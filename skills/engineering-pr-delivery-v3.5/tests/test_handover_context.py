@@ -358,6 +358,58 @@ class HandoverContextTests(unittest.TestCase):
             self.assertIn("AGENT_STATUS_V1", rendered)
             self.assertIn("Further task", rendered)
 
+
+
+    def test_default_successor_entry_is_conservative_and_empty_before_c2(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=load_yaml(target_observation(root)),
+                complex_mode=False,
+            )
+            entry = context["successor_entry"]
+            self.assertEqual("RECONSTRUCT_PLAN_ONLY", entry["mode"])
+            self.assertEqual(
+                [
+                    "READ_RECONSTRUCT",
+                    "RECONCILE_LIVE_TRUTH",
+                    "DRAFT_OR_UPDATE_PLAN",
+                    "ANSWER_SUCCESSOR_CHALLENGE",
+                ],
+                entry["allowed_actions"],
+            )
+            self.assertEqual(
+                [
+                    "QUALIFICATION",
+                    "RETAINED_VALIDATION",
+                    "PRODUCTION_MUTATION",
+                    "PR_CREATION",
+                    "TASK_EXECUTION",
+                ],
+                entry["forbidden_actions"],
+            )
+            self.assertEqual("OWNER_EXPLICIT_EXECUTION_ADMISSION", entry["execution_admission"])
+            self.assertEqual([], entry["successor_reconstruction_challenge"])
+            self.assertEqual([], validate_schema("handover-context", context, "HANDOVER_CONTEXT"))
+
+    def test_successor_entry_schema_fails_closed_on_execution_mode(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=load_yaml(target_observation(root)),
+                complex_mode=False,
+            )
+            bad = copy.deepcopy(context)
+            bad["successor_entry"]["mode"] = "EXECUTE"
+            errors = validate_schema("handover-context", bad, "HANDOVER_CONTEXT")
+            self.assertTrue(errors, errors)
+
     def test_visibility_validator_rejects_reality_leak_into_blind_context(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)

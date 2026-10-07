@@ -18,6 +18,22 @@ LAUNCHER = "skills/two-pass-prompt-generator/SKILL.md"
 SCHEMA = "skills/two-pass-prompt-generator/schema.md"
 VALIDATOR = "skills/two-pass-prompt-generator/validate.py"
 
+SUCCESSOR_ENTRY_MODE = "RECONSTRUCT_PLAN_ONLY"
+SUCCESSOR_ALLOWED_ACTIONS = [
+    "READ_RECONSTRUCT",
+    "RECONCILE_LIVE_TRUTH",
+    "DRAFT_OR_UPDATE_PLAN",
+    "ANSWER_SUCCESSOR_CHALLENGE",
+]
+SUCCESSOR_FORBIDDEN_ACTIONS = [
+    "QUALIFICATION",
+    "RETAINED_VALIDATION",
+    "PRODUCTION_MUTATION",
+    "PR_CREATION",
+    "TASK_EXECUTION",
+]
+SUCCESSOR_EXECUTION_ADMISSION = "OWNER_EXPLICIT_EXECUTION_ADMISSION"
+
 
 class HandoverContextError(RuntimeError):
     pass
@@ -127,6 +143,17 @@ def validate_visibility(context: dict[str, Any]) -> list[str]:
             errors.append(f"blind_context leaks current {label}: {text}")
 
     return errors
+
+
+def _default_successor_entry() -> dict[str, Any]:
+    """Conservative successor boundary. Custody transfer alone grants no execution authority."""
+    return {
+        "mode": SUCCESSOR_ENTRY_MODE,
+        "allowed_actions": list(SUCCESSOR_ALLOWED_ACTIONS),
+        "forbidden_actions": list(SUCCESSOR_FORBIDDEN_ACTIONS),
+        "execution_admission": SUCCESSOR_EXECUTION_ADMISSION,
+        "successor_reconstruction_challenge": [],
+    }
 
 
 def build_context(
@@ -286,6 +313,7 @@ def build_context(
             },
         },
     }
+    context["successor_entry"] = _default_successor_entry()
     errors = validate_schema("handover-context", context, "HANDOVER_CONTEXT")
     errors.extend(validate_visibility(context))
     if errors:
