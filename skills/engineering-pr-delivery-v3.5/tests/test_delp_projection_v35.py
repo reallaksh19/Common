@@ -93,8 +93,10 @@ def stable_graph(**overrides):
     value = graph()
     value["programme"]["graph_generation"] = 1
     for node in value["nodes"]:
-        if node["kind"] == "LEAF" and not node.get("responsibility_id"):
-            node["responsibility_id"] = f"RESP-{M.ref_number(node['ref'])}"
+        if node["kind"] == "LEAF":
+            if not node.get("responsibility_id"):
+                node["responsibility_id"] = f"RESP-{M.ref_number(node['ref'])}"
+            node["spec_generation"] = node.get("spec_generation", 1)
     value.update(overrides)
     return value
 
@@ -711,6 +713,93 @@ class GraphValidation(unittest.TestCase):
         self.assertEqual(stable_id, indexed["nodes"]["Common#999"]["responsibility_id"])
 
 
+    def test_stable_identity_requires_positive_spec_generation(self):
+        g = stable_graph()
+        g["nodes"][4].pop("spec_generation")
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(g)
+        for value in (0, True):
+            g = stable_graph()
+            g["nodes"][4]["spec_generation"] = value
+            with self.assertRaises(M.GraphError):
+                M.validate_graph(g)
+
+    def test_contract_digest_is_derived_and_exposed(self):
+        g = stable_graph()
+        indexed = M.validate_graph(g)
+        leaf = indexed["nodes"]["Common#592"]
+        self.assertTrue(leaf["contract_digest"].startswith("sha256:"))
+        public = M.project(g, [], OBS_A)["nodes"]["Common#592"]["identity"]
+        self.assertEqual(1, public["spec_generation"])
+        self.assertEqual(leaf["contract_digest"], public["contract_digest"])
+
+    def test_spec_generation_itself_does_not_change_contract_digest(self):
+        g1 = stable_graph()
+        g2 = copy.deepcopy(g1)
+        next(n for n in g2["nodes"] if n["ref"] == "Common#592")["spec_generation"] = 2
+        d1 = M.validate_graph(g1)["nodes"]["Common#592"]["contract_digest"]
+        d2 = M.validate_graph(g2)["nodes"]["Common#592"]["contract_digest"]
+        self.assertEqual(d1, d2)
+
+    def test_provider_topology_and_weights_do_not_change_contract_digest(self):
+        g1 = stable_graph()
+        g2 = copy.deepcopy(g1)
+        leaf = next(n for n in g2["nodes"] if n["ref"] == "Common#592")
+        leaf["parent"] = "Common#610"
+        leaf["weight"] = 9
+        leaf["primary_pr"] = "Common#999"
+        d1 = M.validate_graph(g1)["nodes"]["Common#592"]["contract_digest"]
+        d2 = M.validate_graph(g2)["nodes"]["Common#592"]["contract_digest"]
+        self.assertEqual(d1, d2)
+
+    def test_semantic_contract_fields_change_the_digest(self):
+        base = stable_graph()
+        original = M.validate_graph(base)["nodes"]["Common#592"]["contract_digest"]
+        mutations = [
+            lambda g: next(n for n in g["nodes"] if n["ref"] == "Common#592").__setitem__("outcome", "new observable outcome"),
+            lambda g: next(n for n in g["nodes"] if n["ref"] == "Common#592")["units"][0].__setitem__("verify", "run exact replay"),
+            lambda g: next(n for n in g["nodes"] if n["ref"] == "Common#592").__setitem__("write_surface", ["src/kernel.py"]),
+            lambda g: next(n for n in g["nodes"] if n["ref"] == "Common#592").__setitem__(
+                "size_budget", {"target_loc": 50, "hard_loc": 100, "target_minutes": 5, "hard_minutes": 10}
+            ),
+            lambda g: next(n for n in g["nodes"] if n["ref"] == "Common#592").__setitem__("work_class", "MECHANICAL"),
+            lambda g: next(n for n in g["nodes"] if n["ref"] == "Common#592").__setitem__("verification", ["VERIFIED", "PARTIAL"]),
+            lambda g: next(n for n in g["nodes"] if n["ref"] == "Common#592").__setitem__("depends_on", ["Common#594"]),
+        ]
+        for mutate in mutations:
+            g = copy.deepcopy(base)
+            mutate(g)
+            with self.subTest(graph=g):
+                current = M.validate_graph(g)["nodes"]["Common#592"]["contract_digest"]
+                self.assertNotEqual(original, current)
+
+    def test_asserted_contract_digest_cannot_override_derived_digest(self):
+        g = stable_graph()
+        next(n for n in g["nodes"] if n["ref"] == "Common#592")["contract_digest"] = DIGEST
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(g)
+
+    def test_graph_diff_requires_generation_bump_for_semantic_contract_change(self):
+        old = stable_graph()
+        new = copy.deepcopy(old)
+        next(n for n in new["nodes"] if n["ref"] == "Common#592")["outcome"] = "changed contract"
+        blocked = M.graph_diff(old, new)
+        self.assertFalse(blocked["conserved"])
+        self.assertIn("SPEC_GENERATION_NOT_BUMPED", {f["code"] for f in blocked["findings"]})
+        next(n for n in new["nodes"] if n["ref"] == "Common#592")["spec_generation"] = 2
+        accepted = M.graph_diff(old, new)
+        self.assertTrue(accepted["conserved"], accepted["findings"])
+
+    def test_generation_bump_without_contract_change_is_advisory_only(self):
+        old = stable_graph()
+        new = copy.deepcopy(old)
+        next(n for n in new["nodes"] if n["ref"] == "Common#592")["spec_generation"] = 2
+        report = M.graph_diff(old, new)
+        self.assertTrue(report["conserved"])
+        finding = next(f for f in report["findings"] if f["code"] == "SPEC_GENERATION_BUMP_WITHOUT_CONTRACT_CHANGE")
+        self.assertEqual("ADVISORY", finding["severity"])
+
+
 
 class ExtractFactsBlocks(unittest.TestCase):
     BODY = """TASK_EVIDENCE — CHECKPOINT
@@ -1164,6 +1253,13 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
     def test_stable_identity_graph_without_leaf_id_fails_both(self):
         g = stable_graph()
         g["nodes"][4].pop("responsibility_id")
+        self.assertTrue(self.schema_errors("execution-graph", g))
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(g)
+
+    def test_stable_identity_graph_without_spec_generation_fails_both(self):
+        g = stable_graph()
+        g["nodes"][4].pop("spec_generation")
         self.assertTrue(self.schema_errors("execution-graph", g))
         with self.assertRaises(M.GraphError):
             M.validate_graph(g)
