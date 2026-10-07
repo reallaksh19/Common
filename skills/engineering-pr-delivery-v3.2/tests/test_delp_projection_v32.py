@@ -198,6 +198,41 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
         self.assertIn("PRODUCT_SEMANTIC_CLAIM_MISSING", codes)
         self.assertIn("PARENT_CLAIM_UNCOVERED", codes)
 
+
+    def test_mechanism_shaped_product_boundary_requires_explicit_parent_exception(self):
+        g = self.proposal_graph()
+        r = g["programme"]["decomposition_proposal"]["responsibilities"][0]
+        r["id"] = "R-BROWSER-TEST"
+        r["outcome"] = "browser test qualification"
+        row = M.decomposition_report(g)["leaves"]["R-BROWSER-TEST"]
+        self.assertIn("MECHANISM_PRODUCT_BOUNDARY", {f["code"] for f in row["blockers"]})
+
+    def test_genuine_infrastructure_semantic_claim_can_explicitly_allow_mechanism_boundary(self):
+        g = self.proposal_graph()
+        g["programme"]["acceptance_claims"][0]["mechanism_exception_allowed"] = True
+        r = g["programme"]["decomposition_proposal"]["responsibilities"][0]
+        r["id"] = "R-SCHEMA"
+        r["outcome"] = "schema compatibility architecture"
+        r["mechanism_exception"] = {
+            "basis": "the parent semantic outcome is the infrastructure wire contract itself",
+            "claim_ids": ["PA-SEM"],
+        }
+        row = M.decomposition_report(g)["leaves"]["R-SCHEMA"]
+        self.assertNotIn("MECHANISM_PRODUCT_BOUNDARY", {f["code"] for f in row["blockers"]})
+        self.assertTrue(row["releasable"], row)
+
+    def test_mechanism_exception_must_cite_an_owned_allowed_semantic_claim(self):
+        g = self.proposal_graph()
+        g["programme"]["acceptance_claims"][0]["mechanism_exception_allowed"] = True
+        r = g["programme"]["decomposition_proposal"]["responsibilities"][0]
+        r["id"] = "R-WORKFLOW"
+        r["outcome"] = "workflow infrastructure"
+        r["mechanism_exception"] = {"basis": "wrong claim", "claim_ids": ["PG-DELIVERY"]}
+        row = M.decomposition_report(g)["leaves"]["R-WORKFLOW"]
+        codes = {f["code"] for f in row["blockers"]}
+        self.assertIn("MECHANISM_EXCEPTION_CLAIM_UNOWNED", codes)
+        self.assertIn("MECHANISM_PRODUCT_BOUNDARY", codes)
+
     def test_proposal_rejects_provider_ref_and_duplicate_identity(self):
         with_ref = self.proposal_graph()
         with_ref["programme"]["decomposition_proposal"]["responsibilities"][0]["ref"] = "Common#999"
