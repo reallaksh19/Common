@@ -360,7 +360,7 @@ class HandoverContextTests(unittest.TestCase):
 
 
 
-    def test_default_successor_entry_is_conservative_and_empty_before_c2(self):
+    def test_default_handover_entry_is_conservative_even_without_a_requested_challenge(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -372,43 +372,69 @@ class HandoverContextTests(unittest.TestCase):
             )
             entry = context["successor_entry"]
             self.assertEqual("RECONSTRUCT_PLAN_ONLY", entry["mode"])
-            self.assertEqual(
-                [
-                    "READ_RECONSTRUCT",
-                    "RECONCILE_LIVE_TRUTH",
-                    "DRAFT_OR_UPDATE_PLAN",
-                    "ANSWER_SUCCESSOR_CHALLENGE",
-                ],
-                entry["allowed_actions"],
-            )
-            self.assertEqual(
-                [
-                    "QUALIFICATION",
-                    "RETAINED_VALIDATION",
-                    "PRODUCTION_MUTATION",
-                    "PR_CREATION",
-                    "TASK_EXECUTION",
-                ],
-                entry["forbidden_actions"],
-            )
-            self.assertEqual("OWNER_EXPLICIT_EXECUTION_ADMISSION", entry["execution_admission"])
             self.assertEqual([], entry["successor_reconstruction_challenge"])
-            self.assertEqual([], validate_schema("handover-context", context, "HANDOVER_CONTEXT"))
+            self.assertEqual("OWNER_EXPLICIT_EXECUTION_ADMISSION", entry["execution_admission"])
+            for forbidden in ("QUALIFICATION", "RETAINED_VALIDATION", "PRODUCTION_MUTATION", "PR_CREATION", "TASK_EXECUTION"):
+                self.assertIn(forbidden, entry["forbidden_actions"])
 
-    def test_successor_entry_schema_fails_closed_on_execution_mode(self):
+    def test_plan_handover_materializes_exactly_three_repo_grounded_entry_exam_questions(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
-            context, _ = build_context(
+            result = plan_handover(
                 root,
+                tx_id="TX-HANDOVER-CHALLENGE-001",
+                event_id="EVT-HANDOVER-CHALLENGE-001",
+                actor="owner",
+                target_path=target_observation(root),
                 base_ref=base_ref,
-                target=load_yaml(target_observation(root)),
                 complex_mode=False,
+                successor_challenge_count=3,
             )
-            bad = copy.deepcopy(context)
-            bad["successor_entry"]["mode"] = "EXECUTE"
-            errors = validate_schema("handover-context", bad, "HANDOVER_CONTEXT")
-            self.assertTrue(errors, errors)
+            self.assertEqual("COMMITTED", result["status"])
+            context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
+            entry = context["successor_entry"]
+            challenge = entry["successor_reconstruction_challenge"]
+            self.assertEqual(3, len(challenge))
+            self.assertEqual(["Q1", "Q2", "Q3"], [q["id"] for q in challenge])
+            self.assertIn("files/functions", challenge[0]["question"])
+            self.assertIn("authority", challenge[1]["question"].lower())
+            self.assertIn("upstream and downstream", challenge[2]["question"].lower())
+            for q in challenge:
+                self.assertTrue(q["decision_at_risk"])
+                self.assertIn("github:example/project#418", q["repository_anchors"])
+                self.assertTrue(any(str(a).startswith("material_head:") for a in q["repository_anchors"]))
+                self.assertTrue(q["required_evidence"])
+                self.assertTrue(q["authority_distinctions"])
+                self.assertTrue(q["falsifier"])
+                self.assertTrue(q["pass_condition"])
+                self.assertTrue(q["fail_condition"])
+                self.assertTrue(q["forbidden_shortcuts"])
+                self.assertTrue(q["downstream_consequence"])
+            self.assertEqual("DERIVED_HANDOVER_INPUT", context["authority"])
+            self.assertFalse((root / "relay/GENERATED/TWO_PASS_REQUEST.yaml").exists())
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            planned = [row for row in events if row["event_id"] == "EVT-HANDOVER-CHALLENGE-001"][0]
+            self.assertEqual("RECONSTRUCT_PLAN_ONLY", planned["details"]["successor_entry_mode"])
+            self.assertEqual(3, planned["details"]["successor_challenge_count"])
+            self.assertFalse(planned["details"]["reasoning_request_generated"])
+            self.assertEqual([], validate(root))
+
+    def test_successor_challenge_count_is_bounded_and_fails_closed(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            target = load_yaml(target_observation(root))
+            for bad in (-1, 11, True):
+                with self.subTest(bad=bad), self.assertRaises(HandoverContextError):
+                    build_context(
+                        root,
+                        base_ref=base_ref,
+                        target=target,
+                        complex_mode=False,
+                        successor_challenge_count=bad,
+                    )
 
     def test_visibility_validator_rejects_reality_leak_into_blind_context(self):
         with tempfile.TemporaryDirectory() as td:

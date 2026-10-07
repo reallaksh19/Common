@@ -158,6 +158,31 @@ class OwnerIntentEnvelopeTests(unittest.TestCase):
             envelope["boundary_constraints"],
         )
 
+
+
+    def test_formal_handover_preserves_conservative_successor_boundary_constraints(self):
+        result = parse_owner_command(
+            "prepare for handover and create exactly 3 questions; no qualification; "
+            "do not run retained validation; do not modify production code; do not create a PR; "
+            "do not start C1 execution"
+        )
+        envelope = result["owner_intent"]
+        self.assertEqual("PLAN_HANDOVER", result["intent"])
+        self.assertIn({"type": "SUCCESSOR_RECONSTRUCTION_CHALLENGE", "count": 3}, envelope["requested_deliverables"])
+        for constraint in (
+            "EXACT_SUCCESSOR_CHALLENGE_COUNT:3",
+            "NO_QUALIFICATION",
+            "NO_RETAINED_VALIDATION",
+            "NO_PRODUCTION_MUTATION",
+            "NO_PR_CREATION",
+            "NO_TASK_EXECUTION",
+        ):
+            self.assertIn(constraint, envelope["boundary_constraints"])
+        workflow = " ".join(result["workflow"]["steps"]).lower()
+        self.assertIn("reconstruct_plan_only", workflow)
+        self.assertIn("no qualification", workflow)
+        self.assertIn("pr creation", workflow)
+
     def test_handover_no_replan_is_preserved_and_workflow_is_decoupled(self):
         result = parse_owner_command("prepare for handover but do not replan")
         envelope = result["owner_intent"]
