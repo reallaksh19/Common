@@ -95,3 +95,20 @@ amendments:
       - skills/engineering-pr-delivery-v3.2/scripts/agent_quality_metrics_v32.py
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_quality.py
 
+  - id: AMEND-V32-AGENT-TRAJECTORY-005
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner instruction in chat, 2026-10-07: 'you will not work on v3.5' followed by
+      'proceed now, first decompose into workable task, do one by one'. Common #689 defines the
+      V3.2-only Agent Metrics programme; #690/M1 is complete and Common #694 is the next bounded
+      R-M2 responsibility. This amendment authorizes only the three M2 paths below.
+    summary: >-
+      Bounded V3.2-only amendment for Common #689/#694 R-M2: add a pure evidence-derived
+      quality-trajectory contract, evaluator and focused tests. It grants no threshold calibration,
+      intervention/admission action, P/E, candidate/review verdict, title/LIVE_STATUS, merge/release
+      authority, and changes no V3.5 surface.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/schemas/agent-quality-trajectory-v32.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/scripts/agent_quality_trajectory_v32.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_quality_trajectory.py
+
