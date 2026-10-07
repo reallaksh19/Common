@@ -372,6 +372,24 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
         self.assertNotIn("MECHANISM_PRODUCT_BOUNDARY", {f["code"] for f in row["blockers"]})
         self.assertTrue(row["releasable"], row)
 
+    def test_infrastructure_exception_can_cover_mechanism_shaped_semantic_unit(self):
+        g = self.proposal_graph()
+        g["programme"]["acceptance_claims"][0]["mechanism_exception_allowed"] = True
+        r = g["programme"]["decomposition_proposal"]["responsibilities"][0]
+        r["id"] = "R-SCHEMA"
+        r["outcome"] = "schema compatibility architecture"
+        r["mechanism_exception"] = {
+            "basis": "the wire schema itself is the parent semantic infrastructure outcome",
+            "claim_ids": ["PA-SEM"],
+        }
+        r["semantic_units"][0]["id"] = "SCHEMA"
+        r["semantic_units"][0]["outcome"] = "schema wire contract"
+        row = M.decomposition_report(g)["leaves"]["R-SCHEMA"]
+        codes = {f["code"] for f in row["blockers"]}
+        self.assertNotIn("MECHANISM_PRODUCT_BOUNDARY", codes)
+        self.assertNotIn("MECHANISM_SEMANTIC_UNIT", codes)
+        self.assertTrue(row["releasable"], row)
+
     def test_mechanism_exception_must_cite_an_owned_allowed_semantic_claim(self):
         g = self.proposal_graph()
         g["programme"]["acceptance_claims"][0]["mechanism_exception_allowed"] = True
