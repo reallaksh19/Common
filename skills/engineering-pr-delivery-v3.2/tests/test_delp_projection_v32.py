@@ -3961,8 +3961,8 @@ class AgentMetrics689ProposalV2Gate(unittest.TestCase):
                     {
                         "id": "IN-DEGRADATION-SAFETY",
                         "weight": 33,
-                        "outcome": "Degradation plus critical uncertainty or rising repair burden maps to the narrowest justified reconstruction/scope-control advice.",
-                        "verify": "degradation/critical-unknown/repair-rate oracle",
+                        "outcome": "Any classifiable trajectory with unresolved critical uncertainty requires reconstruction-oriented safety advice; degradation with rising repair burden maps to the narrowest justified scope-control advice.",
+                        "verify": "critical-unknown/degradation/repair-rate oracle",
                     },
                     {
                         "id": "IN-AUTHORITY-ISOLATION",
