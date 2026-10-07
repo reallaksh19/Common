@@ -3823,8 +3823,10 @@ class AgentHealthReadModel(unittest.TestCase):
         ):
             self.assertEqual(a.get(key), b.get(key), key)
         self.assertNotEqual(base["input_digest"], rich["input_digest"])
-        self.assertNotIn("agent_health", a)
+        self.assertIn("agent_health", a)
         self.assertIn("agent_health", b)
+        self.assertEqual("UNAVAILABLE", a["agent_health"]["quality"]["status"])
+        self.assertEqual("AVAILABLE", b["agent_health"]["quality"]["status"])
 
         admit_a = M.admit(base, "Common#592")
         admit_b = M.admit(rich, "Common#592")
