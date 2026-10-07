@@ -3104,17 +3104,25 @@ def observe_github(transport: Any, graph: Any) -> dict[str, dict[str, Any]]:
         if pr:
             pull = transport.get_pull(ref_number(pr))
             observed[ref] = {
-                "candidate_sha": str((pull.get("head") or {}).get("sha") or "") or None,
-                "pr_state": "MERGED" if pull.get("merged") else str(pull.get("state") or "UNKNOWN").upper(),
-                "base_sha": base_sha,
+                "schema": OBSERVATION_SCHEMA,
+                "visibility": "OBSERVED",
+                "material": {
+                    "candidate_sha": str((pull.get("head") or {}).get("sha") or "") or None,
+                    "pr_state": "MERGED" if pull.get("merged") else str(pull.get("state") or "UNKNOWN").upper(),
+                    "base_sha": base_sha,
+                },
             }
         elif node.get("candidate_ref"):
             comparison = transport.compare(base_ref, node["candidate_ref"])
             observed[ref] = {
-                "candidate_sha": str(transport.get_commit_sha(node["candidate_ref"]) or "") or None,
-                "ahead_by": int(comparison.get("ahead_by") or 0),
-                "behind_by": int(comparison.get("behind_by") or 0),
-                "base_sha": base_sha,
+                "schema": OBSERVATION_SCHEMA,
+                "visibility": "OBSERVED",
+                "material": {
+                    "candidate_sha": str(transport.get_commit_sha(node["candidate_ref"]) or "") or None,
+                    "ahead_by": int(comparison.get("ahead_by") or 0),
+                    "behind_by": int(comparison.get("behind_by") or 0),
+                    "base_sha": base_sha,
+                },
             }
     return observed
 
