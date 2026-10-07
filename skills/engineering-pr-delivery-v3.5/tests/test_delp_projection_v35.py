@@ -2276,6 +2276,64 @@ class DecompositionRules(unittest.TestCase):
                 mutate(leaf_of(relaxed, "Common#592"))
                 self.assertEqual([], self.codes(relaxed))
 
+    def test_required_transformation_boundary_is_product_only_and_switchable(self):
+        g = planned(require={"transformation_boundaries": True})
+        self.assertEqual(["TRANSFORMATION_BOUNDARY_MISSING"], self.codes(g))
+        leaf_of(g, "Common#592")["transformation_boundaries"] = ["PRODUCT_IMPLEMENTATION"]
+        self.assertEqual([], self.codes(g))
+
+        relaxed = planned(require={"transformation_boundaries": False})
+        self.assertEqual([], self.codes(relaxed))
+
+        for klass in ("MECHANICAL", "GATE"):
+            exempt = planned(require={"transformation_boundaries": True})
+            leaf_of(exempt, "Common#592")["work_class"] = klass
+            self.assertNotIn("TRANSFORMATION_BOUNDARY_MISSING", self.codes(exempt))
+
+    def test_multiple_boundaries_require_an_exceptional_integration_basis(self):
+        g = planned()
+        leaf = leaf_of(g, "Common#592")
+        leaf["transformation_boundaries"] = ["WIRE_SCHEMA", "ENGINE_VALIDATION"]
+        row = M.decomposition_report(g)["leaves"]["Common#592"]
+        self.assertEqual(["MULTI_TRANSFORMATION_BOUNDARY"], [f["code"] for f in row["blockers"]])
+        self.assertIn("ENGINE_VALIDATION, WIRE_SCHEMA", row["blockers"][0]["detail"])
+
+        leaf["integration_basis"] = "one indivisible compatibility transaction"
+        row = M.decomposition_report(g)["leaves"]["Common#592"]
+        self.assertTrue(row["releasable"])
+        self.assertEqual(["MULTI_BOUNDARY_INTEGRATION"], [f["code"] for f in row["advisories"]])
+        self.assertIn("one indivisible compatibility transaction", row["advisories"][0]["detail"])
+
+    def test_real_history_oversized_attempts_are_blocked_by_boundary_shape(self):
+        histories = {
+            "PR624": ["WIRE_SCHEMA", "COMPATIBILITY_NORMALIZATION", "PROVIDER_ADAPTER", "AUTHORITY_POLICY"],
+            "PR643": ["WIRE_SCHEMA", "ENGINE_VALIDATION", "PRODUCT_IMPLEMENTATION"],
+            "PR634-retrospective": ["WIRE_SCHEMA", "ENGINE_VALIDATION"],
+            "PR655-retrospective": ["WIRE_SCHEMA", "ENGINE_VALIDATION"],
+        }
+        for label, boundaries in histories.items():
+            with self.subTest(label=label):
+                g = planned()
+                leaf_of(g, "Common#592")["transformation_boundaries"] = boundaries
+                self.assertEqual(["MULTI_TRANSFORMATION_BOUNDARY"], self.codes(g))
+
+    def test_one_boundary_replacement_shapes_remain_releasable(self):
+        replacements = {
+            "PR635": "COMPATIBILITY_NORMALIZATION",
+            "PR636": "PROVIDER_ADAPTER",
+            "PR637": "AUTHORITY_POLICY",
+            "PR647": "WIRE_SCHEMA",
+            "PR649": "ENGINE_VALIDATION",
+            "PR650": "PRODUCT_IMPLEMENTATION",
+        }
+        for label, boundary in replacements.items():
+            with self.subTest(label=label):
+                g = planned(require={"transformation_boundaries": True})
+                for ref in ("Common#592", "Common#594", "Common#612"):
+                    leaf_of(g, ref)["transformation_boundaries"] = ["PRODUCT_IMPLEMENTATION"]
+                leaf_of(g, "Common#592")["transformation_boundaries"] = [boundary]
+                self.assertEqual([], self.codes(g))
+
     def test_a_partial_size_budget_names_what_is_missing(self):
         g = planned()
         leaf_of(g, "Common#592")["size_budget"] = {"target_loc": 600}
@@ -2405,6 +2463,15 @@ class DecompositionInProjection(unittest.TestCase):
         for ref in clean:
             self.assertEqual(clean[ref]["progress"], enforced[ref]["progress"], ref)
         self.assertEqual("🟢 [#527 › #588 › #592 → PR#593] R:P50/E50 · U03 · ACTIVE", enforced["Common#592"]["title_prefix"])
+
+    def test_multi_boundary_blocker_uses_the_existing_not_releaseable_path(self):
+        g = planned()
+        leaf_of(g, "Common#592")["transformation_boundaries"] = ["WIRE_SCHEMA", "ENGINE_VALIDATION"]
+        node = self.nodes(g, ledger=[])["Common#592"]
+        self.assertEqual("NOT_RELEASEABLE", node["state"])
+        self.assertIn("DECOMPOSITION_BLOCKERS:MULTI_TRANSFORMATION_BOUNDARY", node["warnings"])
+        self.assertEqual(0, node["progress"]["P"])
+        self.assertEqual(0, node["progress"]["E"])
 
     def test_ancestors_stay_active_while_something_moves_and_report_the_gap_in_warnings(self):
         enforced = self.nodes(broken())
