@@ -413,7 +413,19 @@ def validate_facts(facts: Any) -> list[str]:
             parse_ref(responsibility["issue"])
         except DelpError as exc:
             errors.append(f"responsibility.issue: {exc}")
-        extra = set(map(str, responsibility)) - {"issue", "id"}
+        if responsibility.get("id") is not None and (
+            not isinstance(responsibility["id"], str) or not responsibility["id"].strip()
+        ):
+            errors.append("responsibility.id: must be a non-empty string")
+        spec_generation = responsibility.get("spec_generation")
+        if spec_generation is not None and (
+            isinstance(spec_generation, bool) or not isinstance(spec_generation, int) or spec_generation < 1
+        ):
+            errors.append("responsibility.spec_generation: must be a positive integer")
+        contract_digest = responsibility.get("contract_digest")
+        if contract_digest is not None and not _DIGEST.fullmatch(str(contract_digest)):
+            errors.append("responsibility.contract_digest: must be sha256:<64 hex>")
+        extra = set(map(str, responsibility)) - {"issue", "id", "spec_generation", "contract_digest"}
         if extra:
             errors.append(f"responsibility: unknown fields {sorted(extra)}")
 
@@ -1001,6 +1013,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
     normalized_programme["graph_generation"] = graph_generation
     return {
         "programme": normalized_programme,
+        "stable_identity_mode": declared_graph_generation,
         "policy": policy,
         "health_policy": health_policy,
         "total_weight": total_weight,
@@ -1652,6 +1665,7 @@ def compute_leaf(
             last_owner_action = rec["owner_action"]
         record_candidate = (rec.get("material") or {}).get("candidate_sha")
         record_pr = (rec.get("material") or {}).get("pr")
+        record_contract_digest = (rec.get("responsibility") or {}).get("contract_digest")
         for unit in rec.get("units") or []:
             if unit["id"] not in declared:
                 warnings.append(f"UNKNOWN_UNIT:{unit['id']}")
@@ -1661,7 +1675,7 @@ def compute_leaf(
                 "result": unit.get("result") or "NOT_RUN",
                 "evidence_refs": [str(r) for r in unit.get("evidence_refs") or []],
                 "candidate_sha": unit.get("candidate_sha") or record_candidate,
-                "contract_digest": unit.get("contract_digest"),
+                "contract_digest": unit.get("contract_digest") or record_contract_digest,
                 "pr": record_pr,
                 "source": rec.get("_source"),
             }
@@ -1952,6 +1966,48 @@ def _frontier_summary(indexed: Mapping[str, Any], leaves: list[str]) -> str:
     return ", ".join(parts)
 
 
+def bind_facts_to_graph(graph: Any, facts: Mapping[str, Any]) -> dict[str, Any]:
+    """Stamp current Responsibility contract identity into one facts record before publication.
+
+    This is a pure publication helper. It never repairs a conflicting pre-existing binding.
+    """
+    errors = validate_facts(facts)
+    if errors:
+        raise DelpError("cannot bind invalid facts: " + "; ".join(errors))
+    indexed = validate_graph(graph)
+    number = ref_number(facts["responsibility"]["issue"])
+    leaf_ref = next(
+        (
+            ref
+            for ref, node in indexed["nodes"].items()
+            if node["kind"] == "LEAF" and node["number"] == number
+        ),
+        None,
+    )
+    if leaf_ref is None:
+        raise DelpError(f"responsibility.issue: {facts['responsibility']['issue']} is not a declared LEAF")
+    node = indexed["nodes"][leaf_ref]
+    bound = copy.deepcopy(dict(facts))
+    responsibility = dict(bound["responsibility"])
+
+    expected: dict[str, Any] = {}
+    if node.get("responsibility_id") is not None:
+        expected["id"] = node["responsibility_id"]
+    if indexed["stable_identity_mode"]:
+        expected["spec_generation"] = node["spec_generation"]
+        expected["contract_digest"] = node["contract_digest"]
+
+    for field, value in expected.items():
+        current = responsibility.get(field)
+        if current is not None and current != value:
+            raise DelpError(
+                f"responsibility.{field}: existing {current!r} conflicts with current planned {value!r}"
+            )
+        responsibility[field] = value
+    bound["responsibility"] = responsibility
+    return bound
+
+
 def partition_ledger(
     indexed: Mapping[str, Any], ledger: Iterable[Mapping[str, Any]]
 ) -> tuple[dict[str, list[dict[str, Any]]], list[dict[str, Any]]]:
@@ -1971,9 +2027,24 @@ def partition_ledger(
             if leaf_ref is None:
                 errors = [f"responsibility.issue: {facts['responsibility']['issue']} is not a declared LEAF"]
             else:
-                declared_id = indexed["nodes"][leaf_ref].get("responsibility_id")
-                claimed_id = facts["responsibility"].get("id")
-                if declared_id and claimed_id and declared_id != claimed_id:
+                node = indexed["nodes"][leaf_ref]
+                declared_id = node.get("responsibility_id")
+                claimed = facts["responsibility"]
+                claimed_id = claimed.get("id")
+                if indexed["stable_identity_mode"]:
+                    expected = {
+                        "id": declared_id,
+                        "spec_generation": node.get("spec_generation"),
+                        "contract_digest": node.get("contract_digest"),
+                    }
+                    for field, value in expected.items():
+                        if claimed.get(field) is None:
+                            errors.append(f"responsibility.{field}: required for stable-identity facts")
+                        elif claimed.get(field) != value:
+                            errors.append(
+                                f"responsibility.{field}: {claimed.get(field)} does not match planned {value}"
+                            )
+                elif declared_id and claimed_id and declared_id != claimed_id:
                     errors = [f"responsibility.id: {claimed_id} does not match planned {declared_id}"]
         if errors:
             rejected.append({"source": source, "reasons": errors})
@@ -2957,6 +3028,14 @@ def main(argv: list[str] | None = None) -> int:
     vf = sub.add_parser("validate-facts", help="Reject agent-authored progress/titles; exit 1 on any violation.")
     vf.add_argument("facts", type=Path, nargs="+")
 
+    bf = sub.add_parser(
+        "bind-facts",
+        help="Stamp current Responsibility id/spec_generation/contract_digest from the graph before publication.",
+    )
+    bf.add_argument("--graph", type=Path, required=True)
+    bf.add_argument("--facts", type=Path, required=True, help="Exactly one facts record or one CHECKPOINT_FACTS_V1 block.")
+    bf.add_argument("--output", type=Path)
+
     dc = sub.add_parser(
         "decompose-check",
         help="Judge the plan against the decomposition policy; exit 1 on blockers when the effective mode is ENFORCED.",
@@ -3059,6 +3138,13 @@ def main(argv: list[str] | None = None) -> int:
                         for error in errors:
                             print(f"  - {error}", file=sys.stderr)
             return 1 if failed else 0
+        if args.cmd == "bind-facts":
+            rows = _load_ledger([args.facts])
+            if len(rows) != 1:
+                raise DelpError(f"bind-facts requires exactly one facts record; found {len(rows)}")
+            bound = bind_facts_to_graph(_load_structured(args.graph), rows[0]["facts"])
+            _emit(bound, args.output)
+            return 0
         if args.cmd == "graph-diff":
             diff = graph_diff(_load_structured(args.old), _load_structured(args.new))
             if args.json:
