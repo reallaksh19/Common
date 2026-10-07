@@ -259,12 +259,19 @@ def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     """Canonical graph input used for identity/currentness.
 
     Legacy graphs that omit programme.graph_generation are normalized to generation 1,
-    so adding the explicit default does not manufacture semantic drift.
+    so adding the explicit default does not manufacture semantic drift. In stable-identity
+    mode a leaf contract_digest is derived data, so an optional matching assertion is not
+    allowed to manufacture graph drift merely by being present or absent.
     """
     value = copy.deepcopy(dict(graph))
     programme = dict(value.get("programme") or {})
+    stable_identity_mode = "graph_generation" in programme
     programme["graph_generation"] = programme.get("graph_generation", 1)
     value["programme"] = programme
+    if stable_identity_mode:
+        for node in value.get("nodes") or []:
+            if isinstance(node, dict) and node.get("kind") == "LEAF":
+                node.pop("contract_digest", None)
     return value
 
 
@@ -1975,12 +1982,12 @@ def bind_facts_to_graph(graph: Any, facts: Mapping[str, Any]) -> dict[str, Any]:
     if errors:
         raise DelpError("cannot bind invalid facts: " + "; ".join(errors))
     indexed = validate_graph(graph)
-    number = ref_number(facts["responsibility"]["issue"])
+    claimed_issue = facts["responsibility"]["issue"]
     leaf_ref = next(
         (
             ref
             for ref, node in indexed["nodes"].items()
-            if node["kind"] == "LEAF" and node["number"] == number
+            if node["kind"] == "LEAF" and same_ref(ref, claimed_issue)
         ),
         None,
     )
@@ -2014,7 +2021,7 @@ def partition_ledger(
     """Validate every facts record. Invalid/forbidden/unknown records are rejected, never trusted."""
     accepted: dict[str, list[tuple[int, int, dict[str, Any]]]] = {}
     rejected: list[dict[str, Any]] = []
-    leaves = {n["number"]: ref for ref, n in indexed["nodes"].items() if n["kind"] == "LEAF"}
+    leaves = [ref for ref, n in indexed["nodes"].items() if n["kind"] == "LEAF"]
     for position, entry in enumerate(ledger):
         facts = entry.get("facts") if isinstance(entry, Mapping) else None
         source = str((entry or {}).get("source") or f"ledger[{position}]")
@@ -2022,8 +2029,8 @@ def partition_ledger(
         if not errors and (entry or {}).get("untrusted_author"):
             errors = [f"author {(entry or {})['untrusted_author']} is not a trusted fact author for this programme"]
         if not errors:
-            number = ref_number(facts["responsibility"]["issue"])
-            leaf_ref = leaves.get(number)
+            claimed_issue = facts["responsibility"]["issue"]
+            leaf_ref = next((ref for ref in leaves if same_ref(ref, claimed_issue)), None)
             if leaf_ref is None:
                 errors = [f"responsibility.issue: {facts['responsibility']['issue']} is not a declared LEAF"]
             else:
