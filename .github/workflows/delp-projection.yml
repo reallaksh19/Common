@@ -80,6 +80,7 @@ jobs:
             skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py \
             skills/engineering-pr-delivery-v3.2/scripts/owner_commands.py \
             skills/engineering-pr-delivery-v3.5/scripts/delp_projection_v35.py \
+            skills/engineering-pr-delivery-v3.5/scripts/actual_next_v35.py \
             skills/engineering-pr-delivery-v3.5/scripts/continuity_projection.py \
             skills/engineering-pr-delivery-v3.5/scripts/owner_commands.py
 
@@ -100,6 +101,7 @@ jobs:
         if: steps.relevance.outputs.relevant == 'true'
         run: |
           python -m unittest discover -s skills/engineering-pr-delivery-v3.5/tests -p 'test_delp_projection_v35.py' -v
+          python -m unittest discover -s skills/engineering-pr-delivery-v3.5/tests -p 'test_actual_next_v35.py' -v
           python -m unittest discover -s skills/engineering-pr-delivery-v3.5/tests -p 'test_continuity_derived_projection.py' -v
           python -m unittest discover -s skills/engineering-pr-delivery-v3.5/tests -p 'test_owner_commands*.py' -v
 
