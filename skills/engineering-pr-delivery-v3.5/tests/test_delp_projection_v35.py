@@ -457,6 +457,130 @@ class ExecutionProvenanceVisibility(unittest.TestCase):
 
 
 
+class FactCustodyRelationClassifier(unittest.TestCase):
+    def state(self):
+        return {
+            "execution": {
+                "lifecycle": "ACTIVE",
+                "ep": "EP-P3-B2",
+                "lease": "LEASE-P3-B2",
+                "route": "SERIAL:EP-P3-B2",
+                "custody_epoch": 8,
+            }
+        }
+
+    def lease(self):
+        return {
+            "id": "LEASE-P3-B2",
+            "state": "ACTIVE",
+            "executor": {"id": "agent-new"},
+            "basis": {"ep_id": "EP-P3-B2"},
+            "custody": {
+                "epoch": 8,
+                "granted_at": "2026-10-07T10:00:00Z",
+            },
+        }
+
+    def bound(self, *, epoch=8, ep=None, lease=None, executor=None):
+        return {
+            "ep": ep or ("EP-P3-B2" if epoch == 8 else "EP-P3-B1"),
+            "lease": lease or ("LEASE-P3-B2" if epoch == 8 else "LEASE-P3-B1"),
+            "executor": executor or ("agent-new" if epoch == 8 else "agent-old"),
+            "custody_epoch": epoch,
+        }
+
+    def row(self, *, execution=None, updated_at="2026-10-07T10:01:00Z", provider=True):
+        record = facts(units=[unit("U01")], execution=execution) if execution is not None else facts(units=[unit("U01")])
+        row = entry(record, 1, "fact")
+        if provider:
+            row["provider"] = {
+                "kind": "GITHUB_ISSUE_COMMENT",
+                "created_at": "2026-10-07T09:00:00Z",
+                "updated_at": updated_at,
+            }
+        return row
+
+    def relation(self, row):
+        return M.classify_fact_custody(row, self.state(), self.lease())
+
+    def test_current_epoch_requires_exact_active_identity(self):
+        current = self.relation(self.row(execution=self.bound(epoch=8)))
+        self.assertEqual(
+            ("CURRENT_EPOCH", "ACTIVE_EXECUTION_BINDING_MATCH"),
+            (current["relation"], current["reason"]),
+        )
+        mismatch = self.relation(
+            self.row(execution=self.bound(epoch=8, executor="agent-old"))
+        )
+        self.assertEqual(
+            ("UNKNOWN", "CURRENT_EPOCH_IDENTITY_MISMATCH"),
+            (mismatch["relation"], mismatch["reason"]),
+        )
+
+    def test_old_epoch_is_historical_before_grant_and_stale_after_grant(self):
+        before = self.relation(
+            self.row(execution=self.bound(epoch=7), updated_at="2026-10-07T09:59:59Z")
+        )
+        after = self.relation(
+            self.row(execution=self.bound(epoch=7), updated_at="2026-10-07T10:00:01Z")
+        )
+        self.assertEqual("HISTORICAL_PRE_FENCE", before["relation"])
+        self.assertEqual("STALE_POST_FENCE", after["relation"])
+
+    def test_exact_old_epoch_timestamp_tie_is_unknown_not_guessed(self):
+        tied = self.relation(
+            self.row(execution=self.bound(epoch=7), updated_at="2026-10-07T10:00:00Z")
+        )
+        self.assertEqual(
+            ("UNKNOWN", "FENCE_TIMESTAMP_TIE"),
+            (tied["relation"], tied["reason"]),
+        )
+
+    def test_unbound_and_missing_provider_time_remain_non_authoritative(self):
+        unbound = self.relation(self.row(execution=None))
+        self.assertEqual("UNBOUND", unbound["relation"])
+        missing = self.relation(
+            self.row(execution=self.bound(epoch=7), provider=False)
+        )
+        self.assertEqual(
+            ("UNKNOWN", "PROVIDER_TIME_UNAVAILABLE"),
+            (missing["relation"], missing["reason"]),
+        )
+
+    def test_future_epoch_and_impossible_current_epoch_time_fail_to_unknown(self):
+        future = self.relation(
+            self.row(execution=self.bound(epoch=9), updated_at="2026-10-07T10:01:00Z")
+        )
+        self.assertEqual(
+            ("UNKNOWN", "FUTURE_CUSTODY_EPOCH"),
+            (future["relation"], future["reason"]),
+        )
+        predates = self.relation(
+            self.row(execution=self.bound(epoch=8), updated_at="2026-10-07T09:59:59Z")
+        )
+        self.assertEqual(
+            ("UNKNOWN", "CURRENT_EPOCH_PREDATES_GRANT"),
+            (predates["relation"], predates["reason"]),
+        )
+
+    def test_classifier_is_pure_and_does_not_change_projection(self):
+        row = self.row(
+            execution=self.bound(epoch=7),
+            updated_at="2026-10-07T10:00:01Z",
+        )
+        before = copy.deepcopy(row)
+        relation = self.relation(row)
+        self.assertEqual("STALE_POST_FENCE", relation["relation"])
+        self.assertEqual(before, row)
+
+        baseline = M.project(graph(), [row], OBS_A)["nodes"]["Common#592"]
+        self.relation(row)
+        after = M.project(graph(), [row], OBS_A)["nodes"]["Common#592"]
+        for field in ("progress", "state", "conditions", "actual_next", "title_prefix"):
+            with self.subTest(field=field):
+                self.assertEqual(baseline[field], after[field])
+
+
 class LeafProgressAndEvidence(unittest.TestCase):
     def leaf(self, ledger, observations=OBS_A):
         return M.project(graph(), ledger, observations)["nodes"]["Common#592"]
