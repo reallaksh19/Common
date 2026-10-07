@@ -147,6 +147,18 @@ class AgentInterventionTests(unittest.TestCase):
         }
         self.assertTrue({"HANDOVER", "REPLAN"}.isdisjoint(outputs))
 
+    def test_intermediate_unknown_with_observed_boundaries_remains_valid_m2_input(self):
+        a = good("W1")
+        middle = quality("W2", [
+            obs("M1", "MUTATION", "DETECTED", critical=True, covered=1),
+            obs("C1", "CLEAN_CONTROL", "UNKNOWN"),
+        ])
+        c = good("W3")
+        value = trajectory((1, a), (2, middle), (3, c))
+        self.assertEqual("INSUFFICIENT_DATA", value["trajectory"])
+        out = intervention(value)
+        self.assertEqual("REPLAY_REQUIRED", out["recommendation"])
+
     def test_wrong_authority_and_tampered_digest_reject(self):
         value = trajectory((1, poor("W1")), (2, good("W2")))
         wrong = copy.deepcopy(value)
