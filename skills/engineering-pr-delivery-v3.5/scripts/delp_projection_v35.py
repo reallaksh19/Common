@@ -1492,6 +1492,35 @@ def _leaf_findings(node: Mapping[str, Any], policy: Mapping[str, Any]) -> list[d
         found.append(_finding("OUTCOME_MISSING", "state the observable outcome of the leaf in one sentence"))
     if require["write_surface"] and not node["write_surface"]:
         found.append(_finding("WRITE_SURFACE_MISSING", "declare the files or directories the leaf will write"))
+
+    boundaries = node.get("transformation_boundaries") or []
+    if product and require.get("transformation_boundaries") and not boundaries:
+        found.append(
+            _finding(
+                "TRANSFORMATION_BOUNDARY_MISSING",
+                "declare the leaf's independently falsifiable transformation boundary before coding",
+            )
+        )
+    if product and len(boundaries) > 1:
+        basis = node.get("integration_basis")
+        detail = (
+            f"{len(boundaries)} independently falsifiable boundaries: {_id_list(boundaries)}"
+        )
+        if basis:
+            found.append(
+                _finding(
+                    "MULTI_BOUNDARY_INTEGRATION",
+                    f"{detail}; explicit integration_basis: {basis}",
+                    "ADVISORY",
+                )
+            )
+        else:
+            found.append(
+                _finding(
+                    "MULTI_TRANSFORMATION_BOUNDARY",
+                    f"{detail}: split the leaf or state an exceptional integration_basis",
+                )
+            )
     budget = node["size_budget"] or {}
     absent = [k for k in _BUDGET_KEYS if k not in budget]
     if require["size_budget"] and absent:
