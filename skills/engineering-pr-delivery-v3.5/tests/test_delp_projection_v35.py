@@ -1456,6 +1456,12 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
             lambda x: x.__setitem__("diff", {"additions": -1}),
             lambda x: x.__setitem__("check", {"result": "GREEN"}),
             lambda x: x.__setitem__("surprise", True),
+            lambda x: x["material"].__setitem__("pr_state", None),
+            lambda x: x["material"].__setitem__("ahead_by", None),
+            lambda x: x.__setitem__("check", {"result": None}),
+            lambda x: x.__setitem__("check", {"name": None}),
+            lambda x: x.__setitem__("diff", {"additions": None}),
+            lambda x: x.__setitem__("custody", {"interruptions": {"losses": None}}),
         ):
             row = copy.deepcopy(good)
             mutate(row)
