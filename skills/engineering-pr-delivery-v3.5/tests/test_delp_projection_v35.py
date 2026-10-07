@@ -990,6 +990,10 @@ class ResponsibilityCurrentnessProjection(unittest.TestCase):
             {"graph_digest": "sha256:" + "1" * 64},
             {"observed_generation": 99},
             {"contract_current": True},
+            {"observation": {"visibility": "OBSERVED"}},
+            {"observations": {"Common#592": {"candidate_sha": SHA_A}}},
+            {"provider_observation": {"candidate_sha": SHA_A}},
+            {"provider_visibility": "OBSERVED"},
         ]
         for extra in forbidden:
             with self.subTest(extra=extra):
@@ -1076,6 +1080,20 @@ class ProviderObservationNormalization(unittest.TestCase):
         self.assertEqual(0, leaf["progress"]["E"])
         self.assertEqual("UNVERIFIABLE", leaf["evidence"]["health"])
         self.assertEqual("EVIDENCE_GAP", leaf["state"])
+
+    def test_optional_failed_check_is_observed_but_not_a_universal_gate(self):
+        base = {
+            "schema": M.OBSERVATION_SCHEMA,
+            "visibility": "OBSERVED",
+            "material": {"candidate_sha": SHA_A},
+        }
+        failed = copy.deepcopy(base)
+        failed["check"] = {"name": "optional", "result": "FAILURE", "candidate_sha": SHA_A}
+        ledger = [entry(facts(units=[unit("U01")]), 1)]
+        without = M.project(graph(), ledger, {"Common#592": base})["nodes"]["Common#592"]
+        with_failed = M.project(graph(), ledger, {"Common#592": failed})["nodes"]["Common#592"]
+        self.assertEqual(without, with_failed)
+        self.assertEqual("OBSERVED", M.normalize_observation(failed)["_observation"]["categories"]["CHECK"])
 
     def test_legacy_flat_input_gets_category_currentness_without_semantic_change(self):
         normalized = M.normalize_observation({"candidate_sha": SHA_A, "liveness": "ACTIVE"})
