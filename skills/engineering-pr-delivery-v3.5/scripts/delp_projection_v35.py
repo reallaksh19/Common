@@ -300,12 +300,10 @@ def validate_observation(observation: Any) -> list[str]:
             value = material.get(key)
             if value is not None and not _SHA.fullmatch(str(value)):
                 errors.append(f"material.{key}: must be 40-hex lowercase or null")
-        state = material.get("pr_state")
-        if state is not None and state not in {"OPEN", "MERGED", "CLOSED", "UNKNOWN"}:
+        if "pr_state" in material and material["pr_state"] not in {"OPEN", "MERGED", "CLOSED", "UNKNOWN"}:
             errors.append("material.pr_state: OPEN, MERGED, CLOSED or UNKNOWN")
         for key in ("ahead_by", "behind_by"):
-            value = material.get(key)
-            if value is not None and not nonnegative(value):
+            if key in material and not nonnegative(material[key]):
                 errors.append(f"material.{key}: must be a non-negative integer")
 
     custody = mapping("custody", {"interruptions"})
@@ -317,12 +315,11 @@ def validate_observation(observation: Any) -> list[str]:
             unknown = sorted(set(map(str, interruptions)) - {"coverage_from", "losses"})
             if unknown:
                 errors.append(f"custody.interruptions: unknown fields {unknown}")
-            coverage = interruptions.get("coverage_from")
-            if coverage is not None and not isinstance(coverage, str):
+            if "coverage_from" in interruptions and not isinstance(interruptions["coverage_from"], str):
                 errors.append("custody.interruptions.coverage_from: must be a string")
-            losses = interruptions.get("losses")
-            if losses is not None and (
-                not isinstance(losses, list) or any(not isinstance(item, Mapping) for item in losses)
+            if "losses" in interruptions and (
+                not isinstance(interruptions["losses"], list)
+                or any(not isinstance(item, Mapping) for item in interruptions["losses"])
             ):
                 errors.append("custody.interruptions.losses: must be an array of mappings")
 
@@ -332,24 +329,20 @@ def validate_observation(observation: Any) -> list[str]:
 
     check = mapping("check", {"result", "candidate_sha", "name"})
     if check is not None:
-        result = check.get("result")
-        if result is not None and result not in {"SUCCESS", "FAILURE", "PENDING"}:
+        if "result" in check and check["result"] not in {"SUCCESS", "FAILURE", "PENDING"}:
             errors.append("check.result: SUCCESS, FAILURE or PENDING")
-        sha = check.get("candidate_sha")
-        if sha is not None and not _SHA.fullmatch(str(sha)):
+        if "candidate_sha" in check and not _SHA.fullmatch(str(check["candidate_sha"])):
             errors.append("check.candidate_sha: must be 40-hex lowercase")
-        name = check.get("name")
-        if name is not None and (not isinstance(name, str) or not name.strip()):
+        if "name" in check and (not isinstance(check["name"], str) or not check["name"].strip()):
             errors.append("check.name: must be a non-empty string")
 
     diff = mapping("diff", {"additions", "deletions", "since_checkpoint"})
     if diff is not None:
         for key in ("additions", "deletions"):
-            value = diff.get(key)
-            if value is not None and not nonnegative(value):
+            if key in diff and not nonnegative(diff[key]):
                 errors.append(f"diff.{key}: must be a non-negative integer")
-        since = diff.get("since_checkpoint")
-        if since is not None:
+        if "since_checkpoint" in diff:
+            since = diff["since_checkpoint"]
             if not isinstance(since, Mapping):
                 errors.append("diff.since_checkpoint: must be a mapping")
             else:
@@ -357,8 +350,7 @@ def validate_observation(observation: Any) -> list[str]:
                 if unknown:
                     errors.append(f"diff.since_checkpoint: unknown fields {unknown}")
                 for key in ("additions", "deletions"):
-                    value = since.get(key)
-                    if value is not None and not nonnegative(value):
+                    if key in since and not nonnegative(since[key]):
                         errors.append(f"diff.since_checkpoint.{key}: must be a non-negative integer")
     return errors
 
