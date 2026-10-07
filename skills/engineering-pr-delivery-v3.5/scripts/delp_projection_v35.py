@@ -160,6 +160,10 @@ FORBIDDEN_FACT_KEYS = frozenset(
         "graph_digest",
         "observed_generation",
         "contract_current",
+        "observation",
+        "observations",
+        "provider_observation",
+        "provider_visibility",
     }
 )
 _ALLOWED_FACT_TOP = frozenset(
