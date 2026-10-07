@@ -43,9 +43,14 @@ properties:
         description: "LEAF: P/E/D/DE. ROOT/INTERMEDIATE: D/E. Integers 0..100 plus exact ratios; recomputed, never incremented."
       material:
         type: object
+        description: Provider-observed material of a LEAF. Every field after candidate_sha is present only when observed.
         properties:
           primary_pr: {type: [string, "null"]}
           candidate_sha: {type: [string, "null"]}
+          base_sha: {type: string, pattern: '^[0-9a-f]{40}$', description: Head of programme.base_ref when it was observed.}
+          pr_state: {enum: [OPEN, MERGED, CLOSED]}
+          ahead_by: {type: integer, minimum: 0, description: Commits of a branch-only candidate beyond the base.}
+          behind_by: {type: integer, minimum: 0, description: Commits the base has that a branch-only candidate lacks.}
       evidence:
         type: object
         properties:

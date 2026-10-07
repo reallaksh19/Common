@@ -1275,6 +1275,22 @@ def _fraction(num: int, den: int) -> Fraction:
     return Fraction(num, den) if den else Fraction(0)
 
 
+def _observed_material(observation: Mapping[str, Any]) -> dict[str, Any]:
+    """The provider-observed facts about a leaf's material that are safe to publish, validated and typed."""
+    out: dict[str, Any] = {}
+    base = observation.get("base_sha")
+    if isinstance(base, str) and _SHA.fullmatch(base):
+        out["base_sha"] = base
+    pr_state = str(observation.get("pr_state") or "").upper()
+    if pr_state in _PR_ACTIVITY_STATES:
+        out["pr_state"] = pr_state
+    for key in ("ahead_by", "behind_by"):
+        value = observation.get(key)
+        if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+            out[key] = value
+    return out
+
+
 def _provider_signal(observation: Mapping[str, Any]) -> str | None:
     """What the provider shows about a leaf's work, independent of anything an agent published."""
     pr_state = str(observation.get("pr_state") or "").upper()
@@ -1786,6 +1802,7 @@ def project(
             public["material"] = {
                 "primary_pr": node.get("primary_pr"),
                 "candidate_sha": data["frontier"]["material_candidate"],
+                **_observed_material(observations.get(node["number"]) or {}),
             }
             prefix = _leaf_prefix(indexed, ref, data)
         elif node["kind"] == "INTERMEDIATE":
@@ -1978,6 +1995,16 @@ def render_checkpoint(report: Mapping[str, Any]) -> str:
         f"CHILD: R:P{report['child']['P']}/E{report['child']['E']} · {report['child']['unit'] or 'NO_ACTIVE_UNIT'} · {report['state']}",
         f"EVIDENCE: {evidence}",
     ]
+    material = report["material"]
+    seen = [
+        f"base {short(material['base_sha'])}" if material.get("base_sha") else None,
+        f"candidate {short(material.get('candidate_sha'))}",
+        f"PR {material['pr_state']}" if material.get("pr_state") else None,
+        f"ahead {material['ahead_by']}" if material.get("ahead_by") is not None else None,
+        f"behind {material['behind_by']}" if material.get("behind_by") is not None else None,
+    ]
+    if any(material.get(k) is not None for k in ("base_sha", "pr_state", "ahead_by", "behind_by")):
+        lines.append("FRONTIER: " + " · ".join(s for s in seen if s))
     plan = report.get("plan")
     if plan:
         codes = ", ".join(b["code"] for b in plan["blockers"])
@@ -1995,6 +2022,167 @@ def render_checkpoint(report: Mapping[str, Any]) -> str:
         f"OWNER_ACTION: {report['owner_action']}",
         f"NEXT: {report['next']}",
     ]
+    return "\n".join(lines)
+
+
+# --------------------------------------------------------------------------
+# frontier: what a handover may honestly carry, and how a successor checks it is still true
+# --------------------------------------------------------------------------
+
+FRONTIER_DRIFT_SCHEMA = f"{SCHEMA_PREFIX}-frontier-drift"
+# Provider-observed or ledger inputs a frontier depends on. A change in any of them means the handed-over values are
+# stale. Divergence counts (ahead/behind) follow from the base and the candidate, so they are shown, not judged.
+_FRONTIER_INPUTS = (
+    ("BASE", ("observed", "base_sha")),
+    ("CANDIDATE_HEAD", ("observed", "candidate_sha")),
+    ("PR_STATE", ("observed", "pr_state")),
+    ("LIVENESS", ("observed", "liveness")),
+    ("FACTS", ("inputs", "facts", "digest")),
+    ("PLAN", ("inputs", "graph")),
+)
+_FRONTIER_CONSEQUENCES = (
+    ("STATE", ("derived", "state")),
+    ("EVIDENCE_HEALTH", ("derived", "evidence", "health")),
+    ("PROGRESS_P", ("derived", "progress", "P")),
+    ("PROGRESS_E", ("derived", "progress", "E")),
+    ("ACTIVE_UNIT", ("derived", "active_unit")),
+)
+
+
+def _dig(value: Any, path: tuple[str, ...]) -> Any:
+    for key in path:
+        value = value.get(key) if isinstance(value, Mapping) else None
+    return value
+
+
+def frontier(
+    graph: Any,
+    ledger: Iterable[Mapping[str, Any]],
+    observations: Mapping[str, Mapping[str, Any]] | None,
+    leaf_ref: str,
+) -> dict[str, Any]:
+    """One leaf's frontier at this moment: provider-observed material, derived state, and the digests of its inputs.
+
+    This is what a handover may honestly carry. It holds no authored number: everything in it is observed or derived,
+    and it is only ever the predecessor's view at one instant, never current truth. Pure.
+    """
+    ledger = list(ledger)
+    indexed = validate_graph(graph)
+    ref = indexed["by_number"].get(ref_number(leaf_ref))
+    if ref is None or indexed["nodes"][ref]["kind"] != "LEAF":
+        raise DelpError(f"{leaf_ref} is not a LEAF in the graph")
+    projection = project(graph, ledger, observations)
+    leaf = projection["nodes"][ref]
+    accepted, _ = partition_ledger(indexed, ledger)
+    mine = [{k: v for k, v in record.items() if k != "_source"} for record in accepted.get(ref, [])]
+    material = leaf["material"]
+    observed = {k: material[k] for k in ("base_sha", "candidate_sha", "pr_state", "ahead_by", "behind_by") if material.get(k) is not None}
+    if leaf.get("liveness"):
+        observed["liveness"] = leaf["liveness"]
+    ratios = leaf["progress"]["ratio"]
+    derived: dict[str, Any] = {
+        "state": leaf["state"],
+        "lifecycle": leaf["lifecycle"],
+        "active_unit": leaf["active_unit"],
+        "progress": dict(ratios),
+        "evidence": {
+            "health": leaf["evidence"]["health"],
+            "candidate": leaf["frontier"]["evidence_candidate"],
+            "gaps": [f"{g['unit']}:{g['reason']}" for g in leaf["evidence"]["gaps"]],
+        },
+        "next": dict(leaf["next"]),
+        "blocker": leaf["blocker"],
+        "owner_action": leaf["owner_action"],
+    }
+    if "plan" in leaf:
+        derived["plan"] = {"mode": leaf["plan"]["mode"], "releasable": leaf["plan"]["releasable"], "blockers": [b["code"] for b in leaf["plan"]["blockers"]]}
+    if "materialization" in leaf:
+        derived["materialization"] = dict(leaf["materialization"])
+    body = {
+        "leaf": ref,
+        "observed": observed,
+        "derived": derived,
+        "inputs": {"graph": indexed["digest"], "facts": {"accepted": len(mine), "digest": canonical_digest(mine)}},
+    }
+    ancestors = [projection["nodes"][r] for r in leaf["identity"]["lineage"][:-1]]
+    return {
+        "schema": f"{SCHEMA_PREFIX}-frontier",
+        "authority": AUTHORITY,
+        "protocol_line": PROTOCOL_LINE,
+        "lineage": leaf["identity"]["lineage"],
+        "ancestors": [
+            {"ref": a["ref"], "state": a["state"], "D": a["progress"]["ratio"]["D"], "E": a["progress"]["ratio"]["E"]} for a in ancestors
+        ],
+        **body,
+        "frontier_digest": canonical_digest(body),
+    }
+
+
+def frontier_drift(snapshot: Mapping[str, Any], live: Mapping[str, Any]) -> dict[str, Any]:
+    """Compare a handed-over frontier with the one recomputed now. Pure.
+
+    `moved` names the inputs that changed since the snapshot (provider truth, ledger, plan): any of them means the
+    handed-over values are stale and must be recomputed, never trusted. `changed` lists the derived consequences, which are
+    informational. An input the snapshot never observed counts as moved once it is observed: unobserved is not unchanged.
+    """
+    if snapshot.get("leaf") != live.get("leaf"):
+        raise DelpError(f"the snapshot is for {snapshot.get('leaf')} but the live frontier is for {live.get('leaf')}")
+
+    def differences(fields: tuple[tuple[str, tuple[str, ...]], ...]) -> list[dict[str, Any]]:
+        rows = []
+        for name, path in fields:
+            was, now = _dig(snapshot, path), _dig(live, path)
+            if was != now:
+                rows.append({"what": name, "was": was, "now": now})
+        return rows
+
+    moved = differences(_FRONTIER_INPUTS)
+    for row in moved:
+        if row["what"] == "FACTS":  # show the count, not two digests
+            row["was"], row["now"] = _dig(snapshot, ("inputs", "facts", "accepted")), _dig(live, ("inputs", "facts", "accepted"))
+            row["detail"] = "accepted facts records (content differs)" if row["was"] == row["now"] else "accepted facts records"
+        elif row["what"] == "PLAN":
+            row["was"], row["now"] = str(row["was"])[:19], str(row["now"])[:19]
+    return {
+        "schema": FRONTIER_DRIFT_SCHEMA,
+        "authority": AUTHORITY,
+        "leaf": live["leaf"],
+        "status": "MOVED" if moved else "CURRENT",
+        "action": "RECONCILE" if moved else "NONE",
+        "moved": moved,
+        "changed": differences(_FRONTIER_CONSEQUENCES),
+        "snapshot_digest": snapshot.get("frontier_digest"),
+        "live_digest": live.get("frontier_digest"),
+    }
+
+
+def render_frontier(snapshot: Mapping[str, Any]) -> str:
+    o, d = snapshot["observed"], snapshot["derived"]
+    short = lambda sha: (sha or "UNOBSERVED")[:7]  # noqa: E731
+    lines = [
+        f"FRONTIER (derived, observed at one instant; not current truth) — {snapshot['leaf']}",
+        f"PATH: {' → '.join('#' + str(ref_number(r)) for r in snapshot['lineage'])}",
+        f"MATERIAL: base {short(o.get('base_sha'))} · candidate {short(o.get('candidate_sha'))}"
+        + (f" · PR {o['pr_state']}" if o.get("pr_state") else "")
+        + (f" · ahead {o['ahead_by']}" if o.get("ahead_by") is not None else "")
+        + (f" · behind {o['behind_by']}" if o.get("behind_by") is not None else ""),
+        f"STATE: {d['state']} · P {d['progress']['P']} · E {d['progress']['E']} · unit {d['active_unit'] or 'NONE'}",
+        f"EVIDENCE: {d['evidence']['health']}" + (f" ({', '.join(d['evidence']['gaps'])})" if d["evidence"]["gaps"] else ""),
+        f"FRONTIER_DIGEST: {snapshot['frontier_digest']}",
+    ]
+    return "\n".join(lines)
+
+
+def render_frontier_drift(report: Mapping[str, Any]) -> str:
+    short = lambda v: str(v)[:7] if isinstance(v, str) and _SHA.fullmatch(v) else str(v)  # noqa: E731
+    lines = [f"FRONTIER DRIFT — {report['status']} ({report['leaf']})"]
+    lines += [f"  MOVED   {r['what']}: {short(r['was'])} -> {short(r['now'])}" + (f" ({r['detail']})" if r.get("detail") else "") for r in report["moved"]]
+    lines += [f"  changed {r['what']}: {short(r['was'])} -> {short(r['now'])}" for r in report["changed"]]
+    lines.append(
+        "ACTION: NONE — every input is as the predecessor observed it"
+        if report["status"] == "CURRENT"
+        else "ACTION: RECONCILE — the handed-over frontier is stale; recompute from live truth before acting (a handover is the predecessor's view at one instant, never current truth)"
+    )
     return "\n".join(lines)
 
 
@@ -2238,6 +2426,7 @@ def observe_github(transport: Any, graph: Any) -> dict[str, dict[str, Any]]:
     """
     indexed = validate_graph(graph)
     base_ref = str(indexed["programme"].get("base_ref") or "main")
+    base_sha = str(transport.get_commit_sha(base_ref) or "") or None  # one read per pass: the head every leaf is measured against
     observed: dict[str, dict[str, Any]] = {}
     for ref, node in indexed["nodes"].items():
         if node["kind"] != "LEAF":
@@ -2248,6 +2437,7 @@ def observe_github(transport: Any, graph: Any) -> dict[str, dict[str, Any]]:
             observed[ref] = {
                 "candidate_sha": str((pull.get("head") or {}).get("sha") or "") or None,
                 "pr_state": "MERGED" if pull.get("merged") else str(pull.get("state") or "UNKNOWN").upper(),
+                "base_sha": base_sha,
             }
         elif node.get("candidate_ref"):
             comparison = transport.compare(base_ref, node["candidate_ref"])
@@ -2255,6 +2445,7 @@ def observe_github(transport: Any, graph: Any) -> dict[str, dict[str, Any]]:
                 "candidate_sha": str(transport.get_commit_sha(node["candidate_ref"]) or "") or None,
                 "ahead_by": int(comparison.get("ahead_by") or 0),
                 "behind_by": int(comparison.get("behind_by") or 0),
+                "base_sha": base_sha,
             }
     return observed
 
@@ -2426,6 +2617,25 @@ def main(argv: list[str] | None = None) -> int:
     gd.add_argument("--new", type=Path, required=True)
     gd.add_argument("--json", action="store_true")
 
+    fr = sub.add_parser(
+        "frontier",
+        help="One leaf's derived frontier at this instant (observed material, derived state, input digests): what a handover may carry.",
+    )
+    fv = sub.add_parser(
+        "frontier-verify",
+        help="Compare a handed-over frontier with the live one; exit 2 when any input moved (the handover is stale).",
+    )
+    for sp in (fr, fv):
+        sp.add_argument("--graph", type=Path, required=True)
+        sp.add_argument("--facts", type=Path, nargs="*", default=[])
+        sp.add_argument("--observations", type=Path)
+        sp.add_argument("--repository", help="Observe live from GitHub (read-only) instead of --facts / --observations.")
+        sp.add_argument("--leaf", required=True)
+    fr.add_argument("--output", type=Path)
+    fr.add_argument("--text", action="store_true", help="Human-readable form instead of JSON.")
+    fv.add_argument("--snapshot", type=Path, required=True, help="The frontier JSON the predecessor handed over.")
+    fv.add_argument("--json", action="store_true")
+
     pr = sub.add_parser("project")
     pr.add_argument("--graph", type=Path, required=True)
     pr.add_argument("--facts", type=Path, nargs="*", default=[])
@@ -2503,6 +2713,27 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 print(render_decomposition(report))
             return 1 if report["mode"] == "ENFORCED" and report["summary"]["not_releasable"] else 0
+        if args.cmd in {"frontier", "frontier-verify"}:
+            if args.repository:
+                require_repository_match(graph, args.repository, live=False)
+                transport = GhTransport(args.repository)
+                ledger, observations = ledger_from_github(transport, graph), observe_github(transport, graph)
+            else:
+                ledger = _load_ledger(args.facts)
+                observations = _load_structured(args.observations) if args.observations else {}
+            live = frontier(graph, ledger, observations, args.leaf)
+            if args.cmd == "frontier":
+                if args.text:
+                    print(render_frontier(live))
+                else:
+                    _emit(live, args.output)
+                return 0
+            drift = frontier_drift(_load_structured(args.snapshot), live)
+            if args.json:
+                _emit(drift, None)
+            else:
+                print(render_frontier_drift(drift))
+            return 2 if drift["status"] == "MOVED" else 0
         if args.cmd == "sync-github":
             require_repository_match(graph, args.repository, live=not args.dry_run)
         if args.cmd == "sync-github" and args.dry_run:

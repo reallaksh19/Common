@@ -43,6 +43,7 @@ SCHEMAS = MODULE_PATH.parents[1] / "schemas"
 SHA_A = "a" * 40
 SHA_B = "b" * 40
 SHA_C = "c" * 40
+SHA_MAIN = "9" * 40  # the head of the base branch in the fake provider
 DIGEST = "sha256:" + "d" * 64
 
 
@@ -764,7 +765,7 @@ class FakeGitHub:
         self.issues = {}
         self.comments = {}
         self.pulls = {}
-        self.commits = {}
+        self.commits = {"main": SHA_MAIN}
         self.compares = {}
         self.next_id = 100
         self.on_patch_comment = None
@@ -862,10 +863,12 @@ class GitHubStoreTests(unittest.TestCase):
         leaf.pop("primary_pr")
         leaf["candidate_ref"] = "investigate/592"
         observed = M.observe_github(gh, g)
-        self.assertEqual({"candidate_sha": SHA_C, "ahead_by": 9, "behind_by": 4}, observed["Common#612"])
+        self.assertEqual({"candidate_sha": SHA_C, "ahead_by": 9, "behind_by": 4, "base_sha": SHA_MAIN}, observed["Common#612"])
+        self.assertEqual(SHA_MAIN, observed["Common#594"]["base_sha"])  # every leaf is measured against the same base head
         self.assertIn(("COMPARE", "main", "investigate/592"), gh.calls)  # the base defaults to main
+        gh.commits["release/2"] = SHA_B
         g["programme"]["base_ref"] = "release/2"
-        M.observe_github(gh, g)
+        self.assertEqual(SHA_B, M.observe_github(gh, g)["Common#612"]["base_sha"])
         self.assertIn(("COMPARE", "release/2", "investigate/592"), gh.calls)
         self.assertEqual(SHA_C, observed["Common#612"]["candidate_sha"])
         self.assertEqual(SHA_B, observed["Common#594"]["candidate_sha"])
@@ -2310,6 +2313,162 @@ class RealScenarioReplay(unittest.TestCase):
         self.assertEqual("🟡 [#527] Π:D0/E0 · F0 · UNMATERIALIZED — Title 527", gh.issues[527])
         self.assertEqual("🟡 [#527 › #588] R:P0/E0 · NO_ACTIVE_UNIT · UNMATERIALIZED — Title 588", gh.issues[588])
         self.assertIn(("COMPARE", "main", self.BRANCH), gh.calls)
+
+
+class FrontierSnapshotAndDrift(unittest.TestCase):
+    """A handover carries the predecessor's frontier at one instant. DELP derives it and checks it is still true.
+
+    The replay is the real event: the P3-I handover pinned `main` at 4acc5704; the next merge (#591) moved it to
+    46916f48. The handover itself says to stop and recompute when main moves; this makes that rule mechanical.
+    """
+
+    MAIN_AT_HANDOVER = "4acc570495c96653366ef4cd7d5801a5cf747399"
+    MAIN_NOW = "46916f4828090c1f32cf2856186b0b00defdbea3"
+    LEAF = "Common#588"
+
+    def observations(self, main=None, head=None, behind=4):
+        obs = RealScenarioReplay.observations(head)
+        for row in obs.values():
+            row["base_sha"] = main or self.MAIN_AT_HANDOVER
+        obs[self.LEAF]["behind_by"] = behind
+        return obs
+
+    def ledger(self):
+        return RealScenarioReplay.closed_ledger() + [RealScenarioReplay.p3i_facts(RealScenarioReplay.OLD_HEAD, 10)]
+
+    def frontier(self, ledger=None, obs=None, graph_value=None):
+        return M.frontier(graph_value or RealScenarioReplay.plan(), self.ledger() if ledger is None else ledger, obs or self.observations(), self.LEAF)
+
+    def test_the_frontier_holds_only_observed_and_derived_values_and_is_reproducible(self):
+        snapshot = self.frontier()
+        self.assertEqual(
+            {"base_sha": self.MAIN_AT_HANDOVER, "candidate_sha": RealScenarioReplay.OLD_HEAD, "ahead_by": 9, "behind_by": 4},
+            snapshot["observed"],
+        )
+        self.assertEqual(("ACTIVE", "1/5", "1/5", "B"), (snapshot["derived"]["state"], snapshot["derived"]["progress"]["P"], snapshot["derived"]["progress"]["E"], snapshot["derived"]["active_unit"]))
+        self.assertEqual("CURRENT", snapshot["derived"]["evidence"]["health"])
+        self.assertEqual(["Common#527", "Common#588"], snapshot["lineage"])
+        self.assertEqual(M.AUTHORITY, snapshot["authority"])
+        self.assertEqual(snapshot, self.frontier())
+        self.assertEqual(snapshot, json.loads(M.canonical_json(snapshot)))
+        self.assertEqual([], M.forbidden_fields(snapshot["observed"]))  # nothing an agent could have authored is in what was observed
+
+    def test_main_moving_after_the_handover_makes_every_pinned_value_stale(self):
+        snapshot = self.frontier()
+        drift = M.frontier_drift(snapshot, self.frontier(obs=self.observations(main=self.MAIN_NOW)))
+        self.assertEqual(("MOVED", "RECONCILE"), (drift["status"], drift["action"]))
+        self.assertEqual([{"what": "BASE", "was": self.MAIN_AT_HANDOVER, "now": self.MAIN_NOW}], drift["moved"])
+        self.assertEqual([], drift["changed"])  # nothing derived moved: the evidence is still on the same candidate
+        self.assertIn("recompute from live truth", M.render_frontier_drift(drift))
+
+    def test_unchanged_inputs_are_current(self):
+        snapshot = self.frontier()
+        drift = M.frontier_drift(snapshot, self.frontier())
+        self.assertEqual(("CURRENT", "NONE", []), (drift["status"], drift["action"], drift["moved"]))
+        self.assertEqual(snapshot["frontier_digest"], drift["live_digest"])
+
+    def test_every_kind_of_movement_is_named(self):
+        snapshot = self.frontier()
+        replay_head = self.frontier(obs=self.observations(head=RealScenarioReplay.REBASED_HEAD))
+        drift = M.frontier_drift(snapshot, replay_head)
+        self.assertEqual({"CANDIDATE_HEAD"}, {m["what"] for m in drift["moved"]})
+        self.assertEqual(
+            {"STATE": ("ACTIVE", "EVIDENCE_STALE"), "EVIDENCE_HEALTH": ("CURRENT", "STALE_CANDIDATE"), "PROGRESS_E": ("1/5", "0/1")},
+            {c["what"]: (c["was"], c["now"]) for c in drift["changed"]},
+        )
+        more = self.ledger() + [RealScenarioReplay.p3i_facts(RealScenarioReplay.OLD_HEAD, 11)]
+        facts = M.frontier_drift(snapshot, self.frontier(ledger=more))
+        self.assertEqual([{"what": "FACTS", "was": 1, "now": 2, "detail": "accepted facts records"}], facts["moved"])
+        edited = RealScenarioReplay.plan()
+        leaf_of(edited, self.LEAF)["units"][0]["weight"] = 30
+        self.assertEqual({"PLAN"}, {m["what"] for m in M.frontier_drift(snapshot, self.frontier(graph_value=edited))["moved"]})
+        dead = self.observations()
+        dead[self.LEAF]["liveness"] = "STALE"
+        stale = M.frontier_drift(snapshot, self.frontier(obs=dead))
+        self.assertEqual({"LIVENESS"}, {m["what"] for m in stale["moved"]})
+        self.assertEqual("STALE", next(c["now"] for c in stale["changed"] if c["what"] == "STATE"))
+
+    def test_a_pull_request_leaf_reports_its_state_moving(self):
+        leaf = "Common#584"
+        was = M.frontier(RealScenarioReplay.plan(), RealScenarioReplay.closed_ledger(), self.observations(), leaf)
+        reopened = self.observations()
+        reopened[leaf]["pr_state"] = "OPEN"
+        now = M.frontier(RealScenarioReplay.plan(), RealScenarioReplay.closed_ledger(), reopened, leaf)
+        self.assertEqual([{"what": "PR_STATE", "was": "MERGED", "now": "OPEN"}], M.frontier_drift(was, now)["moved"])
+
+    def test_an_input_the_predecessor_never_observed_is_not_treated_as_unchanged(self):
+        blind = self.observations()
+        for row in blind.values():
+            row.pop("base_sha")
+        drift = M.frontier_drift(self.frontier(obs=blind), self.frontier())
+        self.assertEqual([{"what": "BASE", "was": None, "now": self.MAIN_AT_HANDOVER}], drift["moved"])
+        self.assertEqual("MOVED", drift["status"])
+
+    def test_a_snapshot_for_another_leaf_or_a_non_leaf_is_refused(self):
+        with self.assertRaises(M.DelpError):
+            M.frontier_drift(self.frontier(), M.frontier(RealScenarioReplay.plan(), self.ledger(), self.observations(), "Common#584"))
+        with self.assertRaises(M.DelpError):
+            M.frontier(RealScenarioReplay.plan(), [], {}, "Common#527")
+        with self.assertRaises(M.DelpError):
+            M.frontier(RealScenarioReplay.plan(), [], {}, "Common#99999")
+
+    def test_the_continue_checkpoint_carries_the_material_frontier_instead_of_prose(self):
+        projection = M.project(RealScenarioReplay.plan(), self.ledger(), self.observations())
+        text = M.render_checkpoint(M.admit(projection, self.LEAF, "continue"))
+        self.assertIn("FRONTIER: base 4acc570 · candidate ff7c3b7 · ahead 9 · behind 4", text)
+        merged = M.render_checkpoint(M.admit(projection, "Common#584", "continue"))
+        self.assertIn("FRONTIER: base 4acc570 · candidate 797acb3 · PR MERGED", merged)
+        quiet = M.render_checkpoint(M.admit(M.project(graph(), [], OBS_A), "Common#592", "continue"))
+        self.assertNotIn("FRONTIER:", quiet)  # observations without provider fields change nothing
+
+    def test_command_line_snapshot_then_verify_exit_codes(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+
+            def write(name, value):
+                path = root / name
+                path.write_text(json.dumps(value), encoding="utf-8")
+                return str(path)
+
+            graph_path, facts_path = write("g.json", RealScenarioReplay.plan()), write("f.json", self.ledger())
+            then, now = write("then.json", self.observations()), write("now.json", self.observations(main=self.MAIN_NOW))
+            snapshot = str(root / "snapshot.json")
+            self.assertEqual(0, cli("frontier", "--graph", graph_path, "--facts", facts_path, "--observations", then, "--leaf", self.LEAF, "--output", snapshot)[0])
+            code, out, _ = cli("frontier", "--graph", graph_path, "--facts", facts_path, "--observations", then, "--leaf", self.LEAF, "--text")
+            self.assertEqual(0, code)
+            self.assertIn("MATERIAL: base 4acc570 · candidate ff7c3b7 · ahead 9 · behind 4", out)
+            self.assertIn("not current truth", out)
+            code, out, _ = cli("frontier-verify", "--snapshot", snapshot, "--graph", graph_path, "--facts", facts_path, "--observations", then, "--leaf", self.LEAF)
+            self.assertEqual(0, code)
+            self.assertIn("FRONTIER DRIFT — CURRENT", out)
+            code, out, _ = cli("frontier-verify", "--snapshot", snapshot, "--graph", graph_path, "--facts", facts_path, "--observations", now, "--leaf", self.LEAF)
+            self.assertEqual(2, code)
+            self.assertIn("MOVED   BASE: 4acc570 -> 46916f4", out)
+            self.assertIn("ACTION: RECONCILE", out)
+            code, out, _ = cli("frontier-verify", "--snapshot", snapshot, "--graph", graph_path, "--facts", facts_path, "--observations", now, "--leaf", self.LEAF, "--json")
+            self.assertEqual(2, code)
+            self.assertEqual(M.FRONTIER_DRIFT_SCHEMA, json.loads(out)["schema"])
+
+    def test_live_mode_observes_read_only_and_honours_the_repository_guard(self):
+        import unittest.mock as mock
+
+        gh = FakeGitHub()
+        gh.commits.update({"main": self.MAIN_NOW, RealScenarioReplay.BRANCH: RealScenarioReplay.OLD_HEAD})
+        gh.compares[RealScenarioReplay.BRANCH] = {"ahead_by": 9, "behind_by": 4}
+        for _, pr, sha in RealScenarioReplay.SOLO:
+            gh.pulls[int(pr.split("#")[1])] = {"head": {"sha": sha}, "state": "closed", "merged": True}
+        with tempfile.TemporaryDirectory() as td:
+            path = pathlib.Path(td) / "g.json"
+            path.write_text(json.dumps(RealScenarioReplay.plan()), encoding="utf-8")
+            with mock.patch.object(M, "GhTransport", return_value=gh):
+                code, out, _ = cli("frontier", "--graph", str(path), "--repository", "reallaksh19/Common", "--leaf", self.LEAF)
+                self.assertEqual(0, code)
+                self.assertEqual(self.MAIN_NOW, json.loads(out)["observed"]["base_sha"])
+                self.assertEqual("UNMATERIALIZED", json.loads(out)["derived"]["state"])  # the ledger really is empty
+                code, _, err = cli("frontier", "--graph", str(path), "--repository", "someone/else", "--leaf", self.LEAF)
+                self.assertEqual(1, code)
+                self.assertIn("does not match --repository", err)
+        self.assertEqual([], [c for c in gh.calls if c[0] in {"POST", "PATCH_COMMENT", "PATCH_TITLE"}])  # nothing was written
 
 
 @unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
