@@ -156,6 +156,166 @@ def _default_successor_entry() -> dict[str, Any]:
     }
 
 
+
+def build_successor_challenge(context: dict[str, Any], count: int) -> list[dict[str, Any]]:
+    """Pure repository-grounded entry exam. It never grants execution authority or mutates the handover context."""
+    if isinstance(count, bool) or not isinstance(count, int) or not (0 <= count <= 10):
+        raise HandoverContextError("successor challenge count must be an integer from 0 to 10")
+
+    learning = context.get("accumulated_learning") or {}
+    reality = context.get("reality_context") or {}
+    material = reality.get("material") or {}
+    execution = reality.get("execution") or {}
+    reconstruction = learning.get("reconstruction_context") or {}
+    task_snapshot = (learning.get("task_snapshot") or {}).get("value") or {}
+    decision = (
+        learning.get("first_successor_action")
+        or ((task_snapshot.get("next") or {}).get("immediate_action"))
+        or "the next bounded engineering decision"
+    )
+
+    anchors: list[str] = []
+    candidates = [
+        (context.get("target") or {}).get("provider_ref"),
+        f"material_head:{material.get('head')}" if material.get("head") else None,
+        f"branch:{execution.get('branch')}" if execution.get("branch") else None,
+        ((reconstruction.get("original_intent") or {}).get("source_ref")),
+        ((reconstruction.get("original_intent") or {}).get("url")),
+        ((reconstruction.get("latest_reconciliation") or {}).get("ref")),
+    ]
+    candidates.extend(list(reconstruction.get("roadmap_refs") or []))
+    candidates.extend(list(reconstruction.get("primary_conversation_refs") or []))
+    for value in candidates:
+        text = str(value or "").strip()
+        if text and text not in anchors:
+            anchors.append(text)
+        if len(anchors) >= 8:
+            break
+    if not anchors:
+        raise HandoverContextError("successor challenge requires at least one repository/provider anchor")
+
+    unresolved = [str(x).strip() for x in learning.get("what_remains_uncertain") or [] if str(x).strip()]
+    rejected = [str(x).strip() for x in learning.get("attempted_and_rejected") or [] if str(x).strip()]
+    invariants = [str(x).strip() for x in learning.get("do_not_break") or [] if str(x).strip()]
+    invariants.extend(str(x).strip() for x in reality.get("task_constraints") or [] if str(x).strip())
+
+    uncertainty = unresolved[0] if unresolved else "the earliest owning layer / root classification is not yet proven"
+    negative = rejected[0] if rejected else "do not repeat an unproven predecessor repair direction"
+    invariant = invariants[0] if invariants else "preserve accepted behavior and authority boundaries"
+    anchor_hint = ", ".join(anchors[:3])
+
+    templates = [
+        {
+            "question": (
+                f"Before {decision}, reconstruct the exact live implementation path from the relevant entry point to the owned "
+                f"mutation boundary using {anchor_hint}. Cite current files/functions and exact material/provider evidence, identify "
+                "the earliest owning layer, and state an observation that would falsify that ownership."
+            ),
+            "required_evidence": [
+                "current repository file/function call path",
+                "exact material head and provider readback",
+                "evidence locating the earliest owning layer",
+            ],
+            "authority_distinctions": [
+                "production semantics vs candidate generation",
+                "current exact evidence vs inherited predecessor assertion",
+            ],
+            "falsifier": "Live repository/provider evidence shows the proposed owning layer is downstream of an earlier causal loss.",
+            "pass_condition": "Names current files/functions and exact live refs, locates an owning layer, and supplies a falsifier.",
+            "fail_condition": "Can be answered from issue prose, generic architecture knowledge, or predecessor conclusions alone.",
+            "forbidden_shortcuts": [
+                "do not answer from handover prose alone",
+                "do not assume predecessor diagnosis is current truth",
+                "do not start implementation while ownership is unproved",
+            ],
+            "downstream_consequence": "Determines which bounded child may legitimately own the next material change.",
+        },
+        {
+            "question": (
+                f"For {decision}, classify the live evidence and authority boundaries governing the decision and resolve this uncertainty: "
+                f"{uncertainty}. Use current repository/provider evidence and distinguish production authority, candidate-generation-only, "
+                "review-only, validation/benchmark-only, and historical evidence. State which source must not be promoted into production authority."
+            ),
+            "required_evidence": [
+                "current authority-defining code/schema or governing contract",
+                "live evidence/source classification",
+                "contradictory or limiting evidence where present",
+            ],
+            "authority_distinctions": [
+                "production authority",
+                "candidate-generation-only",
+                "review-only",
+                "validation/benchmark-only",
+                "historical/not-current",
+            ],
+            "falsifier": "A current governing contract gives a supposedly non-authoritative source direct production authority.",
+            "pass_condition": "Classifies every load-bearing source by current authority and resolves the uncertainty with live evidence.",
+            "fail_condition": "Treats READY/PASS/benchmark coincidence or predecessor prose as production authority without contract evidence.",
+            "forbidden_shortcuts": [
+                "do not promote benchmark expected output into matching authority",
+                "do not equate status readiness with semantic correctness",
+                "do not collapse historical evidence into exact-head evidence",
+            ],
+            "downstream_consequence": "Prevents the next repair from being justified by the wrong evidence class.",
+        },
+        {
+            "question": (
+                f"Before {decision}, reconstruct the upstream/downstream responsibility boundaries and exact material/evidence frontier. "
+                f"Explain why adjacent layers do not own the next change, preserve this invariant: {invariant}, and account for negative "
+                f"knowledge: {negative}. State the exact root classification/evidence required before coding."
+            ),
+            "required_evidence": [
+                "current parent/child/dependency graph or issue/PR relationships",
+                "exact material and semantic/evidence frontier",
+                "negative knowledge / rejected approach evidence",
+                "explicit pre-coding root classification",
+            ],
+            "authority_distinctions": [
+                "upstream cause vs downstream compensation",
+                "plan/decomposition authority vs execution evidence",
+            ],
+            "falsifier": "Current evidence shows an upstream or adjacent responsibility owns the first causal loss.",
+            "pass_condition": "Names boundaries, frontier, invariant, negative knowledge and the exact pre-coding proof/root classification.",
+            "fail_condition": "Proposes a PR or fix before current ownership/root classification is established.",
+            "forbidden_shortcuts": [
+                "do not compensate downstream for an unlocated upstream defect",
+                "do not repeat a rejected approach without new evidence",
+                "do not create a PR merely because a plausible patch is visible",
+            ],
+            "downstream_consequence": "Controls whether the successor may propose the next bounded implementation child.",
+        },
+    ]
+
+    questions: list[dict[str, Any]] = []
+    for index in range(count):
+        if index < len(templates):
+            row = dict(templates[index])
+        else:
+            subject = unresolved[(index - 3) % len(unresolved)] if unresolved else invariant
+            row = {
+                "question": (
+                    f"Resolve successor uncertainty {index + 1} before {decision}: {subject}. Reconstruct the answer from current "
+                    "repository/provider evidence, explain its decision impact, and state a falsifier."
+                ),
+                "required_evidence": ["current repository/provider evidence tied to the stated uncertainty"],
+                "authority_distinctions": ["current exact evidence vs inherited assertion"],
+                "falsifier": "Current repository/provider evidence contradicts the proposed resolution.",
+                "pass_condition": "Resolves the uncertainty with current refs and a falsifier.",
+                "fail_condition": "Answers generically or only from inherited prose.",
+                "forbidden_shortcuts": ["do not execute the task to discover the answer", "do not treat inherited prose as current truth"],
+                "downstream_consequence": "Decides whether the next engineering step remains safe.",
+            }
+        row.update(
+            {
+                "id": f"Q{index + 1}",
+                "decision_at_risk": str(decision),
+                "repository_anchors": list(anchors),
+            }
+        )
+        questions.append(row)
+    return questions
+
+
 def build_context(
     root: Path,
     *,
