@@ -3031,6 +3031,48 @@ def _topology_assembler_module():
     return _TOPOLOGY_ASSEMBLER_MODULE
 
 
+_TOPOLOGY_OBSERVER_MODULE: Any | None = None
+
+
+def _topology_observer_module():
+    """Load the qualified read-only repository observer lazily."""
+    global _TOPOLOGY_OBSERVER_MODULE
+    if _TOPOLOGY_OBSERVER_MODULE is None:
+        path = Path(__file__).resolve().with_name("decomposition_observer_v35.py")
+        spec = importlib.util.spec_from_file_location("decomposition_observer_v35_for_projection", path)
+        module = importlib.util.module_from_spec(spec)
+        if spec.loader is None:  # pragma: no cover
+            raise DelpError(f"cannot load topology observer {path}")
+        spec.loader.exec_module(module)
+        _TOPOLOGY_OBSERVER_MODULE = module
+    return _TOPOLOGY_OBSERVER_MODULE
+
+
+def observe_topology_repository(
+    graph: Any,
+    repo_root: Path | str,
+) -> dict[str, dict[str, Any]]:
+    """Derive R2 repository observations from a checked-out Git tree; read-only."""
+    indexed = validate_graph(graph)
+    if not (indexed.get("acceptance_claims") or indexed.get("topology_assessments")):
+        return {}
+    observer = _topology_observer_module()
+    root = Path(repo_root).resolve()
+    rows: dict[str, dict[str, Any]] = {}
+    for ref in indexed["order"]:
+        if indexed["nodes"][ref]["kind"] != "LEAF":
+            continue
+        try:
+            rows[ref] = observer.observe_repository_basis(
+                graph,
+                leaf_ref=ref,
+                repo_root=root,
+            )
+        except Exception as exc:
+            raise DelpError(f"{ref}: topology repository observation failed: {exc}") from exc
+    return rows
+
+
 def project(
     graph: Any,
     ledger: Iterable[Mapping[str, Any]] = (),
@@ -3836,10 +3878,12 @@ class _InputCache:
         graph: Any,
         ledger_provider: Callable[[], Iterable[Mapping[str, Any]]],
         observation_provider: Callable[[], Mapping[str, Mapping[str, Any]]],
+        topology_observation_provider: Callable[[], Mapping[str, Mapping[str, Any]]] | None = None,
     ) -> None:
         self.graph = graph
         self.ledger_provider = ledger_provider
         self.observation_provider = observation_provider
+        self.topology_observation_provider = topology_observation_provider or (lambda: {})
         self._projection: dict[str, Any] | None = None
 
     def invalidate(self) -> None:
@@ -3847,7 +3891,12 @@ class _InputCache:
 
     def projection(self) -> dict[str, Any]:
         if self._projection is None:
-            self._projection = project(self.graph, self.ledger_provider(), self.observation_provider())
+            self._projection = project(
+                self.graph,
+                self.ledger_provider(),
+                self.observation_provider(),
+                topology_observations=self.topology_observation_provider(),
+            )
         return self._projection
 
 
@@ -3857,10 +3906,16 @@ def sync_projection(
     ledger_provider: Callable[[], Iterable[Mapping[str, Any]]],
     observation_provider: Callable[[], Mapping[str, Mapping[str, Any]]],
     base_titles: Mapping[str, str],
+    topology_observation_provider: Callable[[], Mapping[str, Mapping[str, Any]]] | None = None,
 ) -> dict[str, Any]:
     """Project every node and write each with compare-and-swap. Leaves first, root last."""
     indexed = validate_graph(graph)
-    cache = _InputCache(graph, ledger_provider, observation_provider)
+    cache = _InputCache(
+        graph,
+        ledger_provider,
+        observation_provider,
+        topology_observation_provider,
+    )
     report: dict[str, Any] = {}
     ordered = sorted(indexed["nodes"], key=lambda r: (-len(lineage(indexed, r)), indexed["nodes"][r]["number"]))
     for ref in ordered:
@@ -3931,11 +3986,16 @@ def require_repository_match(graph: Any, repository: str, *, live: bool) -> None
         )
 
 
-def plan_github(transport: Any, graph: Any) -> dict[str, Any]:
+def plan_github(transport: Any, graph: Any, repo_root: Path | str = Path.cwd()) -> dict[str, Any]:
     """Read-only dry run of `sync-github`: what would change, what drifted, what was rejected. Writes nothing."""
     indexed = validate_graph(graph)
     titles = {ref: str(transport.get_issue(ref_number(ref)).get("title") or "") for ref in indexed["nodes"]}
-    projection = project(graph, ledger_from_github(transport, graph), observe_github(transport, graph))
+    projection = project(
+        graph,
+        ledger_from_github(transport, graph),
+        observe_github(transport, graph),
+        topology_observations=observe_topology_repository(graph, repo_root),
+    )
     drift = {}
     for ref, node in projection["nodes"].items():
         result = title_drift(titles[ref], node["title_prefix"])
@@ -4181,6 +4241,7 @@ def main(argv: list[str] | None = None) -> int:
         sp.add_argument("--observations", type=Path)
         sp.add_argument("--topology-observations", type=Path)
         sp.add_argument("--repository", help="Observe live from GitHub (read-only) instead of --facts / --observations.")
+        sp.add_argument("--repo-root", type=Path, default=Path.cwd(), help="Checked-out Git repository used for read-only topology observation.")
         sp.add_argument("--leaf", required=True)
     fr.add_argument("--output", type=Path)
     fr.add_argument("--text", action="store_true", help="Human-readable form instead of JSON.")
@@ -4230,6 +4291,7 @@ def main(argv: list[str] | None = None) -> int:
     gh.add_argument("--graph", type=Path, required=True)
     gh.add_argument("--repository", required=True)
     gh.add_argument("--dry-run", action="store_true", help="Read-only: report drift, rejected facts and expected titles; write nothing.")
+    gh.add_argument("--repo-root", type=Path, default=Path.cwd(), help="Checked-out Git repository used for read-only topology observation.")
 
     args = parser.parse_args(argv)
     for stream in (sys.stdout, sys.stderr):  # titles carry emoji and arrows; never depend on the console codepage
@@ -4330,14 +4392,19 @@ def main(argv: list[str] | None = None) -> int:
                 require_repository_match(graph, args.repository, live=False)
                 transport = GhTransport(args.repository)
                 ledger, observations = ledger_from_github(transport, graph), observe_github(transport, graph)
+                topology_observations = (
+                    _load_structured(args.topology_observations)
+                    if args.topology_observations
+                    else observe_topology_repository(graph, args.repo_root)
+                )
             else:
                 ledger = _load_ledger(args.facts)
                 observations = _load_structured(args.observations) if args.observations else {}
-            topology_observations = (
-                _load_structured(args.topology_observations)
-                if args.topology_observations
-                else {}
-            )
+                topology_observations = (
+                    _load_structured(args.topology_observations)
+                    if args.topology_observations
+                    else {}
+                )
             live = frontier(
                 graph,
                 ledger,
@@ -4360,7 +4427,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.cmd == "sync-github":
             require_repository_match(graph, args.repository, live=not args.dry_run)
         if args.cmd == "sync-github" and args.dry_run:
-            _emit(plan_github(GhTransport(args.repository), graph), None)
+            _emit(plan_github(GhTransport(args.repository), graph, args.repo_root), None)
             return 0
         if args.cmd == "sync-github":
             transport = GhTransport(args.repository)
@@ -4375,6 +4442,10 @@ def main(argv: list[str] | None = None) -> int:
                 lambda: ledger_from_github(transport, graph),
                 lambda: observe_github(transport, graph),
                 base_titles,
+                topology_observation_provider=lambda: observe_topology_repository(
+                    graph,
+                    args.repo_root,
+                ),
             )
             _emit(report, None)
             return 0

@@ -3968,6 +3968,66 @@ class DecompositionAdmission(unittest.TestCase):
         self.assertEqual("NONE", report["action"])
 
 
+class LiveTopologyObservationPlumbing(unittest.TestCase):
+    def init_repo(self, root):
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+        for name in ("src/a.py", "src/b.py", "other/x.py"):
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(name, encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+
+    def graph(self):
+        g = topology_assessment_planned()
+        leaf_of(g, "Common#592")["write_surface"] = ["src/"]
+        leaf_of(g, "Common#594")["write_surface"] = ["other/"]
+        return g
+
+    def test_live_topology_observer_is_empty_for_legacy_graph(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            self.assertEqual({}, M.observe_topology_repository(stable_graph(), root))
+
+    def test_live_topology_observer_produces_current_r2_basis(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph()
+            observed = M.observe_topology_repository(g, root)
+            self.assertIn("Common#592", observed)
+            current = O.repository_observation_currentness(
+                g,
+                "Common#592",
+                observed["Common#592"],
+            )
+            self.assertEqual("CURRENT", current["state"])
+
+    def test_input_cache_recomputes_topology_observations_after_conflict_invalidation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph()
+            calls = {"topology": 0}
+
+            def topo():
+                calls["topology"] += 1
+                return M.observe_topology_repository(g, root)
+
+            cache = M._InputCache(g, lambda: [], lambda: OBS_A, topo)
+            first = cache.projection()
+            second = cache.projection()
+            self.assertEqual(1, calls["topology"])
+            self.assertEqual(first["input_digest"], second["input_digest"])
+            cache.invalidate()
+            third = cache.projection()
+            self.assertEqual(2, calls["topology"])
+            self.assertEqual(first["input_digest"], third["input_digest"])
+
+
 class IntegratedSemanticDecompositionReport(unittest.TestCase):
     def init_repo(self, root):
         subprocess.run(["git", "init", "-q", str(root)], check=True)
