@@ -156,7 +156,7 @@ class HandoverContextTests(unittest.TestCase):
                 {"outcome", "roadmap_title"},
                 set(context["blind_context"]["programme"]),
             )
-            self.assertEqual("TPG-2P-2026-09-28-R3", context["generator_contract"]["protocol_revision_at_freeze"])
+            self.assertNotIn("generator_contract", context)
 
     def test_post_release_handover_keeps_checkpoint_task_context_while_reality_is_idle(self):
         with tempfile.TemporaryDirectory() as td:
@@ -194,6 +194,7 @@ class HandoverContextTests(unittest.TestCase):
             )
             self.assertEqual([], context["blind_context"]["stable_constraints"])
 
+
     def test_complex_request_preserves_exact_two_pass_contract_and_approval_boundary(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -201,7 +202,8 @@ class HandoverContextTests(unittest.TestCase):
             install_standalone(root)
             target = load_yaml(target_observation(root))
             context, _ = build_context(root, base_ref=base_ref, target=target, complex_mode=True)
-            request = build_request(context)
+            self.assertNotIn("generator_contract", context)
+            request = build_request(context, complex_mode=True)
             self.assertEqual(
                 ["PASS_1_SYSTEM_BASELINE", "PASS_2_IMPROVE_RECONCILE_PLAN"],
                 request["generator"]["prompt_sequence"],
@@ -214,6 +216,7 @@ class HandoverContextTests(unittest.TestCase):
             self.assertIn("DEEP MODE: ON", rendered)
             self.assertIn("grant no production authority", rendered)
 
+
     def test_non_complex_request_still_has_two_passes_and_approval_boundary(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -221,7 +224,8 @@ class HandoverContextTests(unittest.TestCase):
             install_standalone(root)
             target = load_yaml(target_observation(root))
             context, _ = build_context(root, base_ref=base_ref, target=target, complex_mode=False)
-            request = build_request(context)
+            self.assertNotIn("generator_contract", context)
+            request = build_request(context, complex_mode=False)
             self.assertEqual(2, len(request["generator"]["prompt_sequence"]))
             self.assertFalse(request["generator"]["complex_mode"])
             self.assertTrue(request["generator"]["approval_boundary_required"])
@@ -368,11 +372,11 @@ class HandoverContextTests(unittest.TestCase):
             errors = validate_visibility(bad)
             self.assertTrue(any("reality-only token" in item or "leaks current" in item for item in errors), errors)
 
-    def test_plan_handover_transaction_publishes_context_and_generator_request(self):
+
+    def test_plan_handover_transaction_publishes_custody_context_only(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
-            install_standalone(root)
             target_path = target_observation(root)
             result = plan_handover(
                 root,
@@ -385,8 +389,6 @@ class HandoverContextTests(unittest.TestCase):
             )
             self.assertEqual("COMMITTED", result["status"])
             context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
-            request = load_yaml(root / "relay/GENERATED/TWO_PASS_REQUEST.yaml")
-            request_text = (root / "relay/GENERATED/TWO_PASS_REQUEST.md").read_text(encoding="utf-8")
             task_meta = context["accumulated_learning"]["task_snapshot"]
             improvement_meta = context["accumulated_learning"]["improvement_view"]
             task_snapshot = task_meta["value"]
@@ -401,13 +403,15 @@ class HandoverContextTests(unittest.TestCase):
             self.assertFalse((root / "relay/GENERATED/improvements").exists())
             self.assertEqual("DERIVED_HANDOVER_INPUT", context["authority"])
             self.assertEqual("PROVIDER_READBACK", context["target"]["authority"])
-            self.assertEqual("DERIVED_GENERATOR_REQUEST", request["authority"])
-            self.assertEqual(2, len(request["generator"]["prompt_sequence"]))
-            self.assertTrue(request["generator"]["approval_boundary_required"])
-            self.assertIn("current main", request_text)
+            self.assertNotIn("generator_contract", context)
+            self.assertFalse((root / "relay/GENERATED/TWO_PASS_REQUEST.yaml").exists())
+            self.assertFalse((root / "relay/GENERATED/TWO_PASS_REQUEST.md").exists())
             events, errors = load_events(root / "relay/EVENTS.jsonl")
             self.assertEqual([], errors)
-            self.assertIn("EVT-HANDOVER-PLAN-001", [item["event_id"] for item in events])
+            planned = [item for item in events if item["event_id"] == "EVT-HANDOVER-PLAN-001"][0]
+            self.assertFalse(planned["data"]["reasoning_request_generated"])
+            self.assertNotIn("prompt_count", planned["data"])
+            self.assertNotIn("generator_mode", planned["data"])
             self.assertEqual([], validate(root))
 
     def test_parent_backed_handover_allocates_bookkeeping_ids(self):
@@ -619,8 +623,9 @@ class HandoverContextTests(unittest.TestCase):
             )
             self.assertEqual("COMMITTED", result["status"])
 
-    def test_handover_context_resolves_generator_from_protocol_checkout_without_vendored_skills(self):
-        with tempfile.TemporaryDirectory() as td:
+
+    def test_handover_context_does_not_resolve_generator_assets(self):
+        with tempfile.TemporaryDirectory() as td, tempfile.TemporaryDirectory() as bad_proto:
             root = Path(td)
             _, base_ref = prepare_git(root)
             self.assertFalse((root / "skills/two-pass-prompt-generator").exists())
@@ -630,17 +635,14 @@ class HandoverContextTests(unittest.TestCase):
                 base_ref=base_ref,
                 target=target,
                 complex_mode=True,
+                protocol_root=Path(bad_proto),
             )
             self.assertFalse((root / "skills/two-pass-prompt-generator").exists())
-            contract = context["generator_contract"]
-            self.assertEqual("skills/two-pass-prompt-generator/SKILL.md", contract["canonical_launcher"])
-            self.assertEqual("skills/two-pass-prompt-generator/schema.md", contract["canonical_schema"])
-            self.assertEqual("skills/two-pass-prompt-generator/validate.py", contract["canonical_validator"])
-            self.assertEqual("TPG-2P-2026-09-28-R3", contract["protocol_revision_at_freeze"])
-            self.assertEqual("TWO_PASS_ONLY", contract["generator_mode"])
-            self.assertTrue(contract["live_main_fetch_required"])
+            self.assertNotIn("generator_contract", context)
+            self.assertEqual([], validate_visibility(context))
 
-    def test_plan_handover_succeeds_without_vendored_skills(self):
+
+    def test_plan_handover_succeeds_without_two_pass_assets_and_emits_no_request(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -657,17 +659,15 @@ class HandoverContextTests(unittest.TestCase):
             )
             self.assertEqual("COMMITTED", result["status"])
             self.assertTrue((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
-            self.assertTrue((root / "relay/GENERATED/TWO_PASS_REQUEST.yaml").exists())
-            self.assertTrue((root / "relay/GENERATED/TWO_PASS_REQUEST.md").exists())
+            self.assertFalse((root / "relay/GENERATED/TWO_PASS_REQUEST.yaml").exists())
+            self.assertFalse((root / "relay/GENERATED/TWO_PASS_REQUEST.md").exists())
             self.assertFalse((root / "skills/two-pass-prompt-generator").exists())
             context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
-            contract = context["generator_contract"]
-            self.assertEqual("skills/two-pass-prompt-generator/SKILL.md", contract["canonical_launcher"])
-            self.assertEqual("skills/two-pass-prompt-generator/schema.md", contract["canonical_schema"])
-            self.assertEqual("skills/two-pass-prompt-generator/validate.py", contract["canonical_validator"])
+            self.assertNotIn("generator_contract", context)
             self.assertEqual([], validate(root))
 
-    def test_genuinely_missing_or_corrupted_protocol_assets_fail_closed(self):
+
+    def test_only_explicit_reasoning_request_depends_on_two_pass_assets(self):
         with tempfile.TemporaryDirectory() as bad_proto:
             with self.assertRaises(HandoverContextError) as cm:
                 _standalone_contract(Path(bad_proto))
@@ -681,7 +681,9 @@ class HandoverContextTests(unittest.TestCase):
                 shutil.copyfile(STANDALONE / name, proto_skills / name)
             schema_file = proto_skills / "schema.md"
             schema_file.write_text(
-                schema_file.read_text(encoding="utf-8").replace("TPG-2P-2026-09-28-R3", "TPG-WRONG-REV"),
+                schema_file.read_text(encoding="utf-8").replace(
+                    "TPG-2P-2026-09-28-R3", "TPG-WRONG-REV"
+                ),
                 encoding="utf-8",
             )
             with self.assertRaises(HandoverContextError) as cm:
@@ -696,28 +698,31 @@ class HandoverContextTests(unittest.TestCase):
                 shutil.copyfile(STANDALONE / name, proto_skills / name)
             schema_file = proto_skills / "schema.md"
             schema_file.write_text(
-                schema_file.read_text(encoding="utf-8").replace("TWO_PASS_ONLY", "MISSING_TOKEN"),
+                schema_file.read_text(encoding="utf-8").replace(
+                    "TWO_PASS_ONLY", "MISSING_TOKEN"
+                ),
                 encoding="utf-8",
             )
             with self.assertRaises(HandoverContextError) as cm:
                 _standalone_contract(proto_path)
             self.assertIn("missing required surface", str(cm.exception))
 
-        with tempfile.TemporaryDirectory() as bad_proto:
-            proto_path = Path(bad_proto)
-            proto_skills = proto_path / "skills/two-pass-prompt-generator"
-            proto_skills.mkdir(parents=True)
-            for name in ("SKILL.md", "schema.md", "validate.py"):
-                shutil.copyfile(STANDALONE / name, proto_skills / name)
-            launcher_file = proto_skills / "SKILL.md"
-            launcher_file.write_text("No fetch required", encoding="utf-8")
-            with self.assertRaises(HandoverContextError) as cm:
-                _standalone_contract(proto_path)
-            self.assertIn("launcher no longer requires a current-main schema fetch", str(cm.exception))
-
         with tempfile.TemporaryDirectory() as td, tempfile.TemporaryDirectory() as bad_proto:
             root = Path(td)
             _, base_ref = prepare_git(root)
             target = load_yaml(target_observation(root))
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=target,
+                complex_mode=False,
+                protocol_root=Path(bad_proto),
+            )
+            self.assertNotIn("generator_contract", context)
             with self.assertRaises(HandoverContextError):
-                build_context(root, base_ref=base_ref, target=target, complex_mode=False, protocol_root=Path(bad_proto))
+                build_request(
+                    context,
+                    complex_mode=False,
+                    protocol_root=Path(bad_proto),
+                )
+
