@@ -1630,6 +1630,13 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
     total_weight = indexed["total_weight"]
     missing_weights = [cid for cid, claim in claims_by_id.items() if claim.get("weight") is None]
     global_findings: list[dict[str, str]] = []
+    if policy["mode"] != "ENFORCED" or claim_policy["mode"] != "ENFORCED":
+        global_findings.append(
+            _finding(
+                "PROPOSAL_GATE_NOT_ENFORCED",
+                "proposal-v2 child release requires decomposition_policy.mode=ENFORCED and claim_first.mode=ENFORCED",
+            )
+        )
     if missing_weights:
         global_findings.append(
             _finding(
