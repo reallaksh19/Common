@@ -83,6 +83,20 @@ COMPLETE_VALUES = {"YES", "NO", "UNKNOWN"}
 # (mode OFF). `decompose-check` always evaluates; the mode decides whether projection/admission act on it.
 POLICY_MODES = ("OFF", "ADVISORY", "ENFORCED")
 WORK_CLASSES = ("PRODUCT", "MECHANICAL", "GATE")
+TRANSFORMATION_BOUNDARIES = (
+    "WIRE_SCHEMA",
+    "ENGINE_VALIDATION",
+    "COMPATIBILITY_NORMALIZATION",
+    "PROVIDER_ADAPTER",
+    "AUTHORITY_POLICY",
+    "DERIVED_RECONCILIATION",
+    "ACTUATION_UI_PROJECTION",
+    "CUSTODY_FENCING",
+    "ASSURANCE_POLICY",
+    "MIGRATION",
+    "QUALIFICATION_DOCS",
+    "PRODUCT_IMPLEMENTATION",
+)
 PLAN_UPDATE_KINDS = ("SCOPE_EXPANSION", "SCOPE_REDUCTION", "UNIT_REWEIGHT", "UNIT_DROPPED", "POLICY_CHANGE")
 # Display scale for "unit points". Percentages never use it: every share is an exact Fraction of the programme.
 DEFAULT_TOTAL_WEIGHT = 10000
@@ -98,7 +112,13 @@ DEFAULT_POLICY: dict[str, Any] = {
     "units": {"min": 3, "max": 8, "max_share_percent": 40},
     "leaf_budget": {"target_loc": 700, "hard_loc": 1500, "target_minutes": 15, "hard_minutes": 20},
     "min_leaf_target_loc": 50,
-    "require": {"outcome": True, "verify": True, "write_surface": True, "size_budget": True},
+    "require": {
+        "outcome": True,
+        "verify": True,
+        "write_surface": True,
+        "size_budget": True,
+        "transformation_boundaries": False,
+    },
 }
 _BUDGET_KEYS = ("target_loc", "hard_loc", "target_minutes", "hard_minutes")
 
@@ -947,6 +967,20 @@ def _size_budget(value: Any, ref: str) -> dict[str, int] | None:
     return {str(k): _positive_int(v, f"{ref}.size_budget.{k}") for k, v in value.items()}
 
 
+def _transformation_boundaries(value: Any, ref: str) -> list[str]:
+    values = _str_list(value, f"{ref}.transformation_boundaries")
+    duplicates = sorted({item for item in values if values.count(item) > 1})
+    if duplicates:
+        raise GraphError(f"{ref}.transformation_boundaries: duplicate values {duplicates}")
+    unknown = sorted(set(values) - set(TRANSFORMATION_BOUNDARIES))
+    if unknown:
+        raise GraphError(
+            f"{ref}.transformation_boundaries: unknown values {unknown} "
+            f"(allowed: {list(TRANSFORMATION_BOUNDARIES)})"
+        )
+    return sorted(values)
+
+
 def _write_surface(value: Any, ref: str) -> list[str]:
     """Repo-relative file paths or directory prefixes (trailing '/'); globs are rejected so overlap stays decidable."""
     entries = _str_list(value, f"{ref}.write_surface")
@@ -1220,6 +1254,11 @@ def validate_graph(graph: Any) -> dict[str, Any]:
             basis = raw.get("parallel_ok_basis")
             if basis is not None and not isinstance(basis, str):
                 raise GraphError(f"{ref}.parallel_ok_basis: must be a string")
+            integration_basis = raw.get("integration_basis")
+            if integration_basis is not None and (
+                not isinstance(integration_basis, str) or not integration_basis.strip()
+            ):
+                raise GraphError(f"{ref}.integration_basis: must be a non-blank string")
             node.update(
                 {
                     "units": clean_units,
@@ -1241,6 +1280,12 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                     "depends_on": _ref_list(raw.get("depends_on"), f"{ref}.depends_on"),
                     "parallel_ok": _ref_list(raw.get("parallel_ok"), f"{ref}.parallel_ok"),
                     "parallel_ok_basis": (basis or "").strip() or None,
+                    "transformation_boundaries": _transformation_boundaries(
+                        raw.get("transformation_boundaries"), ref
+                    ),
+                    "integration_basis": (
+                        integration_basis.strip() if isinstance(integration_basis, str) else None
+                    ),
                 }
             )
             if node["spec_generation"] is not None:
