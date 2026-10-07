@@ -39,3 +39,23 @@ amendments:
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_derived_projection.py
       - skills/engineering-pr-delivery-v3.2/tests/test_delp_projection_v32.py
       - skills/engineering-pr-delivery-v3.2/tests/test_owner_commands_continuation.py
+
+  - id: AMEND-V32-OWNER-INTENT-002
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner instruction in chat, 2026-10-07: 'fix it, create new PR with full details' after the current-repo
+      Owner Intent Envelope audit identified the active PLAN_HANDOVER custody-to-Two-Pass coupling; the Owner also
+      explicitly required following skills/engineering-pr-delivery-v3.2. This amendment authorizes only the bounded
+      follow-up needed to make handover custody valid without automatic replanning. Merge authority remains Owner-only.
+    summary: >-
+      Forward-only compatibility amendment for Common #570 / #596 follow-up: decouple the active PLAN_HANDOVER custody
+      runtime from automatic TWO_PASS_REQUEST generation while preserving an explicit standalone Two-Pass request builder
+      for callers that separately request reasoning. No Local lifecycle, merge, DELP projection, progress, or production
+      authority changes are authorized.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/operating-model/two-pass-integration.md
+      - skills/engineering-pr-delivery-v3.2/schemas/handover-context.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/scripts/handover_context.py
+      - skills/engineering-pr-delivery-v3.2/scripts/plan_handover.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py
+
