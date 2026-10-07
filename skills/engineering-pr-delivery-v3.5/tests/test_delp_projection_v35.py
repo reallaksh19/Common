@@ -2698,7 +2698,7 @@ class ClaimTopologyContract(unittest.TestCase):
             indexed["nodes"]["Common#592"]["claim_relationships"],
         )
 
-    def test_claim_topology_malformed_documents_fail_closed(self):
+    def test_claim_topology_shape_errors_fail_schema_and_engine(self):
         cases = []
 
         g = claim_topology_planned()
@@ -2710,18 +2710,27 @@ class ClaimTopologyContract(unittest.TestCase):
         cases.append(("shared type", g))
 
         g = claim_topology_planned()
-        g["programme"]["acceptance_claims"].append(
-            {"id": "PC-PRODUCT", "claim": "duplicate", "kind": "SEMANTIC"}
-        )
-        cases.append(("duplicate claim", g))
-
-        g = claim_topology_planned()
         leaf_of(g, "Common#592")["claim_relationships"][0]["relation"] = "REVIEW"
         cases.append(("relation kind", g))
 
+        for label, bad in cases:
+            with self.subTest(label):
+                self.assertTrue(SchemaContract().schema_errors("execution-graph", bad))
+                with self.assertRaises(M.GraphError):
+                    M.validate_graph(bad)
+
+    def test_claim_topology_relational_invariants_fail_closed_in_engine(self):
+        cases = []
+
+        g = claim_topology_planned()
+        g["programme"]["acceptance_claims"].append(
+            {"id": "PC-PRODUCT", "claim": "duplicate", "kind": "SEMANTIC"}
+        )
+        cases.append(("duplicate claim id", g))
+
         g = claim_topology_planned()
         leaf_of(g, "Common#592")["claim_relationships"][0]["claim_id"] = "PC-MISSING"
-        cases.append(("unknown claim", g))
+        cases.append(("unknown claim target", g))
 
         g = claim_topology_planned()
         leaf_of(g, "Common#592")["claim_relationships"].append(
@@ -2730,10 +2739,8 @@ class ClaimTopologyContract(unittest.TestCase):
         cases.append(("duplicate relationship target", g))
 
         for label, bad in cases:
-            with self.subTest(label):
-                self.assertTrue(SchemaContract().schema_errors("execution-graph", bad))
-                with self.assertRaises(M.GraphError):
-                    M.validate_graph(bad)
+            with self.subTest(label), self.assertRaises(M.GraphError):
+                M.validate_graph(bad)
 
     def test_legacy_graph_without_claim_topology_remains_readable(self):
         indexed = M.validate_graph(planned())
