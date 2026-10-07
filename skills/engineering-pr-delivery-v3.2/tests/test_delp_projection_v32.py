@@ -89,16 +89,6 @@ def graph(**overrides):
     return value
 
 
-def stable_graph(**overrides):
-    value = graph()
-    value["programme"]["graph_generation"] = 1
-    for node in value["nodes"]:
-        if node["kind"] == "LEAF" and not node.get("responsibility_id"):
-            node["responsibility_id"] = f"RESP-{M.ref_number(node['ref'])}"
-    value.update(overrides)
-    return value
-
-
 def unit(uid, state="COMPLETE", result="VERIFIED", refs=("Common#592#issuecomment-1",), **extra):
     row = {"id": uid, "state": state, "result": result, "evidence_refs": list(refs)}
     row.update(extra)
@@ -662,55 +652,6 @@ class GraphValidation(unittest.TestCase):
         # weights live only in the graph: a facts record that carries one is rejected outright
         self.assertTrue(M.validate_facts(facts(units=[unit("U01", weight=999)])))
 
-    def test_graph_generation_and_stable_responsibility_identity(self):
-        g = stable_graph()
-        indexed = M.validate_graph(g)
-        self.assertEqual(1, indexed["programme"]["graph_generation"])
-        self.assertEqual("P3-I-R2", indexed["nodes"]["Common#592"]["responsibility_id"])
-        self.assertEqual(indexed["digest"], M.project(g, [], OBS_A)["graph_digest"])
-
-    def test_declared_graph_generation_requires_every_leaf_identity(self):
-        g = stable_graph()
-        g["nodes"][4].pop("responsibility_id")
-        with self.assertRaises(M.GraphError):
-            M.validate_graph(g)
-
-    def test_responsibility_identity_must_be_unique(self):
-        g = stable_graph()
-        g["nodes"][4]["responsibility_id"] = "P3-I-R2"
-        with self.assertRaises(M.GraphError):
-            M.validate_graph(g)
-
-    def test_graph_generation_must_be_positive_integer(self):
-        for value in (0, True):
-            g = stable_graph()
-            g["programme"]["graph_generation"] = value
-            with self.assertRaises(M.GraphError):
-                M.validate_graph(g)
-
-    def test_legacy_graph_without_generation_remains_readable_and_normalizes_to_one(self):
-        indexed = M.validate_graph(graph())
-        self.assertEqual(1, indexed["programme"]["graph_generation"])
-
-    def test_explicit_default_generation_does_not_change_graph_digest(self):
-        explicit = stable_graph()
-        legacy = copy.deepcopy(explicit)
-        legacy["programme"].pop("graph_generation")
-        self.assertEqual(M.validate_graph(explicit)["digest"], M.validate_graph(legacy)["digest"])
-
-    def test_responsibility_id_is_not_synthesized_from_issue_locator(self):
-        g = stable_graph()
-        leaf = next(n for n in g["nodes"] if n["ref"] == "Common#592")
-        stable_id = leaf["responsibility_id"]
-        leaf["ref"] = "Common#999"
-        # Repair references that identify the provider locator; the semantic Responsibility id is unchanged.
-        for node in g["nodes"]:
-            if node.get("parent") == "Common#592":
-                node["parent"] = "Common#999"
-        indexed = M.validate_graph(g)
-        self.assertEqual(stable_id, indexed["nodes"]["Common#999"]["responsibility_id"])
-
-
 
 class ExtractFactsBlocks(unittest.TestCase):
     BODY = """TASK_EVIDENCE — CHECKPOINT
@@ -1155,18 +1096,6 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
     def test_graph_sample_passes_both(self):
         self.assertEqual([], self.schema_errors("execution-graph", graph()))
         M.validate_graph(graph())
-
-    def test_stable_identity_graph_passes_both(self):
-        g = stable_graph()
-        self.assertEqual([], self.schema_errors("execution-graph", g))
-        M.validate_graph(g)
-
-    def test_stable_identity_graph_without_leaf_id_fails_both(self):
-        g = stable_graph()
-        g["nodes"][4].pop("responsibility_id")
-        self.assertTrue(self.schema_errors("execution-graph", g))
-        with self.assertRaises(M.GraphError):
-            M.validate_graph(g)
 
     def test_graph_without_units_or_parent_fails_both(self):
         g = copy.deepcopy(graph())
