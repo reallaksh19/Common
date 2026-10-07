@@ -3048,9 +3048,27 @@ def _topology_observer_module():
     return _TOPOLOGY_OBSERVER_MODULE
 
 
+def _local_repository_slug(repo_root: Path | str) -> str:
+    root = Path(repo_root).resolve()
+    proc = subprocess.run(
+        ["git", "-C", str(root), "config", "--get", "remote.origin.url"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if proc.returncode or not proc.stdout.strip():
+        raise DelpError(f"{root}: cannot resolve remote.origin.url for topology observation")
+    remote = proc.stdout.strip().replace("\\", "/")
+    match = re.search(r"github\.com[/:]([^/]+)/([^/]+?)(?:\.git)?$", remote, re.IGNORECASE)
+    if not match:
+        raise DelpError(f"{root}: origin is not a supported GitHub repository URL: {remote!r}")
+    return f"{match.group(1)}/{match.group(2)}"
+
+
 def observe_topology_repository(
     graph: Any,
     repo_root: Path | str,
+    expected_repository: str | None = None,
 ) -> dict[str, dict[str, Any]]:
     """Derive R2 repository observations from a checked-out Git tree; read-only."""
     indexed = validate_graph(graph)
@@ -3058,6 +3076,13 @@ def observe_topology_repository(
         return {}
     observer = _topology_observer_module()
     root = Path(repo_root).resolve()
+    if expected_repository is not None:
+        local_repository = _local_repository_slug(root)
+        if local_repository.lower() != str(expected_repository).strip().lower():
+            raise DelpError(
+                f"{root}: local topology repository {local_repository!r} does not match "
+                f"expected GitHub repository {expected_repository!r}"
+            )
     rows: dict[str, dict[str, Any]] = {}
     for ref in indexed["order"]:
         if indexed["nodes"][ref]["kind"] != "LEAF":
@@ -3994,7 +4019,11 @@ def plan_github(transport: Any, graph: Any, repo_root: Path | str = Path.cwd()) 
         graph,
         ledger_from_github(transport, graph),
         observe_github(transport, graph),
-        topology_observations=observe_topology_repository(graph, repo_root),
+        topology_observations=observe_topology_repository(
+            graph,
+            repo_root,
+            expected_repository=getattr(transport, "repository", None),
+        ),
     )
     drift = {}
     for ref, node in projection["nodes"].items():
@@ -4395,7 +4424,11 @@ def main(argv: list[str] | None = None) -> int:
                 topology_observations = (
                     _load_structured(args.topology_observations)
                     if args.topology_observations
-                    else observe_topology_repository(graph, args.repo_root)
+                    else observe_topology_repository(
+                        graph,
+                        args.repo_root,
+                        expected_repository=args.repository,
+                    )
                 )
             else:
                 ledger = _load_ledger(args.facts)
@@ -4445,6 +4478,7 @@ def main(argv: list[str] | None = None) -> int:
                 topology_observation_provider=lambda: observe_topology_repository(
                     graph,
                     args.repo_root,
+                    expected_repository=args.repository,
                 ),
             )
             _emit(report, None)

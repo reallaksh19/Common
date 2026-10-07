@@ -3980,6 +3980,12 @@ class LiveTopologyObservationPlumbing(unittest.TestCase):
         subprocess.run(["git", "-C", str(root), "add", "."], check=True)
         subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
 
+    def set_origin(self, root, repository):
+        subprocess.run(
+            ["git", "-C", str(root), "remote", "add", "origin", f"https://github.com/{repository}.git"],
+            check=True,
+        )
+
     def graph(self):
         g = topology_assessment_planned()
         leaf_of(g, "Common#592")["write_surface"] = ["src/"]
@@ -4005,6 +4011,25 @@ class LiveTopologyObservationPlumbing(unittest.TestCase):
                 observed["Common#592"],
             )
             self.assertEqual("CURRENT", current["state"])
+
+    def test_live_repository_identity_binding_fails_closed_on_wrong_checkout(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            self.set_origin(root, "reallaksh19/Common")
+            g = self.graph()
+            observed = M.observe_topology_repository(
+                g,
+                root,
+                expected_repository="reallaksh19/Common",
+            )
+            self.assertIn("Common#592", observed)
+            with self.assertRaises(M.DelpError):
+                M.observe_topology_repository(
+                    g,
+                    root,
+                    expected_repository="reallaksh19/Other",
+                )
 
     def test_input_cache_recomputes_topology_observations_after_conflict_invalidation(self):
         with tempfile.TemporaryDirectory() as td:
