@@ -3913,3 +3913,73 @@ class AgentMetrics689ProposalV2Gate(unittest.TestCase):
         self.assertEqual("RELEASEABLE", report["release_state"], report)
         self.assertTrue(all(row["releasable"] for row in report["leaves"].values()), report)
 
+    def test_699_provider_binding_conserves_released_intervention_contract(self):
+        g = self.proposal()
+        released = M.decomposition_report(g)
+        self.assertEqual("RELEASEABLE", released["release_state"], released)
+        digest = released["proposal_digest"]
+        g["programme"]["decomposition_proposal"]["released_proposal_digest"] = digest
+        g["programme"]["decomposition_proposal"]["bindings"] = [
+            {"responsibility_id": "R-INTERVENTION", "ref": "Common#699"}
+        ]
+        g["nodes"] = [
+            {"ref": "Common#689", "kind": "ROOT", "reserve_weight": 80},
+            {
+                "ref": "Common#699",
+                "kind": "LEAF",
+                "parent": "Common#689",
+                "weight": 20,
+                "responsibility_id": "R-INTERVENTION",
+                "work_class": "PRODUCT",
+                "owns_claims": ["PA-INTERVENTION"],
+                "outcome": "Bounded quality-derived execution-safety recommendation semantics.",
+                "independence_basis": "Can receive RESPONSIBILITY_COMPLETE YES/NO from exact R-TRAJECTORY inputs and a precommitted advisory-policy oracle without DELP/read-model integration.",
+                "size_budget": {
+                    "target_loc": 450,
+                    "hard_loc": 800,
+                    "target_minutes": 15,
+                    "hard_minutes": 20,
+                },
+                "write_surface": [
+                    "skills/engineering-pr-delivery-v3.2/schemas/agent-intervention-v32.schema.yaml",
+                    "skills/engineering-pr-delivery-v3.2/scripts/agent_intervention_v32.py",
+                    "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_intervention.py",
+                ],
+                "acceptance_methods": [
+                    "precommitted trajectory-to-advice oracle",
+                    "tampered-M2 negative controls",
+                    "authority-leakage replay",
+                    "exact-head V3.2 regression qualification",
+                ],
+                "units": [
+                    {
+                        "id": "IN-INCONCLUSIVE-SAFETY",
+                        "weight": 34,
+                        "outcome": "Incomplete, reversing, or conflicting quality observations produce conservative bounded execution-safety advice rather than a fabricated capability conclusion.",
+                        "verify": "incomplete/mixed/conflicting policy oracle",
+                    },
+                    {
+                        "id": "IN-DEGRADATION-SAFETY",
+                        "weight": 33,
+                        "outcome": "Degradation plus critical uncertainty or rising repair burden maps to the narrowest justified reconstruction/scope-control advice.",
+                        "verify": "degradation/critical-unknown/repair-rate oracle",
+                    },
+                    {
+                        "id": "IN-AUTHORITY-ISOLATION",
+                        "weight": 33,
+                        "outcome": "Quality-only advice cannot infer handover, replan, candidate/review truth, DELP admission, progress, merge, or release authority.",
+                        "verify": "authority-injection and forbidden-action negative controls",
+                    },
+                ],
+            },
+        ]
+        report = M.decomposition_report(g)
+        print("BINDING_699_RELEASE_STATE=" + report["release_state"])
+        print("BINDING_699_DIGEST=" + report["proposal_digest"])
+        print("BINDING_699_REPORT=" + json.dumps(report, sort_keys=True))
+        row = report["leaves"]["R-INTERVENTION"]
+        self.assertTrue(row["releasable"], report)
+        self.assertEqual([], row["blockers"], report)
+        self.assertEqual(20, row["weight"])
+        self.assertEqual(digest, report["released_proposal_digest"])
+
