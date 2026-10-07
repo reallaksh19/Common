@@ -342,6 +342,14 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
         self.assertIn("BINDING_CLAIM_MISMATCH", codes)
         self.assertIn("BINDING_WEIGHT_MISMATCH", codes)
 
+    def test_mechanism_named_unit_cannot_self_label_as_semantic(self):
+        g = self.proposal_graph()
+        unit = g["programme"]["decomposition_proposal"]["responsibilities"][0]["semantic_units"][0]
+        unit["id"] = "SCHEMA"
+        unit["outcome"] = "schema implementation"
+        row = M.decomposition_report(g)["leaves"]["R-SEM"]
+        self.assertIn("MECHANISM_SEMANTIC_UNIT", {f["code"] for f in row["blockers"]})
+
     def test_mechanism_shaped_product_boundary_requires_explicit_parent_exception(self):
         g = self.proposal_graph()
         r = g["programme"]["decomposition_proposal"]["responsibilities"][0]
