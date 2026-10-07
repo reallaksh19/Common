@@ -268,6 +268,38 @@ def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     return value
 
 
+def responsibility_contract_basis(node: Mapping[str, Any], nodes: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
+    """Semantic/execution contract whose digest binds evidence, excluding provider/topology metadata."""
+    dependencies = sorted(
+        str(nodes[ref].get("responsibility_id") or ref)
+        for ref in node.get("depends_on") or []
+    )
+    return {
+        "responsibility_id": node.get("responsibility_id"),
+        "outcome": node.get("outcome"),
+        "units": sorted(
+            (
+                {
+                    "id": unit["id"],
+                    "verify": unit.get("verify"),
+                    "outcome": unit.get("outcome"),
+                }
+                for unit in node.get("units") or []
+            ),
+            key=lambda row: row["id"],
+        ),
+        "delivery_gates": sorted(
+            ({"id": gate["id"]} for gate in node.get("delivery_gates") or []),
+            key=lambda row: row["id"],
+        ),
+        "verification": sorted(node.get("verification") or []),
+        "write_surface": sorted(node.get("write_surface") or []),
+        "depends_on": dependencies,
+        "size_budget": node.get("size_budget"),
+        "work_class": node.get("work_class"),
+    }
+
+
 def percent(value: Fraction) -> int:
     """Display percent: half-up, never 100 unless exactly full, never 0 unless exactly empty."""
     if value <= 0:
@@ -836,6 +868,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                     "delivery_gates": gates,
                     "coder_weight": coder_weight if gates else 1,
                     "responsibility_id": raw.get("responsibility_id"),
+                    "spec_generation": raw.get("spec_generation"),
                     "primary_pr": raw.get("primary_pr"),
                     # Branch/tag whose head is the candidate when the leaf has no PR yet.
                     "candidate_ref": (str(raw["candidate_ref"]) if raw.get("candidate_ref") else None),
@@ -852,6 +885,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                     "parallel_ok_basis": (basis or "").strip() or None,
                 }
             )
+            if node["spec_generation"] is not None:
+                node["spec_generation"] = _positive_int(node["spec_generation"], f"{ref}.spec_generation")
             if node["primary_pr"] is not None:
                 try:
                     parse_ref(node["primary_pr"])
@@ -906,6 +941,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         rid = node.get("responsibility_id")
         if declared_graph_generation and not rid:
             raise GraphError(f"{ref}.responsibility_id: required when programme.graph_generation is declared")
+        if declared_graph_generation and node.get("spec_generation") is None:
+            raise GraphError(f"{ref}.spec_generation: required when programme.graph_generation is declared")
         if rid is not None:
             rid = str(rid).strip()
             if not rid:
@@ -945,6 +982,20 @@ def validate_graph(graph: Any) -> dict[str, Any]:
     for ref in leaf_by_number.values():
         if ref not in walk_state:
             walk(ref)
+
+    # Stable-identity graphs derive each leaf contract digest mechanically. Locator/topology/provider
+    # metadata and weights are intentionally excluded so transfers/reparenting/reweighting do not stale evidence.
+    if declared_graph_generation:
+        for ref in leaf_by_number.values():
+            node = nodes[ref]
+            derived_digest = canonical_digest(responsibility_contract_basis(node, nodes))
+            asserted_digest = node.get("contract_digest")
+            if asserted_digest is not None and asserted_digest != derived_digest:
+                raise GraphError(
+                    f"{ref}.contract_digest: asserted {asserted_digest} does not match derived {derived_digest}; "
+                    "omit the field and let the engine derive it"
+                )
+            node["contract_digest"] = derived_digest
 
     normalized_programme = dict(programme)
     normalized_programme["graph_generation"] = graph_generation
@@ -1385,6 +1436,40 @@ def graph_diff(old_graph: Any, new_graph: Any) -> dict[str, Any]:
     def add(code: str, detail: str, severity: str = "BLOCKER") -> None:
         findings.append(_finding(code, detail, severity))
 
+    contracts_changed = 0
+    generation_bumps = 0
+    old_by_id = {
+        str(node["responsibility_id"]): node
+        for node in old["nodes"].values()
+        if node["kind"] == "LEAF" and node.get("responsibility_id") and node.get("spec_generation") is not None
+    }
+    new_by_id = {
+        str(node["responsibility_id"]): node
+        for node in new["nodes"].values()
+        if node["kind"] == "LEAF" and node.get("responsibility_id") and node.get("spec_generation") is not None
+    }
+    for rid in sorted(set(old_by_id) & set(new_by_id)):
+        before, after = old_by_id[rid], new_by_id[rid]
+        old_gen, new_gen = before["spec_generation"], after["spec_generation"]
+        changed = before.get("contract_digest") != after.get("contract_digest")
+        if new_gen < old_gen:
+            add("SPEC_GENERATION_REGRESSED", f"{rid} spec_generation {old_gen} -> {new_gen}")
+        if changed:
+            contracts_changed += 1
+            if new_gen <= old_gen:
+                add(
+                    "SPEC_GENERATION_NOT_BUMPED",
+                    f"{rid} semantic contract changed but spec_generation stayed {old_gen} -> {new_gen}",
+                )
+        elif new_gen != old_gen:
+            add(
+                "SPEC_GENERATION_BUMP_WITHOUT_CONTRACT_CHANGE",
+                f"{rid} spec_generation {old_gen} -> {new_gen} but the derived contract digest is unchanged",
+                "ADVISORY",
+            )
+        if new_gen > old_gen:
+            generation_bumps += 1
+
     previous = {u["id"]: u for u in old["plan_updates"]}
     current = {u["id"]: u for u in new["plan_updates"]}
     for pid, u in previous.items():
@@ -1480,6 +1565,8 @@ def graph_diff(old_graph: Any, new_graph: Any) -> dict[str, Any]:
             "added": sum(1 for s in origin.values() if s is None),
             "dropped": len(dropped),
             "new_plan_updates": len(fresh),
+            "contracts_changed": contracts_changed,
+            "spec_generation_bumps": generation_bumps,
         },
     }
 
@@ -2038,6 +2125,8 @@ def project(
                     "root": indexed["root"],
                     "lineage": chain,
                     "responsibility_id": node.get("responsibility_id"),
+                    "spec_generation": node.get("spec_generation"),
+                    "contract_digest": node.get("contract_digest"),
                 },
                 "weight": node["weight"],
             }
