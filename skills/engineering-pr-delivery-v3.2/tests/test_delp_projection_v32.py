@@ -199,6 +199,15 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
         row = M.decomposition_report(g)["leaves"]["R-SEM"]
         self.assertIn("SEMANTIC_UNITS_BELOW_MIN", {f["code"] for f in row["blockers"]})
 
+    def test_parent_claim_contract_rejects_unknown_fields_in_engine_and_schema(self):
+        g = self.proposal_graph()
+        g["programme"]["acceptance_claims"][0]["surprise"] = True
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(g)
+        if HAVE_JSONSCHEMA:
+            with self.assertRaises(jsonschema.ValidationError):
+                jsonschema.validate(g, yaml.safe_load((SCHEMAS / "delp-execution-graph-v32.schema.yaml").read_text(encoding="utf-8")))
+
     def test_proposal_claim_coverage_is_checked_before_child_materialization(self):
         g = self.proposal_graph()
         g["programme"]["decomposition_proposal"]["responsibilities"][0]["owns_claims"] = ["PG-DELIVERY"]
