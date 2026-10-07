@@ -460,6 +460,7 @@ class HandoverContextTests(unittest.TestCase):
             entry = context["successor_entry"]
             self.assertEqual("RECONSTRUCT_PLAN_ONLY", entry["mode"])
             self.assertEqual([], entry["successor_reconstruction_challenge"])
+            self.assertIsNone(entry["challenge_digest"])
             self.assertEqual("OWNER_EXPLICIT_EXECUTION_ADMISSION", entry["execution_admission"])
             for forbidden in ("QUALIFICATION", "RETAINED_VALIDATION", "PRODUCTION_MUTATION", "PR_CREATION", "TASK_EXECUTION"):
                 self.assertIn(forbidden, entry["forbidden_actions"])
@@ -483,6 +484,7 @@ class HandoverContextTests(unittest.TestCase):
             entry = context["successor_entry"]
             challenge = entry["successor_reconstruction_challenge"]
             self.assertEqual(3, len(challenge))
+            self.assertRegex(entry["challenge_digest"], r"^sha256:[0-9a-f]{64}$")
             self.assertEqual(["Q1", "Q2", "Q3"], [q["id"] for q in challenge])
             self.assertIn("files/functions", challenge[0]["question"])
             self.assertIn("authority", challenge[1]["question"].lower())
@@ -507,6 +509,28 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual(3, planned["details"]["successor_challenge_count"])
             self.assertFalse(planned["details"]["reasoning_request_generated"])
             self.assertEqual([], validate(root))
+
+    def test_successor_challenge_digest_is_deterministic_and_material_bound(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=load_yaml(target_observation(root)),
+                complex_mode=False,
+                successor_challenge_count=0,
+            )
+            self.assertIsNone(context["successor_entry"]["challenge_digest"])
+            first = _successor_entry(context, 3)
+            second = _successor_entry(copy.deepcopy(context), 3)
+            self.assertEqual(first["challenge_digest"], second["challenge_digest"])
+            moved = copy.deepcopy(context)
+            moved["reality_context"]["material"]["head"] = "f" * 40
+            self.assertNotEqual(
+                first["challenge_digest"],
+                _successor_entry(moved, 3)["challenge_digest"],
+            )
 
     def test_successor_challenge_count_is_bounded_and_fails_closed(self):
         with tempfile.TemporaryDirectory() as td:
