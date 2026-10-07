@@ -1341,16 +1341,22 @@ class GitHubStoreTests(unittest.TestCase):
         leaf.pop("primary_pr")
         leaf["candidate_ref"] = "investigate/592"
         observed = M.observe_github(gh, g)
-        self.assertEqual({"candidate_sha": SHA_C, "ahead_by": 9, "behind_by": 4, "base_sha": SHA_MAIN}, observed["Common#612"])
-        self.assertEqual(SHA_MAIN, observed["Common#594"]["base_sha"])  # every leaf is measured against the same base head
+        self.assertEqual(M.OBSERVATION_SCHEMA, observed["Common#612"]["schema"])
+        self.assertEqual("OBSERVED", observed["Common#612"]["visibility"])
+        self.assertEqual(
+            {"candidate_sha": SHA_C, "ahead_by": 9, "behind_by": 4, "base_sha": SHA_MAIN},
+            observed["Common#612"]["material"],
+        )
+        self.assertEqual({"schema", "visibility", "material"}, set(observed["Common#612"]))
+        self.assertEqual(SHA_MAIN, observed["Common#594"]["material"]["base_sha"])  # every leaf is measured against the same base head
         self.assertIn(("COMPARE", "main", "investigate/592"), gh.calls)  # the base defaults to main
         gh.commits["release/2"] = SHA_B
         g["programme"]["base_ref"] = "release/2"
-        self.assertEqual(SHA_B, M.observe_github(gh, g)["Common#612"]["base_sha"])
+        self.assertEqual(SHA_B, M.observe_github(gh, g)["Common#612"]["material"]["base_sha"])
         self.assertIn(("COMPARE", "release/2", "investigate/592"), gh.calls)
-        self.assertEqual(SHA_C, observed["Common#612"]["candidate_sha"])
-        self.assertEqual(SHA_B, observed["Common#594"]["candidate_sha"])
-        self.assertEqual("MERGED", observed["Common#592"]["pr_state"])
+        self.assertEqual(SHA_C, observed["Common#612"]["material"]["candidate_sha"])
+        self.assertEqual(SHA_B, observed["Common#594"]["material"]["candidate_sha"])
+        self.assertEqual("MERGED", observed["Common#592"]["material"]["pr_state"])
 
     @unittest.skipUnless(HAVE_YAML, "PyYAML unavailable")
     def test_facts_from_untrusted_authors_are_rejected_not_believed(self):
