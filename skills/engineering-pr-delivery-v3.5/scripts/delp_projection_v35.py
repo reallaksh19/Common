@@ -280,9 +280,9 @@ def validate_observation(observation: Any) -> list[str]:
         errors.append(f"observation: unknown fields {extra}")
 
     def mapping(name: str, allowed: set[str]) -> Mapping[str, Any] | None:
-        value = observation.get(name)
-        if value is None:
+        if name not in observation:
             return None
+        value = observation[name]
         if not isinstance(value, Mapping):
             errors.append(f"{name}: must be a mapping")
             return None
