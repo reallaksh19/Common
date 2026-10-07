@@ -21,6 +21,7 @@ from handover_context import (
     _protocol_checkout_root,
     _standalone_contract,
     build_context,
+    build_successor_challenge,
     build_request,
     render_request,
     validate_visibility,
@@ -409,6 +410,89 @@ class HandoverContextTests(unittest.TestCase):
             bad["successor_entry"]["mode"] = "EXECUTE"
             errors = validate_schema("handover-context", bad, "HANDOVER_CONTEXT")
             self.assertTrue(errors, errors)
+
+
+
+    def test_successor_challenge_builder_is_pure_exact_count_and_repo_grounded(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=load_yaml(target_observation(root)),
+                complex_mode=False,
+            )
+            before = copy.deepcopy(context)
+            challenge = build_successor_challenge(context, 3)
+            self.assertEqual(context, before)
+            self.assertEqual(["Q1", "Q2", "Q3"], [q["id"] for q in challenge])
+            self.assertEqual([], context["successor_entry"]["successor_reconstruction_challenge"])
+            for q in challenge:
+                self.assertTrue(q["decision_at_risk"])
+                self.assertIn("github:example/project#418", q["repository_anchors"])
+                self.assertTrue(any(a.startswith("material_head:") for a in q["repository_anchors"]))
+                self.assertTrue(q["required_evidence"])
+                self.assertTrue(q["authority_distinctions"])
+                self.assertTrue(q["falsifier"])
+                self.assertTrue(q["pass_condition"])
+                self.assertTrue(q["fail_condition"])
+                self.assertTrue(q["forbidden_shortcuts"])
+                self.assertTrue(q["downstream_consequence"])
+
+    def test_three_question_archetypes_prepare_the_next_engineering_decision(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=load_yaml(target_observation(root)),
+                complex_mode=False,
+            )
+            context["accumulated_learning"]["what_remains_uncertain"] = ["Which matcher first discards the S1 identity?"]
+            context["accumulated_learning"]["attempted_and_rejected"] = ["Raising the search budget was not root-cause evidence."]
+            context["accumulated_learning"]["do_not_break"] = ["Retained benchmark bytes remain validation-only authority."]
+            challenge = build_successor_challenge(context, 3)
+            self.assertIn("files/functions", challenge[0]["question"])
+            self.assertIn("authority", challenge[1]["question"].lower())
+            self.assertIn("which matcher first discards the s1 identity", challenge[1]["question"].lower())
+            self.assertIn("upstream/downstream", challenge[2]["question"].lower())
+            self.assertIn("retained benchmark bytes remain validation-only authority", challenge[2]["question"].lower())
+            self.assertIn("raising the search budget was not root-cause evidence", challenge[2]["question"].lower())
+            self.assertIn("root classification", challenge[2]["question"].lower())
+
+    def test_challenge_count_is_exact_bounded_and_zero_is_empty(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=load_yaml(target_observation(root)),
+                complex_mode=False,
+            )
+            self.assertEqual([], build_successor_challenge(context, 0))
+            self.assertEqual(5, len(build_successor_challenge(context, 5)))
+            for bad in (-1, 11, True, "3"):
+                with self.subTest(bad=bad), self.assertRaises(HandoverContextError):
+                    build_successor_challenge(context, bad)
+
+    def test_structured_challenge_satisfies_handover_schema_when_attached_but_c2_does_not_attach_it(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=load_yaml(target_observation(root)),
+                complex_mode=False,
+            )
+            derived = build_successor_challenge(context, 3)
+            self.assertEqual([], context["successor_entry"]["successor_reconstruction_challenge"])
+            candidate = copy.deepcopy(context)
+            candidate["successor_entry"]["successor_reconstruction_challenge"] = derived
+            self.assertEqual([], validate_schema("handover-context", candidate, "HANDOVER_CONTEXT"))
 
     def test_visibility_validator_rejects_reality_leak_into_blind_context(self):
         with tempfile.TemporaryDirectory() as td:
