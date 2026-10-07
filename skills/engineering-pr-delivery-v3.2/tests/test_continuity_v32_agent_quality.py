@@ -90,7 +90,7 @@ class AgentQualityMetricTests(unittest.TestCase):
     def test_unknown_denominators_remain_unknown_not_zero(self):
         result = self.validate_both(window(
             row("M1", "MUTATION", "UNKNOWN", critical=True),
-            row("C1", "CLEAN_CONTROL", "UNKNOWN"),
+            row("C1", "CLEAN_CONTROL", "UNKNOWN", critical=True),
         ))
         for key in ("mutation_tpr", "clean_tnr", "balanced_accuracy", "critical_mutation_recall", "impact_coverage"):
             metric = result["metrics"][key]
@@ -98,7 +98,7 @@ class AgentQualityMetricTests(unittest.TestCase):
             self.assertIsNone(metric["value"])
             self.assertEqual(0, metric["denominator"])
         self.assertEqual(2, result["unknown_observation_count"])
-        self.assertEqual(1, result["metrics"]["critical_unknown_count"])
+        self.assertEqual(2, result["metrics"]["critical_unknown_count"])
 
     def test_input_fails_closed_on_impossible_or_cross_class_evidence(self):
         cases = [
@@ -120,6 +120,10 @@ class AgentQualityMetricTests(unittest.TestCase):
         second = M.evaluate(window(b, a2))
         self.assertEqual(first["input_digest"], second["input_digest"])
         self.assertEqual(first["evidence_digest"], second["evidence_digest"])
+
+    def test_empty_window_is_rejected(self):
+        with self.assertRaises(M.MetricError):
+            M.evaluate(window())
 
     def test_duplicate_observation_identity_is_rejected(self):
         with self.assertRaises(M.MetricError):
