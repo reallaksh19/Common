@@ -32,6 +32,22 @@ $defs:
       hard_loc: {type: integer, minimum: 1}
       target_minutes: {type: integer, minimum: 1}
       hard_minutes: {type: integer, minimum: 1}
+  successor_policy:
+    type: object
+    additionalProperties: false
+    required: [mode]
+    properties:
+      mode: {enum: [CONTINUITY, INDEPENDENT_RECONSTRUCTION]}
+      decision_at_risk: {type: string, minLength: 1, maxLength: 200, pattern: '^[^\\n]*$'}
+      protected_invariants:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1, maxLength: 200, pattern: '^[^\\n]*$'}
+    allOf:
+      - if:
+          properties: {mode: {const: INDEPENDENT_RECONSTRUCTION}}
+        then:
+          required: [decision_at_risk]
 type: object
 required: [programme, nodes]
 properties:
@@ -231,6 +247,11 @@ properties:
               weight: {type: integer, minimum: 1}
               verify: {type: string, description: The check, command or evidence that proves this unit.}
               outcome: {type: string}
+              successor_policy:
+                $ref: '#/$defs/successor_policy'
+                description: >-
+                  Optional takeover policy for this unit. It never changes weight/progress. CONTINUITY is non-blocking;
+                  INDEPENDENT_RECONSTRUCTION requires successor reconciliation only when a handover is actually offered.
               moved_from: {$ref: '#/$defs/ref', description: The leaf this unit used to live in (same unit id). Only meaningful in the plan that moves it.}
         coder_weight: {type: integer, minimum: 1}
         delivery_gates:
