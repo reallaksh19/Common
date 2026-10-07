@@ -357,23 +357,39 @@ def _successor_entry(
         )
         questions.append(row)
 
+    challenge_basis = {
+        "freshness": freshness,
+        "target_state": target_state,
+        "latest_reconciliation_ref": latest_reconciliation_ref,
+        "latest_reconciliation_summary": latest_reconciliation_summary,
+        "current_task_next": current_task_next,
+        "inherited_first_successor_action": inherited_first_action,
+        "inherited_uncertainties": unresolved,
+        "inherited_negative_knowledge": rejected,
+        "protected_invariants": invariants,
+    }
+    challenge_digest = (
+        canonical_digest(
+            {
+                "challenge_basis": challenge_basis,
+                "questions": questions,
+                "material_head": material.get("head"),
+                "branch": execution.get("branch"),
+                "provider_ref": (context.get("target") or {}).get("provider_ref"),
+            }
+        )
+        if questions
+        else None
+    )
+
     return {
         "mode": SUCCESSOR_ENTRY_MODE,
         "allowed_actions": list(SUCCESSOR_ALLOWED_ACTIONS),
         "forbidden_actions": list(SUCCESSOR_FORBIDDEN_ACTIONS),
         "execution_admission": SUCCESSOR_EXECUTION_ADMISSION,
         "owner_boundary_constraints": list(dict.fromkeys(str(x) for x in (owner_boundary_constraints or []) if str(x).strip())),
-        "challenge_basis": {
-            "freshness": freshness,
-            "target_state": target_state,
-            "latest_reconciliation_ref": latest_reconciliation_ref,
-            "latest_reconciliation_summary": latest_reconciliation_summary,
-            "current_task_next": current_task_next,
-            "inherited_first_successor_action": inherited_first_action,
-            "inherited_uncertainties": unresolved,
-            "inherited_negative_knowledge": rejected,
-            "protected_invariants": invariants,
-        },
+        "challenge_digest": challenge_digest,
+        "challenge_basis": challenge_basis,
         "successor_reconstruction_challenge": questions,
     }
 

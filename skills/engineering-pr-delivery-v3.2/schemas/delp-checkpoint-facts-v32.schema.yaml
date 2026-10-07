@@ -130,9 +130,60 @@ properties:
       frontier_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
       decision_at_risk: {type: string, minLength: 1, maxLength: 200, pattern: '^[^\\n]*$'}
       result: {enum: [RECONCILED, DRIFT_FOUND, INSUFFICIENT_GROUNDING, OWNER_DECISION_REQUIRED]}
+      challenge_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      question_ids:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, pattern: '^Q[1-9][0-9]*$'}
+      answer_evidence:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          required: [question_id, evidence_refs, live_refs, evidence_summary]
+          properties:
+            question_id: {type: string, pattern: '^Q[1-9][0-9]*$'}
+            evidence_refs:
+              type: array
+              minItems: 1
+              items: {type: string, minLength: 1}
+            live_refs:
+              type: array
+              minItems: 1
+              items:
+                type: object
+                additionalProperties: false
+                required: [kind, ref]
+                properties:
+                  kind: {enum: [REPOSITORY, PROVIDER]}
+                  ref: {type: string, minLength: 1}
+            evidence_summary: {type: string, minLength: 20, maxLength: 1000}
+            authority_classifications:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              items: {enum: [PRODUCTION, CANDIDATE_GENERATION, REVIEW_ONLY, VALIDATION_BENCHMARK, HISTORICAL]}
+      root_classification:
+        type: object
+        additionalProperties: false
+        required: [classification, owning_layer, upstream_boundary, downstream_boundary, proof_required, evidence_refs]
+        properties:
+          classification: {type: string, minLength: 1, maxLength: 500}
+          owning_layer: {type: string, minLength: 1, maxLength: 500}
+          upstream_boundary: {type: string, minLength: 1, maxLength: 500}
+          downstream_boundary: {type: string, minLength: 1, maxLength: 500}
+          proof_required: {type: string, minLength: 1, maxLength: 500}
+          evidence_refs:
+            type: array
+            minItems: 1
+            items: {type: string, minLength: 1}
     description: >-
       Optional custody/reconstruction fact inside TASK_EVIDENCE. It never carries progress or title authority.
-      OFFERED begins a handover frontier. ACCEPTED references the predecessor publication and may remain unreconciled.
+      OFFERED begins a handover frontier. Challenged OFFERED facts bind the exact challenge digest/question ids.
+      ACCEPTED may carry engineering answer evidence and root classification; only exact current reconciled evidence
+      can remove the challenged handoff blocker.
   next:
     type: object
     additionalProperties: false
