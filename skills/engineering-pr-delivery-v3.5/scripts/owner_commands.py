@@ -49,8 +49,15 @@ INTENT_SEMANTICS = {
         "partial, pending, blocked, deferred, acceptance debt, delivery/governance debt "
         "and delegated/local work. Do not progress execution."
     ),
+    "TAKEOVER_RECONCILE": (
+        "An explicit new-agent/takeover/lateral-entry command is stronger than ordinary continuation. "
+        "Cold-reconstruct parent/roadmap/provider truth, refresh the phase-wise plan and parent status, create "
+        "the next bounded child issue/comment block, publish recovery TASK_EVIDENCE first when the predecessor "
+        "ended abnormally, then run ordinary DELP admission before coding only that bounded child. Publish "
+        "TASK_EVIDENCE at execution end before selecting another child. Never continue from chat memory."
+    ),
     "CONTINUE_RECONCILE": (
-        "A bare continuation command (continue, proceed, next, resume, reconcile, take over, keep going) "
+        "A bare same-agent continuation command (continue, proceed, next, resume, reconcile, keep going) "
         "means reconstruct and reconcile BEFORE continuing; it never means continue from conversational "
         "memory. Resolve the owned leaf responsibility and its lineage, observe the live PR/candidate, compare "
         "the latest evidence frontier with it, repair any evidence gap first, reproject titles and status "
@@ -138,6 +145,28 @@ WORKFLOWS = {
         ],
         "requires": ["programme_parent_observations"],
     },
+    "TAKEOVER_RECONCILE": {
+        "boundary": "RECONCILE_PLAN_DECOMPOSE_THEN_EXECUTE",
+        "progress_execution": True,
+        "steps": [
+            "Cold-reconstruct the governing parent, relevant children, ROADMAP, accepted evidence and live provider state; never use chat memory as authority.",
+            "Refresh and publish the phase-wise implementation plan and parent status against current roadmap/provider reality before selecting code.",
+            "Create or update the next bounded child issue/comment block with outcome, scope/write surface, acceptance and stop condition before any coding.",
+            "Inspect predecessor termination and the evidence frontier. If the prior epoch ended because of stream, memory, GitHub/provider/tool failure, or material exists without end evidence, publish TASK_EVIDENCE — RECOVERY before any new coding.",
+            "Run the ordinary DELP continuation admission: resolve lineage, observe the live candidate, materialize missing facts, fix an unreleasable plan, recover stale evidence, reproject and read back before execution.",
+            "Execute exactly the bounded child block; do not broaden parent, denominator, scope, priority, review or merge authority.",
+            "At execution end publish TASK_EVIDENCE for the exact candidate and child outcome before selecting or decomposing another child.",
+            "For the next agent or next child, repeat this sequence from durable GitHub truth; never continue from conversational memory.",
+        ],
+        "requires": [
+            "programme_parent_observations",
+            "roadmap_state",
+            "leaf_responsibility",
+            "live_candidate_observation",
+            "bounded_child_block",
+            "delp_projection",
+        ],
+    },
     "CONTINUE_RECONCILE": {
         "boundary": "RECONSTRUCT_THEN_CONTINUE",
         "progress_execution": True,
@@ -215,9 +244,15 @@ _PATTERNS: list[tuple[str, tuple[str, ...]]] = [
         r"\bmove\s+(?:on\s+)?to\s+(?:the\s+)?next\s+task\b",
         r"\btake\s+(?:the\s+)?next\s+task\b",
     )),
-    # Bare continuation commands. Anchored so ordinary sentences never activate it.
+    # Explicit executor transfer/lateral entry. Kept separate from same-agent continuation because it must
+    # refresh the phase plan and bounded child block before any coding.
+    ("TAKEOVER_RECONCILE", (
+        r"^\s*(?:take\s+over|takeover|lateral\s+entry|enter\s+laterally|new\s+agent\s+takeover|walk\s+through\s+as\s+(?:a\s+)?new\s+agent)"
+        r"(?:\s+(?:please|now))?\s*[?!.,]*\s*$",
+    )),
+    # Bare same-agent continuation commands. Anchored so ordinary sentences never activate it.
     ("CONTINUE_RECONCILE", (
-        r"^\s*(?:continue|proceed|next|resume|reconcile|take\s+over|keep\s+going|carry\s+on)"
+        r"^\s*(?:continue|proceed|next|resume|reconcile|keep\s+going|carry\s+on)"
         r"(?:\s+(?:please|now))?\s*[?!.,]*\s*$",
     )),
 ]
@@ -249,6 +284,7 @@ _PRIMARY_PURPOSE_BY_INTENT = {
     "PROCEED_NEXT_COMPLEX": "RECONCILE_AND_PLAN",
     "PLAN_HANDOVER": "TRANSFER_CUSTODY",
     "STATS": "STATUS_ONLY",
+    "TAKEOVER_RECONCILE": "EXECUTE_TASK",
     "CONTINUE_RECONCILE": "EXECUTE_TASK",
     "PREPARE_LOCAL_AGENT": "PREPARE_DELEGATION",
 }
@@ -305,6 +341,15 @@ def _requested_deliverables(
         deliverables.append({"type": "NEXT_FRONTIER_REPORT"})
     elif intent == "PREPARE_LOCAL_AGENT":
         deliverables.append({"type": "LOCAL_AGENT_PACKET"})
+    elif intent == "TAKEOVER_RECONCILE":
+        deliverables.extend(
+            [
+                {"type": "ENTRY_RECONCILIATION"},
+                {"type": "PHASE_PLAN_REFRESH"},
+                {"type": "BOUNDED_CHILD_BLOCK"},
+                {"type": "TASK_EVIDENCE_AT_EXECUTION_END"},
+            ]
+        )
 
     count_match = _EXACT_QUESTION_COUNT.search(value)
     has_questions = bool(re.search(r"\bquestions?\b", value))
@@ -327,15 +372,24 @@ def _requested_deliverables(
 def _custody_intent(value: str, intent: str | None) -> str:
     if intent == "PLAN_HANDOVER":
         return "PREPARE_TRANSFER"
-    if intent == "CONTINUE_RECONCILE" and re.match(r"^take\s+over\b", value):
+    if intent == "TAKEOVER_RECONCILE":
         return "RECOVERY"
     if intent in {"CONTINUE_RECONCILE", "PROCEED_NEXT", "PROCEED_NEXT_COMPLEX"}:
         return "CONTINUE"
     return "CONTINUE"
 
 
-def _boundary_constraints(value: str, target: Any) -> list[str]:
+def _boundary_constraints(value: str, target: Any, intent: str | None) -> list[str]:
     constraints: list[str] = []
+    if intent == "TAKEOVER_RECONCILE":
+        constraints.extend(
+            [
+                "PHASE_PLAN_REFRESH_BEFORE_CODING",
+                "BOUNDED_CHILD_BLOCK_BEFORE_CODING",
+                "RECOVERY_TASK_EVIDENCE_BEFORE_NEW_CODING_IF_ABNORMAL_PREDECESSOR",
+                "TASK_EVIDENCE_AT_EXECUTION_END",
+            ]
+        )
     if _matches(value, _NO_REPLAN):
         constraints.append("NO_REPLAN")
     if target is not None and any(
@@ -385,7 +439,7 @@ def _owner_intent_envelope(
             else "STANDARD"
         ),
         "modifiers": modifiers,
-        "boundary_constraints": _boundary_constraints(value, resolved_target),
+        "boundary_constraints": _boundary_constraints(value, resolved_target, intent),
         "authority_ref": authority_ref,
     }
 
