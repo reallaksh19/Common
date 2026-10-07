@@ -844,6 +844,33 @@ def _plan_updates(value: Any) -> list[dict[str, Any]]:
     return rows
 
 
+def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
+    """Normalize the pre-materialization proposal identity layer. No provider child refs live here."""
+    if value is None:
+        return None
+    if not isinstance(value, Mapping):
+        raise GraphError("programme.decomposition_proposal: must be a mapping")
+    if set(map(str, value)) != {"version", "responsibilities"}:
+        raise GraphError("programme.decomposition_proposal: exact version/responsibilities fields required")
+    if value.get("version") != "V2":
+        raise GraphError("programme.decomposition_proposal.version: must be V2")
+    raw_rows = value.get("responsibilities")
+    if not isinstance(raw_rows, list) or not raw_rows:
+        raise GraphError("programme.decomposition_proposal.responsibilities: non-empty array required")
+    rows: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for index, raw in enumerate(raw_rows):
+        where = f"programme.decomposition_proposal.responsibilities[{index}]"
+        if not isinstance(raw, Mapping) or set(map(str, raw)) != {"id"}:
+            raise GraphError(f"{where}: exact id-only pre-materialization identity required")
+        rid = str(raw.get("id") or "")
+        if not _UNIT_ID.fullmatch(rid) or rid in seen:
+            raise GraphError(f"{where}.id: invalid or duplicate responsibility id {rid!r}")
+        seen.add(rid)
+        rows.append({"id": rid})
+    return {"version": "V2", "responsibilities": rows}
+
+
 def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
     """Normalize parent acceptance claims. Claims describe outcomes; leaves own them."""
     if value is None:
@@ -971,6 +998,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
     health_policy = resolve_health_policy(programme.get("health_policy"))
     acceptance_claims = _acceptance_claims(programme.get("acceptance_claims"))
     claims_by_id = {row["id"]: row for row in acceptance_claims}
+    decomposition_proposal = _decomposition_proposal(programme.get("decomposition_proposal"))
     total_weight = _positive_int(programme.get("total_weight", DEFAULT_TOTAL_WEIGHT), "programme.total_weight")
     base_ref = programme.get("base_ref")
     if base_ref is not None and (not isinstance(base_ref, str) or not base_ref.strip()):
@@ -1188,7 +1216,13 @@ def validate_graph(graph: Any) -> dict[str, Any]:
             cursor = nodes[cursor]["parent_ref"]
     for ref, node in nodes.items():
         if node["kind"] != "LEAF" and not node["children"]:
-            raise GraphError(f"{ref}: a ROOT/INTERMEDIATE node needs at least one child")
+            proposal_root = (
+                node["kind"] == "ROOT"
+                and decomposition_proposal is not None
+                and len(nodes) == 1
+            )
+            if not proposal_root:
+                raise GraphError(f"{ref}: a ROOT/INTERMEDIATE node needs at least one child")
 
     # leaf-to-leaf references (ordering and declared parallelism) must name declared leaves
     leaf_by_number = {n["number"]: ref for ref, n in nodes.items() if n["kind"] == "LEAF"}
@@ -1226,6 +1260,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         "health_policy": health_policy,
         "acceptance_claims": acceptance_claims,
         "claims_by_id": claims_by_id,
+        "decomposition_proposal": decomposition_proposal,
         "total_weight": total_weight,
         "plan_updates": _plan_updates(graph.get("plan_updates")),
         "nodes": nodes,
