@@ -61,7 +61,12 @@ def _fraction_dict(value: Fraction | None) -> dict[str, int] | None:
     return {"numerator": value.numerator, "denominator": value.denominator}
 
 
-def _normalize_component(value: Any, label: str) -> dict[str, Any]:
+def _normalize_component(
+    value: Any,
+    label: str,
+    *,
+    higher_is_better: bool,
+) -> dict[str, Any]:
     if not isinstance(value, Mapping) or set(map(str, value)) != {"direction", "first", "last"}:
         raise InterventionError(f"{label}: exact direction/first/last mapping required")
     direction = value.get("direction")
@@ -69,11 +74,17 @@ def _normalize_component(value: Any, label: str) -> dict[str, Any]:
         raise InterventionError(f"{label}.direction: invalid")
     first = _fraction(value.get("first"), f"{label}.first")
     last = _fraction(value.get("last"), f"{label}.last")
-    if direction == "INSUFFICIENT_DATA":
-        if first is not None and last is not None:
-            raise InterventionError(f"{label}: INSUFFICIENT_DATA requires an unavailable boundary")
-    elif first is None or last is None:
+    if direction != "INSUFFICIENT_DATA" and (first is None or last is None):
         raise InterventionError(f"{label}: observed direction requires first and last")
+    if first is not None and last is not None:
+        if direction == "STABLE" and first != last:
+            raise InterventionError(f"{label}: STABLE requires equal first/last")
+        if direction == "IMPROVING":
+            if (higher_is_better and last <= first) or (not higher_is_better and last >= first):
+                raise InterventionError(f"{label}: IMPROVING boundary direction is inconsistent")
+        if direction == "DEGRADING":
+            if (higher_is_better and last >= first) or (not higher_is_better and last <= first):
+                raise InterventionError(f"{label}: DEGRADING boundary direction is inconsistent")
     return {"direction": direction, "first": _fraction_dict(first), "last": _fraction_dict(last)}
 
 
@@ -158,7 +169,12 @@ def _normalize_m2(value: Any) -> dict[str, Any]:
     if not isinstance(components, Mapping) or set(map(str, components)) != set(_COMPONENTS):
         raise InterventionError("trajectory.components: exact M2 component set required")
     normalized_components = {
-        key: _normalize_component(components[key], f"trajectory.components.{key}") for key in _COMPONENTS
+        key: _normalize_component(
+            components[key],
+            f"trajectory.components.{key}",
+            higher_is_better=key not in {"critical_unknown_rate", "repair_rate"},
+        )
+        for key in _COMPONENTS
     }
 
     expected_trajectory, expected_reason = _expected_trajectory(normalized_components)
