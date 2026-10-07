@@ -2534,6 +2534,24 @@ def planned(mode="ENFORCED", **policy):
     return g
 
 
+def claim_topology_planned():
+    """V3.5 claim topology fixture using explicit OWN / ENABLES / GATE relationships."""
+    g = planned()
+    g["programme"]["acceptance_claims"] = [
+        {"id": "PC-PRODUCT", "claim": "the semantic product outcome exists", "kind": "SEMANTIC"},
+        {"id": "PC-ENABLE", "claim": "a durable enabling contract exists", "kind": "SEMANTIC"},
+        {"id": "PC-GATE", "claim": "the exact-head delivery gate passes", "kind": "DELIVERY_GATE"},
+    ]
+    leaf_of(g, "Common#592")["claim_relationships"] = [
+        {"claim_id": "PC-PRODUCT", "relation": "OWN"},
+        {"claim_id": "PC-ENABLE", "relation": "ENABLES"},
+    ]
+    leaf_of(g, "Common#594")["claim_relationships"] = [
+        {"claim_id": "PC-GATE", "relation": "GATE"},
+    ]
+    return g
+
+
 def with_weights(g, ref, weights):
     leaf_of(g, ref)["units"] = [{"id": f"U{i}", "weight": w, "verify": "check passes"} for i, w in enumerate(weights, 1)]
     return g
@@ -2661,6 +2679,66 @@ class DecompositionPolicyValidation(unittest.TestCase):
         policy_only = {"id": "PU-2", "kind": "POLICY_CHANGE", "reason": "r"}
         g["plan_updates"] = [policy_only]
         M.validate_graph(g)  # a policy change names no units or nodes
+
+
+class ClaimTopologyContract(unittest.TestCase):
+    def test_claim_topology_schema_and_engine_agree(self):
+        g = claim_topology_planned()
+        self.assertEqual([], SchemaContract().schema_errors("execution-graph", g))
+        indexed = M.validate_graph(g)
+        self.assertEqual(
+            ["PC-ENABLE", "PC-GATE", "PC-PRODUCT"],
+            [row["id"] for row in indexed["acceptance_claims"]],
+        )
+        self.assertEqual(
+            [
+                {"claim_id": "PC-ENABLE", "relation": "ENABLES"},
+                {"claim_id": "PC-PRODUCT", "relation": "OWN"},
+            ],
+            indexed["nodes"]["Common#592"]["claim_relationships"],
+        )
+
+    def test_claim_topology_malformed_documents_fail_closed(self):
+        cases = []
+
+        g = claim_topology_planned()
+        g["programme"]["acceptance_claims"][0]["kind"] = "MECHANISM"
+        cases.append(("claim kind", g))
+
+        g = claim_topology_planned()
+        g["programme"]["acceptance_claims"][0]["shared"] = "yes"
+        cases.append(("shared type", g))
+
+        g = claim_topology_planned()
+        g["programme"]["acceptance_claims"].append(
+            {"id": "PC-PRODUCT", "claim": "duplicate", "kind": "SEMANTIC"}
+        )
+        cases.append(("duplicate claim", g))
+
+        g = claim_topology_planned()
+        leaf_of(g, "Common#592")["claim_relationships"][0]["relation"] = "REVIEW"
+        cases.append(("relation kind", g))
+
+        g = claim_topology_planned()
+        leaf_of(g, "Common#592")["claim_relationships"][0]["claim_id"] = "PC-MISSING"
+        cases.append(("unknown claim", g))
+
+        g = claim_topology_planned()
+        leaf_of(g, "Common#592")["claim_relationships"].append(
+            {"claim_id": "PC-PRODUCT", "relation": "ENABLES"}
+        )
+        cases.append(("duplicate relationship target", g))
+
+        for label, bad in cases:
+            with self.subTest(label):
+                self.assertTrue(SchemaContract().schema_errors("execution-graph", bad))
+                with self.assertRaises(M.GraphError):
+                    M.validate_graph(bad)
+
+    def test_legacy_graph_without_claim_topology_remains_readable(self):
+        indexed = M.validate_graph(planned())
+        self.assertEqual([], indexed["acceptance_claims"])
+        self.assertEqual([], indexed["nodes"]["Common#592"]["claim_relationships"])
 
 
 class DecompositionRules(unittest.TestCase):

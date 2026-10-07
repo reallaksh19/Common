@@ -83,6 +83,8 @@ COMPLETE_VALUES = {"YES", "NO", "UNKNOWN"}
 # (mode OFF). `decompose-check` always evaluates; the mode decides whether projection/admission act on it.
 POLICY_MODES = ("OFF", "ADVISORY", "ENFORCED")
 WORK_CLASSES = ("PRODUCT", "MECHANICAL", "GATE")
+CLAIM_KINDS = ("SEMANTIC", "DELIVERY_GATE")
+CLAIM_RELATIONS = ("OWN", "ENABLES", "GATE")
 TRANSFORMATION_BOUNDARIES = (
     "WIRE_SCHEMA",
     "ENGINE_VALIDATION",
@@ -1070,6 +1072,71 @@ def _plan_updates(value: Any) -> list[dict[str, Any]]:
     return rows
 
 
+
+def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
+    """Normalize parent acceptance claims without making an admission decision."""
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise GraphError("programme.acceptance_claims: must be an array")
+    rows: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for index, raw in enumerate(value):
+        where = f"programme.acceptance_claims[{index}]"
+        if not isinstance(raw, Mapping):
+            raise GraphError(f"{where}: must be a mapping")
+        extra = sorted(set(map(str, raw)) - {"id", "claim", "kind", "shared"})
+        if extra:
+            raise GraphError(f"{where}: unknown fields {extra}")
+        claim_id = str(raw.get("id") or "")
+        if not _UNIT_ID.fullmatch(claim_id) or claim_id in seen:
+            raise GraphError(f"{where}.id: invalid or duplicate claim id {claim_id!r}")
+        claim = raw.get("claim")
+        if not isinstance(claim, str) or not claim.strip():
+            raise GraphError(f"{where}.claim: must be a non-blank string")
+        kind = raw.get("kind")
+        if kind not in CLAIM_KINDS:
+            raise GraphError(f"{where}.kind: one of {list(CLAIM_KINDS)}")
+        shared = raw.get("shared", False)
+        if not isinstance(shared, bool):
+            raise GraphError(f"{where}.shared: must be boolean")
+        seen.add(claim_id)
+        rows.append({"id": claim_id, "claim": claim.strip(), "kind": kind, "shared": shared})
+    return sorted(rows, key=lambda row: row["id"])
+
+
+def _claim_relationships(
+    value: Any, leaf_ref: str, claims_by_id: Mapping[str, Mapping[str, Any]]
+) -> list[dict[str, str]]:
+    """Normalize one leaf's claim relationships and reject undeclared/conflicting targets."""
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise GraphError(f"{leaf_ref}.claim_relationships: must be an array")
+    rows: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for index, raw in enumerate(value):
+        where = f"{leaf_ref}.claim_relationships[{index}]"
+        if not isinstance(raw, Mapping):
+            raise GraphError(f"{where}: must be a mapping")
+        extra = sorted(set(map(str, raw)) - {"claim_id", "relation"})
+        if extra:
+            raise GraphError(f"{where}: unknown fields {extra}")
+        claim_id = str(raw.get("claim_id") or "")
+        if not _UNIT_ID.fullmatch(claim_id):
+            raise GraphError(f"{where}.claim_id: invalid claim id {claim_id!r}")
+        if claim_id not in claims_by_id:
+            raise GraphError(f"{where}.claim_id: undeclared parent claim {claim_id!r}")
+        if claim_id in seen:
+            raise GraphError(f"{leaf_ref}.claim_relationships: duplicate relationship target {claim_id!r}")
+        relation = raw.get("relation")
+        if relation not in CLAIM_RELATIONS:
+            raise GraphError(f"{where}.relation: one of {list(CLAIM_RELATIONS)}")
+        seen.add(claim_id)
+        rows.append({"claim_id": claim_id, "relation": str(relation)})
+    return sorted(rows, key=lambda row: (row["claim_id"], row["relation"]))
+
+
 def resolve_policy(overrides: Any) -> dict[str, Any]:
     """Merge `programme.decomposition_policy` over the defaults and validate it. Raises GraphError."""
     policy = copy.deepcopy(DEFAULT_POLICY)
@@ -1165,6 +1232,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         raise GraphError(f"programme.root: {exc}") from exc
     policy = resolve_policy(programme.get("decomposition_policy"))
     health_policy = resolve_health_policy(programme.get("health_policy"))
+    acceptance_claims = _acceptance_claims(programme.get("acceptance_claims"))
+    claims_by_id = {row["id"]: row for row in acceptance_claims}
     total_weight = _positive_int(programme.get("total_weight", DEFAULT_TOTAL_WEIGHT), "programme.total_weight")
     base_ref = programme.get("base_ref")
     if base_ref is not None and (not isinstance(base_ref, str) or not base_ref.strip()):
@@ -1265,6 +1334,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                 not isinstance(integration_basis, str) or not integration_basis.strip()
             ):
                 raise GraphError(f"{ref}.integration_basis: must be a non-blank string")
+            claim_relationships = _claim_relationships(raw.get("claim_relationships"), ref, claims_by_id)
             node.update(
                 {
                     "units": clean_units,
@@ -1286,6 +1356,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                     "depends_on": _ref_list(raw.get("depends_on"), f"{ref}.depends_on"),
                     "parallel_ok": _ref_list(raw.get("parallel_ok"), f"{ref}.parallel_ok"),
                     "parallel_ok_basis": (basis or "").strip() or None,
+                    "claim_relationships": claim_relationships,
                     "transformation_boundaries": _transformation_boundaries(
                         raw.get("transformation_boundaries"), ref
                     ),
@@ -1413,6 +1484,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         "stable_identity_mode": declared_graph_generation,
         "policy": policy,
         "health_policy": health_policy,
+        "acceptance_claims": acceptance_claims,
+        "claims_by_id": claims_by_id,
         "total_weight": total_weight,
         "plan_updates": _plan_updates(graph.get("plan_updates")),
         "nodes": nodes,
