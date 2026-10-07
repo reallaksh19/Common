@@ -31,7 +31,7 @@ from relay_tx import release_lease
 from test_relay_can import WRITE_PATH, add_control, prepare_git
 from test_v3_foundation import DIGEST, dump
 from transactionlib import TransactionError
-from v3lib import canonical_digest, load_events, load_yaml
+from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 from validate_foundation import validate
 
 
@@ -668,6 +668,43 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual([], validate(root))
 
 
+    def test_legacy_generator_contract_remains_readable_but_not_authoritative(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            target = load_yaml(target_observation(root))
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=target,
+                complex_mode=False,
+            )
+            legacy = copy.deepcopy(context)
+            legacy["generator_contract"] = {
+                "canonical_launcher": "skills/two-pass-prompt-generator/SKILL.md",
+                "canonical_schema": "skills/two-pass-prompt-generator/schema.md",
+                "canonical_validator": "skills/two-pass-prompt-generator/validate.py",
+                "protocol_revision_at_freeze": _standalone_contract(),
+                "generator_mode": "TWO_PASS_ONLY",
+                "live_main_fetch_required": True,
+                "prompt_sequence": [
+                    "PASS_1_SYSTEM_BASELINE",
+                    "PASS_2_IMPROVE_RECONCILE_PLAN",
+                ],
+                "complex_mode": True,
+                "approval_boundary_required": True,
+            }
+            self.assertEqual(
+                [],
+                validate_schema("handover-context", legacy, "LEGACY_HANDOVER_CONTEXT"),
+            )
+            request = build_request(legacy)
+            self.assertTrue(request["generator"]["complex_mode"])
+            self.assertEqual(
+                ["PASS_1_SYSTEM_BASELINE", "PASS_2_IMPROVE_RECONCILE_PLAN"],
+                request["generator"]["prompt_sequence"],
+            )
+
     def test_only_explicit_reasoning_request_depends_on_two_pass_assets(self):
         with tempfile.TemporaryDirectory() as bad_proto:
             with self.assertRaises(HandoverContextError) as cm:
@@ -707,6 +744,21 @@ class HandoverContextTests(unittest.TestCase):
             with self.assertRaises(HandoverContextError) as cm:
                 _standalone_contract(proto_path)
             self.assertIn("missing required surface", str(cm.exception))
+
+        with tempfile.TemporaryDirectory() as bad_proto:
+            proto_path = Path(bad_proto)
+            proto_skills = proto_path / "skills/two-pass-prompt-generator"
+            proto_skills.mkdir(parents=True)
+            for name in ("SKILL.md", "schema.md", "validate.py"):
+                shutil.copyfile(STANDALONE / name, proto_skills / name)
+            launcher_file = proto_skills / "SKILL.md"
+            launcher_file.write_text("No fetch required", encoding="utf-8")
+            with self.assertRaises(HandoverContextError) as cm:
+                _standalone_contract(proto_path)
+            self.assertIn(
+                "launcher no longer requires a current-main schema fetch",
+                str(cm.exception),
+            )
 
         with tempfile.TemporaryDirectory() as td, tempfile.TemporaryDirectory() as bad_proto:
             root = Path(td)
