@@ -141,6 +141,91 @@ def _string_list(value: Any, label: str) -> list[str]:
     return sorted(set(value))
 
 
+
+def repository_plan_basis(graph: Mapping[str, Any], leaf_ref: str) -> dict[str, Any]:
+    """Return graph-only repository basis keyed by stable Responsibility identity.
+
+    GitHub refs remain observation locators only. Moving/recreating an issue must
+    not stale repository-plan basis when the stable Responsibility contract is unchanged.
+    """
+    node = _leaf(graph, leaf_ref)
+    surfaces = _surface_list(node)
+    nodes = graph.get("nodes") or []
+    by_ref = {
+        str(item.get("ref") or ""): item
+        for item in nodes
+        if isinstance(item, Mapping)
+    }
+
+    def stable_identity(item: Mapping[str, Any]) -> str:
+        return str(item.get("responsibility_id") or item.get("ref") or "")
+
+    sibling_basis: list[dict[str, Any]] = []
+    for sibling in nodes:
+        if not isinstance(sibling, Mapping) or sibling is node or sibling.get("kind") != "LEAF":
+            continue
+        sibling_basis.append(
+            {
+                "responsibility_id": stable_identity(sibling),
+                "write_surface": _surface_list(sibling),
+            }
+        )
+    sibling_basis.sort(key=lambda row: row["responsibility_id"])
+    boundaries = _string_list(node.get("transformation_boundaries"), "transformation_boundaries")
+    raw_dependencies = _string_list(node.get("depends_on"), "depends_on")
+    dependencies = sorted(
+        stable_identity(by_ref[ref]) if ref in by_ref else ref
+        for ref in raw_dependencies
+    )
+    value = {
+        "subject": stable_identity(node),
+        "write_surface": surfaces,
+        "transformation_boundaries": boundaries,
+        "declared_dependencies": dependencies,
+        "siblings": sibling_basis,
+    }
+    return {
+        "authority": "DERIVED_REPOSITORY_PLAN_BASIS",
+        "value": value,
+        "digest": _canonical_digest(value),
+    }
+
+
+def repository_observation_currentness(
+    graph: Mapping[str, Any],
+    leaf_ref: str,
+    observation: Mapping[str, Any] | None,
+) -> dict[str, Any]:
+    """Compare one observation with the current graph-only repository plan basis."""
+    expected = repository_plan_basis(graph, leaf_ref)
+    if observation is None:
+        return {
+            "subject": leaf_ref,
+            "state": "MISSING",
+            "expected_plan_basis_digest": expected["digest"],
+            "observed_plan_basis_digest": None,
+        }
+    if not isinstance(observation, Mapping):
+        raise ObservationError(f"{leaf_ref}: observation must be a mapping or null")
+    if observation.get("schema") != SCHEMA:
+        raise ObservationError(f"{leaf_ref}: observation schema must be {SCHEMA}")
+    if observation.get("authority") != "OBSERVED_REPOSITORY_BASIS":
+        raise ObservationError(f"{leaf_ref}: observation authority must be OBSERVED_REPOSITORY_BASIS")
+    if observation.get("subject") != leaf_ref:
+        raise ObservationError(
+            f"{leaf_ref}: observation subject mismatch {observation.get('subject')!r}"
+        )
+    observed = observation.get("plan_basis_digest")
+    if not isinstance(observed, str) or not observed.startswith("sha256:"):
+        raise ObservationError(f"{leaf_ref}: observation plan_basis_digest is missing or malformed")
+    return {
+        "subject": leaf_ref,
+        "state": "CURRENT" if observed == expected["digest"] else "MOVED",
+        "expected_plan_basis_digest": expected["digest"],
+        "observed_plan_basis_digest": observed,
+    }
+
+
 def _resolve_ref(root: Path, ref: str) -> str:
     return _git(root, "rev-parse", "--verify", f"{ref}^{{commit}}").decode("ascii").strip()
 
@@ -193,31 +278,21 @@ def observe_repository_basis(
         surface_status = "UNRESOLVED"
 
     overlaps: list[dict[str, Any]] = []
-    sibling_basis: list[dict[str, Any]] = []
     nodes = graph.get("nodes") or []
     for sibling in nodes:
         if not isinstance(sibling, Mapping) or sibling is node or sibling.get("kind") != "LEAF":
             continue
         sibling_ref = str(sibling.get("ref") or "")
         sibling_surface = _surface_list(sibling)
-        sibling_basis.append({"ref": sibling_ref, "write_surface": sibling_surface})
         hit = _surface_overlap(surfaces, sibling_surface)
         if hit:
             overlaps.append({"ref": sibling_ref, "overlaps": hit})
     overlaps.sort(key=lambda row: row["ref"])
-    sibling_basis.sort(key=lambda row: row["ref"])
 
-    boundaries = _string_list(node.get("transformation_boundaries"), "transformation_boundaries")
-    dependencies = _string_list(node.get("depends_on"), "depends_on")
-    plan_basis_digest = _canonical_digest(
-        {
-            "subject": leaf_ref,
-            "write_surface": surfaces,
-            "transformation_boundaries": boundaries,
-            "declared_dependencies": dependencies,
-            "siblings": sibling_basis,
-        }
-    )
+    plan_basis = repository_plan_basis(graph, leaf_ref)
+    boundaries = list(plan_basis["value"]["transformation_boundaries"])
+    dependencies = list(plan_basis["value"]["declared_dependencies"])
+    plan_basis_digest = plan_basis["digest"]
 
     if (base_ref is None) != (candidate_ref is None):
         raise ObservationError("base_ref and candidate_ref must be supplied together")

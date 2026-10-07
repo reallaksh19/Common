@@ -36,6 +36,12 @@ O = importlib.util.module_from_spec(observer_spec)
 assert observer_spec.loader
 observer_spec.loader.exec_module(O)
 
+ASSEMBLER_MODULE_PATH = MODULE_PATH.parents[1] / "scripts" / "decomposition_assembler_v35.py"
+assembler_spec = importlib.util.spec_from_file_location("decomposition_assembler_v35", ASSEMBLER_MODULE_PATH)
+A = importlib.util.module_from_spec(assembler_spec)
+assert assembler_spec.loader
+assembler_spec.loader.exec_module(A)
+
 try:  # PyYAML is only needed for the markdown-block and CLI-from-YAML paths
     import yaml  # noqa: F401
 
@@ -1791,6 +1797,107 @@ class DecompositionRepositoryObserverTests(unittest.TestCase):
                 )
 
 
+class DecompositionRepositoryObservationCurrentness(unittest.TestCase):
+    def graph(self):
+        return DecompositionRepositoryObserverTests().graph()
+
+    def init_repo(self, root):
+        return DecompositionRepositoryObserverTests().init_repo(
+            root, {"pkg/a.py": "a", "other/x.py": "x"}
+        )
+
+    def test_current_observation_matches_public_plan_basis_helper(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            graph_value = self.graph()
+            observation = O.observe_repository_basis(
+                graph_value, leaf_ref="Common#1", repo_root=root
+            )
+            basis = O.repository_plan_basis(graph_value, "Common#1")
+            self.assertEqual(basis["digest"], observation["plan_basis_digest"])
+            current = O.repository_observation_currentness(
+                graph_value, "Common#1", observation
+            )
+            self.assertEqual("CURRENT", current["state"])
+            self.assertEqual(basis["digest"], current["expected_plan_basis_digest"])
+
+    def test_plan_basis_move_marks_existing_observation_moved(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            graph_value = self.graph()
+            observation = O.observe_repository_basis(
+                graph_value, leaf_ref="Common#1", repo_root=root
+            )
+            moved = copy.deepcopy(graph_value)
+            moved["nodes"][0]["write_surface"] = ["pkg/a.py"]
+            current = O.repository_observation_currentness(
+                moved, "Common#1", observation
+            )
+            self.assertEqual("MOVED", current["state"])
+            self.assertNotEqual(
+                current["expected_plan_basis_digest"],
+                current["observed_plan_basis_digest"],
+            )
+
+    def test_provider_locator_move_preserves_stable_repository_plan_basis(self):
+        g = self.graph()
+        g["nodes"][0]["responsibility_id"] = "RID-1"
+        g["nodes"][1]["responsibility_id"] = "RID-2"
+        first = O.repository_plan_basis(g, "Common#1")
+
+        moved = copy.deepcopy(g)
+        moved["nodes"][0]["ref"] = "Common#101"
+        moved["nodes"][1]["ref"] = "Common#202"
+        second = O.repository_plan_basis(moved, "Common#101")
+
+        self.assertEqual("RID-1", first["value"]["subject"])
+        self.assertEqual(
+            [{"responsibility_id": "RID-2", "write_surface": ["other/"]}],
+            first["value"]["siblings"],
+        )
+        self.assertEqual(first["digest"], second["digest"])
+
+    def test_missing_observation_is_explicit_missing_not_clean(self):
+        graph_value = self.graph()
+        current = O.repository_observation_currentness(
+            graph_value, "Common#1", None
+        )
+        self.assertEqual("MISSING", current["state"])
+        self.assertIsNone(current["observed_plan_basis_digest"])
+
+    def test_dependency_basis_uses_stable_responsibility_identity(self):
+        g = self.graph()
+        g["nodes"][0]["responsibility_id"] = "RID-1"
+        g["nodes"][1]["responsibility_id"] = "RID-2"
+        g["nodes"][0]["depends_on"] = ["Common#2"]
+        first = O.repository_plan_basis(g, "Common#1")
+        self.assertEqual(["RID-2"], first["value"]["declared_dependencies"])
+
+        moved = copy.deepcopy(g)
+        moved["nodes"][1]["ref"] = "Common#202"
+        moved["nodes"][0]["depends_on"] = ["Common#202"]
+        second = O.repository_plan_basis(moved, "Common#1")
+        self.assertEqual(first["digest"], second["digest"])
+
+    def test_wrong_authority_or_subject_fails_closed(self):
+        graph_value = self.graph()
+        basis = O.repository_plan_basis(graph_value, "Common#1")
+        good = {
+            "schema": O.SCHEMA,
+            "authority": "OBSERVED_REPOSITORY_BASIS",
+            "subject": "Common#1",
+            "plan_basis_digest": basis["digest"],
+        }
+        bad_schema = dict(good, schema="relay-v0-observation")
+        bad_authority = dict(good, authority="EXECUTOR")
+        bad_subject = dict(good, subject="Common#2")
+        for bad in (bad_schema, bad_authority, bad_subject):
+            with self.subTest(bad=bad), self.assertRaises(O.ObservationError):
+                O.repository_observation_currentness(graph_value, "Common#1", bad)
+
+
 @unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
 class DecompositionRepositoryObservationSchemaContract(unittest.TestCase):
     def test_observer_output_matches_schema(self):
@@ -2628,6 +2735,62 @@ def stable_claim_topology_graph():
     return g
 
 
+def topology_assessment_planned():
+    g = stable_claim_topology_graph()
+    leaf_of(g, "Common#612")["claim_relationships"] = [
+        {"claim_id": "PC-ENABLE", "relation": "OWN"},
+    ]
+    g["programme"]["topology_assessments"] = [
+        {
+            "id": "TA-LEAF",
+            "proposal_kind": "LEAF",
+            "responsibility_ids": ["P3-I-R2"],
+            "semantic_cohesion": "COHESIVE",
+            "dependency_closure": "CLOSED",
+            "verification_closure": "CLOSED",
+            "uncertainty": "LOW",
+            "change_impact": "LOCAL",
+            "execution_horizon": "SHORT",
+            "mutation_domains": ["LOCAL_FILES"],
+            "recovery_radius": "SMALL",
+            "handoff_cost": "LOW",
+            "cross_child_cohesion": "LOW",
+            "stable_cut": {
+                "output_contract": False,
+                "independent_oracle": False,
+                "consumer_stable": False,
+                "risk_reduction": False,
+                "handoff_economy": False,
+            },
+            "source_refs": ["Common#648#topology-release"],
+        },
+        {
+            "id": "TA-PAIR",
+            "proposal_kind": "ADJACENT_CHILDREN",
+            "responsibility_ids": ["RESP-594", "P3-I-R2"],
+            "semantic_cohesion": "COHESIVE",
+            "dependency_closure": "CLOSED",
+            "verification_closure": "CLOSED",
+            "uncertainty": "LOW",
+            "change_impact": "LOCAL",
+            "execution_horizon": "MULTI_STEP",
+            "mutation_domains": ["LOCAL_FILES", "GIT_HISTORY"],
+            "recovery_radius": "MULTI_SURFACE",
+            "handoff_cost": "HIGH",
+            "cross_child_cohesion": "HIGH",
+            "stable_cut": {
+                "output_contract": False,
+                "independent_oracle": False,
+                "consumer_stable": False,
+                "risk_reduction": False,
+                "handoff_economy": False,
+            },
+            "source_refs": ["Common#651#retained-replay"],
+        },
+    ]
+    return g
+
+
 def with_weights(g, ref, weights):
     leaf_of(g, ref)["units"] = [{"id": f"U{i}", "weight": w, "verify": "check passes"} for i, w in enumerate(weights, 1)]
     return g
@@ -2822,6 +2985,345 @@ class ClaimTopologyContract(unittest.TestCase):
         indexed = M.validate_graph(planned())
         self.assertEqual([], indexed["acceptance_claims"])
         self.assertEqual([], indexed["nodes"]["Common#592"]["claim_relationships"])
+
+
+class TopologyAssessmentPlanContract(unittest.TestCase):
+    def test_topology_assessment_schema_and_engine_agree(self):
+        g = topology_assessment_planned()
+        self.assertEqual([], SchemasAgreeWithTheEngine().schema_errors("execution-graph", g))
+        indexed = M.validate_graph(g)
+        self.assertEqual(["TA-LEAF", "TA-PAIR"], [row["id"] for row in indexed["topology_assessments"]])
+        pair = indexed["topology_assessments_by_id"]["TA-PAIR"]
+        self.assertEqual(["P3-I-R2", "RESP-594"], pair["responsibility_ids"])
+        self.assertEqual(["GIT_HISTORY", "LOCAL_FILES"], pair["mutation_domains"])
+
+    def test_topology_assessment_shape_errors_fail_schema_and_engine(self):
+        cases = []
+
+        g = topology_assessment_planned()
+        g["programme"]["topology_assessments"][0]["proposal_kind"] = "PIPELINE"
+        cases.append(("proposal kind", g))
+
+        g = topology_assessment_planned()
+        g["programme"]["topology_assessments"][0]["source_refs"] = []
+        cases.append(("source refs", g))
+
+        g = topology_assessment_planned()
+        g["programme"]["topology_assessments"][0]["stable_cut"]["risk_reduction"] = "yes"
+        cases.append(("stable cut bool", g))
+
+        for label, bad in cases:
+            with self.subTest(label):
+                self.assertTrue(SchemasAgreeWithTheEngine().schema_errors("execution-graph", bad))
+                with self.assertRaises(M.GraphError):
+                    M.validate_graph(bad)
+
+    def test_topology_assessment_relational_invariants_fail_closed(self):
+        cases = []
+
+        g = topology_assessment_planned()
+        g["programme"]["topology_assessments"][0]["responsibility_ids"] = ["NO-SUCH-RID"]
+        cases.append(("unknown stable id", g))
+
+        g = topology_assessment_planned()
+        g["programme"]["topology_assessments"][0]["responsibility_ids"] = ["P3-I-R2", "RESP-594"]
+        cases.append(("leaf cardinality", g))
+
+        g = topology_assessment_planned()
+        g["programme"]["topology_assessments"][1]["responsibility_ids"] = ["P3-I-R2", "RESP-612"]
+        cases.append(("non sibling pair", g))
+
+        g = topology_assessment_planned()
+        duplicate = copy.deepcopy(g["programme"]["topology_assessments"][0])
+        duplicate["id"] = "TA-DUP"
+        g["programme"]["topology_assessments"].append(duplicate)
+        cases.append(("duplicate subject set", g))
+
+        g = topology_assessment_planned()
+        duplicate = copy.deepcopy(g["programme"]["topology_assessments"][0])
+        duplicate["responsibility_ids"] = ["RESP-594"]
+        g["programme"]["topology_assessments"].append(duplicate)
+        cases.append(("duplicate assessment id", g))
+
+        for label, bad in cases:
+            with self.subTest(label), self.assertRaises(M.GraphError):
+                M.validate_graph(bad)
+
+    def test_topology_assessment_is_plan_metadata_not_product_contract(self):
+        base = stable_claim_topology_graph()
+        before = M.validate_graph(base)
+        before_digest = before["nodes"]["Common#592"]["contract_digest"]
+
+        planned = topology_assessment_planned()
+        after = M.validate_graph(planned)
+        self.assertEqual(before_digest, after["nodes"]["Common#592"]["contract_digest"])
+        self.assertNotEqual(before["digest"], after["digest"])
+
+        record = bound_facts(base, units=[unit("U01")])
+        before_projection = M.project(base, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+        after_projection = M.project(planned, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+        self.assertEqual(before_projection["progress"], after_projection["progress"])
+        self.assertEqual(
+            before_projection["identity"]["contract_digest"],
+            after_projection["identity"]["contract_digest"],
+        )
+
+    def test_r2_plan_basis_has_no_r1_admission_side_effect(self):
+        with_basis = M.decomposition_report(topology_assessment_planned())
+        without_basis = M.decomposition_report(stable_claim_topology_graph())
+        self.assertEqual(without_basis, with_basis)
+
+
+class TopologyAdmissionAssembler(unittest.TestCase):
+    def init_repo(self, root):
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+        path = root / "placeholder.txt"
+        path.write_text("x", encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+
+    def observations(self, graph_value, root, refs):
+        return {
+            ref: O.observe_repository_basis(graph_value, leaf_ref=ref, repo_root=root)
+            for ref in refs
+        }
+
+    def test_current_leaf_basis_classifies_pass(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            observations = self.observations(g, root, ["Common#592"])
+            out = A.assemble_topology_admission(
+                g, assessment_id="TA-LEAF", observations=observations
+            )
+            self.assertEqual("DERIVED_TOPOLOGY_ADMISSION_ONLY", out["authority"])
+            self.assertEqual([], out["claim_topology"]["blockers"])
+            self.assertEqual("CURRENT", out["repository_currentness"][0]["state"])
+            self.assertEqual("LOCAL", out["assessment"]["change_impact"])
+            self.assertEqual("PASS", out["decision"]["decision"])
+            self.assertEqual([], D.validate_decomposition_assessment(out["assessment"]))
+
+    def test_current_adjacent_children_basis_classifies_merge(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            observations = self.observations(g, root, ["Common#592", "Common#594"])
+            out = A.assemble_topology_admission(
+                g, assessment_id="TA-PAIR", observations=observations
+            )
+            self.assertEqual(["P3-I-R2", "RESP-594"], out["responsibility_ids"])
+            self.assertEqual("MERGE", out["decision"]["decision"])
+
+    def test_missing_observation_derives_unknown_and_discover_first(self):
+        g = topology_assessment_planned()
+        out = A.assemble_topology_admission(
+            g, assessment_id="TA-LEAF", observations={}
+        )
+        self.assertEqual("MISSING", out["repository_currentness"][0]["state"])
+        self.assertEqual("UNKNOWN", out["assessment"]["change_impact"])
+        self.assertEqual("DISCOVER_FIRST", out["decision"]["decision"])
+
+    def test_moved_repository_basis_forces_replan(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            original = topology_assessment_planned()
+            observations = self.observations(original, root, ["Common#592"])
+
+            moved = copy.deepcopy(original)
+            leaf_of(moved, "Common#592")["write_surface"] = ["pkg/"]
+            out = A.assemble_topology_admission(
+                moved, assessment_id="TA-LEAF", observations=observations
+            )
+            self.assertEqual("MOVED", out["repository_currentness"][0]["state"])
+            self.assertTrue(out["assessment"]["basis_moved"])
+            self.assertEqual("REPLAN", out["decision"]["decision"])
+
+    def test_current_cross_cutting_observation_overrides_optimistic_plan_impact(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            leaf_of(g, "Common#592")["write_surface"] = ["placeholder.txt"]
+            leaf_of(g, "Common#594")["write_surface"] = ["placeholder.txt"]
+            observations = self.observations(g, root, ["Common#592"])
+            self.assertEqual("CROSS_CUTTING", observations["Common#592"]["change_impact"])
+            out = A.assemble_topology_admission(
+                g, assessment_id="TA-LEAF", observations=observations
+            )
+            self.assertEqual("CROSS_CUTTING", out["assessment"]["change_impact"])
+
+    def test_wrong_ontology_claim_topology_cannot_be_rescued_by_optimistic_boundary_basis(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            leaf_of(g, "Common#592")["claim_relationships"] = [
+                {"claim_id": "PC-PRODUCT", "relation": "GATE"},
+                {"claim_id": "PC-ENABLE", "relation": "ENABLES"},
+            ]
+            leaf_of(g, "Common#612")["claim_relationships"] = [
+                {"claim_id": "PC-ENABLE", "relation": "GATE"},
+            ]
+            observations = self.observations(g, root, ["Common#592"])
+            out = A.assemble_topology_admission(
+                g, assessment_id="TA-LEAF", observations=observations
+            )
+            self.assertIn("UNCOVERED_CLAIMS", out["claim_topology"]["blockers"])
+            self.assertEqual("BLOCKING", out["assessment"]["uncertainty"])
+            self.assertEqual("DISCOVER_FIRST", out["decision"]["decision"])
+
+    def test_assembly_is_deterministic_under_observation_map_order(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            obs = self.observations(g, root, ["Common#592", "Common#594"])
+            forward = A.assemble_topology_admission(
+                g, assessment_id="TA-PAIR", observations=obs
+            )
+            reverse = A.assemble_topology_admission(
+                g,
+                assessment_id="TA-PAIR",
+                observations=dict(reversed(list(obs.items()))),
+            )
+            self.assertEqual(M.canonical_json(forward), M.canonical_json(reverse))
+
+    def test_retained_precode_topology_replay(self):
+        def cut(value):
+            return {
+                "output_contract": value,
+                "independent_oracle": value,
+                "consumer_stable": value,
+                "risk_reduction": value,
+                "handoff_economy": value,
+            }
+
+        fixtures = [
+            {
+                "name": "#617 original Phase C",
+                "expected": "SPLIT",
+                "refs": ["Common#592"],
+                "basis": {
+                    "id": "RET-617",
+                    "proposal_kind": "LEAF",
+                    "responsibility_ids": ["P3-I-R2"],
+                    "semantic_cohesion": "MIXED",
+                    "dependency_closure": "OPEN",
+                    "verification_closure": "DEFERRED",
+                    "uncertainty": "MATERIAL",
+                    "change_impact": "CROSS_CUTTING",
+                    "execution_horizon": "LONG_OR_AMBIGUOUS",
+                    "mutation_domains": ["LOCAL_FILES", "GIT_HISTORY", "GITHUB_PR", "CI"],
+                    "recovery_radius": "MULTI_SURFACE",
+                    "handoff_cost": "MATERIAL",
+                    "cross_child_cohesion": "LOW",
+                    "stable_cut": cut(True),
+                    "source_refs": ["Common#651:DECOMPOSITION_FAILURE_CORPUS_V1:CASE_A_PRECODE"],
+                },
+            },
+            {
+                "name": "PR #624 original observation integration",
+                "expected": "SPLIT",
+                "refs": ["Common#592"],
+                "basis": {
+                    "id": "RET-624",
+                    "proposal_kind": "LEAF",
+                    "responsibility_ids": ["P3-I-R2"],
+                    "semantic_cohesion": "MIXED",
+                    "dependency_closure": "OPEN",
+                    "verification_closure": "DEFERRED",
+                    "uncertainty": "MATERIAL",
+                    "change_impact": "CROSS_CUTTING",
+                    "execution_horizon": "MULTI_STEP",
+                    "mutation_domains": ["LOCAL_FILES", "GIT_HISTORY", "GITHUB_PR"],
+                    "recovery_radius": "MULTI_SURFACE",
+                    "handoff_cost": "MATERIAL",
+                    "cross_child_cohesion": "LOW",
+                    "stable_cut": cut(True),
+                    "source_refs": ["Common#651:DECOMPOSITION_FAILURE_CORPUS_V1:CASE_B_PRECODE"],
+                },
+            },
+            {
+                "name": "#638 / PR #643 canonical condition contract",
+                "expected": "PASS",
+                "refs": ["Common#592"],
+                "basis": {
+                    "id": "RET-643",
+                    "proposal_kind": "LEAF",
+                    "responsibility_ids": ["P3-I-R2"],
+                    "semantic_cohesion": "COHESIVE",
+                    "dependency_closure": "CLOSED",
+                    "verification_closure": "CLOSED",
+                    "uncertainty": "LOW",
+                    "change_impact": "LOCAL",
+                    "execution_horizon": "SHORT",
+                    "mutation_domains": ["LOCAL_FILES"],
+                    "recovery_radius": "SMALL",
+                    "handoff_cost": "HIGH",
+                    "cross_child_cohesion": "LOW",
+                    "stable_cut": cut(False),
+                    "source_refs": ["Common#651:DECOMPOSITION_FAILURE_CORPUS_V1:CASE_C_PRECODE"],
+                },
+            },
+            {
+                "name": "#626 + #629 proposed horizontal split",
+                "expected": "MERGE",
+                "refs": ["Common#592", "Common#594"],
+                "basis": {
+                    "id": "RET-626-629",
+                    "proposal_kind": "ADJACENT_CHILDREN",
+                    "responsibility_ids": ["P3-I-R2", "RESP-594"],
+                    "semantic_cohesion": "COHESIVE",
+                    "dependency_closure": "CLOSED",
+                    "verification_closure": "CLOSED",
+                    "uncertainty": "LOW",
+                    "change_impact": "LOCAL",
+                    "execution_horizon": "MULTI_STEP",
+                    "mutation_domains": ["LOCAL_FILES", "GIT_HISTORY"],
+                    "recovery_radius": "MULTI_SURFACE",
+                    "handoff_cost": "HIGH",
+                    "cross_child_cohesion": "HIGH",
+                    "stable_cut": cut(False),
+                    "source_refs": ["Common#651:DECOMPOSITION_FAILURE_CORPUS_V1:CASE_D_PRECODE"],
+                },
+            },
+        ]
+
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            for fixture in fixtures:
+                with self.subTest(case=fixture["name"]):
+                    g = topology_assessment_planned()
+                    g["programme"]["topology_assessments"] = [fixture["basis"]]
+                    observations = self.observations(g, root, fixture["refs"])
+                    out = A.assemble_topology_admission(
+                        g,
+                        assessment_id=fixture["basis"]["id"],
+                        observations=observations,
+                    )
+                    self.assertEqual([], out["claim_topology"]["blockers"])
+                    self.assertEqual(fixture["expected"], out["decision"]["decision"])
+
+    def test_wrong_current_observation_payload_fails_closed(self):
+        g = topology_assessment_planned()
+        basis = O.repository_plan_basis(g, "Common#592")
+        malformed = {
+            "schema": O.SCHEMA,
+            "authority": "OBSERVED_REPOSITORY_BASIS",
+            "subject": "Common#592",
+            "plan_basis_digest": basis["digest"],
+            "change_impact": "LOCAL",
+        }
+        with self.assertRaises(A.AssemblyError):
+            A.assemble_topology_admission(
+                g, assessment_id="TA-LEAF", observations={"Common#592": malformed}
+            )
 
 
 class ClaimTopologyReport(unittest.TestCase):
