@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, authority, frozen_at, frozen_basis, target, blind_context, reality_context, accumulated_learning, generator_contract]
+required: [schema_version, authority, frozen_at, frozen_basis, target, blind_context, reality_context, accumulated_learning]
 properties:
   schema_version: {const: relay-v3.1-handover-context}
   authority: {const: DERIVED_HANDOVER_INPUT}
