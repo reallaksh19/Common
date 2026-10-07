@@ -14,6 +14,7 @@ import io
 import itertools
 import json
 import pathlib
+import subprocess
 import tempfile
 import unittest
 
@@ -28,6 +29,12 @@ decomposition_spec = importlib.util.spec_from_file_location("decomposition_class
 D = importlib.util.module_from_spec(decomposition_spec)
 assert decomposition_spec.loader
 decomposition_spec.loader.exec_module(D)
+
+OBSERVER_MODULE_PATH = MODULE_PATH.parents[1] / "scripts" / "decomposition_observer_v35.py"
+observer_spec = importlib.util.spec_from_file_location("decomposition_observer_v35", OBSERVER_MODULE_PATH)
+O = importlib.util.module_from_spec(observer_spec)
+assert observer_spec.loader
+observer_spec.loader.exec_module(O)
 
 try:  # PyYAML is only needed for the markdown-block and CLI-from-YAML paths
     import yaml  # noqa: F401
@@ -1550,6 +1557,172 @@ class DocumentedBehaviour(unittest.TestCase):
         self.assertEqual("🟢 [#527 › #588 › #592 → PR#593] R:P50/E50 · U03 · ACTIVE", out["nodes"]["Common#592"]["title_prefix"])
         self.assertEqual("🟢 [#527] Π:D28/E28 · F1 · ACTIVE", out["nodes"]["Common#527"]["title_prefix"])
 
+
+
+class DecompositionRepositoryObserverTests(unittest.TestCase):
+    def graph(self, *, surface=None, sibling_surface=None, boundaries=None):
+        return {
+            "nodes": [
+                {
+                    "ref": "Common#1",
+                    "kind": "LEAF",
+                    "write_surface": list(surface or ["pkg/"]),
+                    "transformation_boundaries": list(boundaries or ["PRODUCT_IMPLEMENTATION"]),
+                    "depends_on": [],
+                },
+                {
+                    "ref": "Common#2",
+                    "kind": "LEAF",
+                    "write_surface": list(sibling_surface or ["other/"]),
+                    "transformation_boundaries": ["PRODUCT_IMPLEMENTATION"],
+                    "depends_on": [],
+                },
+            ]
+        }
+
+    def init_repo(self, root, files):
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+        for name, content in files.items():
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+        return subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+
+    def commit(self, root, files, message="candidate"):
+        for name, content in files.items():
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", message], check=True)
+        return subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+
+    def test_large_surface_is_digest_count_and_bounded_sample(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            files = {f"pkg/f{i:02d}.py": str(i) for i in range(30)}
+            files["other/x.py"] = "x"
+            self.init_repo(root, files)
+            out = O.observe_repository_basis(
+                self.graph(), leaf_ref="Common#1", repo_root=root, sample_limit=3
+            )
+            entry = out["write_surface"]["entries"][0]
+            self.assertEqual("COMPLETE", out["write_surface"]["status"])
+            self.assertEqual(30, entry["matched_count"])
+            self.assertEqual(3, len(entry["sample"]))
+            self.assertEqual("LOCAL", out["path_impact"])
+            self.assertEqual("UNKNOWN", out["change_impact"])
+            self.assertEqual("UNAVAILABLE", out["static_dependency_visibility"])
+
+    def test_unresolved_surface_stays_unknown(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root, {"pkg/a.py": "a"})
+            out = O.observe_repository_basis(
+                self.graph(surface=["missing/"]), leaf_ref="Common#1", repo_root=root
+            )
+            self.assertEqual("UNRESOLVED", out["write_surface"]["status"])
+            self.assertEqual("UNKNOWN", out["path_impact"])
+            self.assertEqual("UNKNOWN", out["change_impact"])
+
+    def test_sibling_overlap_proves_cross_cutting(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root, {"pkg/a.py": "a", "other/x.py": "x"})
+            out = O.observe_repository_basis(
+                self.graph(sibling_surface=["pkg/a.py"]), leaf_ref="Common#1", repo_root=root
+            )
+            self.assertEqual([{"ref": "Common#2", "overlaps": ["pkg/a.py"]}], out["sibling_overlaps"])
+            self.assertEqual("CROSS_CUTTING", out["path_impact"])
+            self.assertEqual("CROSS_CUTTING", out["change_impact"])
+
+    def test_multiple_boundaries_are_multistage_not_automatic_semantic_split(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root, {"pkg/a.py": "a", "other/x.py": "x"})
+            out = O.observe_repository_basis(
+                self.graph(boundaries=["WIRE_SCHEMA", "ENGINE_VALIDATION"]),
+                leaf_ref="Common#1",
+                repo_root=root,
+            )
+            self.assertEqual("BOUNDED_MULTI_STAGE", out["path_impact"])
+            self.assertEqual("UNKNOWN", out["change_impact"])
+
+    def test_candidate_diff_outside_surface_is_cross_cutting(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            base = self.init_repo(root, {"pkg/a.py": "a", "other/x.py": "x"})
+            candidate = self.commit(root, {"pkg/a.py": "aa", "other/x.py": "xx"})
+            out = O.observe_repository_basis(
+                self.graph(),
+                leaf_ref="Common#1",
+                repo_root=root,
+                base_ref=base,
+                candidate_ref=candidate,
+            )
+            self.assertEqual("OBSERVED", out["candidate_diff"]["visibility"])
+            self.assertEqual(2, out["candidate_diff"]["changed_count"])
+            self.assertEqual(1, out["candidate_diff"]["outside_surface_count"])
+            self.assertEqual(["other/x.py"], out["candidate_diff"]["outside_sample"])
+            self.assertEqual("CROSS_CUTTING", out["change_impact"])
+
+    def test_invalid_git_ref_fails_closed(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            base = self.init_repo(root, {"pkg/a.py": "a"})
+            with self.assertRaises(O.ObservationError):
+                O.observe_repository_basis(
+                    self.graph(),
+                    leaf_ref="Common#1",
+                    repo_root=root,
+                    base_ref=base,
+                    candidate_ref="does-not-exist",
+                )
+
+    def test_diff_is_not_requested_without_both_refs(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root, {"pkg/a.py": "a"})
+            out = O.observe_repository_basis(self.graph(), leaf_ref="Common#1", repo_root=root)
+            self.assertEqual("NOT_REQUESTED", out["candidate_diff"]["visibility"])
+            with self.assertRaises(O.ObservationError):
+                O.observe_repository_basis(
+                    self.graph(), leaf_ref="Common#1", repo_root=root, base_ref="HEAD"
+                )
+
+
+@unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
+class DecompositionRepositoryObservationSchemaContract(unittest.TestCase):
+    def test_observer_output_matches_schema(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+            subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+            path = root / "pkg/a.py"
+            path.parent.mkdir(parents=True)
+            path.write_text("a", encoding="utf-8")
+            subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+            subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+            graph_value = {
+                "nodes": [
+                    {
+                        "ref": "Common#1",
+                        "kind": "LEAF",
+                        "write_surface": ["pkg/"],
+                        "transformation_boundaries": ["PRODUCT_IMPLEMENTATION"],
+                    }
+                ]
+            }
+            out = O.observe_repository_basis(graph_value, leaf_ref="Common#1", repo_root=root)
+            schema = yaml.safe_load(
+                (SCHEMAS / "delp-decomposition-repository-observation-v35.schema.yaml").read_text(encoding="utf-8")
+            )
+            self.assertEqual([], [e.message for e in jsonschema.Draft202012Validator(schema).iter_errors(out)])
 
 
 class BidirectionalDecompositionClassifier(unittest.TestCase):
