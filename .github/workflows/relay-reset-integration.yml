@@ -1,0 +1,24 @@
+name: relay-reset-crossmodule-integration
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/research-decision-integration-v1.*'
+      - '.github/workflows/relay-reset-integration.yml'
+permissions:
+  contents: read
+jobs:
+  integration-node:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22','24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Test actual R1 modules and source trust boundaries
+        run: node --test skills/engineering-relay-v1/research-decision-integration-v1.test.mjs
