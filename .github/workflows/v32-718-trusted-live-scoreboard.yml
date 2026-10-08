@@ -5,6 +5,11 @@ name: v32-718-trusted-live-scoreboard
 on:
   pull_request_target:
     types: [opened, reopened, synchronize, ready_for_review, edited]
+  # Task evidence can arrive after the bound PR has merged. This is a
+  # trigger only; fresh provider ledger controls facts, and managed
+  # LIVE_STATUS comments must be denied to prevent a write loop.
+  issue_comment:
+    types: [created, edited, deleted]
   workflow_dispatch:
     inputs:
       pr_number:
