@@ -7,7 +7,12 @@ DERIVED_OBSERVATION_ONLY, never engineering acceptance or merge authority.
 """
 from __future__ import annotations
 
+import argparse
+import json
+import os
 import re
+import subprocess
+from pathlib import Path
 from collections.abc import Mapping
 from typing import Any
 
@@ -189,3 +194,85 @@ def assess(contract: dict, provider: object) -> dict:
         "UNKNOWN" if "UNKNOWN" in statuses else "PROVEN"
     )
     return result
+
+class GhReadOnlyProvider:
+    """Authenticated GET-only GitHub observer.
+
+    Requires gh CLI credentials from GH_TOKEN or GITHUB_TOKEN. Secrets are
+    inherited through the process environment; never appear in argv or output.
+    Reads fail closed. No provider API can mutate issues, PRs or the repository.
+    """
+
+    def __init__(self, *, timeout: int = 30) -> None:
+        if not (os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")):
+            raise RuntimeError("authenticated GitHub token required for source observation")
+        self.timeout = timeout
+
+    def _read(self, endpoint: str, *, raw: bool = False) -> Any:
+        if (not endpoint.startswith("/repos/") or ".." in endpoint
+                or any(ch in endpoint for ch in ("\\", "\n", "\r", " "))):
+            raise ValueError("invalid GitHub read path")
+        operation = subprocess.run(
+            ["gh", "api", "--method", "GET", endpoint],
+            capture_output=True, check=False, timeout=self.timeout,
+        )
+        if operation.returncode != 0 or len(operation.stdout) > 8_000_000:
+            raise RuntimeError("GitHub provider read failed or exceeded limit")
+        if raw:
+            return operation.stdout.decode("utf-8")
+        return json.loads(operation.stdout)
+
+    def get_pull(self, repo: str, number: int) -> Any:
+        return self._read(f"/repos/{repo}/pulls/{number}")
+
+    def list_runs(self, repo: str, sha: str) -> Any:
+        result = self._read(f"/repos/{repo}/actions/runs?head_sha={sha}&per_page=100")
+        if not isinstance(result, Mapping):
+            return None
+        items = result.get("workflow_runs")
+        count = result.get("total_count")
+        # A truncated page must never certify a required test's absence.
+        if not isinstance(items, list) or type(count) is not int or count > len(items):
+            return None
+        return items
+
+    def list_jobs(self, repo: str, run_id: int) -> Any:
+        result = self._read(f"/repos/{repo}/actions/runs/{run_id}/jobs?per_page=100")
+        if not isinstance(result, Mapping):
+            return None
+        items = result.get("jobs")
+        count = result.get("total_count")
+        if not isinstance(items, list) or type(count) is not int or count > len(items):
+            return None
+        return items
+
+    def get_job_log(self, repo: str, job_id: int) -> str | None:
+        # gh api follows the time-limited Actions log redirect. Its returned
+        # text is evidence of output observed in this job, not a formal oracle
+        # proving the product is semantically correct.
+        return self._read(f"/repos/{repo}/actions/jobs/{job_id}/logs", raw=True)
+
+    def get_tree(self, repo: str, sha: str) -> Any:
+        # GitHub Git Trees API expects the tree object SHA, not commit SHA.
+        commit = self._read(f"/repos/{repo}/git/commits/{sha}")
+        tree = commit.get("tree") if isinstance(commit, Mapping) else None
+        tree_sha = tree.get("sha") if isinstance(tree, Mapping) else None
+        if not isinstance(tree_sha, str) or not SHA.fullmatch(tree_sha):
+            return None
+        return self._read(f"/repos/{repo}/git/trees/{tree_sha}?recursive=1")
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--contract", type=Path, required=True,
+                        help="JSON containing declared obligations, not asserted results")
+    args = parser.parse_args(argv)
+    source = json.loads(args.contract.read_text(encoding="utf-8"))
+    # No stdout claims of success without actual authenticated provider reads.
+    outcome = assess(source, GhReadOnlyProvider())
+    print(json.dumps(outcome, indent=2, sort_keys=True))
+    return 0 if outcome["overall"] == "PROVEN" else 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
