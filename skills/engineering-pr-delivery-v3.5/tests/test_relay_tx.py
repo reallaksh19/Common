@@ -363,7 +363,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
 
     def test_isolated_idle_fixture_admits_604_without_touching_root_438(self):
         """M1b: synthetic IDLE admission feasibility, NOT fresh-genesis authority."""
-        repo_root = ROOT.parents[2]
+        repo_root = ROOT.parents[1]
         retained = [
             repo_root / "relay/STATE.yaml",
             repo_root / "relay/LEASES/LEASE.438.7.yaml",
