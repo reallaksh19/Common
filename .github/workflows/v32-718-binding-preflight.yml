@@ -9,6 +9,8 @@ on:
 
 permissions:
   contents: read
+  issues: read
+  pull-requests: read
 
 jobs:
   bound-release:
@@ -18,7 +20,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Revalidate exact V3.2 release and two provider bindings
+      - name: Install checkpoint-fact parser dependency
+        run: python -m pip install --disable-pip-version-check PyYAML
+      - name: Revalidate exact V3.2 release and three provider bindings
         shell: bash
         run: |
           set -euo pipefail
@@ -37,20 +41,54 @@ jobs:
           assert report['release_state'] == 'RELEASEABLE', report
           assert report['summary']['evaluated'] == 6, report
           assert report['summary']['not_releasable'] == 0, report
-          assert graph['nodes'][0]['reserve_weight'] == 55, graph
-          assert {(b['responsibility_id'], b['ref']) for b in proposal['bindings']} == {('R-BASIS','Common#720'),('R-PROOF','Common#724')}
-          assert {n['ref'] for n in graph['nodes']} == {'Common#718','Common#720','Common#724'}
+          assert graph['nodes'][0]['reserve_weight'] == 35, graph
+          assert {(b['responsibility_id'], b['ref']) for b in proposal['bindings']} == {('R-BASIS','Common#720'),('R-PROOF','Common#724'),('R-PROJECTION','Common#733')}
+          assert {n['ref'] for n in graph['nodes']} == {'Common#718','Common#720','Common#724','Common#733'}
           path = Path('skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py')
           spec = importlib.util.spec_from_file_location('delp718', path)
           mod = importlib.util.module_from_spec(spec)
           assert spec and spec.loader
           spec.loader.exec_module(mod)
           projected = mod.project(graph, [], {})
-          for ref in ['Common#720', 'Common#724']:
+          for ref in ['Common#720', 'Common#724', 'Common#733']:
               assert projected['nodes'][ref]['plan']['releasable'], projected['nodes'][ref]['plan']
           print('V32_718_BOUND_RELEASE=PASS')
           print('V32_718_PROPOSAL_DIGEST='+report['proposal_digest'])
-          print('V32_718_MATERIALIZED=R-BASIS:R-PROOF')
-          print('V32_718_RESERVE=55')
+          print('V32_718_MATERIALIZED=R-BASIS:R-PROOF:R-PROJECTION')
+          print('V32_718_RESERVE=35')
           print('V32_718_PLAN_JOIN=PASS')
+          PY
+
+      - name: Actual source-bound PR material (read-only dry-run)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import importlib.util
+          import json
+          from pathlib import Path
+          script = Path('skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py')
+          spec = importlib.util.spec_from_file_location('delp733_material', script)
+          assert spec and spec.loader
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          graph = json.loads(Path('.github/v32-evidence-spine/718-proposal-v2.json').read_text())
+          transport = module.GhTransport('reallaksh19/Common')
+          observation = module.observe_github(transport, graph)
+          assert observation['Common#720']['candidate_sha'] == 'b3dfba3becf829d3a4e21d6eaa54983f05317b65', observation
+          assert observation['Common#724']['candidate_sha'] == '7ef9fbdd0c6f0f941fd573c1663c7a142fc41414', observation
+          assert observation['Common#720']['pr_state'] == 'MERGED', observation
+          assert observation['Common#724']['pr_state'] == 'MERGED', observation
+          assert 'Common#733' not in observation, observation
+          preview = module.plan_github(transport, graph)
+          assert preview['input_digest'].startswith('sha256:'), preview
+          assert 'Common#733' in preview['expected_titles'], preview
+          print('V32_733_REAL_PR_SOURCE_BINDING=PASS')
+          print('V32_733_PROVIDER_LEAVES=Common#720:Common#724')
+          print('V32_733_DRY_RUN_INPUT_DIGEST=' + preview['input_digest'])
+          print('V32_733_DRY_RUN_WOULD_WRITE_TITLES=' + str(preview['would_write_titles']))
+          print('V32_733_DRY_RUN_REJECTED_FACTS=' + str(len(preview['rejected_facts'])))
+          print('V32_733_NO_MUTATION=PASS')
           PY
