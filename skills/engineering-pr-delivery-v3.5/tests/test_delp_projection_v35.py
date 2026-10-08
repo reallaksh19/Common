@@ -6902,6 +6902,18 @@ class CustodyFenceSemanticQualification(unittest.TestCase):
         self.assertEqual(SHA_B, material_changed["nodes"]["Common#592"]["material"]["candidate_sha"])
         self.assertEqual("STALE_CANDIDATE", material_changed["nodes"]["Common#592"]["evidence"]["health"])
 
+    def test_multiple_post_fence_blocks_in_one_comment_preserve_audit_and_unique_source(self):
+        first = self.row("same-comment", 1, ["U01"], epoch=7, updated="2026-10-07T10:02:00Z")
+        second = self.row("same-comment", 2, ["U02"], epoch=7, updated="2026-10-07T10:02:00Z")
+        result = self.projected([first, second])
+        leaf = result["nodes"]["Common#592"]
+        self.assertEqual(["same-comment", "same-comment"], [x["source"] for x in result["fenced_facts"]])
+        self.assertEqual(2, leaf["custody_fence"]["fenced_fact_count"])
+        self.assertEqual(["same-comment"], leaf["custody_fence"]["fenced_sources"])
+        status = M.status_document(leaf, version=0, digest=result["input_digest"], programme=result["programme"])
+        if HAVE_YAML and HAVE_JSONSCHEMA:
+            self.assertEqual([], SchemasAgreeWithTheEngine().schema_errors("live-status", status))
+
     def test_fence_is_derived_live_status_not_recover_custody_authority(self):
         old_late = self.row("late", 1, ["U01"], epoch=7, updated="2026-10-07T10:02:00Z")
         projection = self.projected([old_late])
