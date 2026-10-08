@@ -1,0 +1,24 @@
+name: relay-reset-native-grant-witness
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/native-grant-witness-v1.*'
+      - '.github/workflows/relay-reset-native-grant-witness.yml'
+permissions:
+  contents: read
+jobs:
+  witness-node:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22','24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Test pinned two-source facts with mocked transport only
+        run: node --test skills/engineering-relay-v1/native-grant-witness-v1.test.mjs
