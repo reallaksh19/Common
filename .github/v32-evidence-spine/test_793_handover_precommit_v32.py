@@ -16,6 +16,8 @@ SCRIPTS = ROOT / "skills/engineering-pr-delivery-v3.2/scripts"
 sys.path.insert(0, str(SCRIPTS))
 import delp_projection_v32 as delp  # noqa: E402
 import handover_context as legacy  # noqa: E402
+import qualification_observation_v32 as qualifier  # noqa: E402
+import pr_responsibility_view_v32 as read_view  # noqa: E402
 
 GOLDEN = HERE / "793-handover-golden-v1.json"
 GRAPH = HERE / "718-proposal-v2.json"
@@ -79,16 +81,52 @@ class HandoverPrecommit(unittest.TestCase):
             self.assertNotEqual("COMPLETE", view["nodes"][ref]["state"])
         self.assertEqual("UNREPORTED", self.cases["H05"]["expected"]["evidence"])
 
-    def test_06_pr_title_can_disagree_with_provider_lifecycle(self):
+    def test_06_provider_merged_overrides_stale_draft_description(self):
         expected = self.cases["H06"]["expected"]
-        self.assertEqual("MERGED", expected["provider_lifecycle"])
-        self.assertEqual("DRIFT", expected["title_integrity"])
-        self.assertEqual("RECONCILE", expected["handover_state"])
+        # The real issue/PR renderer detects managed-content drift; the real
+        # legacy successor only uses the explicitly supplied provider state,
+        # not the outdated human-controlled DRAFT string.
+        source = read_view.START + "\\n- Candidate: MERGED\\n" + read_view.END
+        observed = read_view.START + "\\n- Candidate: DRAFT\\n" + read_view.END
+        self.assertEqual(expected["title_integrity"],
+                         read_view.inspect_managed_block(observed, source, pr=True))
+        ctx = {"target": {"state": "MERGED", "provider_ref": "Common#740"},
+               "reality_context": {"material": {}, "execution": {}},
+               "accumulated_learning": {"what_remains_uncertain": ["stale draft title"]}}
+        successor = legacy._successor_entry(ctx, 1)
+        self.assertEqual("TERMINAL_TARGET_REQUIRES_RECONCILIATION",
+                         successor["challenge_basis"]["freshness"])
+        self.assertEqual(expected["provider_lifecycle"], successor["challenge_basis"]["target_state"])
+        self.assertIn("PRODUCTION_MUTATION", successor["forbidden_actions"])
+        self.assertEqual(expected["handover_state"], "RECONCILE")
 
-    def test_07_unadjudicated_verdict_grants_no_execution(self):
-        self.assertEqual("UNPROVEN", self.cases["H07"]["expected"]["qualification"])
+    def test_07_forged_green_run_without_required_case_remains_unproven(self):
+        sha = "b" * 40
+        case = "tests.case.TestBounded.test_required"
+        contract = {
+            "schema": qualifier.INPUT_SCHEMA, "repository": "reallaksh19/Common",
+            "responsibility": "Common#793", "pull_number": 798,
+            "candidate_sha": sha, "requirements": [{
+                "id": "H07-REQUIRED", "kind": "UNITTEST", "case_id": case,
+                "job_name": "required source", "step_name": "Execute required case"
+            }]
+        }
+        class GreenButWrongCase:
+            def get_pull(self, repo, number):
+                return {"head": {"sha": sha}}
+            def list_runs(self, repo, head):
+                return [{"head_sha": sha, "status": "completed", "conclusion": "success", "id": 17}]
+            def list_jobs(self, repo, run_id):
+                return [{"name": "required source", "status": "completed",
+                         "conclusion": "success", "id": 19, "steps": [
+                             {"name": "Execute required case", "status": "completed",
+                              "conclusion": "success"}]}]
+            def get_job_log(self, repo, job_id):
+                return "test_wrong_case (tests.case.TestBounded.test_wrong_case) ... ok"
+        actual = qualifier.assess(contract, GreenButWrongCase())
+        self.assertEqual(self.cases["H07"]["expected"]["qualification"], actual["overall"])
+        self.assertEqual("UNPROVEN", actual["requirements"][0]["status"])
         self.assertFalse(self.cases["H07"]["expected"]["admit_execution"])
-        self.assertEqual("UNREPORTED", self.oracle["baseline"]["accepted_machine_facts"])
 
     def test_08_legacy_successor_source_does_not_bind_delp_digest(self):
         ctx = {
@@ -107,17 +145,44 @@ class HandoverPrecommit(unittest.TestCase):
         self.assertNotIn("delp_input_digest", handover)
         self.assertEqual("FAIL_CLOSED_UNIMPLEMENTED", self.cases["H08"]["expected"]["integration_gate"])
 
-    def test_09_no_mutation_or_owner_authority_from_golden(self):
+    def test_09_real_source_projection_and_successor_do_not_grant_authority(self):
         e = self.cases["H09"]["expected"]
+        original = copy.deepcopy(self.graph)
+        projected = delp.project(self.graph, [], {})
+        admission = delp.admit(projected, self.oracle["child"], command="continue")
+        handover_input = {
+            "target": {"state": "DRAFT", "provider_ref": "Common#794"},
+            "reality_context": {"material": {}, "execution": {}},
+            "accumulated_learning": {"first_successor_action": "Review source"}
+        }
+        snapshot = copy.deepcopy(handover_input)
+        successor = legacy._successor_entry(handover_input, 1)
+        self.assertEqual(original, self.graph, "pure DELP mutated graph")
+        self.assertEqual(snapshot, handover_input, "successor source mutated context")
+        self.assertEqual([], admission["authority_effects"])
+        self.assertEqual("OWNER_EXPLICIT_EXECUTION_ADMISSION", successor["execution_admission"])
+        for forbidden in ("PR_CREATION", "PRODUCTION_MUTATION", "TASK_EXECUTION"):
+            self.assertIn(forbidden, successor["forbidden_actions"])
         self.assertEqual(0, e["github_writes"])
         self.assertEqual("NOT_GRANTED", e["owner_merge_authority"])
         self.assertEqual("NOT_TRANSFERRED", e["handover_custody"])
-        self.assertEqual("NO_FROZEN_V32_CODE_NO_GITHUB_WRITE_NO_ACCEPTANCE_FROM_ORACLE",
-                         self.oracle["publication_boundary"])
 
-    def test_10_cold_successor_entry_remains_unqualified(self):
+    def test_10_real_parent_child_pr_entry_stays_reconstruction_only(self):
         e = self.cases["H10"]["expected"]
-        self.assertEqual(["PARENT","CHILD","PR"], e["entry_views"])
+        expected = [("PARENT", "Common#718"), ("CHILD", "Common#793"), ("PR", "Common#798")]
+        self.assertEqual(e["entry_views"], [k for k, _ in expected])
+        for kind, ref in expected:
+            ctx = {
+                "target": {"state": "DRAFT" if kind == "PR" else "OPEN", "provider_ref": ref},
+                "reality_context": {"material": {}, "execution": {}},
+                "accumulated_learning": {"what_remains_uncertain": ["provider check not performed"]},
+            }
+            entry = legacy._successor_entry(ctx, 1)
+            self.assertEqual("RECONSTRUCT_PLAN_ONLY", entry["mode"])
+            self.assertEqual("OWNER_EXPLICIT_EXECUTION_ADMISSION", entry["execution_admission"])
+            self.assertNotIn("delp_input_digest", entry)
+            self.assertTrue(entry["successor_reconstruction_challenge"])
+            self.assertIn("TASK_EXECUTION", entry["forbidden_actions"])
         self.assertTrue(e["same_source_digest_required"])
         self.assertTrue(e["current_provider_recheck_required"])
         self.assertEqual("NOT_YET_TESTED", e["acceptance"])
