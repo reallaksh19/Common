@@ -1,0 +1,71 @@
+{
+  "schema": "relay-cold-synthetic-manifest-v1",
+  "repository": "reallaksh19/Common",
+  "parent_issue": 787,
+  "trust": "SYNTHETIC_PRODUCER_ASSERTED_NOT_OWNER_AUTHENTICATED",
+  "source_template": {
+    "path": "skills/engineering-relay-v1/fixtures/b2a-synthetic-journal-v1.json",
+    "source_sha": "28841b5cfed9e9b6057a1a6f09090adcc512e1b8",
+    "bundle_sha256": "79c2bc0b84f23a862e3ce7cef300c1b2dd1c4b90d00a448a8f1a269d1ddb0e9d",
+    "tip_sha256": "3077376e2d5fe849de1450d9f2cc8e6d350742dc0d98969a36e778000d052660"
+  },
+  "provider_scope_template": {
+    "child_issues": [
+      847
+    ],
+    "workflow_paths": [
+      ".github/workflows/relay-reset-cold-process.yml"
+    ]
+  },
+  "owner_seed": {
+    "schema": "relay-provenance-v1",
+    "parent_issue": "reallaksh19/Common#787",
+    "owner_intents": [
+      {
+        "id": "OI-1",
+        "raw_text": "SYNTHETIC OWNER REQUEST: verify immutable GitHub content; not a real chat",
+        "original_source": {
+          "kind": "CHAT",
+          "status": "UNKNOWN",
+          "locator": null
+        },
+        "first_durable_mirror": "https://github.com/reallaksh19/Common/issues/787"
+      }
+    ],
+    "claims": [
+      {
+        "id": "AC3",
+        "intent_ids": [
+          "OI-1"
+        ],
+        "criterion": "SYNTHETIC intent to module evidence trace"
+      }
+    ],
+    "responsibilities": [
+      {
+        "id": "R2-B2A",
+        "claim_ids": [
+          "AC3"
+        ],
+        "depends_on": [],
+        "scope": "Synthetic native custody and trace",
+        "write_surface": [
+          "skills/engineering-relay-v1/github-journal-lineage-v1.mjs"
+        ]
+      }
+    ],
+    "sessions": [],
+    "task_evidence": [],
+    "research_findings": [],
+    "owner_decisions": []
+  },
+  "bindings": [
+    {
+      "event_id": "EV-1",
+      "intent_id": "OI-1"
+    }
+  ],
+  "authorization_granted": false,
+  "independently_accepted": false,
+  "live_writer_enabled": false
+}
