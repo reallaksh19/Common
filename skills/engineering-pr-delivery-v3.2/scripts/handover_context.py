@@ -213,6 +213,20 @@ def build_delp_source_bound_successor(
         if (issue_before != issue_after or observed_before != observed_after
                 or facts != facts_after):
             raise HandoverContextError("SOURCE_PROVIDER_CHANGED_DURING_READ")
+        # DELP's general projection deliberately tolerates an absent provider
+        # head (UNREPORTED is valid for dashboards). A *successor handover*
+        # must not reinterpret that missing evidence as CURRENT_READ_ONLY.
+        # Check only the selected leaf: unrelated future leaves may legitimately
+        # be unmaterialized and must not invalidate this leaf's reconstruction.
+        observed_leaf = observed_after.get(leaf_ref) or {}
+        candidate_sha = observed_leaf.get("candidate_sha")
+        if not isinstance(candidate_sha, str) or not re.fullmatch(r"[0-9a-f]{40}", candidate_sha):
+            raise HandoverContextError("SOURCE_CANDIDATE_SHA_UNVERIFIED")
+        base_sha = observed_leaf.get("base_sha")
+        if not isinstance(base_sha, str) or not re.fullmatch(r"[0-9a-f]{40}", base_sha):
+            raise HandoverContextError("SOURCE_BASE_SHA_UNVERIFIED")
+        if leaf_material.get("primary_pr") and observed_leaf.get("pr_state") not in {"OPEN", "CLOSED", "MERGED"}:
+            raise HandoverContextError("SOURCE_PR_STATE_UNVERIFIED")
         projection = delp.project(graph, facts, observed_after)
         leaf = projection["nodes"][leaf_ref]
         admission = delp.admit(projection, leaf_ref, command="continue")
