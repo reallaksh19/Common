@@ -378,13 +378,69 @@
             "R-QUALITY"
           ]
         }
+      ],
+      "released_proposal_digest": "sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd",
+      "bindings": [
+        {
+          "responsibility_id": "R-BASIS",
+          "ref": "Common#720"
+        }
       ]
     }
   },
   "nodes": [
     {
       "ref": "Common#718",
-      "kind": "ROOT"
+      "kind": "ROOT",
+      "reserve_weight": 80
+    },
+    {
+      "ref": "Common#720",
+      "kind": "LEAF",
+      "parent": "Common#718",
+      "weight": 20,
+      "responsibility_id": "R-BASIS",
+      "work_class": "PRODUCT",
+      "owns_claims": [
+        "ESC-1"
+      ],
+      "outcome": "One released acceptance contract uniquely identifies its responsible owner, exact obligations, and current material binding without relying on titles or prose.",
+      "independence_basis": "This contract can be accepted or rejected from parent-claim allocation, frozen digest and provider identity before any qualification or status view exists.",
+      "size_budget": {
+        "target_loc": 450,
+        "hard_loc": 1000,
+        "target_minutes": 15,
+        "hard_minutes": 20
+      },
+      "write_surface": [
+        "skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py",
+        "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_basis_reconciliation.py"
+      ],
+      "acceptance_methods": [
+        "Adversarial source-bound replay of ESC-1 including one clean and one mismatched case",
+        "Recompute outcome at exact candidate and confirm rejection of unavailable or out-of-scope truth"
+      ],
+      "depends_on": [],
+      "units": [
+        {
+          "id": "BASIS-IDENTITY",
+          "weight": 34,
+          "outcome": "A programme's acceptance obligations are traceable to one immutable responsibility identity and release.",
+          "verify": "Parent/contract/provider identity conservation oracle"
+        },
+        {
+          "id": "BASIS-CONSERVATION",
+          "weight": 33,
+          "outcome": "A changed claim, unit or bound provider reference cannot silently retain the preceding contract's authority.",
+          "verify": "Mutated-plan and old-digest rejection oracle"
+        },
+        {
+          "id": "BASIS-UNKNOWN",
+          "weight": 33,
+          "outcome": "A missing or stale canonical plan is surfaced as an explicit unresolved source rather than a fabricated percentage.",
+          "verify": "No-plan and stale-release negative controls"
+        }
+      ]
     }
   ]
 }
