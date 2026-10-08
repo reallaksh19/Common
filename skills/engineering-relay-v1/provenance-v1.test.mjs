@@ -192,3 +192,15 @@ test('canonicalJSON handles repeated non-cyclic objects but rejects sparse array
   const sparse=Array(2);sparse[0]='x';
   assert.throws(()=>canonicalJSON(sparse),ProvenanceError);
 });
+
+test('canonicalJSON rejects an array accessor without evaluating it',()=>{
+  let invoked=false;
+  const array=[1];
+  Object.defineProperty(array,'0',{enumerable:true,configurable:true,get(){invoked=true;return 5;}});
+  assert.throws(()=>canonicalJSON(array),ProvenanceError);
+  assert.equal(invoked,false);
+});
+test('canonicalJSON rejects non-finite numeric facts',()=>{
+  assert.throws(()=>canonicalJSON({progress:NaN}),ProvenanceError);
+  assert.throws(()=>canonicalJSON({progress:Infinity}),ProvenanceError);
+});
