@@ -1,0 +1,29 @@
+name: relay-reset-github-r1-lineage-integration
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/github-journal-lineage-v1.*'
+      - 'skills/engineering-relay-v1/github-bundle-custody-v1.mjs'
+      - 'skills/engineering-relay-v1/journal-provenance-bridge-v1.mjs'
+      - '.github/workflows/relay-reset-github-r1-lineage-integration.yml'
+permissions:
+  contents: read
+jobs:
+  native-r1-lineage:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22','24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Native GitHub immutable read and real R2-B1 → R1 lineage
+        env:
+          RELAY_G2C_CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RELAY_G2C_TOKEN: ${{ github.token }}
+        run: node --test skills/engineering-relay-v1/github-journal-lineage-v1.test.mjs
