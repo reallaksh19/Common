@@ -1,0 +1,112 @@
+name: V32 R-PROOF authenticated evidence preflight
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/v32-718-r-proof-authenticated-preflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+
+jobs:
+  authenticated-history:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Diagnose the three required GitHub read endpoints
+        shell: bash
+        run: |
+          python - <<'PY'
+          import subprocess
+          endpoints = [
+              "/repos/reallaksh19/Common/actions/runs?head_sha=b3dfba3becf829d3a4e21d6eaa54983f05317b65&per_page=100",
+              "/repos/reallaksh19/Common/actions/runs/37714447424/jobs?per_page=100",
+              "/repos/reallaksh19/Common/actions/jobs/113107608935/logs",
+          ]
+          for endpoint in endpoints:
+              p = subprocess.run(["gh", "api", "--method", "GET", endpoint], capture_output=True, timeout=40)
+              # Do not expose access tokens, response bodies, or full CLI traces.
+              print("READ_ENDPOINT=" + endpoint.split("?")[0] +
+                    " RETURN_CODE=" + str(p.returncode) +
+                    " BYTES=" + str(len(p.stdout)) +
+                    " ERR_PREFIX=" + p.stderr.decode("utf-8", errors="replace")[:110].replace("\\n", " "))
+          PY
+      - name: Exercise actual GitHub read-only adapter on retained history
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          script = Path('skills/engineering-pr-delivery-v3.2/scripts/qualification_observation_v32.py')
+          base = {
+              "schema": "relay-v3.2-qualification-contract-v1",
+              "repository": "reallaksh19/Common",
+              "responsibility": "Common#724",
+          }
+          contracts = {
+              "POSITIVE_REAL_722": {
+                  **base, "pull_number": 722,
+                  "candidate_sha": "b3dfba3becf829d3a4e21d6eaa54983f05317b65",
+                  "requirements": [
+                      {"id": "EXECUTED-NAMED-TEST", "kind": "UNITTEST",
+                       "case_id": "test_continuity_v32_basis_reconciliation.ProgressiveClaimFirstBinding.test_partial_releaseable_proposal_keeps_the_first_leaf_releasable",
+                       "job_name": "validate-v3-2-candidate",
+                       "step_name": "Run V3.2 continuity regressions"},
+                      {"id": "QUALIFIED-BLOB", "kind": "BLOB",
+                       "path": "skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py",
+                       "expected_blob_sha": "d1f71b18733d9ffc833e91b12cd0792d3ad2bed2"},
+                  ]
+              },
+              "NEGATIVE_REAL_715_UNDISCOVERED": {
+                  **base, "pull_number": 715,
+                  "candidate_sha": "51ca8ca68ce2578ef58e5583844c49be3f04b57f",
+                  "requirements": [
+                      {"id": "UNEXECUTED-RETAINED-CASE", "kind": "UNITTEST",
+                       "case_id": "test_agent_health_retained_replay_v32.AgentHealthRetainedReplay.test_clean_control_chain_is_stable_none_and_fully_traceable",
+                       "job_name": "validate-v3-2-candidate",
+                       "step_name": "Run V3.2 continuity regressions"},
+                  ]
+              },
+              "NEGATIVE_MOVED_HEAD": {
+                  **base, "pull_number": 722,
+                  "candidate_sha": "0000000000000000000000000000000000000000",
+                  "requirements": [
+                      {"id": "WRONG-HEAD", "kind": "UNITTEST",
+                       "case_id": "test_continuity_v32_basis_reconciliation.ProgressiveClaimFirstBinding.test_partial_releaseable_proposal_keeps_the_first_leaf_releasable",
+                       "job_name": "validate-v3-2-candidate",
+                       "step_name": "Run V3.2 continuity regressions"},
+                  ]
+              }
+          }
+          for name, contract in contracts.items():
+              file = Path('/tmp/qual-' + name + '.json')
+              file.write_text(json.dumps(contract), encoding='utf-8')
+              proc = subprocess.run(
+                  [sys.executable, str(script), '--contract', str(file)],
+                  capture_output=True, text=True, timeout=170, env=os.environ.copy()
+              )
+              if not proc.stdout.strip():
+                  print(name + ' NO_JSON_OUTPUT; stderr excerpt=' + proc.stderr[:500])
+                  raise AssertionError('authenticated provider did not return an observation')
+              result = json.loads(proc.stdout)
+              print(name + ' ' + result['overall'] + ' ' +
+                    repr([(row['id'], row['status'], row['reason']) for row in result['requirements']]))
+              expected = 'PROVEN' if name == 'POSITIVE_REAL_722' else 'UNPROVEN'
+              assert result['overall'] == expected, (name, result)
+              assert proc.returncode == (0 if expected == 'PROVEN' else 2), (name, proc.returncode)
+              assert result['authority'] == 'DERIVED_OBSERVATION_ONLY'
+          print('R_PROOF_AUTHENTICATED_PROVIDER_REPLAY=PASS')
+          PY
