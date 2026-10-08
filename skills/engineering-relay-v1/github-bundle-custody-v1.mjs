@@ -95,14 +95,18 @@ function decodedBlob(p,spec,bound) {
  * committed provider bytes, NOT human authorship or an independent trust root.
  */
 export async function readCommittedPortableJournal(rawSpec,options={}) {
-  const spec=JSON.parse(JSON.stringify(rawSpec));
-  fields(options,Object.hasOwn(options,'fetchImpl')?['fetchImpl','readToken']:['readToken'],'options');
+  let spec;
+  try{spec=JSON.parse(canonicalJSON(rawSpec));}
+  catch{fail('INVALID','source specification contains unsafe JSON');}
+  if(!options||typeof options!=='object'||Array.isArray(options)||
+     Object.keys(options).some(k=>!['fetchImpl','readToken'].includes(k)))
+    fail('INVALID','unexpected read-only options');
   const bound=checked(spec);
   const injected=Object.hasOwn(options,'fetchImpl');
   const fetcher=injected?options.fetchImpl:globalThis.fetch;
   if(typeof fetcher!=='function')fail('UNKNOWN','HTTPS fetch unavailable');
   if(options.readToken!==undefined && (typeof options.readToken!=='string'||
-     !/^[A-Za-z0-9_+-]{1,300}$/.test(options.readToken)))fail('INVALID','invalid read-token form');
+     !/^[\x21-\x7e]{1,400}$/.test(options.readToken)))fail('INVALID','invalid read-token form');
   const headers={Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',
     'User-Agent':'relay-reset-b2a-custody-readonly'};
   if(options.readToken)headers.Authorization='Bearer '+options.readToken;
