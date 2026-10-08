@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -19,6 +20,7 @@ from typing import Any, Mapping
 import delp_projection_v35 as DELP
 import integration_read_model_v35 as R2
 import integration_scoreboard_v35 as R3
+import integration_scoreboard_events_v35 as EVENTS
 
 
 class PublishError(ValueError):
@@ -295,12 +297,26 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--apply", action="store_true", help="MUTATES: requires graph digest + source approval receipt")
     ap.add_argument("--expected-graph-digest", help="Graph digest independently approved by Owner/Coordinator")
     ap.add_argument("--approval-ref", help="Scoped approved source comment permalink; operator must verify it")
+    ap.add_argument("--event-name", help="GitHub event name; optional explicit event selection")
+    ap.add_argument("--event-payload", type=Path, help="GitHub event JSON; never accepted as authority")
+    ap.add_argument("--event-actor", help="GitHub actor for comment-loop suppression")
     args = ap.parse_args(argv)
     try:
         import yaml
         graph = yaml.safe_load(args.graph.read_text(encoding="utf-8"))
         origin = yaml.safe_load(args.owner_origin.read_text(encoding="utf-8")) if args.owner_origin else None
         transport = ScoreboardTransport(args.repository)
+        if args.event_name or args.event_payload:
+            if not (args.event_name and args.event_payload):
+                raise PublishError("--event-name and --event-payload must be supplied together")
+            selection = EVENTS.event_scope(
+                graph, args.responsibility, args.pr, args.event_name,
+                json.loads(args.event_payload.read_text(encoding="utf-8")),
+                args.event_actor or os.environ.get("GITHUB_ACTOR"),
+            )
+            if selection["decision"] != "SELECT":
+                print(json.dumps({"status": "EVENT_SKIPPED_NO_MUTATION", "selection": selection}))
+                return 0
         if args.apply:
             result = publish(
                 transport, graph, args.responsibility, args.pr,
@@ -311,7 +327,7 @@ def main(argv: list[str] | None = None) -> int:
             result = plan(transport, graph, args.responsibility, args.pr, owner_origin=origin)
         print(json.dumps(result, sort_keys=True, indent=2))
         return 0
-    except (DELP.DelpError, R2.ReadModelError, R3.ScoreboardError, PublishError, OSError, ValueError) as exc:
+    except (DELP.DelpError, R2.ReadModelError, R3.ScoreboardError, EVENTS.EventError, PublishError, OSError, ValueError) as exc:
         print(f"V3.5 scoreboard sync rejected: {exc}", file=sys.stderr)
         return 2
 
