@@ -28,12 +28,16 @@ for(const [name,change] of [
  ['wrong html',p=>p.html_url='https://github.com/reallaksh19/Common/issues/787'],
  ['wrong login',p=>p.user.login='agent'],
  ['non-owner association',p=>p.author_association='MEMBER'],
- ['empty body',p=>p.body=''],['oversized body',p=>p.body='x'.repeat(1048577)],
+ ['empty body',p=>p.body=''],
  ['missing issuer',p=>p.user=null],
  ['malformed created time',p=>p.created_at='INVALID'],
  ['updated before created',p=>p.updated_at='2026-10-07T15:06:25Z'],
  ['copied approval is not authority',p=>{p.body='I approve';p.author_association='CONTRIBUTOR'}]
 ])test('refuses '+name,async()=>{const p=good();change(p);await refused(verify(p),'REFUTED')});
+test('oversized comment response is UNKNOWN at transport boundary',async()=>{
+ const payload=good();payload.body='x'.repeat(1048577);
+ await refused(verify(payload),'UNKNOWN');
+});
 test('expected wrong SHA256 refuses current bytes',async()=>refused(read(spec,{fetchImpl:response(good()),expectedBodySha256:'0'.repeat(64)}),'REFUTED'));
 test('malformed digest refuses',async()=>refused(read(spec,{fetchImpl:response(good()),expectedBodySha256:'bad'}),'REFUTED'));
 test('unsafe repository path refuses',async()=>refused(read({...spec,repository:'a/b/../../secret'},{fetchImpl:response(good())}),'REFUTED'));
