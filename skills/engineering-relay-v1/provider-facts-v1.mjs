@@ -164,6 +164,19 @@ function workflowResult(payload,repository,head,paths){
   });
 }
 function snapshotDigest(value){return createHash('sha256').update(canonicalJSON(value)).digest('hex');}
+function freezeSnapshot(root){
+  // The digest is over this entire provider view; callers must not mutate a
+  // nested PR/CI fact after digest computation and keep a misleading checksum.
+  const seen=new Set(),stack=[root];
+  while(stack.length){
+    const item=stack.pop();
+    if(!item||typeof item!=='object'||seen.has(item))continue;
+    seen.add(item);
+    for(const value of Object.values(item))if(value&&typeof value==='object')stack.push(value);
+    Object.freeze(item);
+  }
+  return root;
+}
 
 /** A new provider-current read each call; no cache, no mutations.
  * It represents the scope's issues/PRs/head-workflows, NOT source history
@@ -216,5 +229,5 @@ export async function reconcileGitHubFacts(rawScope,options={}){
     // Critical: even a matching PR + success CI is NEVER accepted TASK_EVIDENCE.
     authorization_granted:false,independently_accepted:false,live_writer_enabled:false
   };
-  return Object.freeze({...core,snapshot_sha256:snapshotDigest(core)});
+  return freezeSnapshot({...core,snapshot_sha256:snapshotDigest(core)});
 }
