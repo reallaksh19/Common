@@ -254,6 +254,133 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
     }
 
 
+
+class PublicationIncomplete(ReplayError):
+    """A GitHub REST update may have partially succeeded; never assert atomicity."""
+
+    def __init__(self, code: str, report: dict[str, Any]):
+        self.report = report
+        super().__init__(code)
+
+
+def _provider_surface(transport: Any, ref: str) -> dict[str, Any]:
+    number = int(ref.split("#")[-1])
+    raw = transport.get_pull(number) if ref == "Common#740" else transport.get_issue(number)
+    _require(isinstance(raw, dict) and isinstance(raw.get("title"), str) and
+             isinstance(raw.get("body"), str), "PROVIDER_SURFACE_UNAVAILABLE:" + ref)
+    _require(raw.get("number") == number, "PROVIDER_SURFACE_IDENTITY_MISMATCH:" + ref)
+    return raw
+
+
+def _apply_github_patch(transport: Any, ref: str, title: str, body: str) -> Any:
+    """One title+body PATCH per surface; no cross-surface atomic CAS on GitHub."""
+    _require(callable(getattr(transport, "_gh", None)), "PROVIDER_PATCH_ADAPTER_UNAVAILABLE")
+    number = int(ref.split("#")[-1])
+    route = "pulls" if ref == "Common#740" else "issues"
+    repo = str(transport.repository)
+    _require(repo == "reallaksh19/Common", "MUTATION_REPOSITORY_NOT_ALLOWED")
+    return transport._gh("--method", "PATCH", f"repos/{repo}/{route}/{number}",
+                         "-f", f"title={title}", "-f", f"body={body}")
+
+
+def guarded_publish(
+    manifest: dict,
+    graph: dict,
+    transport: Any,
+    *,
+    expected_head: str,
+    expected_input_digest: str,
+    apply: bool = False,
+) -> dict[str, Any]:
+    """Dry-run or explicit opt-in mutation; fail closed on material drift.
+
+    This is NOT an atomic transaction. No silent retry or rollback after
+    provider ambiguity; a partial mutation is reported INCOMPLETE_SYNC and
+    must be independently reconciled before further publication.
+    """
+    _require(isinstance(expected_head, str) and len(expected_head) == 40 and
+             all(c in "0123456789abcdefABCDEF" for c in expected_head),
+             "PINNED_EXACT_HEAD_REQUIRED")
+    _require(isinstance(expected_input_digest, str) and
+             expected_input_digest.startswith("sha256:") and len(expected_input_digest) == 71,
+             "PINNED_SOURCE_DIGEST_REQUIRED")
+    before = live_readback(manifest, graph, transport)
+    _require(before["candidate_sha"] == expected_head, "PINNED_HEAD_MOVED")
+    _require(before["source_input_digest"] == expected_input_digest,
+             "PINNED_INPUT_DIGEST_MOVED")
+    _require(before["pr_binding"] == "BOUND", "PR_NOT_BOUND_TO_RELEASED_GRAPH")
+    _require(before["qualifier"]["state"] != "PROVEN", "QUALIFICATION_NOT_PROVEN_BY_THIS_WRITER")
+    refs = ("Common#718", "Common#733", "Common#740")
+    planned = {}
+    for ref in refs:
+        surface = _provider_surface(transport, ref)
+        observed = before["read_views"][ref]
+        _require(surface["title"] == observed["observed"] and
+                 view.digest(surface["body"]) == observed["body_digest"],
+                 "PROVIDER_CHANGED_SINCE_READBACK:" + ref)
+        replacement = before["expected_managed_blocks"][ref]
+        proposed = view.reconcile_managed_block(
+            surface["body"], replacement, observed_digest=observed["body_digest"],
+            pr=ref == "Common#740",
+        )
+        planned[ref] = {
+            "previous_title": surface["title"], "expected_title": observed["expected"],
+            "previous_body_digest": observed["body_digest"], "expected_body_digest": view.digest(proposed),
+            "previous_body": surface["body"], "expected_body": proposed,
+            "write_required": surface["title"] != observed["expected"] or proposed != surface["body"],
+        }
+    changes = [ref for ref in refs if planned[ref]["write_required"]]
+    report = {
+        "schema": "relay-v32-718-guarded-publication-v1",
+        "authority": "NONATOMIC_GITHUB_PUBLICATION_ONLY",
+        "requested_mode": "APPLY" if apply else "DRY_RUN",
+        "candidate_sha": expected_head,
+        "source_input_digest": expected_input_digest,
+        "changed_surfaces": changes,
+        "applied_surfaces": [],
+        "status": "PLANNED" if not apply else "IN_PROGRESS",
+        "full_ESC_6_gate": "FAIL_CLOSED_UNRELEASED_CONSUMERS",
+        "authority_effects": [],
+    }
+    if not apply:
+        return report
+    if not changes:
+        report["status"] = "VERIFIED_NO_CHANGE"
+        return report
+    try:
+        # Observe all upstream inputs immediately before the first mutation.
+        fresh = live_readback(manifest, graph, transport)
+        if fresh["candidate_sha"] != expected_head or \
+                fresh["source_input_digest"] != expected_input_digest:
+            raise ReplayError("PROVIDER_MOVED_BEFORE_FIRST_WRITE")
+        for ref in changes:
+            current = _provider_surface(transport, ref)
+            if (current["title"] != planned[ref]["previous_title"] or
+                    view.digest(current["body"]) != planned[ref]["previous_body_digest"]):
+                raise ReplayError("PROVIDER_MOVED_BEFORE_WRITE:" + ref)
+            _apply_github_patch(transport, ref, planned[ref]["expected_title"],
+                                planned[ref]["expected_body"])
+            report["applied_surfaces"].append(ref)
+            # Validate immediately; never proceed on an ambiguous write.
+            checked = _provider_surface(transport, ref)
+            if (checked["title"] != planned[ref]["expected_title"] or
+                    view.digest(checked["body"]) != planned[ref]["expected_body_digest"]):
+                raise ReplayError("PROVIDER_FAILED_PER_SURFACE_READBACK:" + ref)
+        after = live_readback(manifest, graph, transport)
+        if after["candidate_sha"] != expected_head or \
+                after["source_input_digest"] != expected_input_digest or \
+                after["reconciliation"] != "MATCH":
+            raise ReplayError("POST_PUBLISH_PARITY_OR_INPUT_CHANGED")
+        report["status"] = "VERIFIED_ALL_SURFACES"
+        return report
+    except Exception as exc:
+        report["status"] = "INCOMPLETE_SYNC"
+        report["error"] = str(exc)
+        # Does not undo a write: a rollback could itself destroy new human text.
+        raise PublicationIncomplete("INCOMPLETE_SYNC: " + str(exc), report) from exc
+
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--manifest", type=Path, default=MANIFEST)
@@ -265,15 +392,31 @@ def main() -> int:
     p.add_argument("--repository", default="reallaksh19/Common")
     p.add_argument("--require-match", action="store_true",
                    help="fail if issue/PR titles or managed blocks are out of sync")
+    p.add_argument("--plan-publication", action="store_true",
+                   help="dry-run guarded source-bound publication; no mutations")
+    p.add_argument("--apply-live", action="store_true",
+                   help="explicitly mutate GitHub (opt-in, head+digest pinned)")
+    p.add_argument("--expected-head", help="required exact candidate SHA for publication")
+    p.add_argument("--expected-input-digest", help="required source input digest for publication")
     args = p.parse_args()
     try:
         manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
         graph = json.loads(args.graph.read_text(encoding="utf-8"))
-        if args.live_readback:
+        if args.live_readback or args.plan_publication or args.apply_live:
             import delp_projection_v32 as delp
             _require(args.repository == graph["programme"]["repository"],
                      "REQUESTED_REPOSITORY_MISMATCH")
-            report = live_readback(manifest, graph, delp.GhTransport(args.repository))
+            adapter = delp.GhTransport(args.repository)
+            if args.plan_publication or args.apply_live:
+                report = guarded_publish(
+                    manifest, graph, adapter,
+                    expected_head=args.expected_head,
+                    expected_input_digest=args.expected_input_digest,
+                    apply=args.apply_live,
+                )
+                report["exit_code"] = 0
+            else:
+                report = live_readback(manifest, graph, adapter)
             report["exit_code"] = (2 if args.assert_all_consumers or
                                    (args.require_match and report["reconciliation"] != "MATCH")
                                    else 0)
@@ -285,6 +428,12 @@ def main() -> int:
             args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
         print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
         return report["exit_code"]
+    except PublicationIncomplete as exc:
+        if args.report:
+            args.report.parent.mkdir(parents=True, exist_ok=True)
+            args.report.write_text(json.dumps(exc.report, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
+        print("V32-718-INCOMPLETE-SYNC: " + str(exc), file=sys.stderr)
+        return 3
     except (ReplayError, view.ViewError, KeyError, ValueError, OSError) as exc:
         print(f"V32-718-REPLAY-FAILED: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1
