@@ -148,5 +148,96 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             print("V32_733_REAL_CLI_FULL=EXPECTED_RED_UNRELEASED")
 
 
+    def test_17_frozen_c0_and_live_graph_are_distinct_but_same_release(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        frozen = self.graph
+        self.assertEqual(frozen["programme"]["decomposition_proposal"],
+                         live["programme"]["decomposition_proposal"])
+        self.assertEqual(frozen["programme"]["acceptance_claims"],
+                         live["programme"]["acceptance_claims"])
+        self.assertEqual(frozen["nodes"][0]["reserve_weight"], live["nodes"][0]["reserve_weight"])
+        old_child = next(n for n in frozen["nodes"] if n.get("responsibility_id") == "R-PROJECTION")
+        new_child = next(n for n in live["nodes"] if n.get("responsibility_id") == "R-PROJECTION")
+        self.assertNotIn("primary_pr", old_child)
+        self.assertEqual("Common#740", new_child["primary_pr"])
+        new_child = dict(new_child)
+        new_child.pop("primary_pr")
+        self.assertEqual(old_child, new_child)
+
+    def test_18_historical_oracle_source_graph_blob_is_precommit_exact(self):
+        source = ROOT / ".github/v32-evidence-spine/fixtures/718-c0-source-graph.json"
+        result = subprocess.run(["git", "hash-object", str(source)], cwd=ROOT,
+                                capture_output=True, text=True, check=True)
+        self.assertEqual("f4055eb0e8d47e87c59cbd0ccf0b4ce56654a5d3",
+                         result.stdout.strip())
+        self.assertEqual("Common#718", self.graph["programme"]["root"])
+
+    def test_19_live_bound_draft_PR_does_not_award_factless_work(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        fake_current = "c" * 40
+        observations = {
+            "Common#720": {"pr_state": "MERGED", "candidate_sha": "b3dfba3becf829d3a4e21d6eaa54983f05317b65"},
+            "Common#724": {"pr_state": "MERGED", "candidate_sha": "7ef9fbdd0c6f0f941fd573c1663c7a142fc41414"},
+            "Common#733": {"pr_state": "OPEN", "candidate_sha": fake_current},
+        }
+        rendered = view.build_views(
+            live, self.manifest, observations=observations, ledger=[],
+            selected_leaf="Common#733", phase="C4",
+            human_titles={"Common#718": "V3.2 Evidence Spine",
+                          "Common#733": "Issue/PR Views",
+                          "PR": "Cross-Surface Views"},
+            draft_pr={"number": 740, "head_sha": fake_current, "lifecycle": "DRAFT"})
+        self.assertEqual("BOUND", rendered["pr"]["binding"])
+        self.assertEqual(0, rendered["leaf_semantic"]["P"])
+        self.assertEqual(0, rendered["leaf_semantic"]["E"])
+        self.assertEqual(["Common#720", "Common#724"], rendered["historical_unreported"])
+        self.assertIn("PR#740", rendered["issue_titles"]["Common#733"])
+        self.assertIn("HEAD:ccccccc · Q:UNPROVEN", rendered["draft_pr_title"])
+        self.assertEqual("MATERIALIZE_FACTS_OR_CONTRACT", rendered["actual_next"])
+        self.assertEqual([], rendered["authority_effects"])
+
+    def test_20_live_parent_smart_title_recomputed_from_current_graph(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        observations = {
+            "Common#720": {"pr_state": "MERGED", "candidate_sha": "b3dfba3becf829d3a4e21d6eaa54983f05317b65"},
+            "Common#724": {"pr_state": "MERGED", "candidate_sha": "7ef9fbdd0c6f0f941fd573c1663c7a142fc41414"},
+            "Common#733": {"pr_state": "OPEN", "candidate_sha": "c" * 40},
+        }
+        result = view.build_views(
+            live, self.manifest, observations=observations, selected_leaf="Common#733",
+            phase="C4", human_titles={"Common#718": "V3.2 Evidence Spine",
+            "Common#733": "Issue/PR Views"})
+        self.assertEqual(
+            "🟡 [718] NEXT #733/C4 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine",
+            result["issue_titles"]["Common#718"])
+        self.assertEqual(
+            "🟡 [718›733] R-PROJECTION · C4 · PR#740 · UNMATERIALIZED — Issue/PR Views",
+            result["issue_titles"]["Common#733"])
+
+    def test_21_current_draft_candidate_head_changes_only_derived_inputs(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        common = dict(selected_leaf="Common#733", phase="C4",
+                      human_titles={"Common#718": "V3.2 Evidence Spine",
+                                    "Common#733": "Issue/PR Views",
+                                    "PR": "Cross-Surface Views"})
+        a = view.build_views(live, self.manifest, draft_pr={
+            "number": 740, "head_sha": "c" * 40, "lifecycle": "DRAFT"}, **common)
+        b = view.build_views(live, self.manifest, draft_pr={
+            "number": 740, "head_sha": "d" * 40, "lifecycle": "DRAFT"}, **common)
+        self.assertEqual(a["leaf_semantic"], b["leaf_semantic"])
+        self.assertNotEqual(a["input_digest"], b["input_digest"])
+        self.assertNotEqual(a["draft_pr_title"], b["draft_pr_title"])
+        self.assertEqual("NOT_IMPLEMENTED", b["unreleased_consumers"]["agent_matrix"])
+
+    def test_22_live_projection_never_modifies_c0_golden_oracle(self):
+        before = json.loads((ROOT / ".github/v32-evidence-spine/718-golden-fixtures-v1.json").read_text())
+        result = replay.replay(self.manifest, self.graph)
+        after = json.loads((ROOT / ".github/v32-evidence-spine/718-golden-fixtures-v1.json").read_text())
+        self.assertEqual(before, after)
+        self.assertEqual(
+            replay._fixture(self.manifest, "GF-SMART-SURFACES")["expected"]["parent_title"],
+            result["parent_actual_title"])
+
+
 if __name__ == "__main__":
     unittest.main()
