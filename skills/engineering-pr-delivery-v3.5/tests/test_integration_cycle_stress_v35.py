@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "integration_cycle_stress_v35.py"
 FIXTURE = ROOT / "examples/integration/real-common-600-604-712.golden.json"
+FROZEN_EXPECTED = ROOT / "examples/integration/real-common-600-604-712.expected-cycle.json"
 
 sys.path.insert(0, str(ROOT / "scripts"))
 spec = importlib.util.spec_from_file_location("integration_cycle_stress_v35", SCRIPT)
@@ -50,6 +51,15 @@ class IntegrationCycleStressAcceptance(unittest.TestCase):
         self.assertIn("CR-10 Integration", report["surfaces"]["reviewer_checklist"])
         self.assertIn("R-10 Agent-6 replay", report["surfaces"]["reviewer_checklist"])
         C.assert_same_cycle(data, report)
+
+    def test_all_twelve_outputs_match_prior_hosted_frozen_bytes(self):
+        """Regression oracle read back from previous hosted run, not recomputed by cycle()."""
+        expected = json.loads(FROZEN_EXPECTED.read_text(encoding="utf-8"))
+        observed = C.cycle(self.data())
+        self.assertEqual("HOSTED_GOLDEN_SPECIMEN_NOT_AUTHORITATIVE", expected["provenance"])
+        self.assertEqual(expected["source_basis"], observed["basis_sha256"])
+        self.assertEqual(expected["titles"], observed["titles"])
+        self.assertEqual(expected["surfaces"], observed["surfaces"])
 
     def test_individual_title_and_body_tamper_is_detected(self):
         data = self.data()
