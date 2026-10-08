@@ -252,5 +252,74 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
         self.assertEqual("MISSING", view.inspect_managed_block("human only", original, pr=True))
 
 
+    def _v2(self, ledger=None, sha="d511fc0210ee823272f41c43621bc90bc290e739"):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        obs = {**self.observed,"Common#733":{"candidate_sha":sha,"pr_state":"MERGED"}}
+        return view.build_views(live,self.owner,ledger=ledger or [],observations=obs,
+            selected_leaf="Common#733",phase="C4",human_titles=self.titles,
+            draft_pr={"number":740,"head_sha":sha,"lifecycle":"MERGED"},
+            title_contract="C4-S6")
+
+    def _one_fact(self):
+        import delp_projection_v32 as delp
+        oracle=json.loads((ROOT / ".github/v32-evidence-spine/753-progress-title-oracles-v1.json").read_text())
+        record={"schema":delp.FACTS_SCHEMA,"responsibility":{"issue":"Common#733"},
+                "material":{"pr":"Common#740","candidate_sha":oracle["sample_exact_head"]},
+                "units":[{"id":"VIEW-CONSISTENCY","state":"COMPLETE","result":"VERIFIED",
+                          "evidence_refs":["Common#733#issuecomment-1"]}]}
+        return {"source":"Common#733#issuecomment-1","order":1,"facts":record}
+
+    def test_23_v2_exact_zero_titles_from_precommitted_oracle(self):
+        oracle=json.loads((ROOT / ".github/v32-evidence-spine/753-progress-title-oracles-v1.json").read_text())
+        got=self._v2()
+        self.assertEqual("C4-S6",got["title_contract"])
+        self.assertEqual(oracle["zero"]["parent"],got["issue_titles"]["Common#718"])
+        self.assertEqual(oracle["zero"]["child"],got["issue_titles"]["Common#733"])
+        self.assertEqual(0,got["parent_semantic"]["D"])
+        self.assertEqual(0,got["leaf_semantic"]["P"])
+
+    def test_24_accepted_unit_real_DELP_changes_title_not_agent_input(self):
+        oracle=json.loads((ROOT / ".github/v32-evidence-spine/753-progress-title-oracles-v1.json").read_text())
+        got=self._v2(ledger=[self._one_fact()])
+        self.assertEqual(oracle["one_current_unit"]["leaf_percent"],
+                         {k:got["leaf_semantic"][k] for k in ("P","E")})
+        self.assertEqual(oracle["one_current_unit"]["parent_percent"],
+                         {k:got["parent_semantic"][k] for k in ("D","E")})
+        for side,ref in (("parent","Common#718"),("child","Common#733")):
+            self.assertIn(oracle["one_current_unit"]["expected_markers"][side],
+                          got["issue_titles"][ref])
+        self.assertEqual([],got["authority_effects"])
+
+    def test_25_changed_candidate_keeps_claim_not_stale_evidence(self):
+        oracle=json.loads((ROOT / ".github/v32-evidence-spine/753-progress-title-oracles-v1.json").read_text())
+        got=self._v2(ledger=[self._one_fact()],sha="b"*40)
+        self.assertEqual(oracle["candidate_changed"]["leaf_percent"],
+                         {k:got["leaf_semantic"][k] for k in ("P","E")})
+        self.assertEqual(oracle["candidate_changed"]["parent_percent"],
+                         {k:got["parent_semantic"][k] for k in ("D","E")})
+        self.assertIn("P34/E0",got["issue_titles"]["Common#733"])
+
+    def test_26_forged_percent_and_title_rejected_by_REAL_DELP(self):
+        import delp_projection_v32 as delp
+        fake=self._one_fact()
+        fake["facts"]["progress"]=100
+        fake["facts"]["title"]="🟢 ACCEPTED"
+        live=json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        obs={**self.observed,"Common#733":{"candidate_sha":"d511fc0210ee823272f41c43621bc90bc290e739","pr_state":"MERGED"}}
+        self.assertEqual(1,len(delp.project(live,[fake],obs)["rejected_facts"]))
+        got=self._v2(ledger=[fake])
+        oracle=json.loads((ROOT / ".github/v32-evidence-spine/753-progress-title-oracles-v1.json").read_text())
+        self.assertEqual(oracle["zero"]["parent"],got["issue_titles"]["Common#718"])
+        self.assertEqual(oracle["zero"]["child"],got["issue_titles"]["Common#733"])
+
+    def test_27_C0_oracle_remains_byte_identical(self):
+        original=self.views()
+        expected=next(f["expected"] for f in self.owner["fixtures"] if f["id"]=="GF-SMART-SURFACES")
+        self.assertEqual(expected["parent_title"],original["issue_titles"]["Common#718"])
+        self.assertEqual(expected["child_title"],original["issue_titles"]["Common#733"])
+        with self.assertRaisesRegex(view.ViewError,"UNRELEASED_TITLE_CONTRACT"):
+            self.views(title_contract="UNAUTHORIZED")
+
+
 if __name__ == "__main__":
     unittest.main()
