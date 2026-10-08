@@ -1,0 +1,51 @@
+name: v32-811-c6-runtime-precommit
+
+on:
+  pull_request:
+    paths:
+      - '.github/v32-evidence-spine/811-c6-*'
+      - '.github/v32-evidence-spine/test_811_c6_*'
+      - '.github/workflows/v32-811-c6-runtime-precommit.yml'
+  push:
+    branches:
+      - 'v32/811-c6-c0-restack-c4fix-v2'
+    paths:
+      - '.github/v32-evidence-spine/811-c6-*'
+      - '.github/v32-evidence-spine/test_811_c6_*'
+      - '.github/workflows/v32-811-c6-runtime-precommit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  actual-runtime-red-oracle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install existing V3.2 test schema dependencies
+        run: python -m pip install --disable-pip-version-check PyYAML jsonschema
+      - name: Enforce independent golden-before-test ancestry
+        run: |
+          git merge-base --is-ancestor ae4c297841e437d2424c42e09f53462c4cc90938 HEAD
+      - name: Prove actual C6 runtime gap by executing PLAN_HANDOVER
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python -m unittest discover -s .github/v32-evidence-spine -p 'test_811_c6_runtime_precommit.py' -v 2>&1 | tee artifacts/811-c6-runtime-red.log
+          python - <<'PY'
+          from pathlib import Path
+          text=Path("artifacts/811-c6-runtime-red.log").read_text(encoding="utf-8")
+          missing=[f"test_r{i:02d}_" for i in range(1,6) if f"test_r{i:02d}_" not in text]
+          if missing or "Ran 5 tests" not in text or "OK" not in text:
+              raise SystemExit(f"C6_RUNTIME_GAP_NOT_VERIFIED: {missing}")
+          print("C6_REAL_PLAN_HANDOVER_GAP=PROVEN_5_TESTS")
+          print("C6_PRODUCT_INTEGRATION=RED_UNIMPLEMENTED")
+          print("C6_NO_FROZEN_V32_SOURCE_OR_WRITE_PERMISSIONS=PASS")
+          PY
