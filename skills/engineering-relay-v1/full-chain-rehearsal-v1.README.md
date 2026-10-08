@@ -1,0 +1,26 @@
+# R3-B rehearsal #842 — real synthetic GitHub journal → G1 lineage and native R3/R4 in one integrated proof
+
+**Owner:** [RELAY RESET #787](https://github.com/reallaksh19/Common/issues/787) → [release qualification batch #841](https://github.com/reallaksh19/Common/issues/841) → [R3-B rehearsal issue #842](https://github.com/reallaksh19/Common/issues/842). This is a **full-chain source-level integration rehearsal**, not an accepted or merged release. Original private ChatGPT Owner prompt permalink **UNKNOWN**. No authentic Owner privacy/retention consent, no real transcript export, no independent reviewer or actual issue/PR publication permission. AC0/8.
+
+## Exact draft dependency custody
+Branch `feat/842-relay-full-chain-synthetic-rehearsal` derives from [R4 stacked DRAFT PR #839](https://github.com/reallaksh19/Common/pull/839) at `b8cf1848c295db1853827c48915918424bcb64b1`, which includes unmerged R3-A draft #834 candidate. In addition, this **non-release integration-only branch** stages five **byte-identical** blobs from [G2c stacked draft PR #830](https://github.com/reallaksh19/Common/pull/830) at `827fc29c3cdd28077562d2c15601723613e7fcd1`:
+- `github-bundle-custody-v1.mjs` Git blob SHA1 `0bb05764cc29c70e1126b0bbe529dc46a3df1c0c`.
+- `journal-provenance-bridge-v1.mjs` blob `db401810ce7a265da55c32520d6fb727e1bab9ed`.
+- `github-journal-lineage-v1.mjs` blob `4e2051b1b9eb07f666fe3f6aef559ebcb2251591`.
+- `github-journal-lineage-v1.test.mjs` blob `3215f28aff27d18f5d7785dc91569b180fbcfbdb`.
+- `fixtures/b2a-synthetic-journal-v1.json` blob `65b1551b69a27e520bf4749326b892ee05a40e25`.
+
+No user private chat is in that fixture. The user-furnished original Owner text has not been authenticated in this new pipeline. **Do not merge this stacked PR as-is**; it would duplicate code from still-unmerged review dependencies. The independent reviews [#824](https://github.com/reallaksh19/Common/issues/824), [#827](https://github.com/reallaksh19/Common/issues/827), [#831](https://github.com/reallaksh19/Common/issues/831), [#835](https://github.com/reallaksh19/Common/issues/835) and [#840](https://github.com/reallaksh19/Common/issues/840) remain acceptance HOLD.
+
+## Actual integration logic
+`rehearseNativeFullChain(input,options)` requires all three source identity surfaces to agree: R2 synthetic bundle manifest parent/repository; caller-supplied R1 structural OwnerIntent seed and actual G1 graph; R3 provider-current scoped parent/PR. It refuses any original source commit that is not exactly ONE provider-returned current, **independently expected** PR head. It performs:
+1. ONE native GitHub immutable **Contents GET** at full PR head SHA, Git SHA1 and externally *supplied* expected SHA256; runs true merged R2-B1 verifier with real R2-A filesystem cold replay, then G1 real R1 `validate`/forward and reverse traces. Outputs native source/lineage SHA256, NOT the raw session document.
+2. ONE R3 `reconcileGitHubFacts` on actual parent/child GitHub issues and PR with pre/post-Actions PR head recheck; fail STALE on changed head/merge/draft/title while CI fetched. R3 source is bounded **non-atomic** and cannot verify real Owner consent. Current HEAD must equal source pinned commit SHA.
+3. ONE R4 `renderRelayPreviews` on that **same exact** R3 immutable digest; checks per parent, child, PR and handover digest equality. R4 title previews are proposals with caller-selected CI workflows only, not verified required branch policy. Zero network/write operations inside R4.
+4. One combined `full_chain_sha256` binds pinned source+G1 lineage, provider observation digest, and R4 projection digest, as a **content-free witness** with source URL/PR head, no raw Owner/agent text or tokens. Both native provider readings and the source are **observed GitHub bytes**, not human authority, independent outside anchor or valid actual Owner prompt.
+
+## Test and trust contract
+- Node22/24 native `pull_request` workflow with `contents:read`, `issues:read`, `pull-requests:read`, `actions:read` only, `persist-credentials:false`; runs existing G2c source tests AND new full-chain tests (native from current exact PR HEAD; no skipped smoke).
+- Unit anti-goldens: changed journal bytes with provider SHA1 recalculated but independent SHA256 pinned; false R1 Owner prompt text, wrong parent/foreign repo, unpinned source vs PR head, PR force-push during R3 GET, PR current-head not equal source commit, forged Owner grant/writer option, raw text containment, digest determinism, one source GET and two R3 PR GETs.
+- Native status `NATIVE_GITHUB_SYNTHETIC_REHEARSAL_UNANCHORED` only if both actual native GitHub source and provider readers agree; injected transports labelled `INJECTED_UNVERIFIED_REHEARSAL`. All authorization and acceptance flags false; not real-session publication. This does **NOT** claim accepted R3-B production functionality.
+- Independent source reviewer must compare actual original G2c Git blob SHA, inspect full error/timeout/resource bounds and body exclusions and verify actual hosted Node jobs at exact head. No author self-approval. Real release requires independent source reviews and separately merged/restacked dependency PRs, then new tests against true main. B2b/R5 live writer OFF, AC0/8.
