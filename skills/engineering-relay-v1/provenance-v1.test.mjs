@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {validate,canonicalJSON,traceClaim,ProvenanceError} from './provenance-v1.mjs';
+import {validate,canonicalJSON,traceClaim,traceEvidence,traceModule,ProvenanceError} from './provenance-v1.mjs';
 
 function fixture() {
   return {
@@ -203,4 +203,67 @@ test('canonicalJSON rejects an array accessor without evaluating it',()=>{
 test('canonicalJSON rejects non-finite numeric facts',()=>{
   assert.throws(()=>canonicalJSON({progress:NaN}),ProvenanceError);
   assert.throws(()=>canonicalJSON({progress:Infinity}),ProvenanceError);
+});
+
+test('reverse trace from evidence preserves verbatim Owner source but does not grant authority',()=>{
+  const t=traceEvidence(fixture(),'E1');
+  assert.equal(t.evidence_kind,'START');
+  assert.equal(t.evidence_commit_sha,null);
+  assert.equal(t.session_id,'S1');
+  assert.deepEqual(t.claim_ids,['AC1']);
+  assert.equal(t.owner_intents[0].raw_text,'start now');
+  assert.equal(t.owner_intents[0].original_source.status,'UNKNOWN');
+  assert.equal(t.owner_intents[0].original_source.locator,null);
+  assert.equal(t.owner_intents[0].first_durable_mirror,
+    'https://github.com/reallaksh19/Common/issues/787');
+  assert.equal(t.no_authority_asserted,true);
+});
+test('reverse module trace returns only evidence of sessions that touched the exact file',()=>{
+  const file='skills/engineering-relay-v1/provenance-v1.mjs';
+  const f=fixture();
+  // S2 works on different module within R1-A, with separate evidence.
+  f.sessions.push({...JSON.parse(JSON.stringify(f.sessions[0])),id:'S2',
+    changed_files:['skills/engineering-relay-v1/another.mjs']});
+  f.task_evidence.push({...JSON.parse(JSON.stringify(f.task_evidence[0])),
+    id:'E2',session_id:'S2'});
+  const trace=traceModule(f,file);
+  assert.deepEqual(trace.session_ids,['S1']);
+  assert.deepEqual(trace.evidence_ids,['E1']);
+  assert.deepEqual(trace.responsibility_ids,['R1-A']);
+  assert.deepEqual(trace.claim_ids,['AC1']);
+  assert.equal(trace.owner_intents[0].raw_text,'start now');
+  assert.equal(trace.no_authority_asserted,true);
+  const other=traceModule(f,'skills/engineering-relay-v1/another.mjs');
+  assert.deepEqual(other.evidence_ids,['E2']);
+});
+test('unmodified module is explicitly untraced, not fabricated as accepted',()=>{
+  const v=traceModule(fixture(),'skills/engineering-relay-v1/unmodified.mjs');
+  assert.deepEqual(v.session_ids,[]);
+  assert.deepEqual(v.evidence_ids,[]);
+  assert.deepEqual(v.owner_intents,[]);
+});
+test('reverse trace rejects unknown evidence id and unsafe paths',()=>{
+  assert.throws(()=>traceEvidence(fixture(),'E999'),ProvenanceError);
+  assert.throws(()=>traceModule(fixture(),'../secrets.txt'),ProvenanceError);
+});
+test('two acceptance claims with same Owner intent de-duplicate exact raw Owner record',()=>{
+  const f=fixture();
+  f.claims.push({id:'AC2',intent_ids:['OI-1'],criterion:'Trace exact source'});
+  f.responsibilities[0].claim_ids.push('AC2');
+  const v=traceEvidence(f,'E1');
+  assert.deepEqual(v.claim_ids,['AC1','AC2']);
+  assert.equal(v.owner_intents.length,1);
+  assert.equal(v.owner_intents[0].raw_text,'start now');
+});
+test('cross-programme sessions do not inherit evidence from a sibling responsibility',()=>{
+  const f=fixture();
+  const other='skills/engineering-relay-v1/sibling.mjs';
+  f.responsibilities.push({id:'R1-B',claim_ids:['AC1'],depends_on:[],
+    scope:'Different owner',write_surface:[other]});
+  f.sessions.push({...JSON.parse(JSON.stringify(f.sessions[0])),id:'S3',
+    responsibility_id:'R1-B',changed_files:[other]});
+  f.task_evidence.push({...JSON.parse(JSON.stringify(f.task_evidence[0])),id:'E3',
+    session_id:'S3',responsibility_id:'R1-B'});
+  assert.deepEqual(traceModule(f,other).evidence_ids,['E3']);
+  assert.deepEqual(traceModule(f,'skills/engineering-relay-v1/provenance-v1.mjs').evidence_ids,['E1']);
 });

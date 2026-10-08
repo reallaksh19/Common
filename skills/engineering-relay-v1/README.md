@@ -31,3 +31,7 @@ The [read-only Node CI workflow](../../.github/workflows/relay-reset-provenance.
 ## Canonical JSON input hardening (R1-A)
 
 The pure canonical serializer now bounds nesting (256), aggregate visited objects (100,000) and arrays (10,000); rejects cyclic objects, accessor properties and sparse arrays with controlled ProvenanceError rather than executing a getter, silently serializing holes or overflowing the recursive stack. Repeated non-cyclic object references are duplicated as ordinary JSON values. This structural boundary is **not** source-authenticity or approval.
+
+## Bidirectional claim/source lineage (R1-A structural repair)
+
+`traceEvidence(document,evidenceId)` traverses the **precise** task evidence → matching session → owning responsibility → claims → raw Owner intent records, including distinct original-source status and first durable mirror. `traceModule(document,relativeModulePath)` follows exact changed source path → only sessions that changed that file → only their evidence → responsibilities/claims/raw Owner intent. An unmodified file returns empty matches, not implied acceptance; unsafe paths/unknown evidence raise `ProvenanceError`. These views read only the supplied document and **do not authenticate issuer, trust claims, verify commit SHA, approve evidence, or persist original chats**. Upstream must still enforce privacy/retention for raw Owner text. Negative tests exercise multiple sessions and unrelated evidence cross-joins.

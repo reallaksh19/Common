@@ -176,10 +176,68 @@ function provenanceAPI() {
     const intents=doc.claims.find(c=>c.id===claimId).intent_ids.slice();
     return Object.freeze({claim_id:claimId,owner_intent_ids:intents,responsibility_ids:responsibilities,session_ids:sessions,evidence_ids:evidence});
   }
-  return Object.freeze({validate,canonicalJSON,traceClaim,ProvenanceError});
+  // These are pure structural inverses. An ID link is NOT evidence authenticity.
+  function ownerRecords(doc,intentIds){
+    return [...new Set(intentIds)].map(intentId=>{
+      const intent=doc.owner_intents.find(x=>x.id===intentId);
+      // Validation guaranteed this source exists; preserve raw Owner text and the
+      // crucial UNKNOWN-original-vs-first-GitHub-mirror distinction.
+      return Object.freeze({
+        id:intent.id,raw_text:intent.raw_text,
+        original_source:Object.freeze({...intent.original_source}),
+        first_durable_mirror:intent.first_durable_mirror
+      });
+    });
+  }
+  function traceEvidence(doc,evidenceId){
+    validate(doc);
+    const evidence=doc.task_evidence.find(x=>x.id===evidenceId);
+    if(!evidence)fail("traceEvidence",`unknown evidence ${evidenceId}`);
+    const session=doc.sessions.find(x=>x.id===evidence.session_id);
+    const responsibility=doc.responsibilities.find(x=>x.id===evidence.responsibility_id);
+    const claimIds=responsibility.claim_ids.slice();
+    const intentIds=claimIds.flatMap(id=>doc.claims.find(x=>x.id===id).intent_ids);
+    return Object.freeze({
+      evidence_id:evidence.id,
+      evidence_kind:evidence.kind,
+      evidence_source_status:evidence.source.status,
+      evidence_commit_sha:evidence.commit_sha,
+      session_id:session.id,responsibility_id:responsibility.id,
+      claim_ids:claimIds,
+      changed_files:session.changed_files.slice(),
+      owner_intents:ownerRecords(doc,intentIds),
+      // No authority, provider verification, CI outcome or acceptance is projected.
+      no_authority_asserted:true
+    });
+  }
+  function traceModule(doc,modulePath){
+    validate(doc);
+    path(modulePath,"traceModule.modulePath");
+    const sessions=doc.sessions.filter(x=>x.changed_files.includes(modulePath));
+    const sessionIds=sessions.map(x=>x.id);
+    // The module is attached to the precise sessions that changed it, not to
+    // every session sharing the same responsibility.
+    const evidence=doc.task_evidence.filter(x=>sessionIds.includes(x.session_id));
+    const responsibilityIds=[...new Set(sessions.map(x=>x.responsibility_id))];
+    const claimIds=[...new Set(responsibilityIds.flatMap(id=>
+      doc.responsibilities.find(x=>x.id===id).claim_ids))];
+    const intentIds=claimIds.flatMap(id=>doc.claims.find(x=>x.id===id).intent_ids);
+    return Object.freeze({
+      module_path:modulePath,
+      session_ids:sessionIds,
+      evidence_ids:evidence.map(x=>x.id),
+      responsibility_ids:responsibilityIds,
+      claim_ids:claimIds,
+      owner_intents:ownerRecords(doc,intentIds),
+      no_authority_asserted:true
+    });
+  }
+  return Object.freeze({validate,canonicalJSON,traceClaim,traceEvidence,traceModule,ProvenanceError});
 }
 const API = provenanceAPI();
 export const validate = API.validate;
 export const canonicalJSON = API.canonicalJSON;
 export const traceClaim = API.traceClaim;
+export const traceEvidence = API.traceEvidence;
+export const traceModule = API.traceModule;
 export const ProvenanceError = API.ProvenanceError;
