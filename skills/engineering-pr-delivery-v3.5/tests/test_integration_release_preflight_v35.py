@@ -70,7 +70,7 @@ class Provider(COLD_TESTS.Provider):
             source = self.workflows_source
         content = source.encode("utf-8")
         git_sha = hashlib.sha1(
-            b"blob " + str(len(content)).encode("ascii") + b"\\x00" + content
+            b"blob " + str(len(content)).encode("ascii") + b"\x00" + content
         ).hexdigest()
         return {"content": source, "blob_sha": (
             self.workflow_blob_override if self.workflow_blob_override is not None
@@ -139,7 +139,7 @@ class ReleasePreflightTests(unittest.TestCase):
     def test_reviewed_inert_workflow_template_bytes_match_pinned_digest(self):
         data = self.t.workflows_source.encode("utf-8")
         calculated = hashlib.sha1(
-            b"blob " + str(len(data)).encode("ascii") + b"\\x00" + data
+            b"blob " + str(len(data)).encode("ascii") + b"\x00" + data
         ).hexdigest()
         self.assertEqual(R7._AUDITED_WORKFLOW_BLOB_SHA, calculated)
         self.assertIn("--graph-source-ref", self.t.workflows_source)
