@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import sys
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -135,6 +136,22 @@ class ColdEntryTests(unittest.TestCase):
         self.t.pr["base"]["repo"]["full_name"] = "foreign/repo"
         with self.assertRaises(COLD.ColdEntryError):
             COLD.reconstruct(self.t, PR_URL)
+
+    def test_cold_entry_cli_fail_closed_on_real_missing_approval(self):
+        import integration_scoreboard_publish_v35 as SCOREBOARD
+        with patch.object(SCOREBOARD, "ScoreboardTransport", return_value=self.t):
+            self.assertEqual(3, COLD.main([
+                "--repository", self.t.repository,
+                "--entry-url", ROOT_URL,
+            ]))
+        self.assertEqual([], self.t.writes)
+        self.t.set_selected_source()
+        with patch.object(SCOREBOARD, "ScoreboardTransport", return_value=self.t):
+            self.assertEqual(0, COLD.main([
+                "--repository", self.t.repository,
+                "--entry-url", PR_URL,
+            ]))
+        self.assertEqual([], self.t.writes)
 
     def test_no_native_custody_grant_from_owner_graph_even_when_green(self):
         self.t.set_selected_source()
