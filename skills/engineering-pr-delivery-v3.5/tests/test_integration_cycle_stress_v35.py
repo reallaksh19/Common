@@ -109,7 +109,11 @@ class IntegrationCycleStressAcceptance(unittest.TestCase):
             self.assertIn(f"=== TITLE {key} ===\n{title}", proc.stdout)
         for key, body in generated["surfaces"].items():
             self.assertIn(f"=== SURFACE {key} ===\n{body}", proc.stdout)
-        # Keep log small yet retain a real, executable specimen in hosted CI.
+        # Emit exactly the same CLI-produced specimen to hosted logs for Owner
+        # review, not a manually recreated / unverifiable issue comment.
+        print("V3.5_FULL_CYCLE_SPECIMEN_BEGIN")
+        print(proc.stdout)
+        print("V3.5_FULL_CYCLE_SPECIMEN_END")
         print("V3.5_SELF_RUN_STRESS_RESULT=" + json.dumps(report, sort_keys=True))
         print("V3.5_ISSUE_EXCERPT=" +
               generated["surfaces"]["parent_issue"][:260].replace("\n", " | "))
