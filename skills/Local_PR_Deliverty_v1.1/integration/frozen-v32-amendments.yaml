@@ -270,3 +270,72 @@ amendments:
     allowed_paths:
       - skills/engineering-pr-delivery-v3.2/scripts/trusted_scoreboard_v32.py
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_trusted_scoreboard.py
+
+  - id: AMEND-V32-ES-RRECON-014
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner continuation on 2026-10-08: 'ok next', immediately after
+      the previous agent specified that the next gate was authorizing these
+      exact three V3.2 handover paths in PR #799 before implementing DELP-to-
+      handover integration. This is the Owner's contextual instruction to
+      proceed with that bounded exact-path amendment, not a separate approval
+      of CI/reviewer results or any PR merge. The original ChatGPT message
+      permalink was not supplied (SOURCE_REF: UNKNOWN); the durable mirror and
+      implementation scope are linked at https://github.com/reallaksh19/Common/issues/793
+      and https://github.com/reallaksh19/Common/pull/799. Common #718 remains
+      the programme Owner outcome; Common #793 owns ESC-4. Draft #794 and
+      #798 remain unmerged and require independent review. The new exception
+      is effective ONLY for a distinct product PR whose base commit already
+      contains this approved manifest, never for a PR that merely adds it in
+      its own head; no CI success grants merge, provenance, custody or delivery
+      authority.
+    summary: >-
+      PROPOSED only, not an active exception. Add optional source-bound successor
+      reconstruction from the SAME released V3.2 DELP input/plan digest,
+      independently read-back candidate/head and verified provenance status;
+      reject moved material/plan/provider and unknown evidence, keep the
+      original Owner-message source UNKNOWN when the only durable ref is a
+      GitHub mirror, preserve legacy handover and separate execution custody.
+      Do not manufacture CHECKPOINT_FACTS, claim independent qualification,
+      publish issue or PR titles, write GitHub, create a session-history ledger,
+      alter acceptance or DELP maths, or touch V3.5. The approval must already
+      be present in the product PR base, never solely in the PR head.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/scripts/handover_context.py
+      - skills/engineering-pr-delivery-v3.2/schemas/handover-context.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py
+
+  - id: AMEND-V32-ES-RRECON-RUNTIME-015
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner continuation in the ongoing 2026-10-08 C6 discussion:
+      'ok next' after the immediately preceding execution explicitly listed
+      plan_handover.py and test_handover_context.py as the sole two new C6
+      frozen paths in PR #815 and as the remaining code gate. This provides
+      a contextual instruction to prepare a bounded candidate source change,
+      NOT independently verified original-chat provenance, reviewer acceptance,
+      production qualification or authority to merge any PR. The original
+      ChatGPT message permalink remains UNKNOWN. Common #718 governs the
+      owner programme, #793 ESC-4 and #811 the separate production runtime
+      responsibility. C6 product may change only those two V3.2 paths, and
+      only when this amendment is present on its PR BASE before source edits.
+      C4 #799 covers a different three-path amendment. Independent reviews
+      at #805 and Owner merge authorization remain outstanding; live GitHub
+      scoreboard #786 must remain OFF. The C6 branch is allowed to be an
+      implementation candidate while its independent release verdict is held.
+    summary: >-
+      OWNER-AUTHORIZED BASE-PINNED exception to permit an optional, authenticated read-only
+      released DELP graph/provider source input in existing PLAN_HANDOVER,
+      while preserving legacy handover when the source option is absent.
+      Frozen source projection must precede event/replacement mutation;
+      unavailable or moved opted-in source fails closed without partial event
+      or lease transition. Generated successor context records source-bound
+      digests and explicit next reconciliation; source is never a new fifth
+      publication, title writer, Owner proof, merge/reviewer grant, progress
+      credit or session-memory authority. This grants no changes to V3.5 or
+      the legacy DELP maths. CI V3.2/V3.5 parity must independently enforce
+      base-resident exact-path authorization before allowing a deliberately
+      divergent plan_handover.py. A product PR may not authorize its own HEAD.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/scripts/plan_handover.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py

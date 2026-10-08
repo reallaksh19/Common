@@ -392,6 +392,10 @@
         {
           "responsibility_id": "R-PROJECTION",
           "ref": "Common#733"
+        },
+        {
+          "responsibility_id": "R-RECONSTRUCTION",
+          "ref": "Common#793"
         }
       ]
     }
@@ -400,7 +404,7 @@
     {
       "ref": "Common#718",
       "kind": "ROOT",
-      "reserve_weight": 35
+      "reserve_weight": 20
     },
     {
       "ref": "Common#720",
@@ -555,6 +559,59 @@
         }
       ],
       "primary_pr": "Common#740"
+    },
+    {
+      "ref": "Common#793",
+      "kind": "LEAF",
+      "parent": "Common#718",
+      "weight": 15,
+      "responsibility_id": "R-RECONSTRUCTION",
+      "work_class": "PRODUCT",
+      "owns_claims": [
+        "ESC-4"
+      ],
+      "outcome": "A new executor can identify the governing contract, current material/qualification frontier and unsafe next decision, and reject a frozen basis that no longer describes GitHub reality.",
+      "independence_basis": "This result is independently verifiable by a fresh successor over exact frozen and current inputs, before any further implementation is admitted.",
+      "size_budget": {
+        "target_loc": 450,
+        "hard_loc": 1000,
+        "target_minutes": 15,
+        "hard_minutes": 20
+      },
+      "write_surface": [
+        "skills/engineering-pr-delivery-v3.2/schemas/handover-context.schema.yaml",
+        "skills/engineering-pr-delivery-v3.2/scripts/handover_context.py",
+        "skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py"
+      ],
+      "acceptance_methods": [
+        "Adversarial source-bound replay of ESC-4 including one clean and one mismatched case",
+        "Recompute outcome at exact candidate and confirm rejection of unavailable or out-of-scope truth"
+      ],
+      "depends_on": [
+        "Common#720",
+        "Common#724"
+      ],
+      "units": [
+        {
+          "id": "RECON-IDENTITY",
+          "weight": 34,
+          "outcome": "The successor's context names the same currently governed responsibility and source digests as the accepted plan.",
+          "verify": "Frozen context vs source contract identity oracle"
+        },
+        {
+          "id": "RECON-FRESHNESS",
+          "weight": 33,
+          "outcome": "Changed candidate, plan, obligation or provider visibility is surfaced for fresh reconciliation before unsafe continuation.",
+          "verify": "Rebase/head/plan drift successor oracle"
+        },
+        {
+          "id": "RECON-BOUNDARY",
+          "weight": 33,
+          "outcome": "The successor context preserves unresolved reasoning and authority limits without creating new custody or merge permission.",
+          "verify": "No-mutation/no-approval/no-automatic-replan oracle"
+        }
+      ],
+      "primary_pr": "Common#800"
     }
   ]
 }

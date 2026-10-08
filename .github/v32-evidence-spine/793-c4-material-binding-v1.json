@@ -1,0 +1,39 @@
+{
+  "schema": "common-v32-793-candidate-material-registration-v1",
+  "parent": "Common#718",
+  "child": "Common#793",
+  "responsibility": "R-RECONSTRUCTION",
+  "claim_ids": [
+    "ESC-4"
+  ],
+  "material_provider": "Common#800",
+  "source_of_truth": "GITHUB_PULL_REQUEST",
+  "candidate_sha_must_be_provider_readback": true,
+  "precondition": "C4 PRODUCT PR EXISTS AT TIME OF BINDING",
+  "original_c1_oracle": "793-binding-oracles-v1.json",
+  "original_c1_oracle_revision": "HISTORICAL_PRE_PRODUCT_NOT_REWRITTEN",
+  "proposed_acceptance": {
+    "graph_primary_pr": "Common#800",
+    "delp_observation_key": "Common#793",
+    "candidate_sha_matches_live_pr_head": true,
+    "changed_live_pr_head_changes_delp_input_digest": true,
+    "provider_read_failure": "RECONCILE_OR_FAIL_CLOSED",
+    "P_E_D_awarded": 0,
+    "owner_authority": "NONE",
+    "merged_state": "NOT_INFERRED_FROM_GREEN_CI"
+  },
+  "negative_cases": [
+    "Unbound ESC-4 PR must not show CURRENT",
+    "Wrong PR #794 planning-only is not product candidate",
+    "Product PR SHA change invalidates frozen handover basis",
+    "Provider fake or missing candidate does not qualify ESC-4",
+    "Stale accepted facts do not gain progress"
+  ],
+  "source_refs": [
+    "https://github.com/reallaksh19/Common/issues/718",
+    "https://github.com/reallaksh19/Common/issues/793",
+    "https://github.com/reallaksh19/Common/pull/800",
+    "https://github.com/reallaksh19/Common/pull/794"
+  ],
+  "owner_approval_status": "NONE_FROM_THIS_RECORD"
+}
