@@ -91,6 +91,14 @@ def main():
         require(len(items) == 1, "NATIVE_HANDOVER_EVENT_COUNT")
         require(items[0]["details"]["source_bound_input_digest"] == digests["input"],
                 "NATIVE_EVENT_SOURCE_DIGEST_MISMATCH")
+        origin = items[0]["details"].get("source_graph_pinned_location") or {}
+        require(origin.get("repository") == REPO, "NATIVE_SOURCE_ORIGIN_REPOSITORY_MISSING")
+        require(origin.get("revision") == GRAPH_SHA, "NATIVE_SOURCE_ORIGIN_COMMIT_MISSING")
+        require(origin.get("path") == GRAPH_PATH, "NATIVE_SOURCE_ORIGIN_FILE_MISSING")
+        require(origin.get("permalink") ==
+                "https://github.com/" + REPO + "/blob/" + GRAPH_SHA + "/" + GRAPH_PATH,
+                "NATIVE_SOURCE_ORIGIN_PERMALINK_MISSING")
+        print("C6_C3_NATIVE_SOURCE_GRAPH_PERMALINK_IN_EVENT=PASS")
         print("C6_C3_NATIVE_GITHUB_GET_CLI_REAL_PLAN_HANDOVER=PASS")
         print("C6_C3_OBSERVED_SOURCE_PR_HEAD_BOUND=Common#800")
         print("C6_C3_OWNER_OR_MERGE_AUTHORITY=NOT_GRANTED")
