@@ -195,6 +195,17 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
              (final_pull.get("head") or {}).get("sha") == head and
              bool(final_pull.get("draft")) == bool(start_pull.get("draft")),
              "PROVIDER_MOVED_DURING_RECONCILIATION")
+    # The provider can race us on issue titles/PR human descriptions without
+    # changing PR head. Fail closed on *all* three read surfaces; this is an
+    # observation guard, NOT proof of atomic GitHub REST publication.
+    _require(all(final_pull.get(k) == start_pull.get(k) for k in ("title", "body", "state")),
+             "PROVIDER_PR_METADATA_MOVED_DURING_RECONCILIATION")
+    final_root = transport.get_issue(718)
+    final_child = transport.get_issue(733)
+    _require(isinstance(final_root, dict) and isinstance(final_child, dict) and
+             all(final_root.get(k) == root_issue.get(k) for k in ("title", "body")) and
+             all(final_child.get(k) == child_issue.get(k) for k in ("title", "body")),
+             "PROVIDER_ISSUE_MOVED_DURING_RECONCILIATION")
     state = {}
     for ref, observed in ((root, root_issue), (child, child_issue)):
         target = expected["issue_titles"][ref]
