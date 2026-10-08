@@ -162,5 +162,22 @@ class TrustedEventScoreboardTests(unittest.TestCase):
         self.assertTrue(result["input_digest"].startswith("sha256:"))
 
 
+    def test_10_malformed_PR_event_cannot_borrow_dispatch_inputs(self):
+        case = self.oracle["cases"][0]
+        payload = copy.deepcopy(case["event"])
+        del payload["pull_request"]
+        payload["inputs"] = {"pr_number": "740", "expected_head": "a"*40}
+        result = trusted.gate("pull_request_target", payload, self.graph,
+                              self.provider(), enabled=True)
+        self.assertEqual("DENY_MISSING_PR_EVENT", result["decision"])
+        self.assertEqual(0, result["writes"])
+
+    def test_11_dispatch_requires_its_own_shape_no_PR_fallback(self):
+        payload = copy.deepcopy(self.oracle["cases"][0]["event"])
+        result = trusted.gate("workflow_dispatch", payload, self.graph,
+                              self.provider(), enabled=True)
+        self.assertEqual("DENY_MISSING_DISPATCH_INPUTS", result["decision"])
+        self.assertEqual(0, result["writes"])
+
 if __name__ == "__main__":
     unittest.main()
