@@ -66,3 +66,48 @@ jobs:
           name: v32-718-trusted-scoreboard-${{ github.run_id }}
           path: ${{ runner.temp }}/v32-718-trusted-scoreboard.json
           if-no-files-found: ignore
+
+  audit-readback:
+    # Runs AFTER the optional writer, including if the writer was skipped or
+    # failed. A read-only audit is not a delayed write or an acceptance vote.
+    needs: trusted-reconcile
+    if: ${{ always() && (github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request_target' && github.event.pull_request.number == 740) || (github.event_name == 'issue_comment' && github.event.issue.number == 733 && !github.event.issue.pull_request && !startsWith(github.event.comment.body, '<!-- relay-delp:live-status:start -->'))) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    steps:
+      - name: Checkout ONLY trusted default-branch readback implementation
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install source DELP readback parser only
+        run: python -m pip install --disable-pip-version-check PyYAML
+      - name: Verify frozen independent read-only oracle and workflow boundary
+        run: python -m unittest discover -s .github/v32-evidence-spine -p 'test_760_readonly_audit_v32.py' -v
+      - name: Read actual provider, DELP, source digests and three managed views
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          V32_718_LIVE_SCOREBOARD_ENABLED: ${{ vars.V32_718_LIVE_SCOREBOARD_ENABLED }}
+          EVENT_NAME: ${{ github.event_name }}
+          WRITER_JOB_RESULT: ${{ needs.trusted-reconcile.result }}
+        run: |
+          set -euo pipefail
+          python .github/v32-evidence-spine/audit_live_scoreboard_v32.py \
+            --event-name "$EVENT_NAME" \
+            --writer-job-result "$WRITER_JOB_RESULT" \
+            --output "$RUNNER_TEMP/v32-760-readonly-provider-audit.json"
+      - name: Retain independent nonmutating report even on failed readback
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v32-760-readonly-scoreboard-audit-${{ github.run_id }}
+          path: ${{ runner.temp }}/v32-760-readonly-provider-audit.json
+          if-no-files-found: error
