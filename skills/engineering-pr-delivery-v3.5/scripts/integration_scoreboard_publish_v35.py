@@ -10,6 +10,7 @@ There is deliberately no default approved graph or background event automation.
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import os
 import re
@@ -21,6 +22,7 @@ import delp_projection_v35 as DELP
 import integration_read_model_v35 as R2
 import integration_scoreboard_v35 as R3
 import integration_scoreboard_events_v35 as EVENTS
+import integration_graph_authority_v35 as GRAPH_SOURCE
 
 
 class PublishError(ValueError):
@@ -43,6 +45,23 @@ class ScoreboardTransport(DELP.GhTransport):
 
     def get_issue_comment(self, comment_id: int) -> dict[str, Any]:
         return self._gh(f"repos/{self.repository}/issues/comments/{comment_id}")
+
+    def get_file_at(self, commit_sha: str, path: str) -> dict[str, Any]:
+        """Fetch JSON source bytes from the provider at an IMMUTABLE commit."""
+        if not GRAPH_SOURCE.SHA.fullmatch(str(commit_sha)):
+            raise PublishError("GitHub graph content requires immutable SHA")
+        value = self._gh(
+            "--method", "GET",
+            f"repos/{self.repository}/contents/{path}",
+            "-f", f"ref={commit_sha}",
+        )
+        if not isinstance(value, dict) or value.get("type") != "file" or value.get("encoding") != "base64":
+            raise PublishError("provider immutable graph content missing/unsupported")
+        try:
+            raw = base64.b64decode(str(value["content"]), validate=False).decode("utf-8")
+        except (ValueError, KeyError, UnicodeDecodeError) as exc:
+            raise PublishError("provider immutable graph content cannot be decoded") from exc
+        return {"content": raw, "blob_sha": value.get("sha")}
 
     def patch_pull(self, number: int, *, title: str, body: str) -> dict[str, Any]:
         return self._gh(
@@ -234,8 +253,10 @@ def publish(
     expected_graph_digest: str | None = None,
     approval_ref: str | None = None,
     max_attempts: int = 3,
+    source_guard: Any = None,
 ) -> dict[str, Any]:
-    """Guarded live one-time apply; fail closed; no cross-surface atomicity claim."""
+    """Guarded apply; production CLI additionally requires immutable Owner graph."""
+
     DELP.require_repository_match(graph, transport.repository, live=True)
     indexed = DELP.validate_graph(graph)
     _check_binding(indexed, responsibility_ref, pr_number)
@@ -253,6 +274,8 @@ def publish(
         transport, graph, responsibility_ref, pr_number, owner_origin,
         human_titles=base_titles,
     )
+    if source_guard is not None:
+        source_guard()  # approval/Owner mirror and immutable bytes still current
     # One existing DELP issue LIVE_STATUS writer (leaves-first, CAS-like retry).
     issue_result = DELP.sync_projection(
         DELP.GitHubStore(transport), graph,
@@ -270,10 +293,14 @@ def publish(
         raise PublishError(
             "provider/graph/facts changed during issue sync: PR withheld, retry entire cycle"
         )
+    if source_guard is not None:
+        source_guard()  # any changed approval withholds PR publication
     pr_result = _patch_pr(
         transport, pr_number, rendered["candidate_sha"], following,
         max_attempts=max_attempts,
     )
+    if source_guard is not None:
+        source_guard()  # detect post-write source mutation (not an atomic rollback)
     return {
         "status": "APPLIED_NONATOMIC_READBACK_CHECKED",
         "basis_sha256": following["basis_sha256"],
@@ -288,9 +315,61 @@ def publish(
     }
 
 
+
+def publish_from_approved_source(
+    transport: Any,
+    *,
+    graph_approval_ref: str,
+    responsibility_ref: str,
+    pr_number: int,
+    scoreboard_approval_ref: str,
+    expected_root: str | None = None,
+) -> dict[str, Any]:
+    """Production boundary: no source path/digest/Owner quote from the caller.
+
+    The independent OWNER comment provides the immutable graph, its digest and
+    mirrored Owner words. A separate typed scoreboard approval still gates
+    the GitHub write. Re-fetch source each time before/after publishing.
+    """
+    selected = GRAPH_SOURCE.load_approved_source(
+        transport, graph_approval_ref,
+        selected_responsibility=responsibility_ref,
+        selected_pr=pr_number,
+        expected_programme_root=expected_root,
+    )
+    def still_current() -> None:
+        now = GRAPH_SOURCE.load_approved_source(
+            transport, graph_approval_ref,
+            selected_responsibility=responsibility_ref,
+            selected_pr=pr_number,
+            expected_programme_root=expected_root,
+        )
+        for field in ("graph_digest", "graph_file_sha256", "graph_commit_sha",
+                      "approval_ref", "approval_comment_updated_at"):
+            if now[field] != selected[field]:
+                raise PublishError(f"governed graph source changed during publication: {field}")
+        if now["owner_mirror"]["verbatim_sha256"] != selected["owner_mirror"]["verbatim_sha256"]:
+            raise PublishError("Owner intent mirror changed during publication")
+    result = publish(
+        transport, selected["graph"], responsibility_ref, pr_number,
+        owner_origin=selected["owner_origin"],
+        expected_graph_digest=selected["graph_digest"],
+        approval_ref=scoreboard_approval_ref,
+        source_guard=still_current,
+    )
+    result["approved_graph_source"] = {
+        "approval_ref": selected["approval_ref"],
+        "graph_commit_sha": selected["graph_commit_sha"],
+        "graph_digest": selected["graph_digest"],
+        "scope": selected["scope"],
+    }
+    return result
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Guarded DELP-backed GitHub issue/PR title sync")
-    ap.add_argument("--graph", type=Path, required=True, help="Approved DELP execution graph JSON/YAML")
+    ap.add_argument("--graph", type=Path, help="Local graph for DRY RUN ONLY; never an apply authority")
+    ap.add_argument("--graph-source-ref", help="REQUIRED for apply: GitHub OWNER selection comment referencing immutable graph")
     ap.add_argument("--repository", required=True)
     ap.add_argument("--responsibility", required=True)
     ap.add_argument("--pr", type=int, required=True)
@@ -304,9 +383,27 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     try:
         import yaml
-        graph = yaml.safe_load(args.graph.read_text(encoding="utf-8"))
-        origin = yaml.safe_load(args.owner_origin.read_text(encoding="utf-8")) if args.owner_origin else None
         transport = ScoreboardTransport(args.repository)
+        if args.apply:
+            if not args.graph_source_ref:
+                raise PublishError("--apply requires independently approved --graph-source-ref")
+            source = GRAPH_SOURCE.load_approved_source(
+                transport, args.graph_source_ref,
+                selected_responsibility=args.responsibility, selected_pr=args.pr,
+            )
+            graph = source["graph"]
+            origin = source["owner_origin"]
+            if args.graph is not None:
+                supplied = yaml.safe_load(args.graph.read_text(encoding="utf-8"))
+                if DELP.validate_graph(supplied)["digest"] != source["graph_digest"]:
+                    raise PublishError("local graph differs from provider-approved graph")
+            if args.expected_graph_digest and args.expected_graph_digest != source["graph_digest"]:
+                raise PublishError("asserted graph digest disagrees with independent selection")
+        else:
+            if args.graph is None:
+                raise PublishError("read-only dry run requires --graph")
+            graph = yaml.safe_load(args.graph.read_text(encoding="utf-8"))
+            origin = yaml.safe_load(args.owner_origin.read_text(encoding="utf-8")) if args.owner_origin else None
         if args.event_name or args.event_payload:
             if not (args.event_name and args.event_payload):
                 raise PublishError("--event-name and --event-payload must be supplied together")
@@ -319,16 +416,16 @@ def main(argv: list[str] | None = None) -> int:
                 print(json.dumps({"status": "EVENT_SKIPPED_NO_MUTATION", "selection": selection}))
                 return 0
         if args.apply:
-            result = publish(
-                transport, graph, args.responsibility, args.pr,
-                owner_origin=origin, expected_graph_digest=args.expected_graph_digest,
-                approval_ref=args.approval_ref,
+            result = publish_from_approved_source(
+                transport, graph_approval_ref=args.graph_source_ref,
+                responsibility_ref=args.responsibility, pr_number=args.pr,
+                scoreboard_approval_ref=args.approval_ref,
             )
         else:
             result = plan(transport, graph, args.responsibility, args.pr, owner_origin=origin)
         print(json.dumps(result, sort_keys=True, indent=2))
         return 0
-    except (DELP.DelpError, R2.ReadModelError, R3.ScoreboardError, EVENTS.EventError, PublishError, OSError, ValueError) as exc:
+    except (DELP.DelpError, R2.ReadModelError, R3.ScoreboardError, EVENTS.EventError, GRAPH_SOURCE.GraphSelectionError, PublishError, OSError, ValueError) as exc:
         print(f"V3.5 scoreboard sync rejected: {exc}", file=sys.stderr)
         return 2
 

@@ -6629,5 +6629,14 @@ class HostedV35ProviderSourceAuthority(_source_authority.VerifiedSourcePreflight
     """Source receipt, exact Owner quote, provider head and foreign-leaf negatives."""
 
 
+# R2-C: immutable provider-owned graph source selection + publisher integration.
+# Imported using the hosted DELP singleton; this is an executable source gate.
+import test_integration_graph_authority_v35 as _approved_graph_tests
+
+
+class HostedV35ApprovedGraphSource(_approved_graph_tests.GraphSelectionTests):
+    """Independent graph/Owner receipt, mutation negatives, guarded publisher."""
+
+
 if __name__ == "__main__":
     unittest.main()
