@@ -11,11 +11,13 @@ import argparse
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 import re
 import stat
 import subprocess
 import sys
+import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -126,6 +128,26 @@ def run_offline(path: Path) -> dict[str, bytes]:
     require(path.is_file() and not path.is_symlink(), "GIT_ANCHOR_LOCAL_ARCHIVE_NOT_REGULAR")
     archive = path.read_bytes()
     result = verify_archive_bytes(archive, manifest)
+    # Complete a second-process cold reconstruction of both verified source
+    # artifacts, not merely two hash comparisons. No token, network or
+    # execution permission crosses this boundary.
+    with tempfile.TemporaryDirectory() as directory:
+        from pathlib import Path
+        folder = Path(directory)
+        for name, raw in result.items():
+            (folder / name).write_bytes(raw)
+        env = dict(os.environ)
+        env.pop("GH_TOKEN", None)
+        env.pop("GITHUB_TOKEN", None)
+        verifier = Path(__file__).with_name("811_c6_c4_cold_successor.py")
+        proc = subprocess.run(
+            [sys.executable, str(verifier), "--bundle", str(folder), "--local-only"],
+            capture_output=True, text=True, timeout=40, env=env,
+        )
+        require(proc.returncode == 0 and
+                "COLD_OFFLINE_AUTHORITY=NO_SOURCE_CURRENTNESS_NO_EXECUTION" in proc.stdout,
+                "GIT_ANCHOR_OFFLINE_CONTEXT_REPLAY_INVALID")
+    print("C6_C6_OFFLINE_COLD_CONTEXT_REPLAY=PASS_NO_TOKEN")
     print("C6_C6_GIT_ANCHOR_COMMIT=" + ANCHOR_SHA)
     print("C6_C6_OFFLINE_RETAINED_ARCHIVE=VERIFIED_TWO_FILES")
     print("C6_C6_OWNER_SIGNATURE_OR_INDEPENDENT_REVIEW=NOT_CLAIMED")
