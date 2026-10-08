@@ -75,7 +75,10 @@ def verify_owner_mirror(
     if origin.get("claim_origin") != expected_origin:
         raise SourceAuthorityError("claim origin does not bind the source receipt issue")
     comment_id = int(match.group(4))
-    comment = transport.get_issue_comment(comment_id)
+    try:
+        comment = transport.get_issue_comment(comment_id)
+    except (DELP.DelpError, KeyError, LookupError) as exc:
+        raise SourceAuthorityError("Owner mirror provider lookup unavailable or missing") from exc
     if not isinstance(comment, Mapping) or comment.get("html_url") != url:
         raise SourceAuthorityError("provider comment permalink/readback mismatch")
     expected_api_issue = f"https://api.github.com/repos/{repository}/issues/{claim_issue}"
