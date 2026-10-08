@@ -270,3 +270,37 @@ amendments:
     allowed_paths:
       - skills/engineering-pr-delivery-v3.2/scripts/trusted_scoreboard_v32.py
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_trusted_scoreboard.py
+
+  - id: AMEND-V32-ES-RRECON-014
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner continuation on 2026-10-08: 'ok next', immediately after
+      the previous agent specified that the next gate was authorizing these
+      exact three V3.2 handover paths in PR #799 before implementing DELP-to-
+      handover integration. This is the Owner's contextual instruction to
+      proceed with that bounded exact-path amendment, not a separate approval
+      of CI/reviewer results or any PR merge. The original ChatGPT message
+      permalink was not supplied (SOURCE_REF: UNKNOWN); the durable mirror and
+      implementation scope are linked at https://github.com/reallaksh19/Common/issues/793
+      and https://github.com/reallaksh19/Common/pull/799. Common #718 remains
+      the programme Owner outcome; Common #793 owns ESC-4. Draft #794 and
+      #798 remain unmerged and require independent review. The new exception
+      is effective ONLY for a distinct product PR whose base commit already
+      contains this approved manifest, never for a PR that merely adds it in
+      its own head; no CI success grants merge, provenance, custody or delivery
+      authority.
+    summary: >-
+      PROPOSED only, not an active exception. Add optional source-bound successor
+      reconstruction from the SAME released V3.2 DELP input/plan digest,
+      independently read-back candidate/head and verified provenance status;
+      reject moved material/plan/provider and unknown evidence, keep the
+      original Owner-message source UNKNOWN when the only durable ref is a
+      GitHub mirror, preserve legacy handover and separate execution custody.
+      Do not manufacture CHECKPOINT_FACTS, claim independent qualification,
+      publish issue or PR titles, write GitHub, create a session-history ledger,
+      alter acceptance or DELP maths, or touch V3.5. The approval must already
+      be present in the product PR base, never solely in the PR head.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/scripts/handover_context.py
+      - skills/engineering-pr-delivery-v3.2/schemas/handover-context.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py
