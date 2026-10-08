@@ -21,6 +21,8 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "skills/engineering-pr-delivery-v3.2/scripts"))
 from v3lib import load_yaml, load_events, canonical_digest  # noqa: E402
 from handover_context import build_delp_source_bound_successor, HandoverContextError  # noqa: E402
+from plan_handover import _assert_native_graph_current_release  # noqa: E402
+from transactionlib import TransactionError  # noqa: E402
 
 REPO = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 SHA = re.compile(r"^[0-9a-f]{40}$")
@@ -101,7 +103,16 @@ def read_bundle(directory):
     return ctx, event, origin, saved
 
 
-def authenticated_read_only_graph(origin):
+def _require_current_released_graph(origin, graph_bytes):
+    # Same producer-side source-custody invariant. Never trust the predecessor's
+    # pinned SHA as proof that its graph is still the programme's live release.
+    try:
+        _assert_native_graph_current_release(origin["repository"], origin["path"], graph_bytes)
+    except TransactionError as exc:
+        raise RuntimeError("COLD_RELEASED_GRAPH_CHANGED_RECONCILE_REQUIRED") from exc
+
+
+def authenticated_read_only_graph(origin, *, with_source_bytes=False):
     repository = origin["repository"]
     require((os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN"))
             and os.getenv("GITHUB_REPOSITORY", "").lower() == repository.lower(),
@@ -124,7 +135,8 @@ def authenticated_read_only_graph(origin):
             and str((graph.get("programme") or {}).get("repository") or "").lower()
                 == repository.lower(),
             "COLD_GRAPH_REPOSITORY_MISMATCH")
-    return graph
+    _require_current_released_graph(origin, graph_bytes)
+    return (graph, graph_bytes) if with_source_bytes else graph
 
 
 def replay(bundle, live, negative_stale):
@@ -134,7 +146,7 @@ def replay(bundle, live, negative_stale):
         require(not negative_stale, "COLD_NEGATIVE_STALE_REQUIRES_REAL_PROVIDER")
         print("COLD_OFFLINE_AUTHORITY=NO_SOURCE_CURRENTNESS_NO_EXECUTION")
         return
-    graph = authenticated_read_only_graph(origin)
+    graph, graph_bytes = authenticated_read_only_graph(origin, with_source_bytes=True)
     import delp_projection_v32 as delp
 
     class ReadOnlyProvider:
@@ -180,6 +192,8 @@ def replay(bundle, live, negative_stale):
             and observed["execution_admission"] == "NEVER_FROM_RECONSTRUCTION"
             and observed["owner_merge_authority"] == "NOT_GRANTED",
             "COLD_LIVE_AUTHORITY_ESCALATION")
+    # A new roadmap release can appear while PR/fact reads execute.
+    _require_current_released_graph(origin, graph_bytes)
     print("COLD_LIVE_GITHUB_SOURCE_REPLAY=PASS_CURRENT_READ_ONLY")
     print("COLD_OWNER_CHAT_SOURCE=UNKNOWN")
     print("COLD_REVIEWER_OR_MERGE_AUTHORITY=NOT_GRANTED")
