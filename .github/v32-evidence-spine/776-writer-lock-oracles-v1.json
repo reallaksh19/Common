@@ -1,0 +1,46 @@
+{
+  "schema": "relay-v32-776-job-scoped-writer-concurrency-oracle-v1",
+  "baseline": "1795916c02422e6e939943f8af397f47e74972cb",
+  "requirements": {
+    "root_workflow_lock": false,
+    "writer_job_only_group": "v32-718-single-issue-scoreboard-publisher",
+    "writer_cancel_in_progress": false,
+    "writer_guard": "vars.V32_718_LIVE_SCOREBOARD_ENABLED == 'true'",
+    "audit_depends_on": "trusted-reconcile",
+    "audit_no_concurrency": true,
+    "audit_permissions": {
+      "contents": "read",
+      "issues": "read",
+      "pull-requests": "read"
+    },
+    "audit_event_filter": "#733, PR#740, workflow_dispatch (exclude DELP managed LIVE_STATUS)",
+    "no_semantic_award": true
+  },
+  "cases": [
+    {
+      "id": "LOCK-01",
+      "scenario": "one repo-wide issue comment unrelated to 733",
+      "expected": "SKIP_AUDIT_WITHOUT_GLOBAL_LOCK"
+    },
+    {
+      "id": "LOCK-02",
+      "scenario": "selected child 733 comment with writer skipped",
+      "expected": "RUN_AUDIT_AFTER_SKIPPED_WRITER"
+    },
+    {
+      "id": "LOCK-03",
+      "scenario": "trusted writer enabled and two trigger events",
+      "expected": "SERIALIZE_WRITERS_ONLY"
+    },
+    {
+      "id": "LOCK-04",
+      "scenario": "PR 740 event and default branch read-only checkout",
+      "expected": "NO_UNTRUSTED_HEAD_AND_NO_WRITE_AUDIT"
+    },
+    {
+      "id": "LOCK-05",
+      "scenario": "DELP managed status comment",
+      "expected": "SKIP_TO_AVOID_LOOP"
+    }
+  ]
+}
