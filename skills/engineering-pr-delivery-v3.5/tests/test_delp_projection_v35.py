@@ -6595,8 +6595,11 @@ class HostedV35CycleStress(_cycle_stress.IntegrationCycleStressAcceptance):
 
 
 
-# R2-A actual source-engine bridge: hosted suite executes the production DELP
-# projector and mocked real provider ingestion, not a title-only golden fixture.
+# R2-A actual source-engine bridge: the legacy host loads DELP by exec_module
+# without registering it. Share that *same* module with the new adapter so the
+# actual-next engine sees identical condition/exception classes.
+import sys as _r2_sys
+_r2_sys.modules["delp_projection_v35"] = M
 import test_integration_read_model_v35 as _source_read_model
 
 
