@@ -79,6 +79,8 @@ def gate(event_name: str, event: Mapping[str, Any], graph: Mapping[str, Any],
             code = "DENY_PROVIDER_HEAD_REPOSITORY"
         elif provider_pull.get("number") != target["pr_number"]:
             code = "DENY_PROVIDER_PR_IDENTITY"
+        elif provider_pull.get("state") == "closed" and not provider_pull.get("merged"):
+            code = "DENY_CLOSED_UNMERGED_PR"
         elif (provider_pull.get("base") or {}).get("ref", target["base"]) != target["base"]:
             code = "DENY_PROVIDER_BASE"
         elif not isinstance(pin,str) or not SHA.fullmatch(pin) or pin != (provider_pull.get("head") or {}).get("sha"):
