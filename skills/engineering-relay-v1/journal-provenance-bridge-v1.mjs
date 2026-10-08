@@ -79,6 +79,13 @@ function assemble(state,rawSeed,rawBindings,custody) {
       if(!intentId)reject('UNBOUND_OWNER_PROMPT','Owner prompt must bind an explicit intent ID');
       const intent=seed.owner_intents.find(x=>x.id===intentId);
       if(!intent)reject('UNKNOWN_OWNER_INTENT','prompt binding has no seed OwnerIntent');
+      // A same-text prompt from an unrelated intent must not be laundered into
+      // the responsibility's Owner ancestry.
+      const owning=seed.responsibilities.find(x=>x.id===e.responsibility_id);
+      const allowable=new Set(seed.claims.filter(c=>owning.claim_ids.includes(c.id))
+        .flatMap(c=>c.intent_ids));
+      if(!allowable.has(intentId))
+        reject('PROMPT_CLAIM_MISMATCH','bound OwnerIntent not among this responsibility claims');
       if(e.content.visibility!=='PUBLIC')
         reject('REDACTED_OWNER_PROMPT','R1 raw_text cannot honestly represent digest-only Owner prompt');
       if(intent.raw_text!==e.content.text || canonicalJSON(intent.original_source)!==canonicalJSON(source(e)))
