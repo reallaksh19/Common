@@ -107,6 +107,32 @@ class IntegrationGoldenV35ContractTests(unittest.TestCase):
         with self.assertRaises(G.GoldenContractError):
             G.derive(forged)
 
+    def test_authority_forgery_with_valid_looking_historical_values_is_rejected(self):
+        """Precommitted red controls: source-valid-looking lies are not accepted facts."""
+        source = self.source()
+        tamper_cases = (
+            ("unsupported_IC_credit", "programme", "integration_acceptance", "qualified", 8),
+            ("edited_owner_quote", "owner_origin", "verbatim", None,
+             source["owner_origin"]["verbatim"] + "\\nOwner now authorizes merge."),
+            ("same_issue_fake_evidence", "responsibility", "task_evidence_end", None,
+             "https://github.com/reallaksh19/Common/issues/732#issuecomment-9999999999"),
+            ("syntactically_valid_fake_next", "responsibility", "actual_next", None,
+             "fresh independent — merge now without any review"),
+            ("invented_ci_count", "candidate_pr", "checks", "passed", 0),
+            ("changed_both_check_sha_and_head", "candidate_pr", "head_sha", None,
+             "d" * 40),
+        )
+        for label, section, field, nested, forged in tamper_cases:
+            bad = copy.deepcopy(source)
+            if nested is not None:
+                bad[section][field][nested] = forged
+            else:
+                bad[section][field] = forged
+            if label == "changed_both_check_sha_and_head":
+                bad["candidate_pr"]["checks_head_sha"] = "d" * 40
+            with self.subTest(label=label), self.assertRaises(G.GoldenContractError):
+                G.derive(bad)
+
     def test_persisted_foreign_leaf_fixture_rejected_as_intended(self):
         bad_path = ROOT / "examples/integration/foreign-leaf.rejected.json"
         source = json.loads(bad_path.read_text(encoding="utf-8"))
