@@ -1,0 +1,142 @@
+{
+  "schema": "common-v32-793-handover-golden-v1",
+  "parent": "Common#718",
+  "child": "Common#793",
+  "claim": "ESC-4",
+  "source_status": "OWNER_ORIGINAL_CHAT_LINK_UNVERIFIED",
+  "authority": "INDEPENDENT_EXPECTED_OUTCOMES_NOT_EXECUTOR_FACTS_OR_OWNER_APPROVAL",
+  "baseline": {
+    "bound_graph_pr": 794,
+    "bound_graph_head": "6f2d9f4dca3655605542a4e4326f2d533b3b8e3c",
+    "released_proposal_digest": "sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd",
+    "bound_leaf": "R-RECONSTRUCTION",
+    "bound_weight": 15,
+    "undecomposed_reserve_after_C1": 20,
+    "historical_legacy_merged_prs": [
+      722,
+      728,
+      740
+    ],
+    "accepted_machine_facts": "UNREPORTED",
+    "live_writer": "DISABLED_UNPUBLISHED",
+    "source_merge_status": "PENDING_INDEPENDENT_REVIEW"
+  },
+  "precommitted_cases": [
+    {
+      "id": "H01",
+      "label": "Current released identity",
+      "injected_change": "NONE",
+      "expected": {
+        "claim": "ESC-4",
+        "leaf": "Common#793",
+        "proposal_binding": "MATCH",
+        "readiness": "NO_AUTOMATIC_ACCEPTANCE",
+        "handover_completeness": "NOT_IMPLEMENTED"
+      }
+    },
+    {
+      "id": "H02",
+      "label": "Moved candidate",
+      "injected_change": "PR_HEAD_MOVED",
+      "expected": {
+        "currentness": "RECONCILE",
+        "admit_execution": false,
+        "retain_frozen_historical_basis": true
+      }
+    },
+    {
+      "id": "H03",
+      "label": "Changed released claim",
+      "injected_change": "OWNER_PLAN_DIGEST_CHANGED",
+      "expected": {
+        "currentness": "RECONCILE",
+        "admit_execution": false,
+        "no_silent_rebase": true
+      }
+    },
+    {
+      "id": "H04",
+      "label": "Original source unavailable",
+      "injected_change": "OWNER_ORIGINAL_LINK_UNVERIFIED",
+      "expected": {
+        "owner_source": "UNKNOWN",
+        "prohibit_authentication_from_issue_mirror": true
+      }
+    },
+    {
+      "id": "H05",
+      "label": "Merge without structured evidence",
+      "injected_change": "MERGED_PR_CHECKPOINT_FACTS_MISSING",
+      "expected": {
+        "material": "MERGED",
+        "evidence": "UNREPORTED",
+        "semantic_progress_gained": 0,
+        "qualifier": "UNPROVEN"
+      }
+    },
+    {
+      "id": "H06",
+      "label": "Stale displayed title",
+      "injected_change": "PR_TITLE_SAYS_DRAFT_BUT_PROVIDER_MERGED",
+      "expected": {
+        "provider_lifecycle": "MERGED",
+        "title_integrity": "DRIFT",
+        "handover_state": "RECONCILE"
+      }
+    },
+    {
+      "id": "H07",
+      "label": "Forgery of qualification",
+      "injected_change": "SELF_DECLARED_PROVEN_WITHOUT_ASSESSOR",
+      "expected": {
+        "qualification": "UNPROVEN",
+        "admit_execution": false
+      }
+    },
+    {
+      "id": "H08",
+      "label": "Live consumer truly absent",
+      "injected_change": "NO_ESC4_DELP_HANDOVER_ADAPTER",
+      "expected": {
+        "integration_gate": "FAIL_CLOSED_UNIMPLEMENTED",
+        "golden_preflight": "PASS_WITH_PRODUCT_RED"
+      }
+    },
+    {
+      "id": "H09",
+      "label": "Zero authority leakage",
+      "injected_change": "NO_MUTATION",
+      "expected": {
+        "github_writes": 0,
+        "owner_merge_authority": "NOT_GRANTED",
+        "owner_publication_authority": "NOT_GRANTED",
+        "handover_custody": "NOT_TRANSFERRED"
+      }
+    },
+    {
+      "id": "H10",
+      "label": "Cold entry from parent child and PR",
+      "injected_change": "ENTRY_LINK_ONLY",
+      "expected": {
+        "entry_views": [
+          "PARENT",
+          "CHILD",
+          "PR"
+        ],
+        "same_source_digest_required": true,
+        "current_provider_recheck_required": true,
+        "acceptance": "NOT_YET_TESTED"
+      }
+    }
+  ],
+  "golden_source_refs": [
+    "https://github.com/reallaksh19/Common/issues/718",
+    "https://github.com/reallaksh19/Common/issues/793",
+    "https://github.com/reallaksh19/Common/pull/794",
+    "https://github.com/reallaksh19/Common/blob/main/skills/engineering-pr-delivery-v3.2/scripts/handover_context.py",
+    "https://github.com/reallaksh19/Common/blob/main/skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py",
+    "https://github.com/reallaksh19/Common/blob/main/.github/v32-evidence-spine/718-golden-fixtures-v1.json",
+    "https://github.com/reallaksh19/Common/actions/runs/37799820093"
+  ],
+  "publication_boundary": "NO_FROZEN_V32_CODE_NO_GITHUB_WRITE_NO_ACCEPTANCE_FROM_ORACLE"
+}
