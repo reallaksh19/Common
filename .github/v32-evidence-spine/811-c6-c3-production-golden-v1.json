@@ -49,6 +49,11 @@
       "id": "P09",
       "situation": "Source changes after initial context construction but prior to PLAN_HANDOVER transaction execution",
       "expected": "Re-read released DELP graph and read-only provider against exact frozen context digests directly before execute; reject moved provider with no transaction/event/context/lease write"
+    },
+    {
+      "id": "P10",
+      "situation": "Native CLI reads an authenticated graph at an exact GitHub commit and path",
+      "expected": "Actual HANDOVER_PLANNED event records read-only repo/commit/path source location plus graph digest, enabling cold successor retrieval; absent in legacy mode; does not authenticate original Owner chat message"
     }
   ],
   "source_paths": [
