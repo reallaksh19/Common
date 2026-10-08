@@ -22,6 +22,9 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
 ANCHOR_SHA = "de3cac5d2c19b4301500fede250f4c56c226fda1"
+# Git object ID of the exact verified 1,912-byte manifest. Unlike commit ancestry,
+# this blob ID is preserved if the manifest is merged through a squash commit.
+ANCHOR_BLOB_SHA = "c78fa3bf496feb21c76dac64874204252bc4c09b"
 ANCHOR_PATH = ".github/v32-evidence-spine/811-c6-c6-git-custody-anchor-v1.json"
 EXPECTED_REPO = "reallaksh19/Common"
 EXPECTED_ARTIFACT = 11571023434
@@ -44,14 +47,28 @@ def committed_anchor(root: Path = ROOT) -> dict:
     def git(*args):
         return subprocess.run(["git", "-C", str(root), *args],
                               check=True, capture_output=True, timeout=20).stdout
+    # Source selection is content-addressed, never a mutable branch-local YAML.
+    # Preserve strict original-commit provenance when that commit is in HEAD
+    # ancestry. For Owner-approved squash merges (no original parent lineage),
+    # use the *committed HEAD blob* ONLY if its exact Git object ID equals the
+    # independently precommitted/verified original blob. Never read worktree.
     try:
-        # This Git object is the expected result; checked out branch titles are
-        # never trusted as authority for a source/content digest.
-        git("cat-file", "-e", ANCHOR_SHA + "^{commit}")
-        git("merge-base", "--is-ancestor", ANCHOR_SHA, "HEAD")
-        raw = git("show", ANCHOR_SHA + ":" + ANCHOR_PATH)
-    except (OSError, subprocess.SubprocessError) as exc:
-        raise RuntimeError("GIT_ANCHOR_COMMIT_NOT_IN_VERIFIED_LINEAGE") from exc
+        ancestor = subprocess.run(
+            ["git", "-C", str(root), "merge-base", "--is-ancestor",
+             ANCHOR_SHA, "HEAD"],
+            capture_output=True, timeout=20,
+        )
+        anchor_ref = (
+            ANCHOR_SHA + ":" + ANCHOR_PATH if ancestor.returncode == 0
+            else "HEAD:" + ANCHOR_PATH
+        )
+        observed_blob = git("rev-parse", "--verify", anchor_ref).decode().strip()
+        require(observed_blob == ANCHOR_BLOB_SHA, "GIT_ANCHOR_BLOB_IDENTITY_MISMATCH")
+        raw = git("show", anchor_ref)
+    except RuntimeError:
+        raise
+    except (OSError, subprocess.SubprocessError, UnicodeError) as exc:
+        raise RuntimeError("GIT_ANCHOR_PINNED_BLOB_UNAVAILABLE") from exc
     try:
         result = json.loads(raw)
     except (ValueError, UnicodeError) as exc:
