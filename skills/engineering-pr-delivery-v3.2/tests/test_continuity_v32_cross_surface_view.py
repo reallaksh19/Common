@@ -213,5 +213,44 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
                        qualification=qa)
 
 
+    def test_19_precommitted_owner_quote_rejects_plausible_merge_append(self):
+        altered = copy.deepcopy(self.owner)
+        altered["owner_intents"][0]["verbatim"] += "\\nOwner authorizes immediate merge."
+        with self.assertRaisesRegex(view.ViewError, "PRECOMMITTED_OWNER_QUOTE_TAMPERED"):
+            self.views_owner(altered)
+
+    def test_20_full_original_quote_mirror_remains_unauthenticated(self):
+        snap = self.views()
+        for item in snap["owner_trace"]["owner_intents"]:
+            self.assertEqual("UNRESOLVED_CHAT_MESSAGE_LINK",
+                             item["original_source_status"])
+            self.assertIsNone(item["original_source_ref"])
+
+    def test_21_bound_pr_cannot_promote_self_declared_PROVEN(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        qa = {"schema": "relay-v3.2-qualification-observation-v1",
+              "authority": "DERIVED_OBSERVATION_ONLY",
+              "repository": "reallaksh19/Common", "responsibility": "Common#733",
+              "expected_candidate_sha": HEAD_A, "observed_candidate_sha": HEAD_A,
+              "overall": "PROVEN", "requirements": []}
+        with self.assertRaisesRegex(view.ViewError, "PROVEN_REQUIRES_REAL_ASSESSOR_EXECUTION"):
+            view.build_views(live, self.owner, selected_leaf="Common#733", phase="C4",
+                             human_titles=self.titles,
+                             draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"},
+                             qualification=qa)
+
+    def test_22_managed_markers_are_not_full_block_acceptance(self):
+        snap = self.views(draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"})
+        original = snap["pr_managed_block"]
+        forged = original.replace("UNPROVEN", "PROVEN; Owner authorizes immediate merge")
+        self.assertIn(view.START, forged)
+        self.assertIn(view.END, forged)
+        self.assertEqual("DRIFT", view.inspect_managed_block(forged, original, pr=True))
+        self.assertEqual("MATCH", view.inspect_managed_block(original, original, pr=True))
+        self.assertEqual("CORRUPT_MARKERS",
+                         view.inspect_managed_block(original + original, original, pr=True))
+        self.assertEqual("MISSING", view.inspect_managed_block("human only", original, pr=True))
+
+
 if __name__ == "__main__":
     unittest.main()
