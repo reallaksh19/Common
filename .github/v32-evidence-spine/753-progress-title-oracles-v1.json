@@ -1,0 +1,66 @@
+{
+  "schema": "relay-v32-753-precommitted-smart-progress-titles-v1",
+  "owner": "Common#718",
+  "responsibility": "Common#733",
+  "governing_issue": "Common#753",
+  "source_baseline": "fdf9be75d412d705b0410a9a8ead5afafd583e5d",
+  "oracle_authority": "INDEPENDENT_EXPECTATIONS_PRECOMMITTED_BEFORE_TITLE_RENDERER_EDIT",
+  "release": "C4_SMART_TITLE_V2_ONLY; ORIGINAL_C0_TITLE_ORACLES_IMMUTABLE",
+  "source_fields": {
+    "parent": "delp.project().nodes[root].progress.D/E",
+    "child": "delp.project().nodes[leaf].progress.P/E"
+  },
+  "human_titles": {
+    "Common#718": "V3.2 Evidence Spine",
+    "Common#733": "Issue/PR Views"
+  },
+  "source_identity": {
+    "parent": "Common#718",
+    "child": "Common#733",
+    "pr": "Common#740",
+    "phase": "C4"
+  },
+  "sample_exact_head": "d511fc0210ee823272f41c43621bc90bc290e739",
+  "zero": {
+    "parent": "🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine",
+    "child": "🟡 [718›733] R-PROJECTION · C4 · P0/E0 · PR#740 · UNMATERIALIZED — Issue/PR Views"
+  },
+  "one_current_unit": {
+    "unit": "VIEW-CONSISTENCY",
+    "weight": 34,
+    "leaf_percent": {
+      "P": 34,
+      "E": 34
+    },
+    "parent_percent": {
+      "D": 7,
+      "E": 7
+    },
+    "expected_markers": {
+      "parent": "D7/E7",
+      "child": "P34/E34"
+    },
+    "expected_gap": "FACTS UNREPORTED; predecessor leaves #720/#724 still lack accepted facts"
+  },
+  "candidate_changed": {
+    "leaf_percent": {
+      "P": 34,
+      "E": 0
+    },
+    "parent_percent": {
+      "D": 7,
+      "E": 0
+    },
+    "expected_markers": {
+      "parent": "D7/E0",
+      "child": "P34/E0"
+    },
+    "reason": "CLAIM_PERSISTS_BUT_EVIDENCE_HEAD_STALE"
+  },
+  "forged_input": {
+    "field": "progress",
+    "value": 100,
+    "expected": "REJECTED_FACTS_UNCHANGED_TITLES"
+  },
+  "not_valid_authority": "NO_PERCENT_FROM_AGENT_TITLE_INPUT; NO_PROGRESS_FROM_MERGE_OR_WORKFLOW_BADGE"
+}
