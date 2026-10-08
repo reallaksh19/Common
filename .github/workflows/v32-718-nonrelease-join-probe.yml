@@ -1,0 +1,126 @@
+name: v32-718-NONRELEASE-join-probe
+
+on:
+  push:
+    branches:
+      - 'v32/718-nonrelease-join-probe-20261008'
+    paths:
+      - '.github/v32-evidence-spine/718-join-probe-golden-20261008.json'
+      - '.github/workflows/v32-718-nonrelease-join-probe.yml'
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  actions: read
+
+jobs:
+  graph-and-native-source-reconciliation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install existing V3.2 dependencies
+        run: python -m pip install --disable-pip-version-check PyYAML jsonschema
+      - name: Verify six golden cases preceded executable workflow and current-main ancestry
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor e34bd64477358d49a2096429f8f7c2793a48123b HEAD
+          git merge-base --is-ancestor 28841b5cfed9e9b6057a1a6f09090adcc512e1b8 HEAD
+          test "$(git rev-parse HEAD:.github/v32-evidence-spine/718-proposal-v2.json)" = d35019b416cb3b573280e166027d3f65ba61f59c
+          test "$(git rev-parse HEAD:.github/workflows/v32-718-binding-preflight.yml)" = fa34010623c116605861578452b133249eca5985
+          test "$(git rev-parse HEAD:skills/Local_PR_Deliverty_v1.1/integration/frozen-v32-amendments.yaml)" = b72f1d3a71b507c83afdd72c9646230363522e5b
+          test "$(git rev-parse HEAD:skills/engineering-pr-delivery-v3.2/scripts/plan_handover.py)" = b31cb4646c7fc8515a9987031728cfa26ce4ca63
+          test "$(git rev-parse HEAD:skills/engineering-pr-delivery-v3.2/scripts/handover_context.py)" = ff22df9570eeace9fdfd8aabc76dac8ad7a64984
+          echo J06_SYNTHETIC_CURRENT_MAIN_PLUS_EXACT_A_B_SOURCE_BLOBS=PASS_NO_MERGE
+      - name: J01 Real released graph and unaccepted facts distinction
+        run: |
+          python - <<'PY'
+          import json, sys
+          sys.path.insert(0, "skills/engineering-pr-delivery-v3.2/scripts")
+          import delp_projection_v32 as delp
+          from pathlib import Path
+          graph=json.loads(Path(".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+          index=delp.validate_graph(graph)
+          leaf=index["nodes"]["Common#793"]
+          assert graph["nodes"][0]["reserve_weight"]==20
+          assert leaf["primary_pr"]=="Common#800" and leaf["responsibility_id"]=="R-RECONSTRUCTION"
+          assert delp.decomposition_report(graph)["release_state"]=="RELEASEABLE"
+          view=delp.project(graph, [], {})
+          active=view["nodes"]["Common#793"]
+          assert active["progress"]["E"] is None and active["progress"]["P"] is None
+          assert active["state"]!="COMPLETE"
+          print("J01_REAL_RELEASED_ESC4_GRAPH_NOT_FACTLESS_COMPLETE=PASS")
+          PY
+      - name: Execute real ESC4 binding oracles against combined source
+        run: python -m unittest discover -s .github/v32-evidence-spine -p 'test_793_binding_oracles_v32.py' -v
+      - name: J03 Actually execute native V3.2 and untouched V3.5 handover suites
+        run: |
+          python -m unittest discover -s skills/engineering-pr-delivery-v3.2/tests -p 'test_handover_context.py' -v
+          python -m unittest discover -s skills/engineering-pr-delivery-v3.5/tests -p 'test_handover_context.py' -v
+      - name: J03 Actually execute C6 interrupted-transaction atomicity tests
+        run: python -m unittest discover -s .github/v32-evidence-spine -p 'test_811_c6_c2_atomicity.py' -v
+      - name: J04 Actual GitHub authenticated GET-only source C5 6/6
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python .github/v32-evidence-spine/793_c5_live_provider_readback.py | tee /tmp/join-c5.log
+          grep -q 'C5_NATIVE_GITHUB_SOURCE_READBACK=PASS_SIX_CASES_NOT_INDEPENDENT_ACCEPTANCE' /tmp/join-c5.log
+          echo J04_CURRENT_GITHUB_MATERIAL_GET_RECONCILED=PASS
+      - name: J02 Actual native PLAN_HANDOVER transaction using authenticated GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python .github/v32-evidence-spine/811_c6_c3_native_transaction.py | tee /tmp/join-native.log
+          grep -q 'C6_C3_NATIVE_GITHUB_GET_CLI_REAL_PLAN_HANDOVER=PASS' /tmp/join-native.log
+          grep -q 'C6_C3_NATIVE_STALE_PIN_FAIL_CLOSED_ZERO_TX=PASS' /tmp/join-native.log
+          grep -q 'C6_C3_OWNER_OR_MERGE_AUTHORITY=NOT_GRANTED' /tmp/join-native.log
+          echo J02_REAL_COMMITTED_SOURCE_BOUND_EVENT_AND_STALE_FAILURE=PASS_NO_ADMISSION
+      - name: J05 Same real provider artifact verified against integrated immutable Git hash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import importlib.util,os
+          from pathlib import Path
+          folder=Path(".github/v32-evidence-spine")
+          def load(name,path):
+              spec=importlib.util.spec_from_file_location(name,folder/path)
+              module=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(module)
+              return module
+          c5=load("provider", "811_c6_c5_provider_anchor.py")
+          c6=load("gitpin", "811_c6_c6_verify_git_anchor.py")
+          anchor=c6.committed_anchor()
+          pinned=anchor["source"]
+          token=os.environ["GH_TOKEN"]
+          repo=c5.gh_json("/repos/reallaksh19/Common",token)
+          run=c5.gh_json("/repos/reallaksh19/Common/actions/runs/"+str(pinned["workflow_run_id"]),token)
+          info=c5.gh_json("/repos/reallaksh19/Common/actions/artifacts/"+str(pinned["artifact_id"]),token)
+          observed=c5.validate_metadata(info,run,repo,pinned["workflow_run_id"],pinned["workflow_head_sha"],pinned["artifact_id"])
+          assert observed==pinned["artifact_zip_sha256"]
+          raw=c5.get_archive(pinned["artifact_id"],token)
+          assert c6.sha256(raw)==observed
+          Path("/tmp/v32-718-joined-original.zip").write_bytes(raw)
+          print("J05_PROVIDER_DIGEST_IDENTICAL_TO_COMBINED_GIT_BLOB=PASS")
+          PY
+          env -u GH_TOKEN -u GITHUB_TOKEN python .github/v32-evidence-spine/811_c6_c6_verify_git_anchor.py --archive /tmp/v32-718-joined-original.zip
+          echo 'J05_OFFLINE_GIT_CUSTODY=PASS_NOT_ORIGINAL_OWNER_PROOF'
+      - name: Emit no-release/no-review conclusion
+        run: |
+          echo JOIN_PROBE_ONLY_NO_PR_MERGE=TRUE
+          echo NO_INDEPENDENT_REVIEW=TRUE
+          echo ESC4_ESC6_RELEASE_NOT_CLAIMED=TRUE
+          echo PROTECTED_SCOREBOARD_OFF=TRUE
