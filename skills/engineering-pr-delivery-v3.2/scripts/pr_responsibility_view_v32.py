@@ -30,6 +30,14 @@ _LIFECYCLES = frozenset({"DRAFT", "OPEN", "MERGED", "CLOSED"})
 OWNER_UNKNOWN = "UNRESOLVED_CHAT_MESSAGE_LINK"
 HUMAN_SUFFIX = " — "
 
+# Exact quotations frozen independently in C0 oracle commit 80a9c03.
+# Original conversation permalink remains UNKNOWN: this proves frozen-mirror
+# integrity only, not authenticity of the original ChatGPT message.
+FROZEN_OWNER_VERBATIM = {
+    "OI-718-03": "full of stats...\ni dont see any integration on github issue decompostion, issue title scorboard, task evidence, handover prompt and agent metric which is the core...\ni also don't see smart title in issue and draft... I also donot see \"My intent\" or\"Wowner inent\" presenvation i parent issue along with source links and golden fixtures which is mandatory.",
+    "OI-718-04": "update git hub issue... walk the talk,  i.e, show how your implemented cycle will show in issue/OR/task evidence etc.... ensure that stress check achieves the same ie, self run via module once coded and achive same..."
+}
+
 
 class ViewError(ValueError):
     pass
@@ -76,9 +84,14 @@ def owner_trace(
     _require(isinstance(requirements, list) and bool(requirements), "OR_LEDGER_MISSING")
     index = {r.get("id"): r for r in requirements if isinstance(r, Mapping)}
     _require(len(index) == len(requirements), "DUPLICATE_OR_ID")
+    _require({i.get("id") for i in intents if isinstance(i, Mapping)} ==
+             set(FROZEN_OWNER_VERBATIM) and len(intents) == len(FROZEN_OWNER_VERBATIM),
+             "OWNER_INTENT_SET_UNTRUSTED")
     linked = []
     for intent in intents:
         _require(isinstance(intent, Mapping) and bool(intent.get("verbatim")), "OWNER_QUOTATION_MISSING")
+        _require(intent["verbatim"] == FROZEN_OWNER_VERBATIM[intent["id"]],
+                 "PRECOMMITTED_OWNER_QUOTE_TAMPERED")
         source = intent.get("original_source_ref")
         if source is None:
             _require(intent.get("original_source_status") == OWNER_UNKNOWN, "ORIGINAL_SOURCE_UNACCOUNTED")
@@ -205,6 +218,8 @@ def build_views(
                                    graph["programme"]["repository"])
     _require(not pr_details or not pr_details["binding"] == "UNBOUND_ADVISORY" or q["state"] != "PROVEN",
              "UNBOUND_PR_CANNOT_ACQUIRE_QUALIFICATION")
+    # A user-supplied verdict's authority *string* is not provider proof.
+    _require(q["state"] != "PROVEN", "PROVEN_REQUIRES_REAL_ASSESSOR_EXECUTION")
     reserve = next(n.get("reserve_weight", 0) for n in graph["nodes"] if n["ref"] == root_ref)
     root = nodes[root_ref]
     child = nodes[selected_leaf]
@@ -306,6 +321,25 @@ def render_pr_block(snapshot: Mapping[str, Any]) -> str:
     ])
 
 
+def inspect_managed_block(existing: str, expected: str, *, pr: bool = False) -> str:
+    """Check the ENTIRE expected managed block, not just marker presence."""
+    _require(isinstance(existing, str) and isinstance(expected, str),
+             "MANAGED_CONTENT_MUST_BE_TEXT")
+    start, end = (START, END) if pr else (ISSUE_START, ISSUE_END)
+    _require(expected.startswith(start) and expected.endswith(end),
+             "INVALID_EXPECTED_MANAGED_BLOCK")
+    left, right = existing.count(start), existing.count(end)
+    if not left and not right:
+        return "MISSING"
+    if left != 1 or right != 1:
+        return "CORRUPT_MARKERS"
+    i, j = existing.index(start), existing.index(end)
+    if i >= j:
+        return "CORRUPT_MARKERS"
+    actual = existing[i:j + len(end)]
+    return "MATCH" if actual == expected else "DRIFT"
+
+
 def reconcile_managed_block(existing: str, replacement: str, *, observed_digest: str,
                             pr: bool = True) -> str:
     """Pure, guarded edit proposal. Never performs a remote write.
@@ -328,5 +362,5 @@ def reconcile_managed_block(existing: str, replacement: str, *, observed_digest:
 
 __all__ = [
     "AUTHORITY", "SCHEMA", "ViewError", "build_views", "digest", "owner_trace",
-    "reconcile_managed_block", "render_issue_block", "render_pr_block",
+    "inspect_managed_block", "reconcile_managed_block", "render_issue_block", "render_pr_block",
 ]
