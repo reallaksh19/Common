@@ -448,7 +448,8 @@
           "outcome": "A missing or stale canonical plan is surfaced as an explicit unresolved source rather than a fabricated percentage.",
           "verify": "No-plan and stale-release negative controls"
         }
-      ]
+      ],
+      "primary_pr": "Common#722"
     },
     {
       "ref": "Common#724",
@@ -499,7 +500,8 @@
           "outcome": "A merged candidate that omitted required deliverables remains unqualified against the declared acceptance contract.",
           "verify": "PR 611 omitted-surface and clean completeness oracle"
         }
-      ]
+      ],
+      "primary_pr": "Common#728"
     },
     {
       "ref": "Common#733",
