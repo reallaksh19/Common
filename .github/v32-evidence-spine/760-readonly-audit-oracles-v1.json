@@ -1,0 +1,90 @@
+{
+  "schema": "relay-v32-760-readonly-activation-audit-oracle-v1",
+  "owner": "Common#718",
+  "child": "Common#760",
+  "baseline_main": "8249a0b09b142cec6566622cd6c175f338bf14b1",
+  "version": 1,
+  "required": {
+    "event_scope": {
+      "issue_comment": "Common#733 and not DELP LIVE_STATUS",
+      "pull_request_target": "Common#740",
+      "workflow_dispatch": "authenticated manual event"
+    },
+    "publisher_job": "existing gated trusted-reconcile unchanged",
+    "audit_job": "independent default-branch-only read-only",
+    "audit_permissions": [
+      "contents:read",
+      "issues:read",
+      "pull-requests:read"
+    ],
+    "audit_no_mutation": [
+      "NO_--apply",
+      "NO_gh_api_PATCH",
+      "NO_gh_api_POST",
+      "NO_checkout_pr_head",
+      "NO_semantic_PROGRESS_AWARD"
+    ],
+    "audit_readback": [
+      "authority=READ_ONLY_SELF_REPLAY_NO_ACCEPTANCE",
+      "full_ESC_6_gate=FAIL_CLOSED_UNRELEASED_CONSUMERS",
+      "authority_effects=[]",
+      "all three surfaces checked",
+      "write_count=0",
+      "flag-enabled observable",
+      "exact source/delp input digest"
+    ],
+    "failure": "FAILED_UNVERIFIED and artifact persisted"
+  },
+  "cases": [
+    {
+      "id": "READONLY-01",
+      "name": "owner flag unset",
+      "expected": "READ_ONLY_AUDIT_RUNS_WITHOUT_WRITE"
+    },
+    {
+      "id": "READONLY-02",
+      "name": "owner flag true",
+      "expected": "READ_ONLY_AUDIT_STILL_NOT_WRITE"
+    },
+    {
+      "id": "READONLY-03",
+      "name": "foreign issue or pull request",
+      "expected": "SKIP_AUDIT_JOB"
+    },
+    {
+      "id": "READONLY-04",
+      "name": "managed LIVE_STATUS issue comment",
+      "expected": "SKIP_AUDIT_JOB"
+    },
+    {
+      "id": "READONLY-05",
+      "name": "bound issue comment",
+      "expected": "AUDIT_READ_ONLY"
+    },
+    {
+      "id": "READONLY-06",
+      "name": "bound PR event",
+      "expected": "AUDIT_READ_ONLY"
+    },
+    {
+      "id": "READONLY-07",
+      "name": "manual dispatch event",
+      "expected": "AUDIT_READ_ONLY"
+    },
+    {
+      "id": "READONLY-08",
+      "name": "provider mismatch or incomplete read",
+      "expected": "REPORT_FAILED_UNVERIFIED"
+    },
+    {
+      "id": "READONLY-09",
+      "name": "three surfaces unmatched",
+      "expected": "REPORT_DRIFT_OR_UNPUBLISHED_NOT_PASS"
+    },
+    {
+      "id": "READONLY-10",
+      "name": "three surfaces match",
+      "expected": "REPORT_MATCH_NO_ACCEPTANCE"
+    }
+  ]
+}
