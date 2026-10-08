@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any, Mapping
@@ -38,6 +39,9 @@ class ScoreboardTransport(DELP.GhTransport):
             raise PublishError("unexpected GitHub check-runs API response")
         return payload
 
+    def get_issue_comment(self, comment_id: int) -> dict[str, Any]:
+        return self._gh(f"repos/{self.repository}/issues/comments/{comment_id}")
+
     def patch_pull(self, number: int, *, title: str, body: str) -> dict[str, Any]:
         return self._gh(
             "--method", "PATCH", f"repos/{self.repository}/pulls/{number}",
@@ -54,26 +58,74 @@ def _check_binding(indexed: Mapping[str, Any], ref: str, expected_pr: int) -> No
         raise PublishError("requested PR is not the responsibility's declared primary PR")
 
 
+_APPROVAL_START = "<!-- V35_SCOREBOARD_APPROVAL_V1_BEGIN -->"
+_APPROVAL_END = "<!-- V35_SCOREBOARD_APPROVAL_V1_END -->"
+
+
 def _approved_for_write(
+    transport: Any,
     indexed: Mapping[str, Any],
     responsibility_ref: str,
+    expected_pr: int,
     expected_graph_digest: str | None,
     approval_ref: str | None,
-    *,
-    apply: bool,
-) -> None:
-    if not apply:
-        return
+) -> dict[str, Any]:
+    """Fetch a provider-authored, scoped approval—not a caller-asserted permalink.
+
+    The approved *graph itself* remains an upstream Owner/Coordinator selection.
+    This verifies an external GitHub principal and graph binding; it does not
+    authenticate original chat text or grant Local roles/custody/merge authority.
+    """
+    repo = str(indexed["programme"].get("repository") or "")
     if not expected_graph_digest or expected_graph_digest != indexed["digest"]:
         raise PublishError("write denied: expected approved graph digest absent or mismatched")
-    if not isinstance(approval_ref, str) or not approval_ref.startswith(
-        f"https://github.com/{indexed['programme'].get('repository')}/issues/"
-    ) or "#issuecomment-" not in approval_ref:
+    trusted = indexed["programme"].get("scoreboard_approvers") or []
+    if not isinstance(trusted, list) or not trusted or any(
+        not isinstance(name, str) or not name.strip() for name in trusted
+    ):
+        raise PublishError("write denied: approved graph must list scoreboard_approvers")
+    if not isinstance(approval_ref, str):
+        raise PublishError("write denied: real scoped source-approval permalink required")
+    url_re = re.compile(
+        "^https://github\\.com/" + re.escape(repo) +
+        "/issues/[0-9]+#issuecomment-([1-9][0-9]*)$"
+    )
+    match = url_re.fullmatch(approval_ref)
+    if match is None:
         raise PublishError("write denied: scoped source-approval issue comment ref required")
-    # This is an operator gate, NOT proof that the cited comment grants Local
-    # custody/merge rights or that an Owner source has been authenticated.
-    if responsibility_ref not in indexed["nodes"]:
-        raise PublishError("write denied: unknown source responsibility")
+    comment = transport.get_issue_comment(int(match.group(1)))
+    if not isinstance(comment, Mapping) or comment.get("html_url") != approval_ref:
+        raise PublishError("write denied: approval comment provider readback mismatch")
+    author = str((comment.get("user") or {}).get("login") or "")
+    if author not in trusted:
+        raise PublishError("write denied: approval comment authored by unauthorized principal")
+    body = str(comment.get("body") or "")
+    if body.count(_APPROVAL_START) != 1 or body.count(_APPROVAL_END) != 1:
+        raise PublishError("write denied: unique typed approval block missing")
+    interior = body.split(_APPROVAL_START, 1)[1].split(_APPROVAL_END, 1)[0].strip()
+    try:
+        approved = json.loads(interior)
+    except json.JSONDecodeError as exc:
+        raise PublishError("write denied: approval block is not exact JSON") from exc
+    required = {
+        "schema": "V35_SCOREBOARD_APPROVAL_V1",
+        "scope": "ISSUE_PR_SCOREBOARD_TITLE_AND_MANAGED_BODY_ONLY",
+        "repository": repo,
+        "root": indexed["root"],
+        "responsibility_ref": responsibility_ref,
+        "pr_number": expected_pr,
+        "graph_digest": indexed["digest"],
+        "revoked": False,
+    }
+    if not isinstance(approved, dict) or any(
+        approved.get(key) != value for key, value in required.items()
+    ):
+        raise PublishError("write denied: approval scope/identity/graph mismatch or revoked")
+    return {
+        "approval_ref": approval_ref, "approval_author": author,
+        "approved_graph_digest": indexed["digest"],
+        "scope": required["scope"],
+    }
 
 
 def _read(
@@ -185,7 +237,10 @@ def publish(
     DELP.require_repository_match(graph, transport.repository, live=True)
     indexed = DELP.validate_graph(graph)
     _check_binding(indexed, responsibility_ref, pr_number)
-    _approved_for_write(indexed, responsibility_ref, expected_graph_digest, approval_ref, apply=True)
+    approval = _approved_for_write(
+        transport, indexed, responsibility_ref, pr_number,
+        expected_graph_digest, approval_ref,
+    )
     if not 1 <= max_attempts <= 5:
         raise PublishError("bounded attempts must be 1..5")
     base_titles = {
@@ -223,6 +278,7 @@ def publish(
         "candidate_sha": rendered["candidate_sha"],
         "issues": issue_result,
         "pr": pr_result,
+        "provider_approval": approval,
         "warning": "GitHub has no atomic CAS across issue comments/titles and PR fields",
         "integration_acceptance": "NOT_DERIVED",
         "custody_and_merge_authority": "NOT_DERIVED",
