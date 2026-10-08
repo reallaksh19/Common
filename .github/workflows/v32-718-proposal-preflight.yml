@@ -43,3 +43,57 @@ jobs:
           assert report['summary']['evaluated'] == 6, report
           assert report['summary']['not_releasable'] == 0, report
           PY
+
+      - name: Adversarial exact-binding replay using existing V3.2 engine
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import copy
+          import importlib.util
+          import json
+          from pathlib import Path
+
+          graph_path = Path('.github/v32-evidence-spine/718-proposal-v2.json')
+          module_path = Path('skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py')
+          spec = importlib.util.spec_from_file_location('v32_delp_for_718', module_path)
+          assert spec and spec.loader
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          graph = json.loads(graph_path.read_text(encoding='utf-8'))
+
+          result = module.decomposition_report(graph)
+          assert result['release_state'] == 'RELEASEABLE', result
+          assert len(graph['nodes']) == 2, 'exactly one materialized child'
+          assert graph['nodes'][0]['reserve_weight'] == 80
+          assert result['proposal_digest'] == graph['programme']['decomposition_proposal']['released_proposal_digest']
+          print('R_BASIS_BOUND_CONTROL=PASS')
+
+          cases = [
+              ('STALE_RELEASE_DIGEST', 'PROPOSAL_RELEASE_DIGEST_MISMATCH',
+               lambda g: g['programme']['decomposition_proposal'].__setitem__(
+                   'released_proposal_digest', 'sha256:' + '0' * 64)),
+              ('CHANGED_RELEASED_UNIT', 'PROPOSAL_RELEASE_DIGEST_MISMATCH',
+               lambda g: g['programme']['decomposition_proposal']['responsibilities'][0]['semantic_units'][0].__setitem__(
+                   'outcome', 'A changed claim that has never been machine released.')),
+              ('MISWEIGHTED_CHILD', 'BINDING_WEIGHT_MISMATCH',
+               lambda g: g['nodes'][1].__setitem__('weight', 21)),
+              ('MISSING_BOUND_PROVIDER', 'BINDING_REF_UNMATERIALIZED',
+               lambda g: g['programme']['decomposition_proposal']['bindings'][0].__setitem__(
+                   'ref', 'Common#999999')),
+          ]
+          for name, expected, mutation in cases:
+              changed = copy.deepcopy(graph)
+              mutation(changed)
+              report = module.decomposition_report(changed)
+              blockers = {
+                  row['code']
+                  for leaf in report['leaves'].values()
+                  for row in leaf['blockers']
+              }
+              assert report['release_state'] == 'NOT_RELEASEABLE', (name, report)
+              assert expected in blockers, (name, expected, sorted(blockers))
+              print(f'R_BASIS_{name}=REJECTED expected={expected}')
+
+          print('R_BASIS_BOUNDARY_REPLAY=PASS')
+          PY
