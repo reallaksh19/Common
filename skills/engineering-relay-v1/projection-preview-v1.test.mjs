@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {reconcileGitHubFacts} from './provider-facts-v1.mjs';
+import {canonicalJSON} from './provenance-v1.mjs';
+import {createHash} from 'node:crypto';
 import {renderRelayPreviews as render,PreviewError} from './projection-preview-v1.mjs';
 
 const REPO='reallaksh19/Common',HEAD='a'.repeat(40),BASE='b'.repeat(40);
@@ -169,6 +171,22 @@ test('a completely fabricated untrusted R3 snapshot is not validated as external
   assert.equal(p.owner_message_authenticated,false);
   assert.equal(p.independently_accepted,false);
   assert.equal(p.live_writer_enabled,false);
+});
+test('even a forged self-consistent native-looking digest only labels CALLER-SELECTED CI, not all required checks',async()=>{
+  const fixture=JSON.parse(JSON.stringify(await facts()));
+  fixture.source_state='PROVIDER_OBSERVED';
+  fixture.provider_transport='NATIVE_GITHUB_GET';
+  delete fixture.snapshot_sha256;
+  fixture.snapshot_sha256=createHash('sha256').update(canonicalJSON(fixture)).digest('hex');
+  const candidate=render(fixture,OPT);
+  // This forged input is a falsifier, NOT provider authentication evidence.
+  assert.equal(candidate.pr_titles[0].state,'SELECTED_CI_PASS_ONLY');
+  assert.equal(candidate.pr_titles[0].workflow_scope,'CALLER_SELECTED_NOT_REQUIRED_POLICY');
+  assert.deepEqual(candidate.pr_titles[0].checked_workflow_paths,[WF]);
+  assert.match(candidate.parent_issue.managed_block_preview,/NOT proven required policy/);
+  assert.ok(candidate.successor_handover.instructions.some(x=>x.includes('caller-selected')));
+  assert.equal(candidate.independently_accepted,false);
+  assert.equal(candidate.authorization_granted,false);
 });
 test('native GitHub parent/child/PR/Actions source read drives all 3 previews from one digest',
   {skip:!process.env.RELAY_R4_CI_HEAD_SHA},async()=>{
