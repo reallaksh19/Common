@@ -49,7 +49,7 @@ async function fixture(){
  }));
  return {dir,records,tip,approved};
 }
-const capture=(f,overrides={})=>exported(f.dir,config(),policy(f.approved),...overrides);
+const capture=f=>exported(f.dir,config(),policy(f.approved));
 const refused=async(p,code)=>assert.rejects(p,e=>e instanceof BundleError&&e.code===code);
 const alternate=b=>JSON.parse(b.bytes);
 const repr=x=>canonicalJSON(x);
