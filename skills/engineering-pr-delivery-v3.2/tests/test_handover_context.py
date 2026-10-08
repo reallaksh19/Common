@@ -1185,3 +1185,33 @@ class HandoverContextTests(unittest.TestCase):
             self.assertNotIn("source_bound_successor", context["blind_context"])
             self.assertEqual([], validate_visibility(context))
 
+
+    def test_delp_successor_racing_checkpoint_facts_fail_closed(self):
+        graph, provider = self._source_bound_fixture()
+        provider.fact_reads = 0
+        def comments(n):
+            if n != 720:
+                return []
+            provider.fact_reads += 1
+            if provider.fact_reads == 1:
+                return []
+            return [{
+                "id": 8121, "author_association": "OWNER",
+                "user": {"login": "authorized"},
+                "body": (
+                    "```yaml\nCHECKPOINT_FACTS_V1:\n"
+                    "  responsibility: {issue: Common#720}\n"
+                    "  material: {candidate_sha: " + "a"*40 + "}\n"
+                    "  units: []\n```"
+                ),
+            }]
+        provider.list_comments = comments
+        with self.assertRaisesRegex(HandoverContextError, "SOURCE_PROVIDER_CHANGED_DURING_READ"):
+            build_delp_source_bound_successor(graph, leaf_ref="Common#720", provider=provider)
+
+    def test_delp_successor_cannot_mint_owner_original_link(self):
+        graph, provider = self._source_bound_fixture()
+        with self.assertRaisesRegex(HandoverContextError, "OWNER_ORIGIN_STATUS_UNVERIFIED"):
+            build_delp_source_bound_successor(
+                graph, leaf_ref="Common#720", provider=provider,
+                owner_source_status="LINKED_ORIGINAL_SOURCE")
