@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import sys
 import unittest
 from pathlib import Path
@@ -21,6 +22,7 @@ def graph():
         "programme": {
             "id": "SMART-LIVE-V35-TEST", "root": "Common#600",
             "repository": "reallaksh19/Common", "graph_generation": 1,
+            "scoreboard_approvers": ["owner"],
         },
         "nodes": [
             {"ref": "Common#600", "kind": "ROOT"},
@@ -54,6 +56,7 @@ class FakeGitHub:
         ]}
         self.writes = []
         self.next_comment_id = 30000
+        self.approval_comment = None
         self.move_during_issue_write = False
         self.pr_conflict_once = False
 
@@ -75,6 +78,12 @@ class FakeGitHub:
 
     def get_check_runs(self, head_sha):
         return copy.deepcopy(self.checks)
+
+    def get_issue_comment(self, comment_id):
+        assert comment_id == 123
+        if self.approval_comment is None:
+            raise AssertionError("approval not seeded")
+        return copy.deepcopy(self.approval_comment)
 
     def patch_pull(self, number, *, title, body):
         assert number == 712
@@ -192,6 +201,19 @@ class LivePublisherTests(unittest.TestCase):
         self.graph = graph()
         self.digest = M.validate_graph(self.graph)["digest"]
         self.source = "https://github.com/reallaksh19/Common/issues/741#issuecomment-123"
+        self.transport.approval_comment = {
+            "id": 123, "html_url": self.source, "user": {"login": "owner"},
+            "body": (R4._APPROVAL_START + "\\n" + json.dumps({
+                "schema": "V35_SCOREBOARD_APPROVAL_V1",
+                "scope": "ISSUE_PR_SCOREBOARD_TITLE_AND_MANAGED_BODY_ONLY",
+                "repository": "reallaksh19/Common",
+                "root": "Common#600",
+                "responsibility_ref": "Common#604",
+                "pr_number": 712,
+                "graph_digest": self.digest,
+                "revoked": False,
+            }) + "\\n" + R4._APPROVAL_END),
+        }
 
     def apply(self):
         return R4.publish(
@@ -213,6 +235,33 @@ class LivePublisherTests(unittest.TestCase):
             R4.publish(self.transport, self.graph, "Common#604", 712,
                        expected_graph_digest=self.digest, approval_ref="not a provider ref")
         self.assertEqual([], self.transport.writes)
+
+    def test_approval_provider_forgery_and_revocation_block_all_writes(self):
+        for mutation in ("untrusted_author", "revoked", "wrong_graph", "different_scope", "missing_block"):
+            transport = FakeGitHub()
+            transport.approval_comment = copy.deepcopy(self.transport.approval_comment)
+            if mutation == "untrusted_author":
+                transport.approval_comment["user"]["login"] = "other-account"
+            elif mutation == "missing_block":
+                transport.approval_comment["body"] = "I approve it"
+            else:
+                raw = transport.approval_comment["body"]
+                payload = json.loads(raw.split(R4._APPROVAL_START, 1)[1].split(R4._APPROVAL_END, 1)[0])
+                if mutation == "revoked":
+                    payload["revoked"] = True
+                elif mutation == "wrong_graph":
+                    payload["graph_digest"] = "z" * 64
+                else:
+                    payload["scope"] = "UNRESTRICTED"
+                transport.approval_comment["body"] = (
+                    R4._APPROVAL_START + "\\n" + json.dumps(payload) + "\\n" + R4._APPROVAL_END
+                )
+            with self.subTest(mutation=mutation), self.assertRaises(R4.PublishError):
+                R4.publish(
+                    transport, self.graph, "Common#604", 712,
+                    expected_graph_digest=self.digest, approval_ref=self.source,
+                )
+            self.assertEqual([], transport.writes)
 
     def test_issue_status_and_smart_pr_auto_publication_then_repeat_noop(self):
         first = self.apply()
