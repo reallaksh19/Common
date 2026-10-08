@@ -95,3 +95,23 @@ test('authority is never minted even if caller explicitly forges OWNER receipt a
  assert.equal(Object.hasOwn(result,'write_permission'),false);
  assert.equal(result.authorization_granted,false);
 });
+
+test('a lookalike GitHub comment from a different repository never matches',()=>{
+ const r=edit((g,p)=>p.source_receipt.source_url=
+   'https://github.com/attacker/Common/issues/787#issuecomment-6064020826');
+ assert.equal(r.candidate_scope_match,false);
+ assert.ok(r.reasons.includes('COMMENT_REPO_MISMATCH'));
+});
+test('an Owner-declared grant sourced in a different repository cannot match',()=>{
+ const r=edit((g,p)=>g.source_comment_url=
+   'https://github.com/attacker/Common/issues/787#issuecomment-6064020826');
+ assert.equal(r.candidate_scope_match,false);
+ assert.ok(r.reasons.includes('GRANT_SOURCE_REPO_MISMATCH'));
+});
+test('cross-repository resource remains ineligible even if fake grant lists it',()=>{
+ const r=edit((g,p)=>{
+   g.resources=['attacker/Common#787'];p.resource='attacker/Common#787';
+ });
+ assert.equal(r.candidate_scope_match,false);
+ assert.ok(r.reasons.includes('RESOURCE_REPO_MISMATCH'));
+});

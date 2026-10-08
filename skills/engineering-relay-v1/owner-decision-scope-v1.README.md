@@ -9,3 +9,6 @@ The design separates *claim checks* from *source/role policy authenticity*. Futu
 Run `node --test skills/engineering-relay-v1/owner-decision-scope-v1.test.mjs`. Pure offline Node 22/24 CI uses read-only checkout, no secrets or write tokens.
 
 **Design gap intentionally retained:** syntactically correct declared grants or source receipts can be forged. No in-process `true` from these inputs is proof of original Owner authorization. No persistent session logging or live scoreboard exists here.
+## Explicit repository boundary
+
+Scope matching requires declared grant-source comment, decision-source comment and action resource to belong to the governing parent repository. Lookalike/foreign repositories stay DENIED even if an untrusted grant and proposal both claim the same foreign resource. Cross-repository opt-in is future R7, not implied by a matching mock grant.

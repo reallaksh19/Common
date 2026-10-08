@@ -102,6 +102,16 @@ export function evaluateDeclaredScope(grant,proposal){
   deny(grant.actions.includes(proposal.action),'ACTION_OUT_OF_SCOPE');
   deny(grant.claim_ids.includes(proposal.claim_id),'CLAIM_OUT_OF_SCOPE');
   deny(grant.resources.includes(proposal.resource),'RESOURCE_OUT_OF_SCOPE');
+  // A reset for this repo does not implicitly authorize cross-repository grants,
+  // comments or resources; R7 portability will need an explicit opt-in policy.
+  const repo=grant.parent_issue.split('#')[0].toLowerCase();
+  const rootUrl='https://github.com/'+repo+'/';
+  const insideRepo=(url)=>url.toLowerCase().startsWith(rootUrl);
+  const scopedResource=(value)=>
+    value.toLowerCase().startsWith(repo+'#')||insideRepo(value);
+  deny(insideRepo(grant.source_comment_url),'GRANT_SOURCE_REPO_MISMATCH');
+  deny(insideRepo(proposal.source_receipt.source_url),'COMMENT_REPO_MISMATCH');
+  deny(scopedResource(proposal.resource),'RESOURCE_REPO_MISMATCH');
   deny(grant.exact_head_sha!==null&&proposal.exact_head_sha===grant.exact_head_sha,'EXACT_HEAD_NOT_BOUND');
   deny(issued>=dates.vf,'BEFORE_GRANT');
   deny(dates.vu===null||issued<=dates.vu,'GRANT_EXPIRED');
