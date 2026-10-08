@@ -132,6 +132,8 @@ jobs:
           for ref,x in sorted(r["read_views"].items()):
               print(ref+"_SMART_TITLE="+x["title"]+";MANAGED_BLOCK="+x["managed_block"])
               print(ref+"_EXPECTED_TITLE="+x["expected"])
+          print("V32_733_RENDERED_MANAGED_BLOCKS_JSON="+json.dumps(
+              r["expected_managed_blocks"], ensure_ascii=False, sort_keys=True))
           PY
 
   golden-oracle-preflight:
