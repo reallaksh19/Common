@@ -77,7 +77,7 @@ def verify_owner_mirror(
     comment_id = int(match.group(4))
     try:
         comment = transport.get_issue_comment(comment_id)
-    except (DELP.DelpError, KeyError, LookupError, AssertionError) as exc:
+    except (DELP.DelpError, KeyError, LookupError) as exc:
         raise SourceAuthorityError("Owner mirror provider lookup unavailable or missing") from exc
     if not isinstance(comment, Mapping) or comment.get("html_url") != url:
         raise SourceAuthorityError("provider comment permalink/readback mismatch")
