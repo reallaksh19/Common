@@ -1216,6 +1216,31 @@ class HandoverContextTests(unittest.TestCase):
                 graph, leaf_ref="Common#720", provider=provider,
                 owner_source_status="LINKED_ORIGINAL_SOURCE")
 
+    def test_delp_successor_refuses_missing_or_malformed_live_material(self):
+        # A named PR is not proof of the actual commit. An unavailable provider
+        # must not mint CURRENT_READ_ONLY simply because no frozen basis exists.
+        for missing in (None, "", "short", "z" * 40):
+            with self.subTest(candidate_sha=missing):
+                graph, provider = self._source_bound_fixture()
+                provider.sha = missing
+                with self.assertRaisesRegex(HandoverContextError, "SOURCE_CANDIDATE_SHA_UNVERIFIED"):
+                    build_delp_source_bound_successor(
+                        graph, leaf_ref="Common#720", provider=provider)
+        graph, provider = self._source_bound_fixture()
+        provider.get_commit_sha = lambda ref: None
+        with self.assertRaisesRegex(HandoverContextError, "SOURCE_BASE_SHA_UNVERIFIED"):
+            build_delp_source_bound_successor(
+                graph, leaf_ref="Common#720", provider=provider)
+
+    def test_delp_successor_refuses_unknown_provider_pr_state(self):
+        graph, provider = self._source_bound_fixture()
+        provider.get_pull = lambda n: {
+            "head": {"sha": "a" * 40}, "state": None, "merged": False,
+        }
+        with self.assertRaisesRegex(HandoverContextError, "SOURCE_PR_STATE_UNVERIFIED"):
+            build_delp_source_bound_successor(
+                graph, leaf_ref="Common#720", provider=provider)
+
     def test_delp_successor_refuses_unbound_esc4_like_leaf(self):
         # The real C1 graph originally had no primary_pr or candidate_ref for
         # Common#793. Its live SHA was invisible to observe_github. A leaf
