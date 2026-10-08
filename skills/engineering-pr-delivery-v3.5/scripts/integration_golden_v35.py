@@ -56,14 +56,14 @@ def derive(snapshot: Mapping[str, Any]) -> dict[str, Any]:
     pn = programme.get("issue")
     ln = leaf.get("issue")
     prn = pr.get("number")
-    if (
-        repo != "reallaksh19/Common"
-        or (pn, ln, prn) != (600, 604, 712)
-        or snapshot.get("fixture_kind") != "HISTORICAL_PROVIDER_OBSERVATION_NOT_AUTHORITY"
+    if repo != "reallaksh19/Common" or not all(
+        type(n) is int and n > 0 for n in (pn, ln, prn)
     ):
         raise GoldenContractError("unrecognised programme or issue identity")
     if leaf.get("parent_issue") != pn or pr.get("responsibility_issue") != ln:
         raise GoldenContractError("parent/leaf/PR lineage mismatch")
+    if (pn, ln, prn) != (600, 604, 712) or snapshot.get("fixture_kind") != "HISTORICAL_PROVIDER_OBSERVATION_NOT_AUTHORITY":
+        raise GoldenContractError("historical golden fixture identity mismatch")
     if (
         programme.get("selected_issue") != ln
         or leaf.get("responsibility_id") != "RK-P3"
