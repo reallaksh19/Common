@@ -6638,5 +6638,13 @@ class HostedV35ApprovedGraphSource(_approved_graph_tests.GraphSelectionTests):
     """Independent graph/Owner receipt, mutation negatives, guarded publisher."""
 
 
+# R2-D: independent cold entry from any of 3 GitHub surfaces, no chat.
+import test_integration_cold_entry_v35 as _cold_entry
+
+
+class HostedV35ColdEntry(_cold_entry.ColdEntryTests):
+    """Same provider source or same HOLD across parent, child and PR entry."""
+
+
 if __name__ == "__main__":
     unittest.main()
