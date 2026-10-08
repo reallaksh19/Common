@@ -146,18 +146,124 @@ def replay(manifest: dict, graph: dict) -> dict[str, Any]:
     }
 
 
+def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]:
+    """Compare live GitHub readback to *independently generated* source views.
+
+    No provider write methods are called. The caller authenticates its adapter;
+    the pure function can only validate the observations it receives.
+    GitHub's separate issue/title/body writes are NOT an atomic transaction.
+    """
+    import delp_projection_v32 as delp
+
+    repository = graph["programme"]["repository"]
+    delp.require_repository_match(graph, repository, live=False)
+    root, child = "Common#718", "Common#733"
+    root_issue = transport.get_issue(718)
+    child_issue = transport.get_issue(733)
+    start_pull = transport.get_pull(740)
+    _require(all(isinstance(x, dict) for x in (root_issue, child_issue, start_pull)),
+             "PROVIDER_READ_UNAVAILABLE")
+    _require(start_pull.get("number") == 740, "PR_PROVIDER_IDENTITY_CHANGED")
+    head = ((start_pull.get("head") or {}).get("sha"))
+    _require(isinstance(head, str) and len(head) == 40 and
+             all(x in "0123456789abcdefABCDEF" for x in head),
+             "PROVIDER_HEAD_UNAVAILABLE")
+    lifecycle = ("DRAFT" if start_pull.get("draft") else
+                 "MERGED" if start_pull.get("merged") else
+                 str(start_pull.get("state") or "").upper())
+    _require(lifecycle in {"DRAFT", "OPEN", "CLOSED", "MERGED"}, "PR_LIFECYCLE_UNOBSERVED")
+    observations = delp.observe_github(transport, graph)
+    _require(observations.get(child, {}).get("candidate_sha") == head,
+             "CANDIDATE_CHANGED_DURING_OBSERVATION")
+    ledger = delp.ledger_from_github(transport, graph)
+    titles = {}
+    for ref, observed in ((root, root_issue), (child, child_issue), ("PR", start_pull)):
+        original = observed.get("title")
+        _require(isinstance(original, str) and " — " in original,
+                 "HUMAN_TITLE_BASE_UNRESOLVED:" + ref)
+        titles[ref] = original.rsplit(" — ", 1)[1]
+    expected = view.build_views(
+        graph, manifest, observations=observations, ledger=ledger,
+        selected_leaf=child, phase="C4", human_titles=titles,
+        draft_pr={"number": 740, "head_sha": head, "lifecycle": lifecycle},
+        qualification=None,
+    )
+    # Double-read the *actual* live candidate. A concurrent force push must
+    # fail closed rather than rendering a stale head as current.
+    final_pull = transport.get_pull(740)
+    _require(isinstance(final_pull, dict) and
+             (final_pull.get("head") or {}).get("sha") == head and
+             bool(final_pull.get("draft")) == bool(start_pull.get("draft")),
+             "PROVIDER_MOVED_DURING_RECONCILIATION")
+    state = {}
+    for ref, observed in ((root, root_issue), (child, child_issue)):
+        target = expected["issue_titles"][ref]
+        actual = observed["title"]
+        managed = observed.get("body") or ""
+        state[ref] = {
+            "observed": actual, "expected": target,
+            "title": "MATCH" if target == actual else "DRIFT",
+            "managed_block": "PRESENT" if view.ISSUE_START in managed and
+            view.ISSUE_END in managed else "MISSING",
+            "body_digest": view.digest(managed),
+        }
+    pr_body = start_pull.get("body") or ""
+    state["Common#740"] = {
+        "observed": start_pull["title"],
+        "expected": expected["draft_pr_title"],
+        "title": "MATCH" if start_pull["title"] == expected["draft_pr_title"] else "DRIFT",
+        "managed_block": "PRESENT" if view.START in pr_body and
+        view.END in pr_body else "MISSING",
+        "body_digest": view.digest(pr_body),
+    }
+    return {
+        "schema": "relay-v32-718-live-provider-readback-v1",
+        "authority": AUTHORITY,
+        "candidate_sha": head,
+        "source_input_digest": expected["input_digest"],
+        "delp_input_digest": expected["delp_input_digest"],
+        "source_provenance": "AUTHENTICATED_PROVIDER_IS_CALLER_RESPONSIBILITY",
+        "pr_binding": expected["pr"]["binding"],
+        "qualifier": expected["qualification"],
+        "historical_unreported": expected["historical_unreported"],
+        "semantic_progress": expected["leaf_semantic"],
+        "read_views": state,
+        "reconciliation": (
+            "MATCH" if all(s["title"] == "MATCH" and
+                           s["managed_block"] == "PRESENT" for s in state.values())
+            else "DRIFT_OR_UNPUBLISHED"
+        ),
+        "full_ESC_6_gate": "FAIL_CLOSED_UNRELEASED_CONSUMERS",
+        "authority_effects": [],
+    }
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--manifest", type=Path, default=MANIFEST)
     p.add_argument("--graph", type=Path, default=GRAPH)
     p.add_argument("--report", type=Path)
     p.add_argument("--assert-all-consumers", action="store_true")
+    p.add_argument("--live-readback", action="store_true",
+                   help="GET-only source/provider projection parity (requires gh token)")
+    p.add_argument("--repository", default="reallaksh19/Common")
+    p.add_argument("--require-match", action="store_true",
+                   help="fail if issue/PR titles or managed blocks are out of sync")
     args = p.parse_args()
     try:
         manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
         graph = json.loads(args.graph.read_text(encoding="utf-8"))
-        report = replay(manifest, graph)
-        report["exit_code"] = 2 if args.assert_all_consumers else 0
+        if args.live_readback:
+            import delp_projection_v32 as delp
+            _require(args.repository == graph["programme"]["repository"],
+                     "REQUESTED_REPOSITORY_MISMATCH")
+            report = live_readback(manifest, graph, delp.GhTransport(args.repository))
+            report["exit_code"] = (2 if args.assert_all_consumers or
+                                   (args.require_match and report["reconciliation"] != "MATCH")
+                                   else 0)
+        else:
+            report = replay(manifest, graph)
+            report["exit_code"] = 2 if args.assert_all_consumers else 0
         if args.report:
             args.report.parent.mkdir(parents=True, exist_ok=True)
             args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
