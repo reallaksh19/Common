@@ -639,5 +639,33 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         self.assertEqual("INCOMPLETE_SYNC",error.exception.report["status"])
 
 
+    def test_42_smart_title_owner_derived_from_graph_not_literal_issue_PR(self):
+        import delp_projection_v32 as delp
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        self.assertEqual(("Common#718","Common#733"),
+                         delp._source_view_title_contract(live))
+        moved = copy.deepcopy(live)
+        moved["programme"]["id"] = "ANOTHER-REPO-RELEASE"
+        moved["programme"]["root"] = "Another#10"
+        leaf = next(n for n in moved["nodes"] if n.get("responsibility_id")=="R-PROJECTION")
+        leaf["ref"] = "Another#20"
+        leaf["primary_pr"] = "Another#30"
+        binding = next(b for b in moved["programme"]["decomposition_proposal"]["bindings"]
+                       if b["responsibility_id"]=="R-PROJECTION")
+        binding["ref"] = "Another#20"
+        self.assertEqual(("Another#10","Another#20"),
+                         delp._source_view_title_contract(moved))
+        del leaf["primary_pr"]
+        self.assertIsNone(delp._source_view_title_contract(moved))
+
+    def test_43_frozen_unbound_graph_does_not_require_smart_title_policy(self):
+        import delp_projection_v32 as delp
+        self.assertIsNone(delp._source_view_title_contract(self.graph))
+        store=delp.InMemoryStore()
+        report=delp.sync_projection(store,self.graph,lambda:[],lambda:{},{})
+        self.assertEqual(set(report),set(n["ref"] for n in self.graph["nodes"]))
+        self.assertTrue(all(v["status"]=="WRITTEN" for v in report.values()))
+
+
 if __name__ == "__main__":
     unittest.main()
