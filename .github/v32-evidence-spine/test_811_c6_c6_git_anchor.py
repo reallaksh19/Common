@@ -22,8 +22,6 @@ ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "skills/engineering-pr-delivery-v3.2/scripts"
 sys.path.insert(0, str(SCRIPTS))
 from v3lib import canonical_digest  # noqa: E402
-from importlib import import_module
-mod = import_module("811_c6_c6_verify_git_anchor") if False else None
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import importlib.util
 
@@ -126,7 +124,8 @@ class GitAnchorAdversarialTests(unittest.TestCase):
             self.assertEqual(actual, anchor.committed_anchor())
             self.assertNotEqual(json.loads(p.read_text()), actual)
         # Git is the content address trust root; this is NOT a signed Owner claim.
-        self.assertNotIn("SIGNED", actual["authority"].split("_")[-1:])
+        self.assertEqual("AGENT_RECORDED_PROVIDER_EVIDENCE_NOT_OWNER_SIGNATURE",
+                         actual["authority"])
 
     def test_a07_offline_replay_needs_no_live_provider_or_token(self):
         with patch.dict(os.environ, {"GH_TOKEN": "", "GITHUB_TOKEN": ""}):
