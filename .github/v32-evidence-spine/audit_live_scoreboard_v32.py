@@ -235,13 +235,17 @@ def main() -> int:
                     provider_failure.get("reason_code") ==
                     "CANDIDATE_CHANGED_DURING_OBSERVATION"):
                 try:
-                    report["candidate_observer_probe"] = live_three_head_probe()
+                    # The first readback has already failed. This is a FRESH
+                    # guarded readback invocation whose OWN first/direct,
+                    # DELP-internal and final PR reads share ONE traced object.
+                    from same_guarded_readback_trace_v32 import run_guarded_trace
+                    report["same_guarded_replay_trace"] = run_guarded_trace()
                 except Exception as probe_exc:
-                    # Preserve the *original* error; a diagnostic failure
-                    # must never turn source readback into green.
-                    report["candidate_observer_probe"] = {
-                        "verdict": "PROBE_FAILED_UNVERIFIED",
+                    # Preserve original failure and never echo provider bodies.
+                    report["same_guarded_replay_trace"] = {
+                        "source_outcome": "TRACE_FAILED_UNVERIFIED",
                         "exception_class": type(probe_exc).__name__,
+                        "invocation_scope": "NEW_GUARDED_REPLAY_AFTER_ORIGINAL_FAILURE",
                         "write_count": 0, "authority_effects": []}
         code = 3
     args.output.parent.mkdir(parents=True, exist_ok=True)
