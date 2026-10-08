@@ -1,0 +1,55 @@
+{
+  "schema": "common-v32-811-c6-atomicity-oracle-v1",
+  "programme": "Common#718",
+  "task": "Common#811",
+  "source_base": "5c830270b140ba21c0d7cf9060f647164b256a42",
+  "original_owner_message_url": "UNKNOWN",
+  "production_status": "DELP_SOURCE_NOT_WIRED",
+  "classification": "NONFROZEN_EXECUTION_PREFLIGHT_NOT_SOURCE_PATCH",
+  "scenarios": [
+    {
+      "id": "A01",
+      "trigger": "Real PLAN_HANDOVER interrupted after its first staged filesystem operation",
+      "expected": "RECOVERY_REQUIRED and no COMMITTED receipt; explicit recover_all restores exact before-images"
+    },
+    {
+      "id": "A02",
+      "trigger": "Real PLAN_HANDOVER interrupted after two staged filesystem operations",
+      "expected": "Context/event/snapshot restoration byte-for-byte through existing transaction recovery; no falsely committed handover"
+    },
+    {
+      "id": "A03",
+      "trigger": "Issue second PLAN_HANDOVER while first transaction RECOVERY_REQUIRED",
+      "expected": "Second transaction cannot commit or bypass recovery gate"
+    },
+    {
+      "id": "A04",
+      "trigger": "Externally corrupt first already-applied transaction target before recover_all",
+      "expected": "Recovery refuses unknown before/after target state, does not overwrite it, leaves recovery debt"
+    },
+    {
+      "id": "A05",
+      "trigger": "Successful legacy PLAN_HANDOVER",
+      "expected": "Exactly one committed HANDOVER_PLANNED event, generated HANDOVER_CONTEXT and no source-bound digests; duplicate transaction ID rejected"
+    }
+  ],
+  "future_c6_requirements": [
+    "Source-bound provider failure must be detected BEFORE transactional side effects",
+    "Opted-in stale source must not write HANDOVER_PLANNED, snapshot, context or lease renewal",
+    "Crash after staging/apply must recover atomically without silently minting custody",
+    "Unknown post-crash external mutation requires manual reconciliation rather than blind rollback",
+    "A single successful opt-in source-bound handover must carry full graph/plan/input/provider digests into real transaction output",
+    "Unaided cold successor must check current GitHub provider and source against frozen basis"
+  ],
+  "expected_conclusion": "LEGACY_TX_RECOVERY_QUALIFIED_AND_C6_SOURCE_INTEGRATION_RED",
+  "prohibited_claims": [
+    "NO_OWNER_ORIGIN_AUTHENTICATION",
+    "NO_SOURCE_C6_IMPLEMENTATION",
+    "NO_INDEPENDENT_REVIEW",
+    "NO_SOURCE_PATH_AUTHORIZATION_FROM_TESTS",
+    "NO_MERGE"
+  ],
+  "fixture_before_test": true,
+  "restack_source_head": "82ba85564d284f87cadfdedaba5d449cf3c7bc7f",
+  "previous_qualified_c6_c0": "9e35ab2cc29f0fbd98725c783668f49fcdc2012b"
+}
