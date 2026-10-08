@@ -1,0 +1,24 @@
+name: relay-reset-r1-r2-lineage-bridge
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/journal-provenance-bridge-v1.*'
+      - '.github/workflows/relay-reset-lineage-bridge.yml'
+permissions:
+  contents: read
+jobs:
+  bridge-node:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Test real R2 disk, portable cold replay and R1 lineage
+        run: node --test skills/engineering-relay-v1/journal-provenance-bridge-v1.test.mjs
