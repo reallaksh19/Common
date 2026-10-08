@@ -92,7 +92,7 @@ class Provider(BASE.FakeGitHub):
             return copy.deepcopy(RECEIPT)
         if comment_id == 123:
             return copy.deepcopy(self.score_comment)
-        raise AssertionError("unknown approval/mirror id")
+        raise DELP.DelpError("GitHub provider 404: owner mirror comment unavailable")
 
     def get_file_at(self, commit_sha, path):
         if commit_sha != COMMIT or path != PATH:
