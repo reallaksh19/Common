@@ -351,7 +351,7 @@ class ReadonlyScoreboardAuditTests(unittest.TestCase):
             def fake_run(command,**_):
                 calls.append(command)
                 if command[0]=="git":
-                    return subprocess.CompletedProcess([],0,stdout="c"*40+"\\n")
+                    return subprocess.CompletedProcess([],0,stdout="c"*40)
                 self.assertEqual(str(mod.FIRST_SOURCE),command[1])
                 self.assertNotIn("--apply",command)
                 self.assertNotIn("--live-readback",command)
@@ -384,7 +384,7 @@ class ReadonlyScoreboardAuditTests(unittest.TestCase):
             def fake_run(command,**_):
                 seen.append(command)
                 if command[0]=="git":
-                    return subprocess.CompletedProcess([],0,stdout="c"*40+"\\n")
+                    return subprocess.CompletedProcess([],0,stdout="c"*40)
                 Path(command[5]).write_text(json.dumps(first))
                 return subprocess.CompletedProcess([],1,stdout="",
                     stderr="V32-718-REPLAY-FAILED: ReplayError: CANDIDATE_CHANGED_DURING_OBSERVATION")
@@ -412,7 +412,7 @@ class ReadonlyScoreboardAuditTests(unittest.TestCase):
                   "--event-name","issue_comment","--writer-job-result","skipped"]
             def fake_run(command,**_):
                 if command[0]=="git":
-                    return subprocess.CompletedProcess([],0,stdout="c"*40+"\\n")
+                    return subprocess.CompletedProcess([],0,stdout="c"*40)
                 Path(command[3]).write_text(json.dumps(observed(True)))
                 # A forged success without a primary trace MUST fail.
                 return subprocess.CompletedProcess([],0,stdout="",stderr="")
