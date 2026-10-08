@@ -7024,5 +7024,157 @@ class CustodyFenceLiveStatusSchemaContract(unittest.TestCase):
                 self.assertTrue(self.errors(candidate), label)
 
 
+class NativeCustodySourceScopeGate(unittest.TestCase):
+    """B2.3-B: leaf scope is a prerequisite, never custody authorization."""
+
+    @classmethod
+    def setUpClass(cls):
+        source = MODULE_PATH.with_name("custody_source_v35.py")
+        spec = importlib.util.spec_from_file_location("custody_source_v35", source)
+        cls.scope = importlib.util.module_from_spec(spec)
+        assert spec.loader
+        spec.loader.exec_module(cls.scope)
+
+    def graph(self):
+        return {
+            "programme": {
+                "repository": "reallaksh19/Common",
+                "root": "Common#600",
+            },
+            "nodes": [
+                {"kind": "ROOT", "ref": "Common#600"},
+                {"kind": "LEAF", "ref": "Common#604",
+                 "parent": "Common#600", "responsibility_id": "RK-P3"},
+                {"kind": "LEAF", "ref": "Common#605",
+                 "parent": "Common#600", "responsibility_id": "RK-P4"},
+            ],
+        }
+
+    def bundle(self, number=604, ep_id="EP-P3-B8",
+               lease_id="LEASE-P3-B8", epoch=8):
+        repo = "reallaksh19/Common"
+        source = {
+            "provider": "GITHUB", "repository": repo,
+            "revision_sha": "a" * 40,
+            "state_path": "relay/STATE.yaml",
+            "ep_path": f"relay/WORK/{ep_id}.yaml",
+            "lease_path": f"relay/LEASES/{lease_id}.yaml",
+        }
+        state = {"execution": {
+            "lifecycle": "ACTIVE", "ep": ep_id, "lease": lease_id,
+            "route": f"SERIAL:{ep_id}", "custody_epoch": epoch,
+        }}
+        ep = {
+            "id": ep_id,
+            "parent_issue": {"provider": "GITHUB", "repository": repo,
+                             "number": number},
+            "programme_parent": {"provider": "GITHUB", "repository": repo,
+                                 "number": 600},
+            "implementation_plan_basis": {
+                "responsibility_basis_ref": f"Common#{number}",
+            },
+        }
+        lease = {
+            "id": lease_id, "state": "ACTIVE",
+            "route": f"SERIAL:{ep_id}",
+            "basis": {"ep_id": ep_id},
+            "executor": {"id": "agent-B8"},
+            "custody": {"epoch": epoch,
+                        "granted_at": "2026-10-08T00:00:00Z"},
+        }
+        return source, state, ep, lease
+
+    def assess(self, leaf="Common#604", bundle=None, graph=None):
+        return self.scope.assess_scoped_native_source(
+            graph if graph is not None else self.graph(), leaf,
+            *(bundle if bundle is not None else self.bundle()),
+        )
+
+    def test_wrong_programme_438_triplet_never_governs_604(self):
+        source, state, ep, lease = self.bundle(
+            number=438, ep_id="EP.438.7", lease_id="LEASE.438.7", epoch=1)
+        ep["programme_parent"]["number"] = 438
+        result = self.assess(bundle=(source, state, ep, lease))
+        self.assertEqual("SOURCE_NOT_PROVEN", result["status"])
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH", result["reason"])
+        self.assertEqual("NO_CUSTODY_AUTHORITY", result["authority"])
+
+    def test_scoped_match_is_never_provider_authentication_or_permission(self):
+        inputs = self.bundle()
+        untouched = copy.deepcopy(inputs)
+        output = self.assess(bundle=inputs)
+        self.assertEqual("SCOPE_MATCHED_UNVERIFIED", output["status"])
+        self.assertEqual("DERIVED_SCOPE_ASSESSMENT_ONLY", output["authority"])
+        self.assertEqual("NOT_PROVEN", output["provider_authentication"])
+        self.assertEqual("NOT_PROVEN", output["source_currentness"])
+        self.assertNotIn("CustodySafe", output)
+        self.assertEqual(untouched, inputs)
+
+    def test_two_sibling_leaves_cannot_share_one_grant(self):
+        candidate = self.bundle()
+        original = self.graph()
+        self.assertEqual("SCOPE_MATCHED_UNVERIFIED",
+                         self.assess(bundle=candidate, graph=original)["status"])
+        sibling = self.assess(leaf="Common#605", bundle=candidate, graph=original)
+        self.assertEqual("SOURCE_NOT_PROVEN", sibling["status"])
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH", sibling["reason"])
+        other = self.assess(
+            leaf="Common#605",
+            bundle=self.bundle(number=605, ep_id="EP-P4",
+                               lease_id="LEASE-P4", epoch=3))
+        self.assertEqual("SCOPE_MATCHED_UNVERIFIED", other["status"])
+        self.assertEqual(original, self.graph())
+
+    def test_absent_or_ambiguous_source_fails_closed(self):
+        source, state, ep, lease = self.bundle()
+        self.assertEqual("SOURCE_NOT_PROVEN",
+                         self.assess(bundle=(None, state, ep, lease))["status"])
+        incomplete = copy.deepcopy(ep)
+        incomplete.pop("parent_issue")
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH",
+                         self.assess(bundle=(source, state, incomplete, lease))["reason"])
+        incomplete = copy.deepcopy(ep)
+        incomplete.pop("programme_parent")
+        self.assertEqual("EP_PROGRAMME_SCOPE_MISMATCH",
+                         self.assess(bundle=(source, state, incomplete, lease))["reason"])
+        incomplete = copy.deepcopy(ep)
+        incomplete["implementation_plan_basis"]["responsibility_basis_ref"] = "Common#438"
+        self.assertEqual("EP_RESPONSIBILITY_BASIS_MISMATCH",
+                         self.assess(bundle=(source, state, incomplete, lease))["reason"])
+
+    def test_immutable_locator_wrong_repo_and_source_paths_are_rejected(self):
+        source, state, ep, lease = self.bundle()
+        for key, value in [
+            ("repository", "another/repo"),
+            ("revision_sha", "not-an-immutable-commit"),
+            ("ep_path", "relay/WORK/EP.438.7.yaml"),
+            ("lease_path", "relay/LEASES/LEASE.438.7.yaml"),
+        ]:
+            with self.subTest(key=key):
+                bad = {**source, key: value}
+                status = self.assess(bundle=(bad, state, ep, lease))
+                self.assertEqual("SOURCE_NOT_PROVEN", status["status"])
+
+    def test_mismatched_grant_and_unknown_leaf_are_not_authorized(self):
+        source, state, ep, lease = self.bundle()
+        mismatches = [
+            lambda s, e, l: l["custody"].update(epoch=7),
+            lambda s, e, l: l["custody"].update(granted_at="not-date"),
+            lambda s, e, l: l.update(state="REVOKED"),
+            lambda s, e, l: s["execution"].update(route="SERIAL:OTHER"),
+            lambda s, e, l: l.update(scope={"ep_or_task": "EP.438.7"}),
+        ]
+        for change in mismatches:
+            with self.subTest(change=str(change)):
+                s, e, l = copy.deepcopy((state, ep, lease))
+                change(s, e, l)
+                result = self.assess(bundle=(source, s, e, l))
+                self.assertEqual("SOURCE_NOT_PROVEN", result["status"])
+        self.assertEqual(
+            "LEAF_NOT_UNIQUELY_DECLARED",
+            self.assess("Common#999")["reason"],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
