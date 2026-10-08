@@ -1,0 +1,61 @@
+{
+  "schema_version": "v3.5-integration-golden-v1",
+  "fixture_kind": "DELIBERATELY_INVALID_FOREIGN_CHILD_NEGATIVE",
+  "observed_date": "2026-10-08",
+  "owner_origin": {
+    "verbatim": "WHy i don't see any integration on GitHub issue decomposition, issue title scoreboard, task evidence, handover prompt and agent metric which is the core...\ni also don't see smart title in issue and draft... I also don't see \"My intent\" or \"owner inent\" presenvation i parent issue along with source links and golden fixtures which is mandatory.\n\nI still don't see reviewer checklist/self checklist",
+    "original_source_status": "UNRESOLVED_CHAT_LINK",
+    "original_source_ref": null,
+    "first_durable_mirror": "https://github.com/reallaksh19/Common/issues/717#issuecomment-6051883834",
+    "claim_origin": "https://github.com/reallaksh19/Common/issues/717"
+  },
+  "programme": {
+    "repository": "reallaksh19/Common",
+    "issue": 600,
+    "roadmap_ref": "https://github.com/reallaksh19/Common/issues/600",
+    "selected_issue": 604,
+    "integration_acceptance": {
+      "total": 8,
+      "qualified": 0
+    }
+  },
+  "responsibility": {
+    "issue": 605,
+    "parent_issue": 600,
+    "responsibility_id": "RK-P3",
+    "spec_generation": "NOT_PROVEN",
+    "semantic_state": "HOLD",
+    "custody_source": "SOURCE_NOT_PROVEN",
+    "task_evidence_end": "https://github.com/reallaksh19/Common/issues/732#issuecomment-6051715005",
+    "actual_next": "Prove fresh independent native IDLE bootstrap without #438 lineage; then obtain scoped Owner/Local grant before C2 wiring."
+  },
+  "candidate_pr": {
+    "number": 712,
+    "responsibility_issue": 604,
+    "state": "DRAFT",
+    "head_sha": "786e1a99785cc8725ec1983923a01240f6f82ece",
+    "checks_head_sha": "786e1a99785cc8725ec1983923a01240f6f82ece",
+    "checks": {
+      "passed": 5,
+      "total": 5
+    }
+  },
+  "agent_observation": {
+    "status": "UNKNOWN",
+    "provenance": "NO_CURRENT_AGENT_HEALTH_OBSERVATION",
+    "nonsemantic": true
+  },
+  "review_observation": {
+    "self": "NOT_REVIEWED",
+    "independent": "NOT_REVIEWED",
+    "principal_independence": "NONE_ASSERTED"
+  },
+  "expected": {
+    "programme_title": "[570→600 | P3#604 HOLD · R1#736 INCOMPLETE · IC 0/8 qualified] Responsibility kernel",
+    "responsibility_title": "[600/P3#604 | B2.3 HOLD · custody UNKNOWN · PR#712 DRAFT] Custody/recovery",
+    "pr_title": "[600/P3#604→PR#712 | DRAFT HOLD · CI 5/5@786e1a9 · grant UNPROVEN] Custody fencing",
+    "product_status": "HOLD",
+    "qualification": "CI_MATCHES_HEAD"
+  },
+  "expected_rejection": "parent/leaf/PR lineage mismatch"
+}

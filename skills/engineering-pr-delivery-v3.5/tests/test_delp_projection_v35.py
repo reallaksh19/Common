@@ -6576,6 +6576,49 @@ class ProjectionEndToEndAgreement(unittest.TestCase):
         self.assertEqual("STALE_OR_HAND_EDITED", drift["status"])
         self.assertEqual("CONTINUE_UNIT", a["actual_next"]["action"])
 
+# Host-discovered R1-B/C integration oracle: DELP workflow selects only this
+# test module explicitly, so merely storing a new test file is insufficient.
+import test_integration_golden_v35 as _unified_golden
+
+
+class HostedV35UnifiedGoldenContract(_unified_golden.IntegrationGoldenV35ContractTests):
+    """Run all six cross-surface golden falsifiers in the actual DELP workflow."""
+
+
+# R1-E: the DELP hosted workflow discovers only test_delp_projection_v35.py.
+# Import and execute the actual independent CLI stress tests, not just file-existence.
+import test_integration_cycle_stress_v35 as _cycle_stress
+
+
+class HostedV35CycleStress(_cycle_stress.IntegrationCycleStressAcceptance):
+    """An executable same-basis issue/PR/OR/TASK_EVIDENCE/handover review cycle."""
+
+
+
+# R2-A actual source-engine bridge: the legacy host loads DELP by exec_module
+# without registering it. Share that *same* module with the new adapter so the
+# actual-next engine sees identical condition/exception classes.
+import sys as _r2_sys
+_r2_sys.modules["delp_projection_v35"] = M
+import test_integration_read_model_v35 as _source_read_model
+
+
+class HostedV35ActualSourceReadModel(_source_read_model.DELPSourceReadModelTests):
+    """Real graph/fact/provider/observed head integration contract."""
+
+
+# R3/R4: exercise the actual source-bound Github scoreboard publisher in the
+# hosted DELP workflow; do not merely add an undiscovered test file.
+import test_integration_scoreboard_v35 as _smart_scoreboard
+
+
+class HostedV35SmartTitleRendering(_smart_scoreboard.PureSmartTitles):
+    """Parent/child/PR title+managed block from same DELP source and real head."""
+
+
+class HostedV35SmartScoreboardPublication(_smart_scoreboard.LivePublisherTests):
+    """Fake-provider real DELP LIVE_STATUS and PR writer race/readback gates."""
+
 
 if __name__ == "__main__":
     unittest.main()
