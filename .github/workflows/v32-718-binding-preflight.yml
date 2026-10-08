@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Revalidate exact V3.2 release and two provider bindings
+      - name: Revalidate exact V3.2 release and three provider bindings
         shell: bash
         run: |
           set -euo pipefail
@@ -37,20 +37,20 @@ jobs:
           assert report['release_state'] == 'RELEASEABLE', report
           assert report['summary']['evaluated'] == 6, report
           assert report['summary']['not_releasable'] == 0, report
-          assert graph['nodes'][0]['reserve_weight'] == 55, graph
-          assert {(b['responsibility_id'], b['ref']) for b in proposal['bindings']} == {('R-BASIS','Common#720'),('R-PROOF','Common#724')}
-          assert {n['ref'] for n in graph['nodes']} == {'Common#718','Common#720','Common#724'}
+          assert graph['nodes'][0]['reserve_weight'] == 35, graph
+          assert {(b['responsibility_id'], b['ref']) for b in proposal['bindings']} == {('R-BASIS','Common#720'),('R-PROOF','Common#724'),('R-PROJECTION','Common#733')}
+          assert {n['ref'] for n in graph['nodes']} == {'Common#718','Common#720','Common#724','Common#733'}
           path = Path('skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py')
           spec = importlib.util.spec_from_file_location('delp718', path)
           mod = importlib.util.module_from_spec(spec)
           assert spec and spec.loader
           spec.loader.exec_module(mod)
           projected = mod.project(graph, [], {})
-          for ref in ['Common#720', 'Common#724']:
+          for ref in ['Common#720', 'Common#724', 'Common#733']:
               assert projected['nodes'][ref]['plan']['releasable'], projected['nodes'][ref]['plan']
           print('V32_718_BOUND_RELEASE=PASS')
           print('V32_718_PROPOSAL_DIGEST='+report['proposal_digest'])
-          print('V32_718_MATERIALIZED=R-BASIS:R-PROOF')
-          print('V32_718_RESERVE=55')
+          print('V32_718_MATERIALIZED=R-BASIS:R-PROOF:R-PROJECTION')
+          print('V32_718_RESERVE=35')
           print('V32_718_PLAN_JOIN=PASS')
           PY
