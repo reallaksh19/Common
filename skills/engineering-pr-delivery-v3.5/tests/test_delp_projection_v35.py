@@ -6803,6 +6803,121 @@ class ProjectionEndToEndAgreement(unittest.TestCase):
         self.assertEqual("CONTINUE_UNIT", a["actual_next"]["action"])
 
 
+class CustodyFenceSemanticQualification(unittest.TestCase):
+    """B2.3 result-level tests; full retained A7/B8 replay remains B2.4."""
+
+    def state(self):
+        return FactCustodyRelationClassifier().state()
+
+    def lease(self):
+        return FactCustodyRelationClassifier().lease()
+
+    def row(self, source, order, ids, *, epoch=None, updated="2026-10-07T10:01:00Z", provider=True):
+        binding = (
+            FactCustodyRelationClassifier().bound(epoch=epoch)
+            if epoch is not None else None
+        )
+        if binding is None:
+            record = facts(units=[unit(uid) for uid in ids])
+        else:
+            record = facts(units=[unit(uid) for uid in ids], execution=binding)
+        result = entry(record, order, source)
+        if provider:
+            result["provider"] = {
+                "kind": "GITHUB_ISSUE_COMMENT",
+                "created_at": "2026-10-07T09:00:00Z",
+                "updated_at": updated,
+            }
+        return result
+
+    def projected(self, rows, observations=OBS_A, *, state=None, lease=None):
+        return M.project(
+            stable_graph(), rows, observations,
+            custody_state=self.state() if state is None else state,
+            custody_lease=self.lease() if lease is None else lease,
+        )
+
+    def test_pre_fence_evidence_survives_and_late_predecessor_cannot_mint_progress(self):
+        before = self.row("old-pre", 1, ["U01", "U02"], epoch=7, updated="2026-10-07T09:59:00Z")
+        successor = self.row("new", 2, ["U03"], epoch=8)
+        late = self.row("old-late", 3, ["U04"], epoch=7, updated="2026-10-07T10:02:00Z")
+        baseline = self.projected([before, successor])
+        with_late = self.projected([before, successor, late])
+        plain = M.project(stable_graph(), [before, successor, late], OBS_A)
+        for name in ("progress", "state", "conditions", "actual_next", "title_prefix"):
+            with self.subTest(name=name):
+                self.assertEqual(baseline["nodes"]["Common#592"][name], with_late["nodes"]["Common#592"][name])
+        node = with_late["nodes"]["Common#592"]
+        self.assertEqual((75, 75), (node["progress"]["P"], node["progress"]["E"]))
+        self.assertEqual(100, plain["nodes"]["Common#592"]["progress"]["P"])
+        self.assertEqual(["old-late"], [x["source"] for x in with_late["fenced_facts"]])
+        self.assertEqual("STALE_POST_FENCE", with_late["fenced_facts"][0]["relation"])
+        self.assertEqual([], with_late["rejected_facts"])
+        self.assertEqual(3, node["execution_provenance"]["bound_fact_count"])
+        self.assertEqual((2, 1), (
+            node["custody_fence"]["effective_fact_count"], node["custody_fence"]["fenced_fact_count"],
+        ))
+        self.assertEqual(["old-late"], node["custody_fence"]["fenced_sources"])
+
+    def test_unbound_post_fence_and_future_bound_facts_cannot_bypass_fence(self):
+        pre = self.row("legacy-pre", 1, ["U01"], updated="2026-10-07T09:59:00Z")
+        offline = self.row("legacy-offline", 2, ["U02"], provider=False)
+        late = self.row("legacy-late", 3, ["U03"], updated="2026-10-07T10:02:00Z")
+        future = self.row("future", 4, ["U04"], epoch=9, updated="2026-10-07T10:02:00Z")
+        result = self.projected([pre, offline, late, future])
+        node = result["nodes"]["Common#592"]
+        self.assertEqual((50, 50), (node["progress"]["P"], node["progress"]["E"]))
+        self.assertEqual(["future", "legacy-late"], sorted(x["source"] for x in result["fenced_facts"]))
+        self.assertTrue(all(x["relation"] == "UNKNOWN" for x in result["fenced_facts"]))
+        self.assertEqual(3, node["execution_provenance"]["unbound_fact_count"])
+        self.assertEqual([], result["rejected_facts"])
+
+    def test_rejected_invalid_untrusted_facts_are_not_fenced_accepted_facts(self):
+        old_late = self.row("fenced-accepted", 1, ["U01"], epoch=7, updated="2026-10-07T10:02:00Z")
+        invalid = self.row("invalid", 2, ["U02"], epoch=8)
+        invalid["facts"]["progress"] = 99
+        untrusted = self.row("untrusted", 3, ["U03"], epoch=8)
+        untrusted["untrusted_author"] = "intruder"
+        result = self.projected([old_late, invalid, untrusted])
+        self.assertEqual(["fenced-accepted"], [x["source"] for x in result["fenced_facts"]])
+        self.assertEqual(["invalid", "untrusted"], sorted(x["source"] for x in result["rejected_facts"]))
+        self.assertEqual(1, result["nodes"]["Common#592"]["execution_provenance"]["bound_fact_count"])
+        self.assertEqual(0, result["nodes"]["Common#592"]["progress"]["P"])
+
+    def test_provider_movement_and_custody_time_are_independent_digest_inputs(self):
+        early = self.row("historical", 1, ["U01"], epoch=7, updated="2026-10-07T09:59:00Z")
+        shifted = self.row("historical", 1, ["U01"], epoch=7, updated="2026-10-07T09:59:20Z")
+        baseline = self.projected([early])
+        provider_changed = self.projected([shifted])
+        later_lease = self.lease()
+        later_lease["custody"]["granted_at"] = "2026-10-07T10:00:30Z"
+        custody_changed = self.projected([early], lease=later_lease)
+        changed_observations = copy.deepcopy(OBS_A)
+        changed_observations["Common#592"] = {"candidate_sha": SHA_B}
+        material_changed = self.projected([early], changed_observations)
+        self.assertEqual(baseline["nodes"]["Common#592"]["progress"], custody_changed["nodes"]["Common#592"]["progress"])
+        self.assertNotEqual(baseline["input_digest"], provider_changed["input_digest"])
+        self.assertNotEqual(baseline["input_digest"], custody_changed["input_digest"])
+        self.assertNotEqual(baseline["input_digest"], material_changed["input_digest"])
+        self.assertEqual(SHA_B, material_changed["nodes"]["Common#592"]["material"]["candidate_sha"])
+        self.assertEqual("STALE_CANDIDATE", material_changed["nodes"]["Common#592"]["evidence"]["health"])
+
+    def test_fence_is_derived_live_status_not_recover_custody_authority(self):
+        old_late = self.row("late", 1, ["U01"], epoch=7, updated="2026-10-07T10:02:00Z")
+        projection = self.projected([old_late])
+        node = projection["nodes"]["Common#592"]
+        conditions = {x["type"]: x for x in node["conditions"]}
+        self.assertEqual("NOT_APPLICABLE", conditions["CustodySafe"]["status"])
+        self.assertNotEqual("RECOVER_CUSTODY", node["actual_next"]["action"])
+        self.assertNotIn("custody_fence", projection["nodes"]["Common#588"])
+        status = M.status_document(node, version=0, digest=projection["input_digest"], programme=projection["programme"])
+        self.assertEqual(node["custody_fence"], status["node"]["custody_fence"])
+        if HAVE_YAML and HAVE_JSONSCHEMA:
+            self.assertEqual([], SchemasAgreeWithTheEngine().schema_errors("live-status", status))
+        legacy = M.project(stable_graph(), [old_late], OBS_A)
+        self.assertNotIn("custody_fence", legacy["nodes"]["Common#592"])
+
+
 @unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
 class CustodyFenceLiveStatusSchemaContract(unittest.TestCase):
     """Fail closed on malformed B2.3 custody-fence schemas and status documents."""
