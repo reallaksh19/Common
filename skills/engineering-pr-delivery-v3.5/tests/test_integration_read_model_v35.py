@@ -130,6 +130,42 @@ class DELPSourceReadModelTests(unittest.TestCase):
         self.assertIn(("get_commit_sha", "main"), transport.reads)
         self.assertIn("BASIS_SHA256:", model["surfaces"]["parent_issue"])
 
+    def test_github_comment_fact_is_parsed_validated_and_head_bound(self):
+        """Exercise ledger_from_github -> partition_ledger -> project, not hand-built counts."""
+        import yaml
+
+        frozen_graph = graph()
+        comment = {
+            "id": 123,
+            "user": {"login": "owner"},
+            "author_association": "OWNER",
+            "body": ("```yaml\\n" +
+                     yaml.safe_dump({"CHECKPOINT_FACTS_V1": fact(frozen_graph)},
+                                    sort_keys=False) +
+                     "```\\n"),
+        }
+        observed = FakeReadOnlyProvider(comments=[comment])
+        current = R.from_provider(frozen_graph, "Common#604", observed)
+        self.assertEqual((100, 100),
+                         (current["progress"]["P"], current["progress"]["E"]))
+        self.assertEqual(["Common#604#issuecomment-123"],
+                         current["accepted_evidence_sources"])
+
+        # A changed head does not erase the claim, but voids its E evidence.
+        moved = R.from_provider(
+            frozen_graph, "Common#604",
+            FakeReadOnlyProvider(candidate="b" * 40, comments=[comment]))
+        self.assertEqual((100, 0), (moved["progress"]["P"], moved["progress"]["E"]))
+        self.assertNotEqual(current["basis_sha256"], moved["basis_sha256"])
+
+        # A correctly shaped comment from an untrusted identity is not a fact.
+        untrusted = {**comment, "author_association": "NONE"}
+        unsafe = R.from_provider(
+            frozen_graph, "Common#604", FakeReadOnlyProvider(comments=[untrusted]))
+        self.assertEqual(0, unsafe["progress"]["P"])
+        self.assertTrue(unsafe["rejected_facts"])
+        self.assertEqual([], unsafe["accepted_evidence_sources"])
+
     def test_owner_verbatim_is_integrity_bound_but_not_authentication(self):
         owner = {
             "verbatim": "Owner direct prompt text from a supplied mirror",
