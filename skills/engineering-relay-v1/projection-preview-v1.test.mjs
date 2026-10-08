@@ -105,8 +105,17 @@ test('tampered digest or malicious extra Owner approval is refused',async()=>{
 });
 test('absent required parent/PR source and nonmatching repo are refused',async()=>{
   const original=await facts();
-  refusals(()=>render({...original,parent_issue:null},OPT),'UNTRUSTED');
-  refusals(()=>render({...original,pr_facts:[]},OPT),'UNTRUSTED');
+  // First reject a tampered digest; even a recalculated hash cannot give
+  // structurally missing provider facts an accepted/valid meaning.
+  refusals(()=>render({...original,parent_issue:null},OPT),'DIGEST_MISMATCH');
+  refusals(()=>render({...original,pr_facts:[]},OPT),'DIGEST_MISMATCH');
+  const recalc=entry=>{
+    const snap=JSON.parse(JSON.stringify(entry));delete snap.snapshot_sha256;
+    snap.snapshot_sha256=createHash('sha256').update(canonicalJSON(snap)).digest('hex');
+    return snap;
+  };
+  refusals(()=>render(recalc({...original,parent_issue:null}),OPT),'UNTRUSTED');
+  refusals(()=>render(recalc({...original,pr_facts:[]}),OPT),'UNTRUSTED');
   refusals(()=>render({...original,repository:'attacker/Repo'},OPT),'DIGEST_MISMATCH');
 });
 test('stale elapsed time and fresh window are explicit, no hidden currentness claim',async()=>{
