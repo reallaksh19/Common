@@ -6803,5 +6803,99 @@ class ProjectionEndToEndAgreement(unittest.TestCase):
         self.assertEqual("CONTINUE_UNIT", a["actual_next"]["action"])
 
 
+@unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
+class CustodyFenceLiveStatusSchemaContract(unittest.TestCase):
+    """Fail closed on malformed B2.3 custody-fence schemas and status documents."""
+
+    @staticmethod
+    def strict_yaml(text):
+        import yaml as _yaml
+
+        class DuplicateKeyRejectingLoader(_yaml.SafeLoader):
+            pass
+
+        def strict_mapping(loader, node):
+            seen = set()
+            for key_node, _ in node.value:
+                key = loader.construct_object(key_node)
+                if key in seen:
+                    raise _yaml.constructor.ConstructorError(
+                        "while constructing a mapping", node.start_mark,
+                        f"duplicate YAML mapping key: {key}", key_node.start_mark,
+                    )
+                seen.add(key)
+            return _yaml.SafeLoader.construct_mapping(loader, node)
+
+        DuplicateKeyRejectingLoader.add_constructor(
+            _yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, strict_mapping
+        )
+        return _yaml.load(text, Loader=DuplicateKeyRejectingLoader)
+
+    def schema(self):
+        path = SCHEMAS / f"delp-live-status-{TAG}.schema.yaml"
+        record = self.strict_yaml(path.read_text(encoding="utf-8"))
+        jsonschema.Draft202012Validator.check_schema(record)
+        self.assertIn("custody_fence", record["properties"]["node"]["properties"])
+        return record
+
+    def status_with_fence(self):
+        projection = M.project(stable_graph(), [], OBS_A)
+        status = M.status_document(
+            projection["nodes"]["Common#592"],
+            version=0,
+            digest=projection["input_digest"],
+            programme=projection["programme"],
+        )
+        status["node"]["custody_fence"] = {
+            "active_execution": {
+                "ep": "EP-P3-B2",
+                "lease": "LEASE-P3-B2",
+                "executor": "agent-604-b2",
+                "custody_epoch": 8,
+            },
+            "granted_at": "2026-10-07T12:00:00Z",
+            "effective_fact_count": 2,
+            "fenced_fact_count": 1,
+            "fenced_sources": ["Common#592#issuecomment-12"],
+        }
+        return status
+
+    def errors(self, status):
+        return list(jsonschema.Draft202012Validator(
+            self.schema(), format_checker=jsonschema.FormatChecker()
+        ).iter_errors(status))
+
+    def test_schema_parses_strictly_and_valid_custody_fence_status_passes(self):
+        self.assertEqual([], self.errors(self.status_with_fence()))
+
+    def test_duplicate_yaml_mapping_keys_are_rejected(self):
+        import yaml as _yaml
+
+        with self.assertRaises(_yaml.constructor.ConstructorError):
+            self.strict_yaml("node:\n  source: one\n  source: two\n")
+        self.schema()  # shipped schema must also pass duplicate-key-rejecting loader
+
+    def test_malformed_custody_fence_statuses_fail_closed(self):
+        original = self.status_with_fence()
+        mutations = [
+            ("missing_active", lambda c: c.pop("active_execution")),
+            ("missing_grant", lambda c: c.pop("granted_at")),
+            ("bad_grant", lambda c: c.update(granted_at="not-a-timestamp")),
+            ("bad_ep", lambda c: c["active_execution"].update(ep="EP")),
+            ("bad_lease", lambda c: c["active_execution"].update(lease="LEASE")),
+            ("missing_executor", lambda c: c["active_execution"].pop("executor")),
+            ("zero_epoch", lambda c: c["active_execution"].update(custody_epoch=0)),
+            ("negative_effective", lambda c: c.update(effective_fact_count=-1)),
+            ("negative_fenced", lambda c: c.update(fenced_fact_count=-1)),
+            ("duplicate_source", lambda c: c.update(fenced_sources=["same", "same"])),
+            ("unknown_key", lambda c: c.update(unauthorized=True)),
+        ]
+        for label, change in mutations:
+            with self.subTest(label=label):
+                candidate = copy.deepcopy(original)
+                change(candidate["node"]["custody_fence"])
+                self.assertTrue(self.errors(candidate), label)
+
+
 if __name__ == "__main__":
     unittest.main()
