@@ -111,9 +111,14 @@ class IntegrationCycleStressAcceptance(unittest.TestCase):
             self.assertIn(f"=== SURFACE {key} ===\n{body}", proc.stdout)
         # Emit exactly the same CLI-produced specimen to hosted logs for Owner
         # review, not a manually recreated / unverifiable issue comment.
-        print("V3.5_FULL_CYCLE_SPECIMEN_BEGIN")
-        print(proc.stdout)
-        print("V3.5_FULL_CYCLE_SPECIMEN_END")
+        for name, title in generated["titles"].items():
+            print("V35_CYCLE_TITLE_JSON=" + json.dumps(
+                {"name": name, "title": title, "basis_sha256": report["basis_sha256"]},
+                ensure_ascii=False, sort_keys=True))
+        for name, body in generated["surfaces"].items():
+            print("V35_CYCLE_SURFACE_JSON=" + json.dumps(
+                {"name": name, "body": body, "basis_sha256": report["basis_sha256"]},
+                ensure_ascii=False, sort_keys=True))
         print("V3.5_SELF_RUN_STRESS_RESULT=" + json.dumps(report, sort_keys=True))
         print("V3.5_ISSUE_EXCERPT=" +
               generated["surfaces"]["parent_issue"][:260].replace("\n", " | "))
