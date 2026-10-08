@@ -101,7 +101,7 @@ class ColdAgent6StressTests(unittest.TestCase):
             R6.replay(self.transport, ENTRIES)
         other = FIXTURES.Provider()
         other.pr["base"]["repo"]["full_name"] = "foreign/repo"
-        with self.assertRaises((R6.ColdReplayError, Exception)):
+        with self.assertRaisesRegex(R6.ColdReplayError, "invalid native provider entry route"):
             R6.replay(other, ENTRIES)
 
     def test_injected_human_text_ci_or_fake_health_never_authenticates(self):
