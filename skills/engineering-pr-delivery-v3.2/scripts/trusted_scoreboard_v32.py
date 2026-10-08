@@ -53,22 +53,43 @@ def gate(event_name: str, event: Mapping[str, Any], graph: Mapping[str, Any],
          provider_pull: Mapping[str, Any], *, enabled: bool) -> dict[str, Any]:
     """Independent, deterministic negative authorization gate: NO writes."""
     target = _identity(graph)
-    if event_name not in {"pull_request_target", "workflow_dispatch"}:
+    if event_name not in {"pull_request_target", "workflow_dispatch", "issue_comment"}:
         code = "DENY_EVENT_NAME"
     elif (event.get("repository") or {}).get("full_name") != target["repository"]:
         code = "DENY_REPOSITORY"
     elif event_name == "pull_request_target" and event.get("action") not in ACTIONS:
         code = "DENY_EVENT_ACTION"
+    elif event_name == "issue_comment" and event.get("action") not in {"created", "edited", "deleted"}:
+        code = "DENY_EVENT_ACTION"
+    elif event_name == "issue_comment" and (
+            not isinstance(event.get("issue"), Mapping) or
+            str(event["issue"].get("number")) != target["leaf"].split("#")[-1]):
+        code = "DENY_UNBOUND_ISSUE"
+    elif event_name == "issue_comment" and (event.get("issue") or {}).get("pull_request"):
+        code = "DENY_PR_COMMENT_SURFACE"
+    elif event_name == "issue_comment" and (
+            not isinstance(event.get("comment"), Mapping) or
+            type(event["comment"].get("id")) is not int or
+            event["comment"]["id"] <= 0 or
+            not isinstance(event["comment"].get("body"), str)):
+        code = "DENY_UNVERIFIABLE_COMMENT"
+    elif event_name == "issue_comment" and event["comment"]["body"].lstrip().startswith(delp.STATUS_START):
+        # DELP's managed LIVE_STATUS update emits issue_comment. Never loop.
+        code = "DENY_MANAGED_STATUS_COMMENT"
     elif event_name == "pull_request_target" and not isinstance(event.get("pull_request"), Mapping):
         code = "DENY_MISSING_PR_EVENT"
     elif event_name == "workflow_dispatch" and not isinstance(event.get("inputs"), Mapping):
         code = "DENY_MISSING_DISPATCH_INPUTS"
     else:
         event_pr = event["pull_request"] if event_name == "pull_request_target" else None
-        pin = ((event_pr.get("head") or {}).get("sha") if event_pr is not None
-               else event["inputs"].get("expected_head"))
-        number = (event_pr.get("number") if event_pr is not None
-                  else event["inputs"].get("pr_number"))
+        # A task-evidence comment is only an event signal. It cannot supply
+        # candidate SHA or accepted facts; both come from fresh provider+DELP.
+        pin = ((event_pr.get("head") or {}).get("sha") if event_pr is not None else
+               event["inputs"].get("expected_head") if event_name == "workflow_dispatch" else
+               (provider_pull.get("head") or {}).get("sha"))
+        number = (event_pr.get("number") if event_pr is not None else
+                  event["inputs"].get("pr_number") if event_name == "workflow_dispatch" else
+                  target["pr_number"])
         if str(number) != str(target["pr_number"]):
             code = "DENY_UNBOUND_PR"
         elif event_pr and (event_pr.get("head", {}).get("repo") or {}).get("full_name") != target["repository"]:
