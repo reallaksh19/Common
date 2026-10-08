@@ -83,11 +83,16 @@ jobs:
           assert observation['Common#724']['pr_state'] == 'MERGED', observation
           selected = next(n for n in graph['nodes'] if n.get('responsibility_id') == 'R-PROJECTION')
           if selected.get('primary_pr') == 'Common#740':
-              assert observation['Common#733']['pr_state'] == 'OPEN', observation
+              product_pr = transport.get_pull(740)
+              provider_state = ('MERGED' if product_pr.get('merged') else
+                                str(product_pr.get('state') or 'UNKNOWN').upper())
+              assert observation['Common#733']['pr_state'] == provider_state, observation
               head = observation['Common#733']['candidate_sha']
+              assert head == (product_pr.get('head') or {}).get('sha'), observation
               assert isinstance(head, str) and len(head) == 40, observation
               print('V32_733_PRODUCT_PR_BOUND=Common#740')
-              print('V32_733_LIVE_DRAFT_HEAD=' + head)
+              print('V32_733_LIVE_BOUND_HEAD=' + head)
+              print('V32_733_LIVE_BOUND_STATE=' + provider_state)
           else:
               assert 'Common#733' not in observation, observation
           preview = module.plan_github(transport, graph)
