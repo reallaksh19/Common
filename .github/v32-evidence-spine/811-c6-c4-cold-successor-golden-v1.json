@@ -33,6 +33,10 @@
     {
       "id": "COLD-07",
       "expected": "Cold verifier reports the missing original Owner chat permalink as UNKNOWN, requires separately submitted independent source review; no task execution, title publishing or PR merge"
+    },
+    {
+      "id": "COLD-08",
+      "expected": "A frozen source graph that still matches its old immutable commit but differs from the programme currently released default-branch graph MUST be rejected, even if provider PR head and four handover digests are unchanged. Source read must enforce the same graph release identity as native PLAN_HANDOVER, then recheck before declaring CURRENT. No admission or write."
     }
   ],
   "prohibited": [
