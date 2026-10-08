@@ -87,6 +87,10 @@ def main() -> None:
     provider = ReadOnlyGh()
     actual_pull = provider.get_pull(oracle["product_pr"])
     sha = actual_pull["head"]["sha"]
+    # The previous C5 passed on whatever live #800 head happened to be
+    # returned, even when the fixture named a different reviewed source.
+    # A true exact-head replay must bind both the golden and the provider.
+    require(sha, oracle["exact_product_code_base"], "LIVE-00_EXACT_C4_PRODUCT_HEAD")
 
     basis = build_delp_source_bound_successor(graph, leaf_ref=oracle["leaf"], provider=provider)
     actual_observation = delp.observe_github(provider, graph)[oracle["leaf"]]
