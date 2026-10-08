@@ -186,7 +186,7 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
         graph, manifest, observations=observations, ledger=ledger,
         selected_leaf=child, phase="C4", human_titles=titles,
         draft_pr={"number": 740, "head_sha": head, "lifecycle": lifecycle},
-        qualification=None,
+        qualification=None, title_contract="C4-S6",
     )
     # Double-read the *actual* live candidate. A concurrent force push must
     # fail closed rather than rendering a stale head as current.
