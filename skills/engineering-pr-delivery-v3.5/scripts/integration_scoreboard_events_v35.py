@@ -52,7 +52,7 @@ def event_scope(
         if selected and event_name == "issue_comment" and str(actor or "").lower().endswith("[bot]"):
             selected = False
             why = "BOT_MANAGED_COMMENT_NO_LOOP"
-    elif event_name in ("pull_request", "pull_request_review", "pull_request_review_comment"):
+    elif event_name in ("pull_request", "pull_request_target", "pull_request_review", "pull_request_review_comment"):
         selected = _number((event.get("pull_request") or {}).get("number") or event.get("number")) == pr_number
         why = "DECLARED_PRIMARY_PR" if selected else "UNRELATED_PR"
     elif event_name in ("check_run", "check_suite", "workflow_run"):
