@@ -5344,6 +5344,40 @@ class GhTransport:
             raise DelpError(proc.stderr.strip() or "gh api failed")
         return json.loads(proc.stdout) if proc.stdout.strip() else {}
 
+    def read_native_yaml_at_sha(self, path: str, commit_sha: str) -> dict[str, Any]:
+        """Read one native Relay YAML document at an immutable GitHub commit.
+
+        Repository/file origin is observed here, NOT approved as a custody
+        grant. Callers must separately bind EP/lease scope and Owner authority.
+        """
+        import base64
+        import binascii
+        import yaml  # type: ignore
+
+        if not re.fullmatch(r"[0-9a-f]{40}", commit_sha):
+            raise DelpError("native custody source: immutable commit SHA required")
+        if not re.fullmatch(
+            r"relay/(?:STATE\\.yaml|WORK/EP[-.][A-Za-z0-9_.-]+\\.yaml|LEASES/LEASE[-.][A-Za-z0-9_.-]+\\.yaml)",
+            path,
+        ) or ".." in path:
+            raise DelpError("native custody source: path outside native STATE/WORK/LEASES")
+        response = self._gh(f"repos/{self.repository}/contents/{path}?ref={commit_sha}")
+        if not isinstance(response, Mapping) or response.get("type") != "file":
+            raise DelpError("native custody source: provider did not return a file")
+        if response.get("encoding") != "base64":
+            raise DelpError("native custody source: provider encoding must be base64")
+        try:
+            encoded = "".join(str(response.get("content") or "").split())
+            raw = base64.b64decode(encoded, validate=True)
+            if len(raw) > 131072 or int(response.get("size") or -1) != len(raw):
+                raise DelpError("native custody source: content exceeds budget or size mismatches")
+            document = yaml.safe_load(raw.decode("utf-8", errors="strict"))
+        except (binascii.Error, UnicodeError, ValueError, yaml.YAMLError) as exc:
+            raise DelpError("native custody source: malformed provider YAML") from exc
+        if not isinstance(document, dict):
+            raise DelpError("native custody source: expected YAML mapping")
+        return document
+
     def get_commit_sha(self, ref: str) -> str:
         return str(self._gh(f"repos/{self.repository}/commits/{ref}").get("sha") or "")
 
