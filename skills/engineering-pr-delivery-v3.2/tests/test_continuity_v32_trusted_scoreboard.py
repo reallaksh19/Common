@@ -179,5 +179,18 @@ class TrustedEventScoreboardTests(unittest.TestCase):
         self.assertEqual("DENY_MISSING_DISPATCH_INPUTS", result["decision"])
         self.assertEqual(0, result["writes"])
 
+    def test_12_abandoned_closed_PR_cannot_trigger_live_sync(self):
+        case = self.oracle["cases"][0]
+        pr = self.provider()
+        pr["state"] = "closed"
+        pr["merged"] = False
+        self.assertEqual("DENY_CLOSED_UNMERGED_PR",
+            trusted.gate(case["event_name"], case["event"], self.graph, pr,
+                         enabled=True)["decision"])
+        pr["merged"] = True
+        self.assertEqual("ALLOW", trusted.gate("workflow_dispatch",
+            self.oracle["cases"][8]["event"], self.graph, pr,
+            enabled=True)["decision"])
+
 if __name__ == "__main__":
     unittest.main()
