@@ -187,7 +187,8 @@ class ReadonlyScoreboardAuditTests(unittest.TestCase):
         self.assertNotIn("--apply",source)
         main=inspect.getsource(mod.main)
         self.assertIn("CANDIDATE_CHANGED_DURING_OBSERVATION",main)
-        self.assertIn("live_three_head_probe()",main)
+        self.assertIn("run_guarded_trace()",main)
+        self.assertIn("NEW_GUARDED_REPLAY_AFTER_ORIGINAL_FAILURE",main)
 
     def test_15_source_failure_probe_stays_FAILED_UNVERIFIED(self):
         with TemporaryDirectory() as td:
@@ -197,12 +198,17 @@ class ReadonlyScoreboardAuditTests(unittest.TestCase):
             err="V32-718-REPLAY-FAILED: ReplayError: CANDIDATE_CHANGED_DURING_OBSERVATION"
             responses=[subprocess.CompletedProcess([],0,stdout="c"*40+"\\n"),
                        subprocess.CompletedProcess([],1,stdout="",stderr=err)]
-            heads=mod.three_head_verdict("d"*40,None,"d"*40)
-            with patch.object(sys,"argv",argv),patch.object(mod.subprocess,"run",side_effect=responses),patch.object(mod,"live_three_head_probe",return_value=heads):
+            import same_guarded_readback_trace_v32 as tracing
+            trace={"source_outcome":"SOURCE_REPLAY_FAILED_UNVERIFIED",
+                   "invocation_scope":"NEW_GUARDED_REPLAY_AFTER_ORIGINAL_FAILURE",
+                   "verdict":"DELP_OBSERVER_MISMATCH","write_count":0,"authority_effects":[]}
+            with patch.object(sys,"argv",argv),patch.object(mod.subprocess,"run",side_effect=responses),patch.object(tracing,"run_guarded_trace",return_value=trace):
                 self.assertEqual(3,mod.main())
             audit=json.loads(path.read_text())
             self.assertEqual("FAILED_UNVERIFIED",audit["status"])
-            self.assertEqual("DELP_OBSERVER_MISMATCH",audit["candidate_observer_probe"]["verdict"])
+            self.assertEqual("DELP_OBSERVER_MISMATCH",audit["same_guarded_replay_trace"]["verdict"])
+            self.assertEqual("NEW_GUARDED_REPLAY_AFTER_ORIGINAL_FAILURE",
+                             audit["same_guarded_replay_trace"]["invocation_scope"])
             self.assertEqual(0,audit["write_count"])
             self.assertEqual([],audit["authority_effects"])
 
@@ -229,6 +235,60 @@ class ReadonlyScoreboardAuditTests(unittest.TestCase):
         self.assertIn("github.event.issue.number == 733",audit)
         self.assertIn("github.event.pull_request.number == 740",audit)
         self.assertIn("relay-delp:live-status:start",audit)
+
+
+    def test_17_precommitted_same_invocation_oracle(self):
+        import same_guarded_readback_trace_v32 as trace
+        fixture=json.loads((HERE/"780-same-call-trace-oracles-v1.json").read_text())
+        self.assertEqual("relay-v32-780-same-guarded-readback-observer-trace-oracle-v1",fixture["schema"])
+        self.assertEqual(5,len(fixture["cases"]))
+        for case in fixture["cases"]:
+            with self.subTest(id=case["id"]):
+                observations=[{"sha":p["sha"]} for p in case["get_pulls"]]
+                report=trace.classify_calls(observations)
+                self.assertEqual(case["verdict"],report["verdict"])
+                self.assertEqual(case["expected"],
+                    [x["phase"] for x in report["ordered_bound_pull_reads"]])
+                self.assertEqual(len(case["get_pulls"]),report["read_count"])
+
+    def test_18_tracing_transport_is_GET_ONLY_and_source_guard_unchanged(self):
+        import inspect
+        import same_guarded_readback_trace_v32 as trace
+        self.assertEqual({"get_pull","get_issue","get_commit_sha","compare","list_comments"},
+            {name for name in vars(trace.ReadOnlyTraceTransport)
+             if not name.startswith("_")})
+        src=inspect.getsource(trace.run_guarded_trace)
+        self.assertIn("cycle.live_readback(",src)
+        self.assertIn("ReadOnlyTraceTransport(",src)
+        self.assertNotIn("patch_",src)
+        self.assertNotIn("post_comment",src)
+        self.assertNotIn("--apply",src)
+
+    def test_19_original_failing_guard_is_captured_in_one_new_invocation(self):
+        import same_guarded_readback_trace_v32 as trace
+        fake_graph={"programme":{"repository":"reallaksh19/Common"},
+                    "nodes":[{"ref":"Common#733","primary_pr":"Common#740"}]}
+        class FakeGetOnlyProvider:
+            def __init__(self):
+                self.idx=0
+            def get_pull(self,n):
+                self.idx+=1
+                return {"number":n,"head":{"sha":"d"*40 if self.idx==1 else "b"*40}}
+        provider=FakeGetOnlyProvider()
+        def fake_readback(manifest,graph,transport):
+            self.assertEqual("d"*40,transport.get_pull(740)["head"]["sha"])
+            self.assertEqual("b"*40,transport.get_pull(740)["head"]["sha"])
+            raise trace.cycle.ReplayError("CANDIDATE_CHANGED_DURING_OBSERVATION")
+        with patch.object(trace.cycle,"live_readback",side_effect=fake_readback) as source:
+            got=trace.run_guarded_trace(provider=provider,graph=fake_graph,manifest={})
+        self.assertEqual(1,source.call_count)
+        self.assertEqual(2,got["read_count"])
+        self.assertEqual("DELP_OBSERVER_MISMATCH",got["verdict"])
+        self.assertEqual("CANDIDATE_CHANGED_DURING_OBSERVATION",got["source_error_code"])
+        self.assertEqual("SOURCE_REPLAY_FAILED_UNVERIFIED",got["source_outcome"])
+        self.assertEqual("NEW_GUARDED_REPLAY_AFTER_ORIGINAL_FAILURE",got["invocation_scope"])
+        self.assertEqual(0,got["write_count"])
+        self.assertEqual([],got["authority_effects"])
 
 
 if __name__=="__main__":

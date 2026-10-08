@@ -1,0 +1,114 @@
+{
+  "schema": "relay-v32-780-same-guarded-readback-observer-trace-oracle-v1",
+  "baseline": "368890b58897584b301c9200462ff35e0e15d71d",
+  "origin": "Common#718",
+  "selected_leaf": "Common#733",
+  "bound_pr": "Common#740",
+  "intent": "Diagnostic reproduction uses one NEW guarded readback invocation; must NEVER retroactively claim to trace original failed invocation.",
+  "constraints": [
+    "NO_WRITE_METHODS",
+    "NO_PROVIDER_BODY_OR_TOKENS",
+    "NO_CHECKPOINT_FACTS_OR_PROGRESS",
+    "ORIGINAL_SOURCE_GUARD_INTACT",
+    "SAFE_FAIL_CLOSED",
+    "TRACE_CALL_ORDER",
+    "EXPLICIT_NEW_INVOCATION_NOT_ORIGINAL"
+  ],
+  "cases": [
+    {
+      "id": "TRACE-01",
+      "get_pulls": [
+        {
+          "n": 740,
+          "sha": "d511fc0210ee823272f41c43621bc90bc290e739"
+        },
+        {
+          "n": 740,
+          "sha": "d511fc0210ee823272f41c43621bc90bc290e739"
+        },
+        {
+          "n": 740,
+          "sha": "d511fc0210ee823272f41c43621bc90bc290e739"
+        }
+      ],
+      "expected": [
+        "direct_initial",
+        "delp_observer",
+        "direct_final"
+      ],
+      "verdict": "MATCH"
+    },
+    {
+      "id": "TRACE-02",
+      "get_pulls": [
+        {
+          "n": 740,
+          "sha": "d511fc0210ee823272f41c43621bc90bc290e739"
+        },
+        {
+          "n": 740,
+          "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      ],
+      "expected": [
+        "direct_initial",
+        "delp_observer"
+      ],
+      "verdict": "DELP_OBSERVER_MISMATCH"
+    },
+    {
+      "id": "TRACE-03",
+      "get_pulls": [
+        {
+          "n": 740,
+          "sha": "d511fc0210ee823272f41c43621bc90bc290e739"
+        }
+      ],
+      "expected": [
+        "direct_initial"
+      ],
+      "verdict": "UNOBSERVED_SECOND_CALL"
+    },
+    {
+      "id": "TRACE-04",
+      "get_pulls": [
+        {
+          "n": 740,
+          "sha": null
+        },
+        {
+          "n": 740,
+          "sha": "d511fc0210ee823272f41c43621bc90bc290e739"
+        }
+      ],
+      "expected": [
+        "direct_initial",
+        "delp_observer"
+      ],
+      "verdict": "HEAD_UNAVAILABLE"
+    },
+    {
+      "id": "TRACE-05",
+      "get_pulls": [
+        {
+          "n": 740,
+          "sha": "d511fc0210ee823272f41c43621bc90bc290e739"
+        },
+        {
+          "n": 740,
+          "sha": "d511fc0210ee823272f41c43621bc90bc290e739"
+        },
+        {
+          "n": 740,
+          "sha": "cccccccccccccccccccccccccccccccccccccccc"
+        }
+      ],
+      "expected": [
+        "direct_initial",
+        "delp_observer",
+        "direct_final"
+      ],
+      "verdict": "PROVIDER_HEAD_MOVED"
+    }
+  ]
+}
