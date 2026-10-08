@@ -70,7 +70,9 @@ class ReadonlyScoreboardAuditTests(unittest.TestCase):
         self.assertIn("persist-credentials: false",audit)
         self.assertIn("audit_live_scoreboard_v32.py",audit)
         self.assertNotIn("github.event.pull_request.head.sha }}",audit)
-        self.assertIn('"--live-readback"',SOURCE)
+        self.assertIn('"--first-source-report"',SOURCE)
+        self.assertIn('"--first-trace-report"',SOURCE)
+        self.assertIn("FIRST_GUARDED_TRACE_MISSING_OR_INVALID",SOURCE)
         self.assertNotIn('"--apply",',SOURCE)
         self.assertNotIn(".patch_title(",SOURCE)
         self.assertNotIn(".patch_issue_body(",SOURCE)
@@ -289,6 +291,137 @@ class ReadonlyScoreboardAuditTests(unittest.TestCase):
         self.assertEqual("NEW_GUARDED_REPLAY_AFTER_ORIGINAL_FAILURE",got["invocation_scope"])
         self.assertEqual(0,got["write_count"])
         self.assertEqual([],got["authority_effects"])
+
+
+    def test_20_precommitted_primary_invocation_contract(self):
+        oracle=json.loads((HERE/"784-first-invocation-trace-oracles-v1.json").read_text())
+        self.assertEqual("relay-v32-784-first-invocation-audit-oracle-v1",oracle["schema"])
+        self.assertEqual("PRIMARY_GUARDED_INVOCATION_NOT_REPLAY",oracle["scope"])
+        self.assertEqual(5,len(oracle["cases"]))
+        import same_guarded_readback_trace_v32 as trace
+        for case in oracle["cases"]:
+            with self.subTest(oracle_id=case["id"]):
+                report=trace.classify_calls([{"sha":x} for x in case["calls"]])
+                self.assertEqual(case["expected"],report["verdict"])
+                self.assertEqual(len(case["calls"]),report["read_count"])
+
+    def test_21_primary_driver_records_first_guarded_failure_not_a_retry(self):
+        import same_guarded_readback_trace_v32 as trace
+        with TemporaryDirectory() as td:
+            source=Path(td)/"first-source.json"
+            tracefile=Path(td)/"first-trace.json"
+            args=["source_trace.py","--first-source-report",str(source),
+                  "--first-trace-report",str(tracefile)]
+            first={"schema":"relay-v32-784-guarded-invocation-trace-v1",
+                   "invocation_scope":"PRIMARY_AUDIT_SOURCE_INVOCATION",
+                   "source_outcome":"SOURCE_REPLAY_FAILED_UNVERIFIED",
+                   "source_exception_class":"ReplayError",
+                   "source_error_code":"CANDIDATE_CHANGED_DURING_OBSERVATION",
+                   "ordered_bound_pull_reads":[
+                       {"phase":"direct_initial","sha":"d"*40},
+                       {"phase":"delp_observer","sha":"b"*40}],
+                   "read_count":2,"verdict":"DELP_OBSERVER_MISMATCH",
+                   "write_count":0,"authority_effects":[]}
+            with patch.object(sys,"argv",args),patch.object(
+                    trace,"run_guarded_trace",return_value=(first,None)) as execute:
+                self.assertEqual(1,trace.main())
+            self.assertEqual(1,execute.call_count)
+            self.assertTrue(execute.call_args.kwargs["first_invocation"])
+            self.assertTrue(execute.call_args.kwargs["include_source_view"])
+            saved=json.loads(tracefile.read_text())
+            self.assertEqual("DELP_OBSERVER_MISMATCH",saved["verdict"])
+            self.assertEqual("PRIMARY_AUDIT_SOURCE_INVOCATION",saved["invocation_scope"])
+            self.assertFalse(source.exists())
+
+    def test_22_wrapper_accepts_only_matching_primary_source_trace(self):
+        import same_guarded_readback_trace_v32 as trace
+        with TemporaryDirectory() as td:
+            report=Path(td)/"audit.json"
+            args=["audit_live_scoreboard_v32.py","--output",str(report),
+                  "--event-name","issue_comment","--writer-job-result","skipped"]
+            sha="d511fc0210ee823272f41c43621bc90bc290e739"
+            first={"invocation_scope":"PRIMARY_AUDIT_SOURCE_INVOCATION",
+                   "source_outcome":"SOURCE_REPLAY_SUCCEEDED_NO_ACCEPTANCE",
+                   "verdict":"MATCH","read_count":3,"write_count":0,
+                   "authority_effects":[],"ordered_bound_pull_reads":[
+                       {"phase":"direct_initial","sha":sha},
+                       {"phase":"delp_observer","sha":sha},
+                       {"phase":"direct_final","sha":sha}]}
+            calls=[]
+            def fake_run(command,**_):
+                calls.append(command)
+                if command[0]=="git":
+                    return subprocess.CompletedProcess([],0,stdout="c"*40+"\\n")
+                self.assertEqual(str(mod.FIRST_SOURCE),command[1])
+                self.assertNotIn("--apply",command)
+                self.assertNotIn("--live-readback",command)
+                Path(command[3]).write_text(json.dumps(observed(False)))
+                Path(command[5]).write_text(json.dumps(first))
+                return subprocess.CompletedProcess([],0,stdout="",stderr="")
+            with patch.object(sys,"argv",args),patch.object(mod.subprocess,"run",side_effect=fake_run):
+                self.assertEqual(0,mod.main())
+            self.assertEqual(2,len(calls))
+            saved=json.loads(report.read_text())
+            self.assertEqual("OBSERVED_DRIFT_OR_UNPUBLISHED",saved["status"])
+            self.assertEqual("PRIMARY_AUDIT_SOURCE_INVOCATION",
+                             saved["first_guarded_invocation_trace"]["invocation_scope"])
+            self.assertEqual(0,saved["write_count"])
+            self.assertEqual([],saved["authority_effects"])
+
+    def test_23_wrapper_preserves_first_failure_and_first_call_heads(self):
+        with TemporaryDirectory() as td:
+            report=Path(td)/"audit.json"
+            args=["audit_live_scoreboard_v32.py","--output",str(report),
+                  "--event-name","issue_comment","--writer-job-result","skipped"]
+            first={"invocation_scope":"PRIMARY_AUDIT_SOURCE_INVOCATION",
+                   "source_outcome":"SOURCE_REPLAY_FAILED_UNVERIFIED",
+                   "source_error_code":"CANDIDATE_CHANGED_DURING_OBSERVATION",
+                   "verdict":"DELP_OBSERVER_MISMATCH","read_count":2,
+                   "write_count":0,"authority_effects":[],
+                   "ordered_bound_pull_reads":[{"phase":"direct_initial","sha":"d"*40},
+                                               {"phase":"delp_observer","sha":"b"*40}]}
+            seen=[]
+            def fake_run(command,**_):
+                seen.append(command)
+                if command[0]=="git":
+                    return subprocess.CompletedProcess([],0,stdout="c"*40+"\\n")
+                Path(command[5]).write_text(json.dumps(first))
+                return subprocess.CompletedProcess([],1,stdout="",
+                    stderr="V32-718-REPLAY-FAILED: ReplayError: CANDIDATE_CHANGED_DURING_OBSERVATION")
+            import same_guarded_readback_trace_v32 as trace
+            later={"source_outcome":"SOURCE_REPLAY_SUCCEEDED_NO_ACCEPTANCE",
+                   "invocation_scope":"NEW_GUARDED_REPLAY_AFTER_ORIGINAL_FAILURE",
+                   "verdict":"MATCH","write_count":0,"authority_effects":[]}
+            with patch.object(sys,"argv",args),patch.object(mod.subprocess,"run",side_effect=fake_run),patch.object(
+                    trace,"run_guarded_trace",return_value=later):
+                self.assertEqual(3,mod.main())
+            saved=json.loads(report.read_text())
+            self.assertEqual(2,len(seen))
+            self.assertEqual("FAILED_UNVERIFIED",saved["status"])
+            self.assertEqual("DELP_OBSERVER_MISMATCH",
+                             saved["first_guarded_invocation_trace"]["verdict"])
+            self.assertEqual("CANDIDATE_CHANGED_DURING_OBSERVATION",
+                             saved["provider_failure"]["reason_code"])
+            self.assertEqual(0,saved["write_count"])
+            self.assertEqual([],saved["authority_effects"])
+
+    def test_24_false_green_first_report_missing_or_corrupt_fails_closed(self):
+        with TemporaryDirectory() as td:
+            report=Path(td)/"audit.json"
+            args=["audit_live_scoreboard_v32.py","--output",str(report),
+                  "--event-name","issue_comment","--writer-job-result","skipped"]
+            def fake_run(command,**_):
+                if command[0]=="git":
+                    return subprocess.CompletedProcess([],0,stdout="c"*40+"\\n")
+                Path(command[3]).write_text(json.dumps(observed(True)))
+                # A forged success without a primary trace MUST fail.
+                return subprocess.CompletedProcess([],0,stdout="",stderr="")
+            with patch.object(sys,"argv",args),patch.object(mod.subprocess,"run",side_effect=fake_run):
+                self.assertEqual(3,mod.main())
+            saved=json.loads(report.read_text())
+            self.assertEqual("FAILED_UNVERIFIED",saved["status"])
+            self.assertIn("FIRST_GUARDED_TRACE_MISSING_OR_INVALID",saved["error"])
+            self.assertEqual(0,saved["write_count"])
 
 
 if __name__=="__main__":
