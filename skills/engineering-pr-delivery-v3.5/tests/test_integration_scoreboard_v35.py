@@ -175,6 +175,16 @@ class PureSmartTitles(unittest.TestCase):
         self.assertEqual("UNKNOWN", R3.render(self.model, self.provider.pr, case)["checks"]["status"])
         self.assertEqual("UNKNOWN", R3.render(self.model, self.provider.pr, {})["checks"]["status"])
 
+    def test_presentation_digest_changes_with_checks_but_not_semantic_basis(self):
+        original = R3.render(self.model, self.provider.pr, self.provider.checks)
+        changed = copy.deepcopy(self.provider.checks)
+        changed["check_runs"][0]["conclusion"] = "failure"
+        failed = R3.render(self.model, self.provider.pr, changed)
+        self.assertEqual(original["basis_sha256"], failed["basis_sha256"])
+        self.assertEqual(original["issue_titles"], failed["issue_titles"])
+        self.assertNotEqual(original["presentation_digest"], failed["presentation_digest"])
+        self.assertEqual("FAIL", failed["checks"]["status"])
+
     def test_duplicate_title_prefix_is_stripped_only_if_owned(self):
         first = R3.render(self.model, self.provider.pr, self.provider.checks)
         later = copy.deepcopy(self.provider.pr)
