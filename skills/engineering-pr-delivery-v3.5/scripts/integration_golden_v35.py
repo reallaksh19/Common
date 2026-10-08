@@ -14,6 +14,16 @@ class GoldenContractError(ValueError):
     pass
 
 
+# Independent frozen *historical* expectations. These were read back from
+# the cited Common#600/#604/PR#712 historical basis and must not be replaced
+# from the untrusted input being validated. They are not current provider facts.
+_HISTORICAL_OWNER_QUOTE = "WHy i don't see any integration on GitHub issue decomposition, issue title scoreboard, task evidence, handover prompt and agent metric which is the core...\ni also don't see smart title in issue and draft... I also don't see \"My intent\" or \"owner inent\" presenvation i parent issue along with source links and golden fixtures which is mandatory.\n\nI still don't see reviewer checklist/self checklist"
+_HISTORICAL_EVIDENCE_END = "https://github.com/reallaksh19/Common/issues/732#issuecomment-6051715005"
+_HISTORICAL_NEXT = "Prove fresh independent native IDLE bootstrap without #438 lineage; then obtain scoped Owner/Local grant before C2 wiring."
+_HISTORICAL_CHECKS_SHA = "786e1a99785cc8725ec1983923a01240f6f82ece"
+_HISTORICAL_CHECKS = (5, 5)
+
+
 def _required(record: Mapping[str, Any], name: str) -> Mapping[str, Any]:
     result = record.get(name)
     if not isinstance(result, Mapping):
@@ -46,8 +56,10 @@ def derive(snapshot: Mapping[str, Any]) -> dict[str, Any]:
     pn = programme.get("issue")
     ln = leaf.get("issue")
     prn = pr.get("number")
-    if repo != "reallaksh19/Common" or not all(
-        type(n) is int and n > 0 for n in (pn, ln, prn)
+    if (
+        repo != "reallaksh19/Common"
+        or (pn, ln, prn) != (600, 604, 712)
+        or snapshot.get("fixture_kind") != "HISTORICAL_PROVIDER_OBSERVATION_NOT_AUTHORITY"
     ):
         raise GoldenContractError("unrecognised programme or issue identity")
     if leaf.get("parent_issue") != pn or pr.get("responsibility_issue") != ln:
@@ -62,7 +74,7 @@ def derive(snapshot: Mapping[str, Any]) -> dict[str, Any]:
         owner.get("original_source_status") != "UNRESOLVED_CHAT_LINK"
         or owner.get("original_source_ref") is not None
         or not isinstance(owner.get("verbatim"), str)
-        or "WHy i don't see any integration" not in owner["verbatim"]
+        or owner["verbatim"] != _HISTORICAL_OWNER_QUOTE
         or owner.get("first_durable_mirror") !=
         "https://github.com/reallaksh19/Common/issues/717#issuecomment-6051883834"
     ):
@@ -72,11 +84,10 @@ def derive(snapshot: Mapping[str, Any]) -> dict[str, Any]:
 
     counts = _required(programme, "integration_acceptance")
     total, qualified = counts.get("total"), counts.get("qualified")
-    if not (
-        type(total) is int and total >= 1
-        and type(qualified) is int and 0 <= qualified <= total
-    ):
-        raise GoldenContractError("integration acceptance denominator invalid")
+    # Historical R1 is NEVER authorized to assert operational IC credit.
+    # Real IC qualification must be derived from accepted claim/fixture evidence in R2+.
+    if (total, qualified) != (8, 0):
+        raise GoldenContractError("historical fixture cannot assert unsupported IC acceptance")
     if leaf.get("custody_source") != "SOURCE_NOT_PROVEN":
         raise GoldenContractError("fixture must represent the real unproven custody boundary")
     if leaf.get("semantic_state") != "HOLD":
@@ -99,6 +110,8 @@ def derive(snapshot: Mapping[str, Any]) -> dict[str, Any]:
         or not 0 <= passed <= total_checks
     ):
         raise GoldenContractError("provider checks inconsistent")
+    if (passed, total_checks) != _HISTORICAL_CHECKS or assessed != _HISTORICAL_CHECKS_SHA:
+        raise GoldenContractError("historical CI counts/checks SHA changed without provider qualification")
     check_label = (
         f"CI {passed}/{total_checks}@{head[:7]}"
         if head == assessed
@@ -109,11 +122,11 @@ def derive(snapshot: Mapping[str, Any]) -> dict[str, Any]:
     if review.get("independent") != "NOT_REVIEWED":
         raise GoldenContractError("golden independent review cannot be inferred from CI")
     task_evidence = leaf.get("task_evidence_end")
-    if not isinstance(task_evidence, str) or not task_evidence.startswith(_issue_url(repo, 732)):
-        raise GoldenContractError("leaf task evidence link missing")
+    if task_evidence != _HISTORICAL_EVIDENCE_END:
+        raise GoldenContractError("historical task evidence exact reference changed")
     next_step = leaf.get("actual_next")
-    if not isinstance(next_step, str) or "fresh independent" not in next_step:
-        raise GoldenContractError("actual next must preserve source/genesis blocker")
+    if next_step != _HISTORICAL_NEXT:
+        raise GoldenContractError("historical actual-next assertion changed")
 
     parent_title = (
         f"[570→{pn} | P3#{ln} HOLD · R1#736 INCOMPLETE · "
