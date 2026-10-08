@@ -213,3 +213,40 @@ amendments:
       - skills/engineering-pr-delivery-v3.2/scripts/qualification_observation_v32.py
       - skills/engineering-pr-delivery-v3.2/schemas/qualification-observation-v32.schema.yaml
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_qualification_observation.py
+
+  - id: AMEND-V32-ES-RPROJECTION-012
+    owner_authorized: true
+    owner_basis: >-
+      Owner's direct V3.2-only corrective request on 2026-10-08,
+      verbatim preserved at https://github.com/reallaksh19/Common/issues/733#issuecomment-6051916044:
+      'i dont see any integration on github issue decompostion, issue title
+      scorboard, task evidence, handover prompt and agent metric which is the core...'
+      and 'i also don't see smart title in issue and draft...'
+      followed by 'update git hub issue... walk the talk ... ensure that stress check
+      achieves the same ie, self run via module once coded and achive same...',
+      and subsequent Owner continuation 'continue'. Governed by Common #718 and
+      bounded child #733 / ESC-3, preserving precommitted twelve golden fixture
+      oracles on PR #739, direct readback and the exact released Proposal V2 digest
+      sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd.
+      This amendment grants NO merge authority and does not alter V3.5.
+    summary: >-
+      Authorize only the released #733 R-PROJECTION source-level integration:
+      combine immutable Owner-intent/OR/ESC/fixture provenance, V3.2 DELP
+      accepted-fact projection, real provider PR material and separate R-PROOF
+      observation into one read model; render parent/child issue status and
+      smart titles plus associated draft PR smart title and managed read view,
+      retaining Owner-owned text and distinct issue/PR lifecycles; detect
+      changed input/partial provider writes without claiming atomic GitHub CAS.
+      Authorize the exact named cross-surface and vertical-cycle regressions
+      and an opt-in read-only self-run stress module for this scope. Stale/missing
+      sources fail closed. Handover and agent quality remain separately released
+      future ESC-4/5 consumers; G-REPLAY cannot claim full PASS here. This
+      does not authorize historical retroactive CHECKPOINT_FACTS, agent-author
+      progress, unchecked live provider writes, PR merge, V3.5 changes or
+      a new publication family.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py
+      - skills/engineering-pr-delivery-v3.2/scripts/pr_responsibility_view_v32.py
+      - skills/engineering-pr-delivery-v3.2/scripts/vertical_cycle_v32.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_cross_surface_view.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_vertical_cycle.py
