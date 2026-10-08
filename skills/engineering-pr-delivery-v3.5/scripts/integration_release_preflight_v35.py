@@ -73,7 +73,7 @@ def _checked_workflow(transport: Any, path: str) -> dict[str, Any]:
     # GitHub reported blob id and an independent Git-blob hash of the bytes.
     encoded = code.encode("utf-8")
     blob_sha = hashlib.sha1(
-        b"blob " + str(len(encoded)).encode("ascii") + b"\\x00" + encoded
+        b"blob " + str(len(encoded)).encode("ascii") + b"\x00" + encoded
     ).hexdigest()
     reported_blob = file.get("blob_sha")
     if (blob_sha != _AUDITED_WORKFLOW_BLOB_SHA or
@@ -85,6 +85,17 @@ def _checked_workflow(transport: Any, path: str) -> dict[str, Any]:
             "native_blob_id": str(reported_blob or "UNKNOWN"),
             "calculated_blob_id": blob_sha,
         }
+    # The default branch can move while we read file bytes and workflow
+    # metadata. A stale but previously audited commit is NOT current readiness.
+    try:
+        latest_head = transport.get_commit_sha(branch)
+    except (DELP.DelpError, OSError, LookupError, ValueError) as exc:
+        return {"status": "WORKFLOW_PROVIDER_UNVERIFIED",
+                "reason": "DEFAULT_BRANCH_HEAD_REREAD_FAILED",
+                "detail": str(exc)[:180]}
+    if latest_head != head:
+        return {"status": "WORKFLOW_DEFAULT_HEAD_MOVED",
+                "initial_head": head, "current_head": str(latest_head)}
     # A successful blob check proves audited workflow content only. An external
     # security review, two Owner approvals and actual event readback remain
     # separate release obligations.
