@@ -131,8 +131,10 @@ test('one-byte tampering fails independently pinned bundle checksum',async()=>{
 });
 test('missing middle record and renamed entry are detected by real R2 replay',async()=>{
  const f=await fixture(),b=await capture(f),v=alternate(b);
- v.entries.splice(2,1);
+ const missing=v.entries.splice(2,1)[0];
  v.manifest.event_count-=1;v.manifest.tip.seq-=1;
+ if(missing.record.content.visibility==='PUBLIC')v.manifest.public_count-=1;
+ else v.manifest.redacted_count-=1;
  // The supplied digest alone is not independently authenticated; still R2-A detects gap.
  const changed=repr(v),fake={...expected(b),bundle_sha256:H(changed)};
  await refused(verify(changed,fake),'CORRUPT');
@@ -179,7 +181,7 @@ test('privacy consent tampering and revision change detected against manifest di
 });
 test('unapproved PUBLIC event from altered payload refused at import',async()=>{
  const f=await fixture(),b=await capture(f),v=alternate(b);
- v.privacy_policy.approved_public=v.privacy_policy.approved_public.filter(x=>x.event_id!=='EV-1');
+ v.privacy_policy.approved_public=v.privacy_policy.approved_public.filter(x=>x.event_id!==f.records[0].event_id);
  v.manifest.policy_sha256=H(repr(v.privacy_policy));
  const changed=repr(v);
  await refused(verify(changed,{...expected(b),bundle_sha256:H(changed)}),'PRIVACY_DENIED');
