@@ -235,9 +235,14 @@ class GhReadOnlyProvider:
         if (not endpoint.startswith("/repos/") or ".." in endpoint
                 or any(ch in endpoint for ch in ("\\", "\n", "\r", " "))):
             raise ValueError("invalid GitHub read path")
+        command = ["gh", "api", "--method", "GET"]
+        if raw:
+            # Actions job-log redirects contain ANSI escape sequences; gh api
+            # otherwise rejects the log even when the authenticated read works.
+            command.append("--allow-escape-sequences")
+        command.append(endpoint)
         operation = subprocess.run(
-            ["gh", "api", "--method", "GET", endpoint],
-            capture_output=True, check=False, timeout=self.timeout,
+            command, capture_output=True, check=False, timeout=self.timeout,
         )
         if operation.returncode != 0 or len(operation.stdout) > 8_000_000:
             raise RuntimeError("GitHub provider read failed or exceeded limit")
