@@ -140,6 +140,8 @@ def validate_current(body: str, issue: int) -> dict[str, Any]:
         raise FrontPageError("current front page exceeds bounded cold-entry view")
     rest = body[close_at:]
     protected = PROTECTED[issue]
+    if issue in (600, 717) and rest.count(protected) != 1:
+        raise FrontPageError("protected source marker must be unique")
     idx = rest.find(protected)
     if idx < 0:
         raise FrontPageError("Owner/parent governing source missing after front page")
