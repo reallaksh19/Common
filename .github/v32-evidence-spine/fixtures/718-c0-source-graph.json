@@ -553,8 +553,7 @@
           "outcome": "Changed upstream input or a conflicting provider update is recognized without overwriting Owner-owned specification.",
           "verify": "Digest divergence and compare-and-swap race oracle"
         }
-      ],
-      "primary_pr": "Common#740"
+      ]
     }
   ]
 }
