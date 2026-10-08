@@ -185,6 +185,30 @@ class ContractObservationTests(unittest.TestCase):
 
 
 
+    def test_pull_moves_during_observation_is_not_certified(self):
+        class RacingProvider(Provider):
+            reads = 0
+            def get_pull(self, repo, number):
+                self.reads += 1
+                value = super().get_pull(repo, number)
+                if self.reads >= 2:
+                    value["head"]["sha"] = OLD
+                return value
+        output = self.check(reader=RacingProvider())
+        self.assertNotEqual("PROVEN", output["overall"], output)
+        self.assertTrue(all(r["status"] != "PROVEN" for r in output["requirements"]))
+
+    def test_an_earlier_missing_case_does_not_mask_later_proven_run(self):
+        provider = Provider()
+        provider.runs.insert(0, {"id": 8999, "head_sha": HEAD, "status": "completed", "conclusion": "success"})
+        provider.jobs[8999] = copy.deepcopy(provider.jobs[9001])
+        provider.jobs[8999][0]["id"] = 8998
+        provider.logs[8998] = "2026-10-08T00:00:00Z test_other (other.Tests.test_other) ... ok\nOK"
+        outcome = self.check(reader=provider)
+        self.assertEqual("PROVEN", self.requirement(outcome, "T-RUN")["status"], outcome)
+
+
+
 class SchemaBoundaryTests(unittest.TestCase):
     def test_source_bound_result_conforms_to_schema(self):
         import jsonschema
