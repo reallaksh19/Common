@@ -205,7 +205,7 @@ def _patch_pr(
         new_title = rendering["pr_title"]
         new_body = R3.managed_body(str(before.get("body") or ""), rendering["pr_managed_body"])
         if (before.get("title"), before.get("body") or "") == (new_title, new_body):
-            return {"status": "UNCHANGED", "attempts": attempt}
+            return {"status": "UNCHANGED", "attempts": attempt, "presentation_digest": rendering["presentation_digest"]}
         # Best-effort pre-write re-read; GitHub lacks an If-Match update API
         # for these fields, so any continuing race must be caught by readback.
         guard = transport.get_pull(number)
@@ -220,7 +220,7 @@ def _patch_pr(
         if ((after.get("head") or {}).get("sha") != expected_candidate):
             raise PublishError("PR candidate moved during readback; abort and reproject")
         if (after.get("title"), after.get("body") or "") == (new_title, new_body):
-            return {"status": "WRITTEN_READBACK_VERIFIED", "attempts": attempt}
+            return {"status": "WRITTEN_READBACK_VERIFIED", "attempts": attempt, "presentation_digest": rendering["presentation_digest"]}
     raise PublishError("concurrent PR edit prevented stable managed publication")
 
 
@@ -281,6 +281,7 @@ def publish(
         "issues": issue_result,
         "pr": pr_result,
         "provider_approval": approval,
+        "pr_presentation_digest": pr_result["presentation_digest"],
         "warning": "GitHub has no atomic CAS across issue comments/titles and PR fields",
         "integration_acceptance": "NOT_DERIVED",
         "custody_and_merge_authority": "NOT_DERIVED",
