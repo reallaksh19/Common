@@ -151,6 +151,77 @@ class GraphSelectionTests(unittest.TestCase):
             with self.subTest(key=key, fake=fake), self.assertRaises(AUTH.GraphSelectionError):
                 self.load(t)
 
+    def test_same_repository_owner_approval_from_nonroot_issue_rejected(self):
+        """A source comment must live on Common#600, not merely assert its own #741."""
+        foreign_url = (
+            "https://github.com/reallaksh19/Common/issues/741#issuecomment-123456"
+        )
+        self.t.graph_comment["html_url"] = foreign_url
+        self.t.graph_comment["issue_url"] = (
+            "https://api.github.com/repos/reallaksh19/Common/issues/741"
+        )
+        self.t.manifest["approval_issue"] = 741
+        self.t.issues[741] = {"number": 741, "title": "Other issue, not governing root"}
+        self.t.refresh_graph_comment()
+        with patch.object(self.t, "get_file_at", wraps=self.t.get_file_at) as graph_reads:
+            with self.assertRaisesRegex(
+                AUTH.GraphSelectionError, "must reside on the governing root issue"
+            ):
+                AUTH.load_approved_source(
+                    self.t, foreign_url, selected_responsibility="Common#604",
+                    selected_pr=712,
+                )
+            graph_reads.assert_not_called()
+        self.assertEqual([], self.t.writes)
+
+    def test_live_publisher_cli_rejects_validly_self_scoped_nonroot_approval(self):
+        foreign_url = (
+            "https://github.com/reallaksh19/Common/issues/741#issuecomment-123456"
+        )
+        self.t.graph_comment["html_url"] = foreign_url
+        self.t.graph_comment["issue_url"] = (
+            "https://api.github.com/repos/reallaksh19/Common/issues/741"
+        )
+        self.t.manifest["approval_issue"] = 741
+        self.t.issues[741] = {"number": 741, "title": "Foreign approval location"}
+        self.t.refresh_graph_comment()
+        with patch.object(PUBLISH, "ScoreboardTransport", return_value=self.t):
+            rc = PUBLISH.main([
+                "--repository", self.t.repository,
+                "--responsibility", "Common#604", "--pr", "712",
+                "--graph-source-ref", foreign_url,
+                "--approval-ref", SCORE_URL, "--apply",
+            ])
+        self.assertEqual(2, rc)
+        self.assertEqual([], self.t.writes)
+
+    def test_manual_dispatch_only_selects_recheck_not_approval(self):
+        event = {"inputs": {
+            "graph_digest": "f" * 64,
+            "approval": "OWNER_APPROVED",
+            "completion": "IC8/8",
+        }}
+        selected = PUBLISH.EVENTS.event_scope(
+            self.t.graph, "Common#604", 712, "workflow_dispatch", event,
+            actor="random-user",
+        )
+        self.assertEqual("SELECT", selected["decision"])
+        self.assertEqual(
+            "EXPLICIT_MANUAL_PROVIDER_RECONCILIATION_ONLY",
+            selected["reason"],
+        )
+        self.assertNotIn("approval", selected)
+        self.assertNotIn("graph_digest", selected)
+        self.assertEqual([], self.t.writes)
+        with patch.object(PUBLISH, "ScoreboardTransport", return_value=self.t):
+            denied = PUBLISH.main([
+                "--repository", self.t.repository,
+                "--responsibility", "Common#604", "--pr", "712",
+                "--approval-ref", SCORE_URL, "--apply",
+            ])
+        self.assertEqual(2, denied)
+        self.assertEqual([], self.t.writes)
+
     def test_forged_owner_or_graph_approval_comment_is_rejected(self):
         for mode in ("untrusted", "edited", "revoked", "foreign_issue", "wrong_pr", "scope"):
             t = Provider()
