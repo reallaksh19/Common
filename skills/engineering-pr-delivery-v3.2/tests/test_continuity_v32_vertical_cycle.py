@@ -350,5 +350,76 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             replay.live_readback(self.manifest, live, transport)
 
 
+    def test_29_actual_guarded_publisher_blocks_competing_issue_writers(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        with self.assertRaisesRegex(replay.ReplayError,
+                                    "DUAL_ISSUE_PUBLISHERS_UNRECONCILED_NO_LIVE_WRITE"):
+            replay.guarded_publish(self.manifest, live, object(),
+                expected_head="c" * 40,
+                expected_input_digest="sha256:" + "a" * 64, apply=True)
+
+    def test_30_actual_guarded_publisher_dry_run_no_mutations(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        first = replay.live_readback(self.manifest, live, self._provider())
+        adapter = self._provider()
+        report = replay.guarded_publish(self.manifest, live, adapter,
+                    expected_head="c" * 40,
+                    expected_input_digest=first["source_input_digest"], apply=False)
+        self.assertEqual("DRY_RUN", report["requested_mode"])
+        self.assertEqual("PLANNED", report["status"])
+        self.assertEqual(["Common#718", "Common#733", "Common#740"],
+                         report["changed_surfaces"])
+        self.assertEqual([], report["applied_surfaces"])
+        self.assertEqual([], report["authority_effects"])
+
+    def test_31_real_live_readback_rejects_valid_markers_forged_content(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        first = replay.live_readback(self.manifest, live, self._provider())
+        refs = first["expected_managed_blocks"]
+        provider = self._provider()
+        get_issue, get_pull = provider.get_issue, provider.get_pull
+        def issue_with_managed(number):
+            raw = get_issue(number)
+            body = refs[f"Common#{number}"]
+            if number == 733:
+                body = body.replace("UNPROVEN", "PROVEN OWNER MERGE APPROVED")
+            raw["body"] = raw["body"] + "\\n" + body
+            return raw
+        def pr_with_managed(number):
+            raw = get_pull(number)
+            if number == 740:
+                raw["body"] += "\\n" + refs["Common#740"]
+            return raw
+        provider.get_issue, provider.get_pull = issue_with_managed, pr_with_managed
+        second = replay.live_readback(self.manifest, live, provider)
+        self.assertEqual("MATCH", second["read_views"]["Common#718"]["managed_block"])
+        self.assertEqual("DRIFT", second["read_views"]["Common#733"]["managed_block"])
+        self.assertEqual("MATCH", second["read_views"]["Common#740"]["managed_block"])
+        self.assertEqual("DRIFT_OR_UNPUBLISHED", second["reconciliation"])
+
+    def test_32_complete_exact_managed_readback_can_match_without_writer(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        first = replay.live_readback(self.manifest, live, self._provider())
+        refs = first["expected_managed_blocks"]
+        provider = self._provider()
+        get_issue, get_pull = provider.get_issue, provider.get_pull
+        def issue_with_managed(number):
+            raw = get_issue(number)
+            raw["body"] += "\\n" + refs[f"Common#{number}"]
+            return raw
+        def pr_with_managed(number):
+            raw = get_pull(number)
+            if number == 740:
+                raw["body"] += "\\n" + refs["Common#740"]
+            return raw
+        provider.get_issue, provider.get_pull = issue_with_managed, pr_with_managed
+        result = replay.live_readback(self.manifest, live, provider)
+        self.assertEqual("MATCH", result["reconciliation"])
+        self.assertTrue(all(v["title"] == "MATCH" and
+                            v["managed_block"] == "MATCH"
+                            for v in result["read_views"].values()))
+        self.assertEqual([], result["authority_effects"])
+
+
 if __name__ == "__main__":
     unittest.main()
