@@ -209,6 +209,20 @@ jobs:
           print("V32_718_FULL_INTEGRATION=EXPECTED_RED_NOT_IMPLEMENTED")
           print("V32_718_INPUT_DIGEST="+a["fixture_manifest_digest"])
           PY
+      - name: S5-D1 independent read-only audit controls and oracle chronology
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 13437eca8483f04ad97d7611c95f0af65a13ac1b 95959bdbec6ae71058f5b56c79a9d6f5376726ad
+          python -m unittest discover -s .github/v32-evidence-spine -p 'test_760_readonly_audit_v32.py' -v 2>&1 | tee artifacts/v32-760-audit-tests.log
+          python - <<'PY'
+          from pathlib import Path
+          log=Path('artifacts/v32-760-audit-tests.log').read_text()
+          missing=[f'test_{n:02d}_' for n in range(1,11) if f'test_{n:02d}_' not in log]
+          if missing or 'Ran 10 tests' not in log or 'OK' not in log:
+              raise SystemExit(f'S5_D1_NAMED_AUDIT_CASES_NOT_EXECUTED: {missing}')
+          print('V32_760_READONLY_AUDIT_PRECOMMITTED_TESTS=10_PASS')
+          PY
       - name: Retain golden preflight evidence
         if: always()
         uses: actions/upload-artifact@v4
