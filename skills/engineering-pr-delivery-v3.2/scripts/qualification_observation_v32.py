@@ -94,6 +94,7 @@ def _observed_execution(req: Mapping, provider: Any, repo: str, sha: str) -> dic
         if not runs:
             return _row(req, "UNKNOWN", "NO_RUNS_OBSERVED")
         uncertain = False
+        observed_negative = False
         for run in runs:
             if not isinstance(run, Mapping) or run.get("head_sha") != sha:
                 continue
@@ -115,13 +116,15 @@ def _observed_execution(req: Mapping, provider: Any, repo: str, sha: str) -> dic
                     uncertain = True
                     continue
                 if job.get("conclusion") != "success" or run.get("conclusion") != "success":
-                    return _row(req, "UNPROVEN", "NAMED_RUN_OR_JOB_FAILED")
+                    observed_negative = True
+                    continue
                 if not any(
                     isinstance(step, Mapping) and step.get("name") == req["step_name"]
                     and step.get("status") == "completed" and step.get("conclusion") == "success"
                     for step in job.get("steps") or []
                 ):
-                    return _row(req, "UNPROVEN", "REQUIRED_STEP_NOT_SUCCESSFUL")
+                    observed_negative = True
+                    continue
                 job_id = job.get("id")
                 if type(job_id) is not int or job_id < 1:
                     uncertain = True
@@ -131,9 +134,12 @@ def _observed_execution(req: Mapping, provider: Any, repo: str, sha: str) -> dic
                     uncertain = True
                     continue
                 if not _named_successful_case(raw, req["case_id"]):
-                    return _row(req, "UNPROVEN", "NAMED_CASE_ABSENT_FROM_JOB_LOG")
+                    observed_negative = True
+                    continue
                 url = f"https://github.com/{repo}/actions/runs/{run_id}/job/{job_id}"
                 return _row(req, "PROVEN", "CASE_OBSERVED_AT_EXACT_HEAD", [url])
+        if observed_negative:
+            return _row(req, "UNPROVEN", "NO_SUCCESSFUL_NAMED_CASE_IN_EXACT_HEAD_RUNS")
         return _row(req, "UNKNOWN" if uncertain else "UNPROVEN",
                     "RUN_OR_LOG_INCOMPLETE" if uncertain else "REQUIRED_EXECUTION_NOT_OBSERVED")
     except (OSError, RuntimeError, ValueError):
@@ -189,6 +195,23 @@ def assess(contract: dict, provider: object) -> dict:
                     tree = {}
             row = _observed_blob(q, tree, repo, sha)
         result["requirements"].append(row)
+    # Re-read the live PR after job/tree inspection. A concurrent force-push
+    # may otherwise let a stale candidate earn a deceptively fresh PROVEN.
+    try:
+        latest = provider.get_pull(repo, plan["pull_number"])
+    except (OSError, RuntimeError, ValueError):
+        latest = None
+    latest_head = (latest.get("head") or {}).get("sha") if isinstance(latest, Mapping) else None
+    if not isinstance(latest_head, str) or not SHA.fullmatch(latest_head):
+        result["requirements"] = [_row(q, "UNKNOWN", "FINAL_LIVE_HEAD_UNAVAILABLE") for q in plan["requirements"]]
+        result["observed_candidate_sha"] = None
+        result["overall"] = "UNKNOWN"
+        return result
+    if latest_head.lower() != sha:
+        result["requirements"] = [_row(q, "UNPROVEN", "LIVE_CANDIDATE_MOVED_DURING_OBSERVATION") for q in plan["requirements"]]
+        result["observed_candidate_sha"] = latest_head.lower()
+        result["overall"] = "UNPROVEN"
+        return result
     statuses = {x["status"] for x in result["requirements"]}
     result["overall"] = "UNPROVEN" if "UNPROVEN" in statuses else (
         "UNKNOWN" if "UNKNOWN" in statuses else "PROVEN"
