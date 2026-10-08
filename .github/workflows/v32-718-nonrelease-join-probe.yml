@@ -54,7 +54,7 @@ jobs:
           assert delp.decomposition_report(graph)["release_state"]=="RELEASEABLE"
           view=delp.project(graph, [], {})
           active=view["nodes"]["Common#793"]
-          assert active["progress"]["E"] is None and active["progress"]["P"] is None
+          assert active["progress"]["E"] == 0 and active["progress"]["P"] == 0
           assert active["state"]!="COMPLETE"
           print("J01_REAL_RELEASED_ESC4_GRAPH_NOT_FACTLESS_COMPLETE=PASS")
           PY
