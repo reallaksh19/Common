@@ -50,6 +50,24 @@ jobs:
       - name: Four local tamper cases must reject before network
         run: |
           python .github/v32-evidence-spine/811_c6_c4_cold_mutations.py --bundle artifacts/cold-handover
+      - name: Cold live entry rejects missing token and spoofed repository BEFORE GitHub access
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          BUNDLE=artifacts/cold-handover
+          VERIFY=.github/v32-evidence-spine/811_c6_c4_cold_successor.py
+          if env -u GH_TOKEN -u GITHUB_TOKEN python "$VERIFY" --bundle "$BUNDLE" --live > /tmp/cold-no-token.log 2>&1; then
+            echo 'COLD_MISSING_TOKEN_FAILED_OPEN'; exit 1
+          fi
+          grep -q 'COLD_GITHUB_TOKEN_OR_REPO_SCOPE_REQUIRED' /tmp/cold-no-token.log
+          echo 'COLD_MISSING_TOKEN_FAIL_CLOSED=PASS'
+          if env GITHUB_REPOSITORY=wrong/repository python "$VERIFY" --bundle "$BUNDLE" --live > /tmp/cold-wrong-repo.log 2>&1; then
+            echo 'COLD_WRONG_REPOSITORY_FAILED_OPEN'; exit 1
+          fi
+          grep -q 'COLD_GITHUB_TOKEN_OR_REPO_SCOPE_REQUIRED' /tmp/cold-wrong-repo.log
+          echo 'COLD_WRONG_REPOSITORY_FAIL_CLOSED=PASS'
       - name: Process C cold re-reads immutable graph and real GitHub provider GET-only
         env:
           GH_TOKEN: ${{ github.token }}
