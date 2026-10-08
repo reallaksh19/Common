@@ -1,0 +1,174 @@
+"""#733 first vertical product slice: execute real DELP and render issue/PR views.
+
+All fixtures were frozen on an earlier commit/PR before this file. These
+tests verify released ESC-3 consumers only, NOT unreleased handover/metrics.
+"""
+from __future__ import annotations
+
+import copy
+import json
+from pathlib import Path
+import sys
+import unittest
+
+HERE = Path(__file__).resolve()
+V32 = HERE.parents[1]
+ROOT = HERE.parents[3]
+sys.path.insert(0, str(V32 / "scripts"))
+import pr_responsibility_view_v32 as view  # noqa: E402
+
+HEAD_A = "7ef9fbdd0c6f0f941fd573c1663c7a142fc41414"
+HEAD_B = "b" * 40
+MANIFEST = ROOT / ".github/v32-evidence-spine/718-golden-fixtures-v1.json"
+GRAPH = ROOT / ".github/v32-evidence-spine/718-proposal-v2.json"
+
+
+class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.owner = json.loads(MANIFEST.read_text())
+        cls.graph = json.loads(GRAPH.read_text())
+        cls.observed = {
+            "Common#720": {"pr_state": "MERGED", "candidate_sha": "b3dfba3becf829d3a4e21d6eaa54983f05317b65"},
+            "Common#724": {"pr_state": "MERGED", "candidate_sha": HEAD_A},
+        }
+        cls.titles = {
+            "Common#718": "V3.2 Evidence Spine",
+            "Common#733": "Issue/PR Views",
+            "PR": "Cross-Surface Views",
+        }
+
+    def views(self, **kw):
+        args = dict(ledger=[], observations=self.observed, selected_leaf="Common#733",
+                    phase="C0", human_titles=self.titles)
+        args.update(kw)
+        return view.build_views(self.graph, self.owner, **args)
+
+    def test_01_current_parent_child_titles_match_precommitted_golden(self):
+        result = self.views()
+        fixture = next(f for f in self.owner["fixtures"] if f["id"] == "GF-SMART-SURFACES")
+        expected = fixture["expected"]
+        self.assertEqual(expected["parent_title"], result["issue_titles"]["Common#718"])
+        self.assertEqual(expected["child_title"], result["issue_titles"]["Common#733"])
+        self.assertIsNone(result["draft_pr_title"])
+        self.assertEqual(expected["pr_title"], "NOT_MATERIALIZED")
+        self.assertEqual("DERIVED_R_PROJECTION_READ_VIEW_ONLY", result["authority"])
+
+    def test_02_real_merged_children_without_facts_remain_unreported(self):
+        result = self.views()
+        self.assertEqual(["Common#720", "Common#724"], result["historical_unreported"])
+        self.assertEqual(0, result["leaf_semantic"]["P"])
+        self.assertEqual(0, result["leaf_semantic"]["E"])
+        self.assertIn("FACTS UNREPORTED", result["issue_titles"]["Common#718"])
+
+    def test_03_owner_verbatim_OR_claim_and_fixtures_reverse_join(self):
+        result = self.views()
+        self.assertEqual(["OR-718-04"], result["OR_ids"])
+        self.assertEqual(["ESC-3"], result["claim_ids"])
+        self.assertEqual(["GF-PR-HEAD", "GF-PUBLISH-RACE", "GF-SMART-SURFACES"], result["golden_fixture_ids"])
+        self.assertTrue(any("i dont see any integration" in s["verbatim"]
+                            for s in result["owner_trace"]["owner_intents"]))
+        self.assertTrue(all(x["original_source_status"] == "UNRESOLVED_CHAT_MESSAGE_LINK"
+                            for x in result["owner_trace"]["owner_intents"]))
+
+    def test_04_smart_draft_pr_title_is_candidate_bound_but_unbound_is_advisory(self):
+        pr = {"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"}
+        result = self.views(draft_pr=pr)
+        self.assertEqual("UNBOUND_ADVISORY", result["pr"]["binding"])
+        self.assertEqual("UNPROVEN", result["qualification"]["state"])
+        self.assertEqual(
+            "🟡 [718›733] DRAFT · VIEW-PR · HEAD:7ef9fbd · Q:UNPROVEN — Cross-Surface Views",
+            result["draft_pr_title"])
+        self.assertIn("UNBOUND_ADVISORY", result["pr_managed_block"])
+        self.assertEqual("NOT_IMPLEMENTED", result["unreleased_consumers"]["handover"])
+
+    def test_05_changed_head_invalidates_old_independent_candidate_proof(self):
+        qa = {"authority": "DERIVED_OBSERVATION_ONLY",
+              "observed_candidate_sha": HEAD_A, "overall": "PROVEN"}
+        with self.assertRaisesRegex(view.ViewError, "UNBOUND_PR_CANNOT_ACQUIRE_QUALIFICATION"):
+            self.views(draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"},
+                       qualification=qa)
+
+    def test_06_cannot_forge_proven_qualification_for_unbound_PR(self):
+        qa = {"authority": "DERIVED_OBSERVATION_ONLY",
+              "observed_candidate_sha": HEAD_A, "overall": "PROVEN"}
+        with self.assertRaisesRegex(view.ViewError, "UNBOUND_PR_CANNOT_ACQUIRE_QUALIFICATION"):
+            self.views(draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"},
+                       qualification=qa)
+
+    def test_07_changed_head_produces_unproven_view_and_new_input_digest(self):
+        qa = {"authority": "DERIVED_OBSERVATION_ONLY",
+              "observed_candidate_sha": HEAD_A, "overall": "PROVEN"}
+        stale = self.views(draft_pr={"number": 740, "head_sha": HEAD_B, "lifecycle": "DRAFT"},
+                           qualification=qa)
+        fresh = self.views(draft_pr={"number": 740, "head_sha": HEAD_B, "lifecycle": "DRAFT"})
+        self.assertEqual("UNPROVEN", stale["qualification"]["state"])
+        self.assertIn("HEAD:bbbbbbb · Q:UNPROVEN", stale["draft_pr_title"])
+        self.assertNotEqual(stale["input_digest"], fresh["input_digest"])
+        self.assertEqual(0, stale["leaf_semantic"]["P"])
+
+    def test_08_wrong_origin_status_fails_closed(self):
+        owner = copy.deepcopy(self.owner)
+        owner["owner_intents"][0].pop("original_source_status")
+        with self.assertRaisesRegex(view.ViewError, "ORIGINAL_SOURCE_UNACCOUNTED"):
+            self.views_owner(owner)
+
+    def views_owner(self, owner):
+        return view.build_views(self.graph, owner, observations=self.observed,
+                                selected_leaf="Common#733", phase="C0",
+                                human_titles=self.titles)
+
+    def test_09_wrong_OR_claim_reference_fails_closed(self):
+        owner = copy.deepcopy(self.owner)
+        next(r for r in owner["requirements"] if r["id"] == "OR-718-04")["claims"] = ["ESC-999"]
+        with self.assertRaisesRegex(view.ViewError, "OR_TO_UNRELEASED_CLAIM"):
+            self.views_owner(owner)
+
+    def test_10_wrong_release_digest_fails_closed(self):
+        owner = copy.deepcopy(self.owner)
+        owner["released_proposal_digest"] = "sha256:" + "f" * 64
+        with self.assertRaisesRegex(view.ViewError, "OWNER_TO_RELEASE_DIGEST_MISMATCH"):
+            self.views_owner(owner)
+
+    def test_11_managed_PR_body_preserves_human_owned_text(self):
+        snap = self.views(draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"})
+        human = "## Human purpose\nDo not overwrite this rationale.\n"
+        first = view.reconcile_managed_block(human, snap["pr_managed_block"],
+                                             observed_digest=view.digest(human))
+        self.assertTrue(first.startswith(human))
+        self.assertIn("GF-PUBLISH-RACE", first)
+        second = view.reconcile_managed_block(first, snap["pr_managed_block"],
+                                              observed_digest=view.digest(first))
+        self.assertEqual(first, second)
+
+    def test_12_competing_provider_update_is_a_hard_stale_conflict(self):
+        snap = self.views(draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"})
+        with self.assertRaisesRegex(view.ViewError, "PROVIDER_BODY_MOVED_RECONCILE"):
+            view.reconcile_managed_block("A newer human edit", snap["pr_managed_block"],
+                                         observed_digest=view.digest("Old content"))
+
+    def test_13_qualification_cannot_be_agent_authored_status(self):
+        qa = {"authority": "AGENT_ASSERTED_STATUS", "observed_candidate_sha": HEAD_A,
+              "overall": "PROVEN"}
+        with self.assertRaisesRegex(view.ViewError, "QUALIFIER_AUTHORITY_INVALID"):
+            self.views(qualification=qa)
+
+    def test_14_no_double_managed_markers_or_corrupt_interleaving(self):
+        snap = self.views(draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"})
+        corrupt = snap["pr_managed_block"] + "\n" + snap["pr_managed_block"]
+        with self.assertRaisesRegex(view.ViewError, "DUPLICATE_MANAGED_MARKER"):
+            view.reconcile_managed_block(corrupt, snap["pr_managed_block"],
+                                         observed_digest=view.digest(corrupt))
+
+    def test_15_title_base_is_human_owned_and_not_derived_from_old_status(self):
+        titles = dict(self.titles)
+        titles["PR"] = "Preserved engineering purpose"
+        result = self.views(human_titles=titles,
+                            draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"})
+        self.assertTrue(result["draft_pr_title"].endswith(" — Preserved engineering purpose"))
+        self.assertEqual("NOT_IMPLEMENTED", result["unreleased_consumers"]["agent_matrix"])
+        self.assertEqual([], result["authority_effects"])
+
+
+if __name__ == "__main__":
+    unittest.main()
