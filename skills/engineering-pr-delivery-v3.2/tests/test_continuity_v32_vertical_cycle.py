@@ -206,12 +206,12 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         result = view.build_views(
             live, self.manifest, observations=observations, selected_leaf="Common#733",
             phase="C4", human_titles={"Common#718": "V3.2 Evidence Spine",
-            "Common#733": "Issue/PR Views"})
+            "Common#733": "Issue/PR Views"}, title_contract="C4-S6")
         self.assertEqual(
-            "🟡 [718] NEXT #733/C4 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine",
+            "🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine",
             result["issue_titles"]["Common#718"])
         self.assertEqual(
-            "🟡 [718›733] R-PROJECTION · C4 · PR#740 · UNMATERIALIZED — Issue/PR Views",
+            "🟡 [718›733] R-PROJECTION · C4 · P0/E0 · PR#740 · UNMATERIALIZED — Issue/PR Views",
             result["issue_titles"]["Common#733"])
 
     def test_21_current_draft_candidate_head_changes_only_derived_inputs(self):
@@ -251,9 +251,9 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         p.get_issue = lambda number: {
             "number": number,
             "title": (
-                "🟡 [718] NEXT #733/C4 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine"
+                "🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine"
                 if number == 718 else
-                child_title or "🟡 [718›733] R-PROJECTION · C4 · PR#740 · UNMATERIALIZED — Issue/PR Views"
+                child_title or "🟡 [718›733] R-PROJECTION · C4 · P0/E0 · PR#740 · UNMATERIALIZED — Issue/PR Views"
             ),
             "body": "## Human Owner specification preserved\n"
         }
@@ -665,6 +665,17 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         report=delp.sync_projection(store,self.graph,lambda:[],lambda:{},{})
         self.assertEqual(set(report),set(n["ref"] for n in self.graph["nodes"]))
         self.assertTrue(all(v["status"]=="WRITTEN" for v in report.values()))
+
+
+    def test_44_live_readback_uses_source_bound_C4_S6_progress_title(self):
+        live=json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        report=replay.live_readback(self.manifest,live,self._provider())
+        self.assertEqual("MATCH",report["read_views"]["Common#718"]["title"])
+        self.assertEqual("MATCH",report["read_views"]["Common#733"]["title"])
+        self.assertIn("D0/E0",report["read_views"]["Common#718"]["expected"])
+        self.assertIn("P0/E0",report["read_views"]["Common#733"]["expected"])
+        self.assertEqual("DRIFT_OR_UNPUBLISHED",report["reconciliation"])
+        self.assertEqual([],report["authority_effects"])
 
 
 if __name__ == "__main__":

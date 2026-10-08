@@ -169,6 +169,7 @@ def build_views(
     human_titles: Mapping[str, str],
     draft_pr: Mapping[str, Any] | None = None,
     qualification: Mapping[str, Any] | None = None,
+    title_contract: str = "C0",
 ) -> dict[str, Any]:
     """Generate all currently released R-PROJECTION read views at one basis.
 
@@ -177,6 +178,7 @@ def build_views(
     by the caller; this pure function cannot authenticate GitHub provider data.
     """
     _require(bool(_PHASE.fullmatch(phase)), "UNRELEASED_PHASE")
+    _require(title_contract in {"C0", "C4-S6"}, "UNRELEASED_TITLE_CONTRACT")
     _require(isinstance(human_titles, Mapping), "HUMAN_TITLES_MISSING")
     projection = delp.project(graph, ledger or [], observations or {})
     nodes = projection["nodes"]
@@ -233,11 +235,27 @@ def build_views(
         nodes[n["ref"]]["state"] in {"UNMATERIALIZED", "EVIDENCE_GAP"}
     ]
     facts_label = "FACTS UNREPORTED" if historical_unreported else "FACTS RECONCILED"
-    parent_prefix = f"🟡 [{parent_number}] NEXT #{number}/{phase} · RESERVE{reserve} · {facts_label}"
+    # DELP's actual root roll-up has D/E, NOT P. Leaf execution has P/E.
+    # Frozen C0 oracle/title output must remain byte-identical. In C4-S6
+    # only these source-derived numbers enter the smart issue title; no
+    # input-supplied title/percentage has authority.
+    parent_progress = ""
+    child_progress = ""
+    if title_contract == "C4-S6":
+        rp, cp = root["progress"], child["progress"]
+        _require(all(type(rp.get(k)) is int and 0 <= rp[k] <= 100 for k in ("D", "E")),
+                 "INVALID_DELP_ROOT_PROGRESS")
+        _require(all(type(cp.get(k)) is int and 0 <= cp[k] <= 100 for k in ("P", "E")),
+                 "INVALID_DELP_LEAF_PROGRESS")
+        parent_progress = f" · D{rp['D']}/E{rp['E']}"
+        child_progress = f" · P{cp['P']}/E{cp['E']}"
+    parent_prefix = (
+        f"🟡 [{parent_number}] NEXT #{number}/{phase}{parent_progress} · RESERVE{reserve} · {facts_label}"
+    )
     leaf_prefix = (
-        f"🟡 [{parent_number}›{number}] {identity} · {phase} · NO PRODUCT PR · CODE HELD"
+        f"🟡 [{parent_number}›{number}] {identity} · {phase}{child_progress} · NO PRODUCT PR · CODE HELD"
         if not raw_node.get("primary_pr")
-        else f"🟡 [{parent_number}›{number}] {identity} · {phase} · PR#{_number(raw_node['primary_pr'])} · {child['state']}"
+        else f"🟡 [{parent_number}›{number}] {identity} · {phase}{child_progress} · PR#{_number(raw_node['primary_pr'])} · {child['state']}"
     )
     parent_title = _suffix_title(parent_prefix, human_titles[root_ref])
     child_title = _suffix_title(leaf_prefix, human_titles[selected_leaf])
@@ -260,6 +278,7 @@ def build_views(
             "released_proposal_digest": owner["released_proposal_digest"],
         }),
         "selected_leaf": selected_leaf, "phase": phase,
+        "title_contract": title_contract,
         "draft_pr": pr_details, "qualifier": dict(qualification or {}),
         "human_titles": {k: human_titles[k] for k in (root_ref, selected_leaf) if k in human_titles},
         "human_pr_title": human_titles.get("PR") if pr_details else None,
@@ -271,6 +290,7 @@ def build_views(
         "claim_ids": sorted(raw_node.get("owns_claims") or []),
         "owner_trace": proof, "OR_ids": or_ids, "golden_fixture_ids": fixture_ids,
         "root_reserve": reserve, "historical_unreported": historical_unreported,
+        "title_contract": title_contract,
         "parent_semantic": root["progress"], "leaf_semantic": child["progress"],
         "leaf_state": child["state"], "qualification": q,
         "pr": pr_details, "actual_next": actual_next,
