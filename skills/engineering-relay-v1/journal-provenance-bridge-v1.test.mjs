@@ -134,6 +134,13 @@ test('forged Owner text or swapped original source is refused, not silently join
     status:'CLAIMED',locator:'https://github.com/reallaksh19/Common/issues/787'};
   await bridgeRefused(projectLocalJournal(f.dir,b,bindings()),'OWNER_SOURCE_MISMATCH');
 });
+test('same-text Owner prompt cannot bind an unrelated claim ancestry',async()=>{
+  const f=await fixture(),s=seed();
+  s.owner_intents.push({id:'OI-OTHER',raw_text:'Build one traceable lifecycle',
+    original_source:seedSource(),first_durable_mirror:null});
+  await bridgeRefused(projectLocalJournal(f.dir,s,
+    [{event_id:'EV-1',intent_id:'OI-OTHER'}]),'PROMPT_CLAIM_MISMATCH');
+});
 test('a prompt needs one explicit binding to an existing seed OwnerIntent',async()=>{
   const f=await fixture();
   await bridgeRefused(projectLocalJournal(f.dir,seed(),[]),'UNBOUND_OWNER_PROMPT');
