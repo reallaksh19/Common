@@ -1389,3 +1389,53 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual(event_before, (root / "relay/EVENTS.jsonl").read_bytes())
             self.assertFalse((root / "relay/TRANSACTIONS/TX-C6-P09").exists())
             self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+
+    def test_c6_p11_released_graph_custody_cannot_be_self_claimed(self):
+        """P11: exact SHA + valid DELP graph is insufficient without live release custody."""
+        import base64
+        import os
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from plan_handover import _native_delp_source
+
+        graph, _provider = self._source_bound_fixture()
+        pinned = json.dumps(graph, sort_keys=True).encode("utf-8")
+        alternative = copy.deepcopy(graph)
+        # Same repository and proposal metadata, but different current released
+        # material binding.  This models #718 main reserve35 versus #794 reserve20.
+        alternative["nodes"][0]["reserve_weight"] = graph["nodes"][0]["reserve_weight"] + 1
+        released = [json.dumps(alternative, sort_keys=True).encode("utf-8")]
+        revision = "b4e61d8f61e9738833564795971692241c2e3df9"
+        path = ".github/v32-evidence-spine/718-proposal-v2.json"
+
+        def content(raw):
+            return {"type": "file", "encoding": "base64",
+                    "content": base64.b64encode(raw).decode("ascii")}
+
+        def fake_gh(args, **_kwargs):
+            endpoint = args[-1]
+            if endpoint == "repos/reallaksh19/Common":
+                value = {"full_name": "reallaksh19/Common", "default_branch": "main"}
+            elif endpoint.endswith("?ref=" + revision):
+                value = content(pinned)
+            elif endpoint.endswith("?ref=main"):
+                value = content(released[0])
+            else:
+                raise AssertionError("unexpected GitHub request: " + endpoint)
+            return SimpleNamespace(stdout=json.dumps(value))
+
+        opts = {"repository": "reallaksh19/Common",
+                "graph_revision": revision, "graph_path": path,
+                "leaf_ref": "Common#720"}
+        with patch.dict(os.environ, {"GH_TOKEN": "TEST_TOKEN",
+                                      "GITHUB_REPOSITORY": "reallaksh19/Common"}, clear=True):
+            with patch("plan_handover.subprocess.run", side_effect=fake_gh):
+                with self.assertRaisesRegex(TransactionError, "SOURCE_GRAPH_NOT_CURRENT_RELEASED"):
+                    _native_delp_source(**opts)
+                released[0] = pinned
+                source = _native_delp_source(**opts)
+                self.assertTrue(callable(source["__native_release_check"]))
+                # Default branch changes AFTER freezing context, BEFORE commit.
+                released[0] = json.dumps(alternative, sort_keys=True).encode("utf-8")
+                with self.assertRaisesRegex(TransactionError, "SOURCE_GRAPH_NOT_CURRENT_RELEASED"):
+                    source["__native_release_check"]()
