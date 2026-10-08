@@ -131,22 +131,29 @@ jobs:
           else:
               manifest_bytes = pathlib.Path(manifest_path).read_bytes()
           manifest = yaml.safe_load(manifest_bytes)
-          bounded = {
+          bounded_c4 = {
               "schemas/handover-context.schema.yaml",
               "scripts/handover_context.py",
               "tests/test_handover_context.py",
           }
-          authorizations = [
-              row for row in manifest.get("amendments", [])
-              if row.get("id") == "AMEND-V32-ES-RRECON-014"
-          ]
-          authorized = (
-              len(authorizations) == 1
-              and authorizations[0].get("owner_authorized") is True
-              and set(authorizations[0].get("allowed_paths") or []) == {
-                  "skills/engineering-pr-delivery-v3.2/" + path for path in bounded
-              }
-          )
+          bounded_c6 = {
+              "scripts/plan_handover.py",
+              "tests/test_handover_context.py",
+          }
+          def base_authorized(amendment_id, bounded):
+              matches = [
+                  row for row in manifest.get("amendments", [])
+                  if row.get("id") == amendment_id
+              ]
+              return (
+                  len(matches) == 1
+                  and matches[0].get("owner_authorized") is True
+                  and set(matches[0].get("allowed_paths") or []) == {
+                      "skills/engineering-pr-delivery-v3.2/" + path for path in bounded
+                  }
+              )
+          c4_authorized = base_authorized("AMEND-V32-ES-RRECON-014", bounded_c4)
+          c6_authorized = base_authorized("AMEND-V32-ES-RRECON-RUNTIME-015", bounded_c6)
           common = [
               "operating-model/two-pass-integration.md",
               "schemas/handover-context.schema.yaml",
@@ -160,7 +167,9 @@ jobs:
               new = pathlib.Path("skills/engineering-pr-delivery-v3.5") / relative
               if old.read_bytes() == new.read_bytes():
                   continue
-              if relative not in bounded or not authorized:
+              approved_c4 = c4_authorized and relative in bounded_c4
+              approved_c6 = c6_authorized and relative in bounded_c6
+              if not (approved_c4 or approved_c6):
                   raise SystemExit(
                       f"HANDOVER_PARITY_OR_BASE_AUTHORIZATION_FAILED: {relative}"
                   )
