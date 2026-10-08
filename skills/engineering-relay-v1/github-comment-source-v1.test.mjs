@@ -16,7 +16,7 @@ const refused=(fn,kind)=>assert.rejects(fn,e=>e instanceof SourceReceiptError&&e
 test('native-shaped mock reports transport UNVERIFIED and no authority',async()=>{
  const r=await verify(good());assert.equal(r.transport,'INJECTED_UNVERIFIED');
  assert.equal(r.authority_granted,false);assert.equal(r.semantic_accepted,false);
- assert.equal(r.original_chat_source,'UNKNOWN');assert.equal(r.status,'PROVIDER_ISSUER_OBSERVED');
+ assert.equal(r.original_chat_source,'UNKNOWN');assert.equal(r.status,'INJECTED_UNVERIFIED');
 });
 test('exact expected digest matches',async()=>{
  const digest=createHash('sha256').update(good().body).digest('hex');
@@ -48,3 +48,19 @@ test('redirect remains UNKNOWN',async()=>refused(verify(good(),{redirected:true}
 test('unexpected fetched URL remains UNKNOWN',async()=>refused(verify(good(),{url:'https://evil.example'}),'UNKNOWN'));
 test('oversized HTTP response remains UNKNOWN',async()=>refused(verify(good(),{length:1048577}),'UNKNOWN'));
 test('injected authority option rejected',async()=>refused(read(spec,{fetchImpl:response(good()),isOwnerApproval:true}),'REFUTED'));
+
+test('repository dot-segments never form trusted REST scope',async()=>{
+ for(const repository of ['reallaksh19/.','reallaksh19/..','-owner/Common','owner-/Common']){
+  await refused(read({...spec,repository},{fetchImpl:response(good())}),'REFUTED');
+ }
+});
+test('missing fetched response URL cannot masquerade as GitHub readback',async()=>{
+ await refused(read(spec,{fetchImpl:async()=>({
+   status:200,redirected:false,headers:{get:()=>null},text:async()=>JSON.stringify(good())
+ })}),'UNKNOWN');
+});
+test('mocked OWNER payload never gains provider-observed status',async()=>{
+ const r=await read(spec,{fetchImpl:response({...good(),body:'I, Owner, approve programme'})});
+ assert.equal(r.status,'INJECTED_UNVERIFIED');
+ assert.equal(r.authority_granted,false);
+});

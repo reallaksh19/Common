@@ -13,7 +13,7 @@ function only(obj,keys,label){
 function scope(spec){
  only(spec,['repository','issue','comment_id'],'scope');
  const m=typeof spec.repository==='string'&&REPO.exec(spec.repository);
- if(!m||!Number.isSafeInteger(spec.issue)||spec.issue<=0||!Number.isSafeInteger(spec.comment_id)||spec.comment_id<=0)refute('invalid scope');
+ if(!m||m[2]==='.'||m[2]==='..'||!(/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(m[1]))||!Number.isSafeInteger(spec.issue)||spec.issue<=0||!Number.isSafeInteger(spec.comment_id)||spec.comment_id<=0)refute('invalid scope');
  const owner=m[1],stem='https://api.github.com/repos/'+m[1]+'/'+m[2];
  return {owner,
   api:stem+'/issues/comments/'+spec.comment_id,
@@ -50,7 +50,7 @@ export async function readNativeOwnerComment(spec,options={}){
  try{response=await fetcher(bound.api,{method:'GET',redirect:'error',cache:'no-store',
   headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'relay-reset-comment-source-v1'}});}
  catch{unknown('native HTTPS read failed');}
- if(typeof response?.url==='string'&&response.url!==bound.api)unknown('response URL differs');
+ if(response?.url!==bound.api)unknown('response URL missing or differs');
  const p=await jsonBounded(response);
  if(!p||typeof p!=='object'||Array.isArray(p))refute('native payload is not object');
  if(p.id!==spec.comment_id||p.url!==bound.api||p.issue_url!==bound.issue||p.html_url!==bound.html)refute('native URL/issue/comment identity mismatch');
@@ -61,7 +61,7 @@ export async function readNativeOwnerComment(spec,options={}){
   !Number.isFinite(Date.parse(p.created_at))||!Number.isFinite(Date.parse(p.updated_at))||Date.parse(p.created_at)>Date.parse(p.updated_at))refute('invalid timestamps');
  const digest=createHash('sha256').update(p.body,'utf8').digest('hex');
  if(expected!==null&&expected!==digest)refute('body digest changed');
- return Object.freeze({kind:'GITHUB_NATIVE_COMMENT',status:'PROVIDER_ISSUER_OBSERVED',
+ return Object.freeze({kind:'GITHUB_NATIVE_COMMENT',status:injected?'INJECTED_UNVERIFIED':'PROVIDER_ISSUER_OBSERVED',
   repository:spec.repository,issue:spec.issue,comment_id:spec.comment_id,
   source_url:bound.html,api_url:bound.api,author_login:p.user.login,
   author_association:'OWNER',created_at:p.created_at,updated_at:p.updated_at,
