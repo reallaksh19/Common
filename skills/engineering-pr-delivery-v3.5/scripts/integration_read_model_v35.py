@@ -113,28 +113,28 @@ def from_observations(
     actual_next = live_next.get("action") if isinstance(live_next, Mapping) else None
     if not actual_next:
         raise ReadModelError("DELP projection did not resolve an actual-next action")
-    prefix = f"BASIS_SHA256: {digest}\\nSOURCE: DELP_PROJECTED_READ_ONLY\\n"
+    prefix = f"BASIS_SHA256: {digest}\nSOURCE: DELP_PROJECTED_READ_ONLY\n"
     identity = (
-        f"REPO: {repo}\\nROOT: {root_ref}\\nLEAF: {ref}\\n"
-        f"GRAPH_DIGEST: {derived['graph_digest']}\\n"
-        f"CONTRACT_DIGEST: {leaf['identity']['contract_digest'] or 'UNKNOWN'}\\n"
-        f"SPEC_GENERATION: {leaf['identity']['spec_generation'] or 'UNKNOWN'}\\n"
-        f"CANDIDATE_SHA: {candidate_sha or 'UNKNOWN'}\\n"
-        f"OWNER_AUTH: {owner['authentication']}\\n"
-        f"NEXT: {actual_next}\\n"
+        f"REPO: {repo}\nROOT: {root_ref}\nLEAF: {ref}\n"
+        f"GRAPH_DIGEST: {derived['graph_digest']}\n"
+        f"CONTRACT_DIGEST: {leaf['identity']['contract_digest'] or 'UNKNOWN'}\n"
+        f"SPEC_GENERATION: {leaf['identity']['spec_generation'] or 'UNKNOWN'}\n"
+        f"CANDIDATE_SHA: {candidate_sha or 'UNKNOWN'}\n"
+        f"OWNER_AUTH: {owner['authentication']}\n"
+        f"NEXT: {actual_next}\n"
     )
     # Pure views only: actual GitHub status/title writers belong to the separately
     # governed R3/R4 publication phase, not this read-only R2 adapter.
     bodies = {
-        "parent_issue": prefix + identity + f"STATUS: {parent['state']}\\nPROGRESS: {parent['progress']}\\n",
-        "child_issue": prefix + identity + f"STATUS: {leaf['state']}\\nPROGRESS: {leaf['progress']}\\nEVIDENCE_SOURCES: {evidence_sources}\\n",
-        "draft_pr": prefix + identity + "CHECKS: UNKNOWN_UNOBSERVED\\nMERGE_AUTHORITY: NONE_DERIVED\\n",
-        "owner_report": prefix + identity + "IC_ACCEPTANCE: UNKNOWN_NOT_DERIVED\\n",
-        "task_evidence_start": prefix + identity + "TEMPLATE_ONLY: NO_PUBLICATION_ASSERTED\\n",
-        "task_evidence_end": prefix + identity + "TEMPLATE_ONLY: NO_PUBLICATION_ASSERTED\\n",
-        "handover_prompt": prefix + identity + f"OWNER_VERBATIM: {owner['verbatim'] or 'UNKNOWN'}\\nEVIDENCE_SOURCES: {evidence_sources}\\n",
-        "agent_metrics": prefix + identity + "AGENT_HEALTH: UNVERIFIED_ADVISORY\\nPROGRESS_EFFECT: NONE\\n",
-        "reviewer_checklist": prefix + identity + "REVIEW: NOT_OBSERVED\\nINDEPENDENCE: NOT_PROVEN\\n",
+        "parent_issue": prefix + identity + f"STATUS: {parent['state']}\nPROGRESS: {parent['progress']}\n",
+        "child_issue": prefix + identity + f"STATUS: {leaf['state']}\nPROGRESS: {leaf['progress']}\nEVIDENCE_SOURCES: {evidence_sources}\n",
+        "draft_pr": prefix + identity + "CHECKS: UNKNOWN_UNOBSERVED\nMERGE_AUTHORITY: NONE_DERIVED\n",
+        "owner_report": prefix + identity + "IC_ACCEPTANCE: UNKNOWN_NOT_DERIVED\n",
+        "task_evidence_start": prefix + identity + "TEMPLATE_ONLY: NO_PUBLICATION_ASSERTED\n",
+        "task_evidence_end": prefix + identity + "TEMPLATE_ONLY: NO_PUBLICATION_ASSERTED\n",
+        "handover_prompt": prefix + identity + f"OWNER_VERBATIM: {owner['verbatim'] or 'UNKNOWN'}\nEVIDENCE_SOURCES: {evidence_sources}\n",
+        "agent_metrics": prefix + identity + "AGENT_HEALTH: UNVERIFIED_ADVISORY\nPROGRESS_EFFECT: NONE\n",
+        "reviewer_checklist": prefix + identity + "REVIEW: NOT_OBSERVED\nINDEPENDENCE: NOT_PROVEN\n",
     }
     return {
         "schema": "v3.5-r2-read-only-v1",
