@@ -6670,5 +6670,13 @@ class HostedV35ReleasePreflight(_release_preflight.ReleasePreflightTests):
     """No Owner graph/scoreboard grant, no false workflow enabled, no IC release."""
 
 
+# R7-U4: source inventory of full P1..P7 graph and false-approval falsifiers.
+import test_integration_full_graph_inventory_v35 as _full_graph_inventory
+
+
+class HostedV35FullProgrammeSourceInventory(_full_graph_inventory.FullGraphInventoryTests):
+    """Seven native children, partial graph rejected, no synthetic Owner authority."""
+
+
 if __name__ == "__main__":
     unittest.main()
