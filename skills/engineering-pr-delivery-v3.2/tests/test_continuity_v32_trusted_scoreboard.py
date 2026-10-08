@@ -192,5 +192,24 @@ class TrustedEventScoreboardTests(unittest.TestCase):
             self.oracle["cases"][8]["event"], self.graph, pr,
             enabled=True)["decision"])
 
+    def test_13_partial_write_FAILURE_persists_reconciliation_report(self):
+        from unittest.mock import patch
+        from tempfile import TemporaryDirectory
+        payload={"status":"INCOMPLETE_SYNC","applied_surfaces":["Common#733"],
+                 "error":"PROVIDER_MOVED_BEFORE_PR_WRITE"}
+        with TemporaryDirectory() as tmp:
+            event=Path(tmp)/"event.json"
+            report=Path(tmp)/"failed.json"
+            event.write_text(json.dumps(self.oracle["cases"][0]["event"]))
+            argv=["trusted_scoreboard_v32.py","--event",str(event),
+                  "--event-name","pull_request_target","--apply","--report",str(report)]
+            with patch.object(sys,"argv",argv), patch.object(trusted,"run",
+                    side_effect=trusted.cycle.PublicationIncomplete("partial",payload)):
+                self.assertEqual(3,trusted.main())
+            saved=json.loads(report.read_text())
+            self.assertEqual("INCOMPLETE_SYNC",saved["status"])
+            self.assertEqual(["Common#733"],saved["applied_surfaces"])
+            self.assertEqual(3,saved["exit_code"])
+
 if __name__ == "__main__":
     unittest.main()
