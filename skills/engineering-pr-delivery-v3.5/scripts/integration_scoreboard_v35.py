@@ -104,6 +104,15 @@ def render(model: Mapping[str, Any], pull: Mapping[str, Any], checks: Any) -> di
     else:
         pr_status = "UNKNOWN"
     verdict = _check_verdict(checks, sha)
+    # Current check status may change without a graph/evidence/head change.
+    # Preserve the canonical DELP source basis and expose a distinct observed
+    # PR presentation digest so 'same source' cannot masquerade as 'same checks'.
+    presentation_digest = hashlib.sha256(
+        json.dumps(
+            [model["basis_sha256"], sha, pr_status, verdict],
+            sort_keys=True, ensure_ascii=False, separators=(",", ":")
+        ).encode("utf-8")
+    ).hexdigest()
     raw_progress = model.get("progress")
     if not isinstance(raw_progress, Mapping):
         raise ScoreboardError("projected progress absent")
@@ -126,7 +135,8 @@ def render(model: Mapping[str, Any], pull: Mapping[str, Any], checks: Any) -> di
     title = prefix + " " + base[:remaining]
     body = "\n".join((
         "## V3.5 smart candidate scoreboard — managed read-only projection",
-        f"- **Basis:** `{model['basis_sha256']}`",
+        f"- **DELP source basis:** `{model['basis_sha256']}`",
+        f"- **PR check presentation digest:** `{presentation_digest}` (separate observed CI layer)",
         f"- **Graph:** `{identity['graph_digest']}`; source: DELP accepted-facts projection",
         f"- **Repository/lineage:** `{repo}` · `{root}` → `{ref}`",
         f"- **Spec generation / contract:** `{identity.get('spec_generation') or 'UNKNOWN'}` / `{identity.get('contract_digest') or 'UNKNOWN'}`",
@@ -141,6 +151,7 @@ def render(model: Mapping[str, Any], pull: Mapping[str, Any], checks: Any) -> di
     )) + "\n"
     return {
         "basis_sha256": model["basis_sha256"],
+        "presentation_digest": presentation_digest,
         "candidate_sha": sha,
         "issue_titles": {k: model["titles"][k] for k in ("parent_issue", "child_issue")},
         "pr_title": title,
@@ -150,6 +161,6 @@ def render(model: Mapping[str, Any], pull: Mapping[str, Any], checks: Any) -> di
         "progress": {"P": p, "E": e},
         "actual_next": action,
         "idempotency_digest": hashlib.sha256(json.dumps(
-            [model["basis_sha256"], sha, title, body], ensure_ascii=False
+            [model["basis_sha256"], presentation_digest, sha, title, body], ensure_ascii=False
         ).encode("utf-8")).hexdigest(),
     }
