@@ -1252,3 +1252,88 @@ class HandoverContextTests(unittest.TestCase):
         with self.assertRaisesRegex(HandoverContextError, "SOURCE_CANDIDATE_NOT_BOUND"):
             build_delp_source_bound_successor(graph, leaf_ref="Common#733", provider=provider)
 
+
+    def test_c6_p01_real_transaction_source_bound_context_and_event(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            graph, provider = self._source_bound_fixture()
+            result = plan_handover(
+                root, tx_id="TX-C6-P01", event_id="EVT-C6-P01",
+                actor="owner", target_path=target_observation(root),
+                base_ref=base_ref, complex_mode=False, successor_challenge_count=3,
+                delp_source={"graph": graph, "leaf_ref": "Common#720", "provider": provider},
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
+            bound = context["source_bound_successor"]
+            self.assertEqual("CURRENT_READ_ONLY", bound["currentness"])
+            self.assertEqual("NEVER_FROM_RECONSTRUCTION", bound["execution_admission"])
+            self.assertEqual([], bound["authority_effects"])
+            self.assertEqual(bound["digests"]["input"],
+                             context["successor_entry"]["challenge_basis"]["source_input_digest"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            matches = [e for e in events if e["event_id"] == "EVT-C6-P01"]
+            self.assertEqual(1, len(matches))
+            self.assertEqual(bound["digests"]["input"], matches[0]["details"]["source_bound_input_digest"])
+
+    def test_c6_p02_stale_frozen_provider_denied_before_writes(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            graph, provider = self._source_bound_fixture()
+            before = build_delp_source_bound_successor(graph, leaf_ref="Common#720", provider=provider)
+            provider.sha = "c" * 40
+            events_before = (root / "relay/EVENTS.jsonl").read_bytes()
+            with self.assertRaisesRegex(TransactionError, "SOURCE_BOUND_RECONCILIATION_REQUIRED"):
+                plan_handover(
+                    root, tx_id="TX-C6-P02", event_id="EVT-C6-P02", actor="owner",
+                    target_path=target_observation(root), base_ref=base_ref, complex_mode=False,
+                    delp_source={"graph": graph, "leaf_ref": "Common#720",
+                                 "provider": provider, "frozen_basis": before["digests"]},
+                )
+            self.assertEqual(events_before, (root / "relay/EVENTS.jsonl").read_bytes())
+            self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+            self.assertFalse((root / "relay/TRANSACTIONS/TX-C6-P02").exists())
+
+    def test_c6_p03_p04_invalid_or_racing_provider_cannot_start_transaction(self):
+        for mode in ("missing_head", "moving_issue"):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as td:
+                root = Path(td)
+                _, base_ref = prepare_git(root)
+                graph, provider = self._source_bound_fixture()
+                if mode == "missing_head":
+                    provider.sha = None
+                    expected = "SOURCE_CANDIDATE_SHA_UNVERIFIED"
+                else:
+                    provider.move_during_read = True
+                    expected = "SOURCE_PROVIDER_CHANGED_DURING_READ"
+                before = (root / "relay/EVENTS.jsonl").read_bytes()
+                with self.assertRaisesRegex(HandoverContextError, expected):
+                    plan_handover(
+                        root, tx_id="TX-C6-P03", event_id="EVT-C6-P03", actor="owner",
+                        target_path=target_observation(root), base_ref=base_ref, complex_mode=False,
+                        delp_source={"graph": graph, "leaf_ref": "Common#720", "provider": provider},
+                    )
+                self.assertEqual(before, (root / "relay/EVENTS.jsonl").read_bytes())
+                self.assertFalse((root / "relay/TRANSACTIONS/TX-C6-P03").exists())
+
+    def test_c6_p08_opted_in_interruption_recovers_before_images(self):
+        from transactionlib import recover_all, incomplete_transactions
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            graph, provider = self._source_bound_fixture()
+            before = (root / "relay/EVENTS.jsonl").read_bytes()
+            with self.assertRaisesRegex(TransactionError, "injected transaction interruption"):
+                plan_handover(
+                    root, tx_id="TX-C6-P08", event_id="EVT-C6-P08", actor="owner",
+                    target_path=target_observation(root), base_ref=base_ref, complex_mode=False,
+                    delp_source={"graph": graph, "leaf_ref": "Common#720", "provider": provider},
+                    fail_after=1,
+                )
+            self.assertTrue(incomplete_transactions(root))
+            self.assertEqual(["ROLLED_BACK"], [v["status"] for v in recover_all(root)])
+            self.assertEqual(before, (root / "relay/EVENTS.jsonl").read_bytes())
+            self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
