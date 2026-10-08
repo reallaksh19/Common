@@ -182,6 +182,9 @@ def build_delp_source_bound_successor(
         delp.require_repository_match(graph, repo, live=True)
         if leaf_ref not in indexed["nodes"] or indexed["nodes"][leaf_ref]["kind"] != "LEAF":
             raise HandoverContextError("SOURCE_RESPONSIBILITY_NOT_BOUND")
+        leaf_material = indexed["nodes"][leaf_ref]
+        if not (leaf_material.get("primary_pr") or leaf_material.get("candidate_ref")):
+            raise HandoverContextError("SOURCE_CANDIDATE_NOT_BOUND")
         report = delp.decomposition_report(graph)
         if report["release_state"] != "RELEASEABLE":
             raise HandoverContextError("SOURCE_PROPOSAL_NOT_RELEASEABLE")
