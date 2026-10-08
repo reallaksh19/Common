@@ -194,13 +194,53 @@ def propose(body: str, issue: int, current: str) -> dict[str, Any]:
     }
 
 
+def inspect_native(transport: Any, issue: int, expected_body_sha256: str | None = None) -> dict[str, Any]:
+    """Reobserve the current native issue body twice; no writer or authority.
+
+    A stable two-read observation is a useful cold-entry fact but does not
+    imply atomic GitHub CAS, Owner authorization, DELP progress or acceptance.
+    """
+    _check_issue(issue)
+    if getattr(transport, "repository", None) != "reallaksh19/Common":
+        raise FrontPageError("native parent front page repository mismatch")
+    observed = []
+    expected_url = f"https://github.com/reallaksh19/Common/issues/{issue}"
+    for _ in range(2):
+        native = transport.get_issue(issue)
+        if not isinstance(native, dict) or native.get("number") != issue or (
+            native.get("html_url") != expected_url
+        ) or not isinstance(native.get("body"), str):
+            raise FrontPageError("native issue identity/body unavailable")
+        observed.append((native["body"], native.get("title")))
+    if observed[0] != observed[1]:
+        raise FrontPageError("native issue body/title changed during readback")
+    data = validate_current(observed[0][0], issue)
+    digest = _sha(observed[0][0])
+    if expected_body_sha256 is not None and expected_body_sha256 != digest:
+        raise FrontPageError("native parent issue body differs from pinned evidence")
+    return {
+        **data,
+        "source": expected_url,
+        "provider_body_sha256": digest,
+        "readback": "TWO_OBSERVATIONS_MATCH_NOT_ATOMIC_CAS",
+        "writes": False,
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Read-only V3.5 parent-front-page guard")
     parser.add_argument("--issue", required=True, type=int)
-    parser.add_argument("--body-file", required=True, type=Path)
+    parser.add_argument("--body-file", type=Path)
+    parser.add_argument("--repository", help="read native issue twice using gh api; no mutation")
     args = parser.parse_args(argv)
     try:
-        result = validate_current(args.body_file.read_text(encoding="utf-8"), args.issue)
+        if bool(args.body_file) == bool(args.repository):
+            raise FrontPageError("select exactly one read-only source: --body-file or --repository")
+        if args.repository:
+            import delp_projection_v35 as DELP
+            result = inspect_native(DELP.GhTransport(args.repository), args.issue)
+        else:
+            result = validate_current(args.body_file.read_text(encoding="utf-8"), args.issue)
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0
     except (OSError, FrontPageError) as exc:
