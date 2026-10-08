@@ -1111,11 +1111,11 @@ class HandoverContextTests(unittest.TestCase):
 
     def test_delp_source_successor_is_real_read_model_not_authority(self):
         graph, provider = self._source_bound_fixture()
-        result = build_delp_source_bound_successor(graph, leaf_ref="Common#733", provider=provider)
+        result = build_delp_source_bound_successor(graph, leaf_ref="Common#720", provider=provider)
         self.assertEqual("DERIVED_RECONSTRUCTION_READ_ONLY", result["authority"])
         self.assertEqual("CURRENT_READ_ONLY", result["currentness"])
         self.assertEqual("UNRESOLVED_CHAT_MESSAGE_LINK", result["owner_source_status"])
-        self.assertEqual("Common#733", result["leaf"])
+        self.assertEqual("Common#720", result["leaf"])
         self.assertEqual([], result["authority_effects"])
         self.assertEqual(0, result["progress"]["P"])
         self.assertEqual("NEVER_FROM_RECONSTRUCTION", result["execution_admission"])
