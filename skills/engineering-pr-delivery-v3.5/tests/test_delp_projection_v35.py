@@ -6821,7 +6821,7 @@ class CustodyFenceSemanticQualification(unittest.TestCase):
             record = facts(units=[unit(uid) for uid in ids])
         else:
             record = facts(units=[unit(uid) for uid in ids], execution=binding)
-        result = entry(record, order, source)
+        result = entry(M.bind_facts_to_graph(stable_graph(), record), order, source)
         if provider:
             result["provider"] = {
                 "kind": "GITHUB_ISSUE_COMMENT",
