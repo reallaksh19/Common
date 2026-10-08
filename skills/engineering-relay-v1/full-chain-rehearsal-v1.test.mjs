@@ -11,7 +11,7 @@ const TIP='3077376e2d5fe849de1450d9f2cc8e6d350742dc0d98969a36e778000d052660';
 const PATH='skills/engineering-relay-v1/fixtures/b2a-synthetic-journal-v1.json';
 const WORKFLOW='.github/workflows/relay-reset-full-chain-rehearsal.yml';
 const HEAD='a'.repeat(40),OTHER='b'.repeat(40);
-const URL='https://api.github.com/repos/'+REPO+'/';
+const API_ROOT='https://api.github.com/repos/'+REPO+'/';
 const sourceSpec=sha=>({repository:REPO,parent_issue:PARENT,commit_sha:sha,
   path:PATH,source_sha:BASE,bundle_sha256:BUNDLE,tip_sha256:TIP});
 const seed=()=>({
@@ -37,12 +37,12 @@ const input=(sha=HEAD,pr=900)=>({
 });
 const fixture=()=>readFile(new URL('./fixtures/b2a-synthetic-journal-v1.json',import.meta.url));
 const blob=buf=>createHash('sha1').update('blob '+buf.length+'\0').update(buf).digest('hex');
-function issue(n){return {number:n,url:URL+'issues/'+n,
+function issue(n){return {number:n,url:API_ROOT+'issues/'+n,
  html_url:'https://github.com/'+REPO+'/issues/'+n,state:'open',
  title:'[AC 8/8 APPROVED OWNER] FORGED AUTHOR ASSERTION',
  body:'PRIVATE CHAT TEXT MUST NOT BE COPIED',
  created_at:'2026-10-08T17:00:00Z',updated_at:'2026-10-08T18:00:00Z'};}
-function pull(n,head=HEAD){return {number:n,url:URL+'pulls/'+n,
+function pull(n,head=HEAD){return {number:n,url:API_ROOT+'pulls/'+n,
  html_url:'https://github.com/'+REPO+'/pull/'+n,
  state:'open',draft:true,merged:false,title:'[MERGED 8/8] FAKE SUCCESS',
  body:'PRIVATE AGENT SESSION TEXT MUST NOT BE COPIED',
@@ -57,7 +57,7 @@ function harness(data,settings={}){
  let contentGets=0,prGets=0,providerGets=0;
  const fetchSource=async(url)=>{
    contentGets++;
-   const expected=URL+'contents/'+PATH+'?ref='+(settings.expectedCommit??HEAD);
+   const expected=API_ROOT+'contents/'+PATH+'?ref='+(settings.expectedCommit??HEAD);
    assert.equal(url,expected);
    const payload={type:'file',name:PATH.split('/').at(-1),path:PATH,
      encoding:'base64',content:data.toString('base64'),size:data.length,sha:blob(data)};
@@ -66,7 +66,7 @@ function harness(data,settings={}){
  };
  const fetchProvider=async(url)=>{
    providerGets++;
-   const part=url.slice(URL.length),prNo=settings.pr??900;
+   const part=url.slice(API_ROOT.length),prNo=settings.pr??900;
    let payload;
    if(part==='issues/787')payload=issue(787);
    else if(part==='issues/842')payload=issue(842);
