@@ -79,8 +79,10 @@ def replay(manifest: dict, graph: dict) -> dict[str, Any]:
     old = changed["input"]["candidate_before"]
     new = changed["input"]["candidate_after"]
     stale_qualifier = {
-        "authority": "DERIVED_OBSERVATION_ONLY", "observed_candidate_sha": old,
-        "overall": "PROVEN",
+        "schema": "relay-v3.2-qualification-observation-v1",
+        "repository": "reallaksh19/Common", "responsibility": "Common#733",
+        "expected_candidate_sha": old, "observed_candidate_sha": old,
+        "authority": "DERIVED_OBSERVATION_ONLY", "overall": "PROVEN",
     }
     draft = view.build_views(
         graph, manifest, selected_leaf="Common#733", phase="C0",
