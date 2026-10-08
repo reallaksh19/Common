@@ -83,6 +83,12 @@ def gate(event_name: str, event: Mapping[str, Any], graph: Mapping[str, Any],
             code = "DENY_CLOSED_UNMERGED_PR"
         elif (provider_pull.get("base") or {}).get("ref", target["base"]) != target["base"]:
             code = "DENY_PROVIDER_BASE"
+        elif ((provider_pull.get("base") or {}).get("repo") or {}).get("full_name") != target["repository"]:
+            code = "DENY_PROVIDER_BASE_REPOSITORY"
+        elif event_name == "pull_request_target" and provider_pull.get("merged"):
+            # Historical/merged PRs can only be reconciled through deliberate
+            # owner-pinned dispatch, not spurious automatic PR edit events.
+            code = "DENY_MERGED_AUTO_EVENT"
         elif not isinstance(pin,str) or not SHA.fullmatch(pin) or pin != (provider_pull.get("head") or {}).get("sha"):
             code = "DENY_STALE_EVENT_HEAD"
         elif not enabled:
