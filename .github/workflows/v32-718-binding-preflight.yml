@@ -265,7 +265,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m pip install --disable-pip-version-check PyYAML
+          python -m pip install --disable-pip-version-check PyYAML jsonschema
           git merge-base --is-ancestor 5e2b46d037c9cdb10ed1a12f6a9661c26238994f ff464d5868c5036a1dbd745f0db66b0fb6324ecc
           python -m unittest discover -s .github/v32-evidence-spine -p 'test_793_handover_precommit_v32.py' -v 2>&1 | tee artifacts/v32-793-handover-preflight.log
           python - <<'PY'
