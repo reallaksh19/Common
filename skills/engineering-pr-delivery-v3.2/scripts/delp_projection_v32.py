@@ -3219,7 +3219,50 @@ def project(
     if mode != "OFF":
         # Closed (COMPLETE/SUPERSEDED) leaves are history, not work to release: the gate skips them.
         closed = {ref for ref, leaf in results.items() if leaf["lifecycle"] in _TERMINAL}
-        for ref, row in _decomposition(indexed, closed)["leaves"].items():
+        # In a released Proposal-V2 programme, future responsibilities are allowed
+        # to remain unmaterialized. Re-evaluating claim coverage over only existing
+        # leaves would falsely block the first admitted child. Instead, reuse the
+        # same exact released-proposal and provider-binding verdict as decompose-check.
+        if indexed["decomposition_proposal"] is None:
+            plan_rows = _decomposition(indexed, closed)["leaves"]
+        else:
+            proposal_report = _proposal_decomposition(indexed)
+            bound_by_number = {
+                ref_number(binding["ref"]): binding["responsibility_id"]
+                for binding in indexed["decomposition_proposal"]["bindings"]
+            }
+            plan_rows = {}
+            for ref in indexed["order"]:
+                if nodes[ref]["kind"] != "LEAF" or ref in closed:
+                    continue
+                rid = nodes[ref].get("responsibility_id")
+                proposed = (
+                    proposal_report["leaves"].get(rid)
+                    if rid and bound_by_number.get(nodes[ref]["number"]) == rid
+                    else None
+                )
+                if proposed is None:
+                    plan_rows[ref] = {
+                        "releasable": False,
+                        "blockers": [{
+                            "code": "PROPOSAL_BINDING_UNRESOLVED",
+                            "detail": "Materialized leaf lacks its exact released responsibility/provider binding",
+                        }],
+                        "advisories": [],
+                    }
+                    continue
+                blockers = list(proposed["blockers"])
+                if proposal_report["release_state"] != "RELEASEABLE":
+                    blockers.append({
+                        "code": "PROPOSAL_NOT_RELEASEABLE",
+                        "detail": "Released Proposal-V2 topology or provider bindings are not valid",
+                    })
+                plan_rows[ref] = {
+                    "releasable": not blockers,
+                    "blockers": blockers,
+                    "advisories": list(proposed["advisories"]),
+                }
+        for ref, row in plan_rows.items():
             leaf = results[ref]
             leaf["plan"] = {
                 "mode": mode,
