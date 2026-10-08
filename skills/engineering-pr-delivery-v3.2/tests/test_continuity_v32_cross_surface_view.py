@@ -20,7 +20,7 @@ import pr_responsibility_view_v32 as view  # noqa: E402
 HEAD_A = "7ef9fbdd0c6f0f941fd573c1663c7a142fc41414"
 HEAD_B = "b" * 40
 MANIFEST = ROOT / ".github/v32-evidence-spine/718-golden-fixtures-v1.json"
-GRAPH = ROOT / ".github/v32-evidence-spine/718-proposal-v2.json"
+GRAPH = ROOT / ".github/v32-evidence-spine/fixtures/718-c0-source-graph.json"
 
 
 class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
