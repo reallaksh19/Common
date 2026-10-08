@@ -104,7 +104,11 @@ test('recomputed nested Owner-origin and decision forgeries are rejected before 
   m=>{m.source_template.tip_sha256='c'.repeat(64);}
  ]){
   const modified=manipulated(b,edit);
-  refuted(()=>validatePinnedManifest(makePin(modified),modified),'UNTRUSTED');
+  const candidate=JSON.parse(modified);
+  const extraKey=Object.hasOwn(candidate.owner_seed.owner_intents[0],'authorizer')||
+    Object.hasOwn(candidate.bindings[0],'owner_adopted');
+  refuted(()=>validatePinnedManifest(makePin(modified),modified),
+    extraKey?'INVALID':'UNTRUSTED');
  }
 });
 test('validated pinned manifest and nested provenance claims are deeply immutable',async()=>{
