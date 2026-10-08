@@ -148,3 +148,68 @@ amendments:
       - skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py
       - skills/engineering-pr-delivery-v3.2/tests/test_delp_projection_v32.py
 
+  - id: AMEND-V32-AGENT-REPLAY-008
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner instruction in chat, 2026-10-07: 'you will not work on v3.5' and
+      'proceed next', applied through Common #689's released claim-first Proposal V2
+      (sha256:7648513d5b0efb9f0ee0483906fe26949e47ffd25f5d0a74745c7568829ea550).
+      Common #713 is the released G-REPLAY DELIVERY_GATE. This amendment authorizes
+      only the retained V3.2 Agent Health replay test path below and earns no product
+      or semantic progress by itself.
+    summary: >-
+      Bounded V3.2-only preflight for Common #689/#713 G-REPLAY: permit one retained
+      end-to-end replay file covering clean controls, semantic defects, UNKNOWN,
+      degradation/recovery, provenance tamper and zero-authority-leakage across the
+      already merged R-QOBS -> R-TRAJECTORY -> R-INTERVENTION -> R-READMODEL chain.
+      No runtime, DELP, handover, admission, title or V3.5 surface is authorized.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/tests/test_agent_health_retained_replay_v32.py
+
+  - id: AMEND-V32-ES-RBASIS-010
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner request, 2026-10-08: 'create a new github issue dedicated to v3.2,
+      link with parent issue, add my prompt intents, then proceed v3.2 since you
+      analysis is great'. Common #718 preserves the V3.2-only Owner intent and
+      machine-released claim-first Proposal-V2 digest
+      sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd.
+      Common #720 is the single bound R-BASIS responsibility. Exact V3.2
+      project() versus Proposal-V2 gate contradiction was independently replayed
+      at https://github.com/reallaksh19/Common/issues/720#issuecomment-6050415535.
+      This amendment grants only the two released R-BASIS paths and no merge authority.
+    summary: >-
+      R-BASIS source-bound claim-first progressive binding repair, V3.2 only.
+      Make live DELP plan readiness consistent with the exact released
+      Proposal-V2 provider binding while retaining fail-closed bad binding,
+      legacy graph behavior and unchanged P/E, titles, handover and Agent Health.
+      No V3.5 code changes, new progress authority, automatic live sync, or
+      review/merge/release authority is created.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_basis_reconciliation.py
+
+  - id: AMEND-V32-ES-RPROOF-011
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner instruction 2026-10-08 to proceed with V3.2 after the
+      #718 evidence spine programme was created. The exact source-bound
+      claim-first Proposal V2 was RELEASEABLE with digest
+      sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd.
+      Common #724 is the bound R-PROOF PRODUCT for claim ESC-2, after
+      #720/R-BASIS delivered and closed. Independent provider-contract
+      reconstruction and negative controls are recorded at
+      https://github.com/reallaksh19/Common/issues/724#issuecomment-6050688889.
+      This amendment authorizes only the listed three R-PROOF paths and
+      never grants merge authority.
+    summary: >-
+      Bounded V3.2-only source-bound required-execution and delivered-obligation
+      observation contract. Fail closed when an expected named test did not
+      execute for the exact candidate or an expected delivered blob is absent
+      or mismatched. Keep provider uncertainty explicit and results advisory
+      to existing DELP progress, task acceptance, review, custody, PR title
+      and merge authority. No V3.5 or #689/#713 scope expansion.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/scripts/qualification_observation_v32.py
+      - skills/engineering-pr-delivery-v3.2/schemas/qualification-observation-v32.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_qualification_observation.py

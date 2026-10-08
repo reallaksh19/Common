@@ -12,6 +12,46 @@ $defs:
     properties:
       code: {type: string}
       detail: {type: string}
+
+  agent_health_dimension:
+    type: object
+    additionalProperties: false
+    required: [status]
+    properties:
+      status: {enum: [AVAILABLE, UNAVAILABLE, INVALID]}
+      reason: {type: string}
+      source: {type: string}
+      source_schema: {type: string}
+      source_authority: {type: string}
+      source_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      window_id: {type: string}
+      input_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      evidence_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      result_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      evidence_refs:
+        type: array
+        uniqueItems: true
+        items: {type: string}
+      verdict: {type: string}
+      light: {type: string}
+      trajectory_id: {type: string}
+      trajectory_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      comparison_basis:
+        type: object
+        additionalProperties: false
+        required: [ref, digest]
+        properties:
+          ref: {type: string}
+          digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      trajectory: {enum: [STABLE, IMPROVING, DEGRADING, INSUFFICIENT_DATA]}
+      latest_window_id: {type: string}
+      latest_result_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      policy_version: {type: string}
+      source_trajectory_id: {type: string}
+      source_trajectory_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      recommendation:
+        enum: [NONE, CHECKPOINT, SPLIT_REMAINDER, FRESH_RECONSTRUCTION, FRESH_SELF_REVIEW, REPLAY_REQUIRED]
+      recommendation_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
 type: object
 required: [schema, authority, node, projection]
 properties:
@@ -113,6 +153,23 @@ properties:
           leaves: {type: integer, minimum: 1}
           counts: {type: object, propertyNames: {enum: [HEALTHY, UNOBSERVED, WATCH, AT_RISK]}, additionalProperties: {type: integer, minimum: 1}}
           at_risk: {type: array, items: {type: string}}
+      agent_health:
+        type: object
+        additionalProperties: false
+        description: >-
+          Leaf-only unified advisory read model. Operational continuity health, quality observation,
+          quality trajectory, and intervention advice remain separate dimensions. Missing or invalid
+          quality inputs are explicit and never change progress, state, title, handover, admission,
+          review, merge, or release authority.
+        required: [authority, advisory, operational, quality, trajectory, intervention, read_model_digest]
+        properties:
+          authority: {const: DERIVED_AGENT_HEALTH_READ_MODEL_ONLY}
+          advisory: {const: true}
+          operational: {$ref: '#/$defs/agent_health_dimension'}
+          quality: {$ref: '#/$defs/agent_health_dimension'}
+          trajectory: {$ref: '#/$defs/agent_health_dimension'}
+          intervention: {$ref: '#/$defs/agent_health_dimension'}
+          read_model_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
       materialization:
         type: object
         description: >-

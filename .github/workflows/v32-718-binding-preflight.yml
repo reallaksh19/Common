@@ -1,0 +1,56 @@
+name: v32-718-binding-preflight
+
+on:
+  pull_request:
+    paths:
+      - '.github/v32-evidence-spine/718-proposal-v2.json'
+      - '.github/workflows/v32-718-binding-preflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bound-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Revalidate exact V3.2 release and two provider bindings
+        shell: bash
+        run: |
+          set -euo pipefail
+          GRAPH=.github/v32-evidence-spine/718-proposal-v2.json
+          DELP=skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py
+          python "$DELP" validate-graph --graph "$GRAPH"
+          python "$DELP" decompose-check --graph "$GRAPH" --json > /tmp/718-bound-report.json
+          python - <<'PY'
+          import importlib.util
+          import json
+          from pathlib import Path
+          graph = json.loads(Path('.github/v32-evidence-spine/718-proposal-v2.json').read_text(encoding='utf-8'))
+          report = json.loads(Path('/tmp/718-bound-report.json').read_text(encoding='utf-8'))
+          proposal = graph['programme']['decomposition_proposal']
+          assert report['proposal_digest'] == proposal['released_proposal_digest'] == 'sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd'
+          assert report['release_state'] == 'RELEASEABLE', report
+          assert report['summary']['evaluated'] == 6, report
+          assert report['summary']['not_releasable'] == 0, report
+          assert graph['nodes'][0]['reserve_weight'] == 55, graph
+          assert {(b['responsibility_id'], b['ref']) for b in proposal['bindings']} == {('R-BASIS','Common#720'),('R-PROOF','Common#724')}
+          assert {n['ref'] for n in graph['nodes']} == {'Common#718','Common#720','Common#724'}
+          path = Path('skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py')
+          spec = importlib.util.spec_from_file_location('delp718', path)
+          mod = importlib.util.module_from_spec(spec)
+          assert spec and spec.loader
+          spec.loader.exec_module(mod)
+          projected = mod.project(graph, [], {})
+          for ref in ['Common#720', 'Common#724']:
+              assert projected['nodes'][ref]['plan']['releasable'], projected['nodes'][ref]['plan']
+          print('V32_718_BOUND_RELEASE=PASS')
+          print('V32_718_PROPOSAL_DIGEST='+report['proposal_digest'])
+          print('V32_718_MATERIALIZED=R-BASIS:R-PROOF')
+          print('V32_718_RESERVE=55')
+          print('V32_718_PLAN_JOIN=PASS')
+          PY

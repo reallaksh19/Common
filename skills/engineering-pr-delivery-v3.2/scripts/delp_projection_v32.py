@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import importlib.util
 import hashlib
 import json
 import re
@@ -273,6 +274,156 @@ def canonical_json(value: Any) -> str:
 
 def canonical_digest(value: Any) -> str:
     return "sha256:" + hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
+
+
+_AGENT_HEALTH_AUTHORITY = "DERIVED_AGENT_HEALTH_READ_MODEL_ONLY"
+_AGENT_MODULES: dict[str, Any] = {}
+
+
+def _agent_module(filename: str, module_name: str) -> Any:
+    """Load an exact sibling Agent Metrics implementation without changing DELP control authority."""
+    if module_name not in _AGENT_MODULES:
+        path = Path(__file__).with_name(filename)
+        spec = importlib.util.spec_from_file_location(module_name, path)
+        if spec is None or spec.loader is None:
+            raise DelpError(f"cannot load Agent Metrics source {filename}")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        _AGENT_MODULES[module_name] = module
+    return _AGENT_MODULES[module_name]
+
+
+def _dimension_unavailable(reason: str) -> dict[str, Any]:
+    return {"status": "UNAVAILABLE", "reason": reason}
+
+
+def _dimension_invalid(reason: str) -> dict[str, Any]:
+    return {"status": "INVALID", "reason": reason}
+
+
+def _agent_health_read_model(
+    operational_health: Mapping[str, Any] | None,
+    agent_quality: Any,
+) -> dict[str, Any]:
+    """Compose leaf-scoped operational + quality dimensions without feeding any value back into DELP control."""
+    if operational_health:
+        operational = {
+            "status": "AVAILABLE",
+            "source": "LIVE_STATUS.node.health",
+            "source_authority": AUTHORITY,
+            "source_digest": canonical_digest(operational_health),
+            "verdict": operational_health.get("verdict"),
+            "light": operational_health.get("light"),
+        }
+    else:
+        operational = _dimension_unavailable("OPERATIONAL_HEALTH_NOT_PROJECTED")
+
+    quality = _dimension_unavailable("QUALITY_RESULT_NOT_OBSERVED")
+    trajectory = _dimension_unavailable("TRAJECTORY_RESULT_NOT_OBSERVED")
+    intervention = _dimension_unavailable("INTERVENTION_RESULT_NOT_OBSERVED")
+
+    if agent_quality is not None:
+        if not isinstance(agent_quality, Mapping):
+            quality = trajectory = intervention = _dimension_invalid("AGENT_QUALITY_INPUT_NOT_MAPPING")
+        else:
+            allowed = {"quality_result", "trajectory_result", "intervention_result"}
+            extra = sorted(set(map(str, agent_quality)) - allowed)
+            if extra:
+                quality = trajectory = intervention = _dimension_invalid(
+                    "AGENT_QUALITY_INPUT_UNKNOWN_FIELDS:" + ",".join(extra)
+                )
+            else:
+                m2 = _agent_module("agent_quality_trajectory_v32.py", "_relay_v32_agent_quality_trajectory")
+                m3 = _agent_module("agent_intervention_v32.py", "_relay_v32_agent_intervention")
+                normalized_quality = None
+                normalized_trajectory = None
+
+                raw_quality = agent_quality.get("quality_result")
+                if raw_quality is not None:
+                    try:
+                        normalized_quality = m2._normalize_m1(raw_quality, "agent_quality.quality_result")
+                        quality = {
+                            "status": "AVAILABLE",
+                            "source_schema": normalized_quality["schema"],
+                            "source_authority": normalized_quality["authority"],
+                            "window_id": normalized_quality["window_id"],
+                            "input_digest": normalized_quality["input_digest"],
+                            "evidence_digest": normalized_quality["evidence_digest"],
+                            "result_digest": canonical_digest(normalized_quality),
+                            "evidence_refs": normalized_quality["evidence_refs"],
+                        }
+                    except Exception as exc:
+                        quality = _dimension_invalid("QUALITY_RESULT_INVALID:" + str(exc))
+
+                raw_trajectory = agent_quality.get("trajectory_result")
+                if raw_trajectory is not None:
+                    if normalized_quality is None:
+                        trajectory = _dimension_invalid("QUALITY_RESULT_REQUIRED_FOR_TRAJECTORY_PROVENANCE")
+                    else:
+                        try:
+                            normalized_trajectory = m3._normalize_m2(raw_trajectory)
+                            latest = normalized_trajectory["windows"][-1]
+                            basis_ref = normalized_trajectory["comparison_basis"]["ref"]
+                            quality_digest = canonical_digest(normalized_quality)
+                            if (
+                                latest["window_id"] != normalized_quality["window_id"]
+                                or latest["result_digest"] != quality_digest
+                                or basis_ref not in normalized_quality["evidence_refs"]
+                            ):
+                                raise ValueError("latest quality result does not match trajectory provenance")
+                            trajectory = {
+                                "status": "AVAILABLE",
+                                "source_schema": normalized_trajectory["schema"],
+                                "source_authority": normalized_trajectory["authority"],
+                                "trajectory_id": normalized_trajectory["trajectory_id"],
+                                "input_digest": normalized_trajectory["input_digest"],
+                                "trajectory_digest": normalized_trajectory["trajectory_digest"],
+                                "comparison_basis": normalized_trajectory["comparison_basis"],
+                                "trajectory": normalized_trajectory["trajectory"],
+                                "reason": normalized_trajectory["reason"],
+                                "latest_window_id": latest["window_id"],
+                                "latest_result_digest": latest["result_digest"],
+                            }
+                        except Exception as exc:
+                            normalized_trajectory = None
+                            trajectory = _dimension_invalid("TRAJECTORY_RESULT_INVALID:" + str(exc))
+
+                raw_intervention = agent_quality.get("intervention_result")
+                if raw_intervention is not None:
+                    if normalized_trajectory is None:
+                        intervention = _dimension_invalid("VALID_TRAJECTORY_REQUIRED_FOR_INTERVENTION")
+                    else:
+                        try:
+                            expected = m3.evaluate({"schema": m3.INPUT_SCHEMA, "trajectory": normalized_trajectory})
+                            if not isinstance(raw_intervention, Mapping) or dict(raw_intervention) != expected:
+                                raise ValueError("intervention result does not equal exact recomputation from trajectory")
+                            intervention = {
+                                "status": "AVAILABLE",
+                                "source_schema": expected["schema"],
+                                "source_authority": expected["authority"],
+                                "policy_version": expected["policy_version"],
+                                "source_trajectory_id": expected["source_trajectory_id"],
+                                "source_trajectory_digest": expected["source_trajectory_digest"],
+                                "comparison_basis": expected["comparison_basis"],
+                                "recommendation": expected["recommendation"],
+                                "reason": expected["reason"],
+                                "recommendation_digest": expected["recommendation_digest"],
+                            }
+                        except Exception as exc:
+                            intervention = _dimension_invalid("INTERVENTION_RESULT_INVALID:" + str(exc))
+
+    dimensions = {
+        "operational": operational,
+        "quality": quality,
+        "trajectory": trajectory,
+        "intervention": intervention,
+    }
+    return {
+        "authority": _AGENT_HEALTH_AUTHORITY,
+        "advisory": True,
+        **dimensions,
+        "read_model_digest": canonical_digest(dimensions),
+    }
 
 
 def percent(value: Fraction) -> int:
@@ -3068,7 +3219,50 @@ def project(
     if mode != "OFF":
         # Closed (COMPLETE/SUPERSEDED) leaves are history, not work to release: the gate skips them.
         closed = {ref for ref, leaf in results.items() if leaf["lifecycle"] in _TERMINAL}
-        for ref, row in _decomposition(indexed, closed)["leaves"].items():
+        # In a released Proposal-V2 programme, future responsibilities are allowed
+        # to remain unmaterialized. Re-evaluating claim coverage over only existing
+        # leaves would falsely block the first admitted child. Instead, reuse the
+        # same exact released-proposal and provider-binding verdict as decompose-check.
+        if indexed["decomposition_proposal"] is None:
+            plan_rows = _decomposition(indexed, closed)["leaves"]
+        else:
+            proposal_report = _proposal_decomposition(indexed)
+            bound_by_number = {
+                ref_number(binding["ref"]): binding["responsibility_id"]
+                for binding in indexed["decomposition_proposal"]["bindings"]
+            }
+            plan_rows = {}
+            for ref in indexed["order"]:
+                if nodes[ref]["kind"] != "LEAF" or ref in closed:
+                    continue
+                rid = nodes[ref].get("responsibility_id")
+                proposed = (
+                    proposal_report["leaves"].get(rid)
+                    if rid and bound_by_number.get(nodes[ref]["number"]) == rid
+                    else None
+                )
+                if proposed is None:
+                    plan_rows[ref] = {
+                        "releasable": False,
+                        "blockers": [{
+                            "code": "PROPOSAL_BINDING_UNRESOLVED",
+                            "detail": "Materialized leaf lacks its exact released responsibility/provider binding",
+                        }],
+                        "advisories": [],
+                    }
+                    continue
+                blockers = list(proposed["blockers"])
+                if proposal_report["release_state"] != "RELEASEABLE":
+                    blockers.append({
+                        "code": "PROPOSAL_NOT_RELEASEABLE",
+                        "detail": "Released Proposal-V2 topology or provider bindings are not valid",
+                    })
+                plan_rows[ref] = {
+                    "releasable": not blockers,
+                    "blockers": blockers,
+                    "advisories": list(proposed["advisories"]),
+                }
+        for ref, row in plan_rows.items():
             leaf = results[ref]
             leaf["plan"] = {
                 "mode": mode,
@@ -3116,6 +3310,15 @@ def project(
             leaf["health"] = _health_block(
                 _health_components(leaf, nodes[ref], seen, indexed["health_policy"], indexed["policy"]["leaf_budget"])
             )
+
+    # R-READMODEL is leaf-scoped and advisory. It consumes the already-derived operational health plus
+    # optional Agent Metrics observations, and is never consulted by state/progress/title/admission logic.
+    for ref, leaf in results.items():
+        if nodes[ref]["kind"] != "LEAF":
+            continue
+        seen = observations.get(nodes[ref]["number"]) or {}
+        if "health" in leaf or "agent_quality" in seen:
+            leaf["agent_health"] = _agent_health_read_model(leaf.get("health"), seen.get("agent_quality"))
 
     def visit(ref: str) -> dict[str, Any]:
         node = nodes[ref]
