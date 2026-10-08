@@ -108,17 +108,35 @@ def owner_trace(
                 "source_refs": list(req.get("source_refs") or []),
             })
     _require(bool(accepted), "SELECTED_RESPONSIBILITY_HAS_NO_OR")
+    # The selected OR must own this exact leaf's claims, not merely any valid
+    # programme claim. Unknown provenance cannot silently borrow sibling truth.
+    expected_selected_claims = set(owner.get("selected_claims") or [])
+    if expected_selected_claims:
+        _require(all(set(a["claim_ids"]) == expected_selected_claims for a in accepted),
+                 "SELECTED_OR_CLAIM_OWNERSHIP_DRIFT")
     _require(any(any(x["id"] in o["OR_ids"] for o in linked) for x in accepted),
              "SELECTED_OR_NOT_CONNECTED_TO_OWNER")
     return {"owner_intents": linked, "selected_OR": accepted}
 
 
-def _independent_qualification(observation: Any, head_sha: str | None) -> dict[str, str]:
+def _independent_qualification(observation: Any, head_sha: str | None,
+                               responsibility: str, repository: str) -> dict[str, str]:
     if observation is None:
         return {"state": "UNPROVEN", "basis": "NOT_OBSERVED"}
     _require(isinstance(observation, Mapping), "INVALID_QUALIFIER")
     _require(observation.get("authority") == "DERIVED_OBSERVATION_ONLY", "QUALIFIER_AUTHORITY_INVALID")
+    _require(observation.get("schema") == "relay-v3.2-qualification-observation-v1",
+             "QUALIFIER_SCHEMA_MISMATCH")
+    _require(observation.get("responsibility") == responsibility,
+             "QUALIFIER_WRONG_RESPONSIBILITY")
+    _require(observation.get("repository") == repository,
+             "QUALIFIER_WRONG_REPOSITORY")
     qhead = observation.get("observed_candidate_sha")
+    expected_candidate = observation.get("expected_candidate_sha")
+    _require(isinstance(expected_candidate, str) and bool(_SHA.fullmatch(expected_candidate)),
+             "QUALIFIER_EXPECTED_SHA_INVALID")
+    _require(qhead is None or qhead == expected_candidate or observation.get("overall") == "UNPROVEN",
+             "QUALIFIER_INCOHERENT_EXPECTED_OBSERVED_HEAD")
     _require(qhead is None or _SHA.fullmatch(str(qhead)) is not None, "QUALIFIER_INVALID_SHA")
     state = observation.get("overall")
     _require(state in {"PROVEN", "UNPROVEN", "UNKNOWN"}, "QUALIFIER_INVALID_VERDICT")
@@ -159,7 +177,10 @@ def build_views(
     release = graph["programme"].get("decomposition_proposal") or {}
     _require(owner.get("released_proposal_digest") == release.get("released_proposal_digest"),
              "OWNER_TO_RELEASE_DIGEST_MISMATCH")
-    proof = owner_trace(owner, required_claims=claim_ids, responsibility_id=identity)
+    proof = owner_trace(
+        {**owner, "selected_claims": sorted(raw_node.get("owns_claims") or [])},
+        required_claims=claim_ids, responsibility_id=identity,
+    )
     proposed = {r["id"]: r for r in release.get("responsibilities") or []}
     _require(identity in proposed and set(proposed[identity]["owns_claims"]) == set(raw_node.get("owns_claims") or []),
              "SELECTED_CLAIM_CONTRACT_DRIFT")
@@ -180,7 +201,8 @@ def build_views(
         pr_details = {"number": number, "head_sha": sha,
                       "lifecycle": lifecycle, "binding": "BOUND" if bound else "UNBOUND_ADVISORY"}
     candidate = pr_details["head_sha"] if pr_details else None
-    q = _independent_qualification(qualification, candidate)
+    q = _independent_qualification(qualification, candidate, selected_leaf,
+                                   graph["programme"]["repository"])
     _require(not pr_details or not pr_details["binding"] == "UNBOUND_ADVISORY" or q["state"] != "PROVEN",
              "UNBOUND_PR_CANNOT_ACQUIRE_QUALIFICATION")
     reserve = next(n.get("reserve_weight", 0) for n in graph["nodes"] if n["ref"] == root_ref)
