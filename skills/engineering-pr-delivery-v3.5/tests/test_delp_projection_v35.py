@@ -457,6 +457,156 @@ class ExecutionProvenanceVisibility(unittest.TestCase):
 
 
 
+class FactCustodyRelationClassifier(unittest.TestCase):
+    def state(self):
+        return {
+            "execution": {
+                "lifecycle": "ACTIVE",
+                "ep": "EP-P3-B2",
+                "lease": "LEASE-P3-B2",
+                "route": "SERIAL:EP-P3-B2",
+                "custody_epoch": 8,
+            }
+        }
+
+    def lease(self):
+        return {
+            "id": "LEASE-P3-B2",
+            "state": "ACTIVE",
+            "executor": {"id": "agent-new"},
+            "basis": {"ep_id": "EP-P3-B2"},
+            "custody": {
+                "epoch": 8,
+                "granted_at": "2026-10-07T10:00:00Z",
+            },
+        }
+
+    def bound(self, *, epoch=8, ep=None, lease=None, executor=None):
+        return {
+            "ep": ep or ("EP-P3-B2" if epoch == 8 else "EP-P3-B1"),
+            "lease": lease or ("LEASE-P3-B2" if epoch == 8 else "LEASE-P3-B1"),
+            "executor": executor or ("agent-new" if epoch == 8 else "agent-old"),
+            "custody_epoch": epoch,
+        }
+
+    def row(self, *, execution=None, updated_at="2026-10-07T10:01:00Z", provider=True):
+        record = facts(units=[unit("U01")], execution=execution) if execution is not None else facts(units=[unit("U01")])
+        row = entry(record, 1, "fact")
+        if provider:
+            row["provider"] = {
+                "kind": "GITHUB_ISSUE_COMMENT",
+                "created_at": "2026-10-07T09:00:00Z",
+                "updated_at": updated_at,
+            }
+        return row
+
+    def relation(self, row):
+        return M.classify_fact_custody(row, self.state(), self.lease())
+
+    def test_current_epoch_requires_exact_active_identity(self):
+        current = self.relation(self.row(execution=self.bound(epoch=8)))
+        self.assertEqual(
+            ("CURRENT_EPOCH", "ACTIVE_EXECUTION_BINDING_MATCH"),
+            (current["relation"], current["reason"]),
+        )
+        mismatch = self.relation(
+            self.row(execution=self.bound(epoch=8, executor="agent-old"))
+        )
+        self.assertEqual(
+            ("UNKNOWN", "CURRENT_EPOCH_IDENTITY_MISMATCH"),
+            (mismatch["relation"], mismatch["reason"]),
+        )
+
+    def test_old_epoch_is_historical_before_grant_and_stale_after_grant(self):
+        before = self.relation(
+            self.row(execution=self.bound(epoch=7), updated_at="2026-10-07T09:59:59Z")
+        )
+        after = self.relation(
+            self.row(execution=self.bound(epoch=7), updated_at="2026-10-07T10:00:01Z")
+        )
+        self.assertEqual("HISTORICAL_PRE_FENCE", before["relation"])
+        self.assertEqual("STALE_POST_FENCE", after["relation"])
+
+    def test_exact_old_epoch_timestamp_tie_is_unknown_not_guessed(self):
+        tied = self.relation(
+            self.row(execution=self.bound(epoch=7), updated_at="2026-10-07T10:00:00Z")
+        )
+        self.assertEqual(
+            ("UNKNOWN", "FENCE_TIMESTAMP_TIE"),
+            (tied["relation"], tied["reason"]),
+        )
+
+    def test_unbound_legacy_before_fence_survives_but_late_unbound_is_unknown(self):
+        historical = self.relation(
+            self.row(execution=None, updated_at="2026-10-07T09:59:59Z")
+        )
+        self.assertEqual(
+            ("UNBOUND", "UNBOUND_PUBLISHED_BEFORE_CURRENT_GRANT"),
+            (historical["relation"], historical["reason"]),
+        )
+        late = self.relation(
+            self.row(execution=None, updated_at="2026-10-07T10:00:01Z")
+        )
+        self.assertEqual(
+            ("UNKNOWN", "UNBOUND_POST_FENCE_CANNOT_PROVE_CURRENT_CUSTODY"),
+            (late["relation"], late["reason"]),
+        )
+        tied = self.relation(
+            self.row(execution=None, updated_at="2026-10-07T10:00:00Z")
+        )
+        self.assertEqual(
+            ("UNKNOWN", "UNBOUND_FENCE_TIMESTAMP_TIE"),
+            (tied["relation"], tied["reason"]),
+        )
+
+    def test_missing_provider_time_is_unbound_offline_compatibility_or_unknown_when_bound(self):
+        unbound = self.relation(self.row(execution=None, provider=False))
+        self.assertEqual(
+            ("UNBOUND", "FACT_EXECUTION_UNBOUND_PROVIDER_TIME_UNAVAILABLE"),
+            (unbound["relation"], unbound["reason"]),
+        )
+        missing = self.relation(
+            self.row(execution=self.bound(epoch=7), provider=False)
+        )
+        self.assertEqual(
+            ("UNKNOWN", "PROVIDER_TIME_UNAVAILABLE"),
+            (missing["relation"], missing["reason"]),
+        )
+
+    def test_future_epoch_and_impossible_current_epoch_time_fail_to_unknown(self):
+        future = self.relation(
+            self.row(execution=self.bound(epoch=9), updated_at="2026-10-07T10:01:00Z")
+        )
+        self.assertEqual(
+            ("UNKNOWN", "FUTURE_CUSTODY_EPOCH"),
+            (future["relation"], future["reason"]),
+        )
+        predates = self.relation(
+            self.row(execution=self.bound(epoch=8), updated_at="2026-10-07T09:59:59Z")
+        )
+        self.assertEqual(
+            ("UNKNOWN", "CURRENT_EPOCH_PREDATES_GRANT"),
+            (predates["relation"], predates["reason"]),
+        )
+
+    def test_classifier_is_pure_and_does_not_change_projection(self):
+        row = self.row(
+            execution=self.bound(epoch=7),
+            updated_at="2026-10-07T10:00:01Z",
+        )
+        before = copy.deepcopy(row)
+        relation = self.relation(row)
+        self.assertEqual("STALE_POST_FENCE", relation["relation"])
+        self.assertEqual(before, row)
+
+        baseline = M.project(graph(), [row], OBS_A)["nodes"]["Common#592"]
+        self.relation(row)
+        after = M.project(graph(), [row], OBS_A)["nodes"]["Common#592"]
+        for field in ("progress", "state", "conditions", "actual_next", "title_prefix"):
+            with self.subTest(field=field):
+                self.assertEqual(baseline[field], after[field])
+
+
 class LeafProgressAndEvidence(unittest.TestCase):
     def leaf(self, ledger, observations=OBS_A):
         return M.project(graph(), ledger, observations)["nodes"]["Common#592"]
@@ -1626,7 +1776,13 @@ class FakeGitHub:
         return dict(self.compares.get(head, {"ahead_by": 0, "behind_by": 0}))
 
     def list_comments(self, number):
-        return [dict(c) for c in self.comments.get(number, [])]
+        rows = []
+        for comment in self.comments.get(number, []):
+            row = dict(comment)
+            row.setdefault("created_at", "2026-10-07T00:00:00Z")
+            row.setdefault("updated_at", row["created_at"])
+            rows.append(row)
+        return rows
 
     def post_comment(self, number, body):
         self.next_id += 1
@@ -1719,6 +1875,76 @@ class GitHubStoreTests(unittest.TestCase):
         self.assertEqual(SHA_C, observed["Common#612"]["material"]["candidate_sha"])
         self.assertEqual(SHA_B, observed["Common#594"]["material"]["candidate_sha"])
         self.assertEqual("MERGED", observed["Common#592"]["material"]["pr_state"])
+
+    @unittest.skipUnless(HAVE_YAML, "PyYAML unavailable")
+    def test_fact_ledger_retains_provider_created_and_updated_time(self):
+        gh = FakeGitHub()
+        body = ExtractFactsBlocks.BODY.replace("__SHA__", SHA_A)
+        gh.comments[592] = [
+            {
+                "id": 5,
+                "body": body,
+                "author_association": "OWNER",
+                "user": {"login": "reallaksh19"},
+                "created_at": "2026-10-07T10:00:00Z",
+                "updated_at": "2026-10-07T11:30:00+00:00",
+            }
+        ]
+        ledger = M.ledger_from_github(gh, graph())
+        self.assertEqual(1, len(ledger))
+        self.assertEqual(
+            {
+                "kind": "GITHUB_ISSUE_COMMENT",
+                "created_at": "2026-10-07T10:00:00Z",
+                "updated_at": "2026-10-07T11:30:00Z",
+            },
+            ledger[0]["provider"],
+        )
+
+    @unittest.skipUnless(HAVE_YAML, "PyYAML unavailable")
+    def test_provider_comment_timestamp_is_provider_metadata_not_semantic_authority(self):
+        gh = FakeGitHub()
+        body = ExtractFactsBlocks.BODY.replace("__SHA__", SHA_A)
+        gh.comments[592] = [
+            {
+                "id": 5,
+                "body": body,
+                "author_association": "OWNER",
+                "user": {"login": "reallaksh19"},
+                "created_at": "2026-10-07T10:00:00Z",
+                "updated_at": "2026-10-07T11:30:00Z",
+            }
+        ]
+        ledger = M.ledger_from_github(gh, graph())
+        stripped = [{key: value for key, value in row.items() if key != "provider"} for row in ledger]
+        with_provider = M.project(graph(), ledger, OBS_A)["nodes"]["Common#592"]
+        without_provider = M.project(graph(), stripped, OBS_A)["nodes"]["Common#592"]
+        for field in ("progress", "state", "lifecycle", "conditions", "actual_next", "title_prefix"):
+            with self.subTest(field=field):
+                self.assertEqual(without_provider[field], with_provider[field])
+
+    @unittest.skipUnless(HAVE_YAML, "PyYAML unavailable")
+    def test_malformed_or_naive_provider_timestamp_fails_closed_for_facts_comment(self):
+        body = ExtractFactsBlocks.BODY.replace("__SHA__", SHA_A)
+        for created_at, updated_at in (
+            ("not-a-time", "2026-10-07T11:00:00Z"),
+            ("2026-10-07T10:00:00", "2026-10-07T11:00:00Z"),
+            ("2026-10-07T12:00:00Z", "2026-10-07T11:00:00Z"),
+        ):
+            with self.subTest(created_at=created_at, updated_at=updated_at):
+                gh = FakeGitHub()
+                gh.comments[592] = [
+                    {
+                        "id": 5,
+                        "body": body,
+                        "author_association": "OWNER",
+                        "user": {"login": "reallaksh19"},
+                        "created_at": created_at,
+                        "updated_at": updated_at,
+                    }
+                ]
+                with self.assertRaises(M.DelpError):
+                    M.ledger_from_github(gh, graph())
 
     @unittest.skipUnless(HAVE_YAML, "PyYAML unavailable")
     def test_facts_from_untrusted_authors_are_rejected_not_believed(self):
@@ -6575,6 +6801,564 @@ class ProjectionEndToEndAgreement(unittest.TestCase):
         drift = M.title_drift(forged_title, a["title_prefix"], "manual edit")
         self.assertEqual("STALE_OR_HAND_EDITED", drift["status"])
         self.assertEqual("CONTINUE_UNIT", a["actual_next"]["action"])
+
+
+class CustodyFenceSemanticQualification(unittest.TestCase):
+    """B2.3 result-level tests; full retained A7/B8 replay remains B2.4."""
+
+    def state(self):
+        return FactCustodyRelationClassifier().state()
+
+    def lease(self):
+        return FactCustodyRelationClassifier().lease()
+
+    def row(self, source, order, ids, *, epoch=None, updated="2026-10-07T10:01:00Z", provider=True):
+        binding = (
+            FactCustodyRelationClassifier().bound(epoch=epoch)
+            if epoch is not None else None
+        )
+        if binding is None:
+            record = facts(units=[unit(uid) for uid in ids])
+        else:
+            record = facts(units=[unit(uid) for uid in ids], execution=binding)
+        result = entry(M.bind_facts_to_graph(stable_graph(), record), order, source)
+        if provider:
+            result["provider"] = {
+                "kind": "GITHUB_ISSUE_COMMENT",
+                "created_at": "2026-10-07T09:00:00Z",
+                "updated_at": updated,
+            }
+        return result
+
+    def projected(self, rows, observations=OBS_A, *, state=None, lease=None):
+        return M.project(
+            stable_graph(), rows, observations,
+            custody_state=self.state() if state is None else state,
+            custody_lease=self.lease() if lease is None else lease,
+        )
+
+    def test_pre_fence_evidence_survives_and_late_predecessor_cannot_mint_progress(self):
+        before = self.row("old-pre", 1, ["U01", "U02"], epoch=7, updated="2026-10-07T09:59:00Z")
+        successor = self.row("new", 2, ["U03"], epoch=8)
+        late = self.row("old-late", 3, ["U04"], epoch=7, updated="2026-10-07T10:02:00Z")
+        baseline = self.projected([before, successor])
+        with_late = self.projected([before, successor, late])
+        plain = M.project(stable_graph(), [before, successor, late], OBS_A)
+        for name in ("progress", "state", "conditions", "actual_next", "title_prefix"):
+            with self.subTest(name=name):
+                self.assertEqual(baseline["nodes"]["Common#592"][name], with_late["nodes"]["Common#592"][name])
+        node = with_late["nodes"]["Common#592"]
+        self.assertEqual((75, 75), (node["progress"]["P"], node["progress"]["E"]))
+        self.assertEqual(100, plain["nodes"]["Common#592"]["progress"]["P"])
+        self.assertEqual(["old-late"], [x["source"] for x in with_late["fenced_facts"]])
+        self.assertEqual("STALE_POST_FENCE", with_late["fenced_facts"][0]["relation"])
+        self.assertEqual([], with_late["rejected_facts"])
+        self.assertEqual(3, node["execution_provenance"]["bound_fact_count"])
+        self.assertEqual((2, 1), (
+            node["custody_fence"]["effective_fact_count"], node["custody_fence"]["fenced_fact_count"],
+        ))
+        self.assertEqual(["old-late"], node["custody_fence"]["fenced_sources"])
+
+    def test_unbound_post_fence_and_future_bound_facts_cannot_bypass_fence(self):
+        pre = self.row("legacy-pre", 1, ["U01"], updated="2026-10-07T09:59:00Z")
+        offline = self.row("legacy-offline", 2, ["U02"], provider=False)
+        late = self.row("legacy-late", 3, ["U03"], updated="2026-10-07T10:02:00Z")
+        future = self.row("future", 4, ["U04"], epoch=9, updated="2026-10-07T10:02:00Z")
+        result = self.projected([pre, offline, late, future])
+        node = result["nodes"]["Common#592"]
+        self.assertEqual((50, 50), (node["progress"]["P"], node["progress"]["E"]))
+        self.assertEqual(["future", "legacy-late"], sorted(x["source"] for x in result["fenced_facts"]))
+        self.assertTrue(all(x["relation"] == "UNKNOWN" for x in result["fenced_facts"]))
+        self.assertEqual(3, node["execution_provenance"]["unbound_fact_count"])
+        self.assertEqual([], result["rejected_facts"])
+
+    def test_rejected_invalid_untrusted_facts_are_not_fenced_accepted_facts(self):
+        old_late = self.row("fenced-accepted", 1, ["U01"], epoch=7, updated="2026-10-07T10:02:00Z")
+        invalid = self.row("invalid", 2, ["U02"], epoch=8)
+        invalid["facts"]["progress"] = 99
+        untrusted = self.row("untrusted", 3, ["U03"], epoch=8)
+        untrusted["untrusted_author"] = "intruder"
+        result = self.projected([old_late, invalid, untrusted])
+        self.assertEqual(["fenced-accepted"], [x["source"] for x in result["fenced_facts"]])
+        self.assertEqual(["invalid", "untrusted"], sorted(x["source"] for x in result["rejected_facts"]))
+        self.assertEqual(1, result["nodes"]["Common#592"]["execution_provenance"]["bound_fact_count"])
+        self.assertEqual(0, result["nodes"]["Common#592"]["progress"]["P"])
+
+    def test_provider_movement_and_custody_time_are_independent_digest_inputs(self):
+        early = self.row("historical", 1, ["U01"], epoch=7, updated="2026-10-07T09:59:00Z")
+        shifted = self.row("historical", 1, ["U01"], epoch=7, updated="2026-10-07T09:59:20Z")
+        baseline = self.projected([early])
+        provider_changed = self.projected([shifted])
+        later_lease = self.lease()
+        later_lease["custody"]["granted_at"] = "2026-10-07T10:00:30Z"
+        custody_changed = self.projected([early], lease=later_lease)
+        changed_observations = copy.deepcopy(OBS_A)
+        changed_observations["Common#592"] = {"candidate_sha": SHA_B}
+        material_changed = self.projected([early], changed_observations)
+        self.assertEqual(baseline["nodes"]["Common#592"]["progress"], custody_changed["nodes"]["Common#592"]["progress"])
+        self.assertNotEqual(baseline["input_digest"], provider_changed["input_digest"])
+        self.assertNotEqual(baseline["input_digest"], custody_changed["input_digest"])
+        self.assertNotEqual(baseline["input_digest"], material_changed["input_digest"])
+        self.assertEqual(SHA_B, material_changed["nodes"]["Common#592"]["material"]["candidate_sha"])
+        self.assertEqual("STALE_CANDIDATE", material_changed["nodes"]["Common#592"]["evidence"]["health"])
+
+    def test_multiple_post_fence_blocks_in_one_comment_preserve_audit_and_unique_source(self):
+        first = self.row("same-comment", 1, ["U01"], epoch=7, updated="2026-10-07T10:02:00Z")
+        second = self.row("same-comment", 2, ["U02"], epoch=7, updated="2026-10-07T10:02:00Z")
+        result = self.projected([first, second])
+        leaf = result["nodes"]["Common#592"]
+        self.assertEqual(["same-comment", "same-comment"], [x["source"] for x in result["fenced_facts"]])
+        self.assertEqual(2, leaf["custody_fence"]["fenced_fact_count"])
+        self.assertEqual(["same-comment"], leaf["custody_fence"]["fenced_sources"])
+        status = M.status_document(leaf, version=0, digest=result["input_digest"], programme=result["programme"])
+        if HAVE_YAML and HAVE_JSONSCHEMA:
+            self.assertEqual([], SchemasAgreeWithTheEngine().schema_errors("live-status", status))
+
+    def test_fence_is_derived_live_status_not_recover_custody_authority(self):
+        old_late = self.row("late", 1, ["U01"], epoch=7, updated="2026-10-07T10:02:00Z")
+        projection = self.projected([old_late])
+        node = projection["nodes"]["Common#592"]
+        conditions = {x["type"]: x for x in node["conditions"]}
+        self.assertEqual("NOT_APPLICABLE", conditions["CustodySafe"]["status"])
+        self.assertNotEqual("RECOVER_CUSTODY", node["actual_next"]["action"])
+        self.assertNotIn("custody_fence", projection["nodes"]["Common#588"])
+        status = M.status_document(node, version=0, digest=projection["input_digest"], programme=projection["programme"])
+        self.assertEqual(node["custody_fence"], status["node"]["custody_fence"])
+        if HAVE_YAML and HAVE_JSONSCHEMA:
+            self.assertEqual([], SchemasAgreeWithTheEngine().schema_errors("live-status", status))
+        legacy = M.project(stable_graph(), [old_late], OBS_A)
+        self.assertNotIn("custody_fence", legacy["nodes"]["Common#592"])
+
+
+@unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
+class CustodyFenceLiveStatusSchemaContract(unittest.TestCase):
+    """Fail closed on malformed B2.3 custody-fence schemas and status documents."""
+
+    @staticmethod
+    def strict_yaml(text):
+        import yaml as _yaml
+
+        class DuplicateKeyRejectingLoader(_yaml.SafeLoader):
+            pass
+
+        def strict_mapping(loader, node):
+            seen = set()
+            for key_node, _ in node.value:
+                key = loader.construct_object(key_node)
+                if key in seen:
+                    raise _yaml.constructor.ConstructorError(
+                        "while constructing a mapping", node.start_mark,
+                        f"duplicate YAML mapping key: {key}", key_node.start_mark,
+                    )
+                seen.add(key)
+            return _yaml.SafeLoader.construct_mapping(loader, node)
+
+        DuplicateKeyRejectingLoader.add_constructor(
+            _yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, strict_mapping
+        )
+        return _yaml.load(text, Loader=DuplicateKeyRejectingLoader)
+
+    def schema(self):
+        path = SCHEMAS / f"delp-live-status-{TAG}.schema.yaml"
+        record = self.strict_yaml(path.read_text(encoding="utf-8"))
+        jsonschema.Draft202012Validator.check_schema(record)
+        self.assertIn("custody_fence", record["properties"]["node"]["properties"])
+        return record
+
+    def status_with_fence(self):
+        projection = M.project(stable_graph(), [], OBS_A)
+        status = M.status_document(
+            projection["nodes"]["Common#592"],
+            version=0,
+            digest=projection["input_digest"],
+            programme=projection["programme"],
+        )
+        status["node"]["custody_fence"] = {
+            "active_execution": {
+                "ep": "EP-P3-B2",
+                "lease": "LEASE-P3-B2",
+                "executor": "agent-604-b2",
+                "custody_epoch": 8,
+            },
+            "granted_at": "2026-10-07T12:00:00Z",
+            "effective_fact_count": 2,
+            "fenced_fact_count": 1,
+            "fenced_sources": ["Common#592#issuecomment-12"],
+        }
+        return status
+
+    def errors(self, status):
+        return list(jsonschema.Draft202012Validator(
+            self.schema(), format_checker=jsonschema.FormatChecker()
+        ).iter_errors(status))
+
+    def test_schema_parses_strictly_and_valid_custody_fence_status_passes(self):
+        self.assertEqual([], self.errors(self.status_with_fence()))
+
+    def test_duplicate_yaml_mapping_keys_are_rejected(self):
+        import yaml as _yaml
+
+        with self.assertRaises(_yaml.constructor.ConstructorError):
+            self.strict_yaml("node:\n  source: one\n  source: two\n")
+        self.schema()  # shipped schema must also pass duplicate-key-rejecting loader
+
+    def test_malformed_custody_fence_statuses_fail_closed(self):
+        original = self.status_with_fence()
+        mutations = [
+            ("missing_active", lambda c: c.pop("active_execution")),
+            ("missing_grant", lambda c: c.pop("granted_at")),
+            ("bad_grant", lambda c: c.update(granted_at="not-a-timestamp")),
+            ("bad_ep", lambda c: c["active_execution"].update(ep="EP")),
+            ("bad_lease", lambda c: c["active_execution"].update(lease="LEASE")),
+            ("missing_executor", lambda c: c["active_execution"].pop("executor")),
+            ("zero_epoch", lambda c: c["active_execution"].update(custody_epoch=0)),
+            ("negative_effective", lambda c: c.update(effective_fact_count=-1)),
+            ("negative_fenced", lambda c: c.update(fenced_fact_count=-1)),
+            ("duplicate_source", lambda c: c.update(fenced_sources=["same", "same"])),
+            ("unknown_key", lambda c: c.update(unauthorized=True)),
+        ]
+        for label, change in mutations:
+            with self.subTest(label=label):
+                candidate = copy.deepcopy(original)
+                change(candidate["node"]["custody_fence"])
+                self.assertTrue(self.errors(candidate), label)
+
+
+class NativeCustodySourceScopeGate(unittest.TestCase):
+    """B2.3-B: leaf scope is a prerequisite, never custody authorization."""
+
+    @classmethod
+    def setUpClass(cls):
+        source = MODULE_PATH.with_name("custody_source_v35.py")
+        spec = importlib.util.spec_from_file_location("custody_source_v35", source)
+        cls.scope = importlib.util.module_from_spec(spec)
+        assert spec.loader
+        spec.loader.exec_module(cls.scope)
+
+    def graph(self):
+        return {
+            "programme": {
+                "repository": "reallaksh19/Common",
+                "root": "Common#600",
+            },
+            "nodes": [
+                {"kind": "ROOT", "ref": "Common#600"},
+                {"kind": "LEAF", "ref": "Common#604",
+                 "parent": "Common#600", "responsibility_id": "RK-P3"},
+                {"kind": "LEAF", "ref": "Common#605",
+                 "parent": "Common#600", "responsibility_id": "RK-P4"},
+            ],
+        }
+
+    def bundle(self, number=604, ep_id="EP-P3-B8",
+               lease_id="LEASE-P3-B8", epoch=8):
+        repo = "reallaksh19/Common"
+        source = {
+            "provider": "GITHUB", "repository": repo,
+            "revision_sha": "a" * 40,
+            "state_path": "relay/STATE.yaml",
+            "ep_path": f"relay/WORK/{ep_id}.yaml",
+            "lease_path": f"relay/LEASES/{lease_id}.yaml",
+        }
+        state = {"execution": {
+            "lifecycle": "ACTIVE", "ep": ep_id, "lease": lease_id,
+            "route": f"SERIAL:{ep_id}", "custody_epoch": epoch,
+        }}
+        ep = {
+            "id": ep_id,
+            "parent_issue": {"provider": "GITHUB", "repository": repo,
+                             "number": number},
+            "programme_parent": {"provider": "GITHUB", "repository": repo,
+                                 "number": 600},
+            "implementation_plan_basis": {
+                "responsibility_basis_ref": f"Common#{number}",
+            },
+        }
+        lease = {
+            "id": lease_id, "state": "ACTIVE",
+            "route": f"SERIAL:{ep_id}",
+            "basis": {"ep_id": ep_id},
+            "executor": {"id": "agent-B8"},
+            "custody": {"epoch": epoch,
+                        "granted_at": "2026-10-08T00:00:00Z"},
+        }
+        return source, state, ep, lease
+
+    def assess(self, leaf="Common#604", bundle=None, graph=None):
+        return self.scope.assess_scoped_native_source(
+            graph if graph is not None else self.graph(), leaf,
+            *(bundle if bundle is not None else self.bundle()),
+        )
+
+    def test_wrong_programme_438_triplet_never_governs_604(self):
+        source, state, ep, lease = self.bundle(
+            number=438, ep_id="EP.438.7", lease_id="LEASE.438.7", epoch=1)
+        ep["programme_parent"]["number"] = 438
+        result = self.assess(bundle=(source, state, ep, lease))
+        self.assertEqual("SOURCE_NOT_PROVEN", result["status"])
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH", result["reason"])
+        self.assertEqual("NO_CUSTODY_AUTHORITY", result["authority"])
+
+    def test_scoped_match_is_never_provider_authentication_or_permission(self):
+        inputs = self.bundle()
+        untouched = copy.deepcopy(inputs)
+        output = self.assess(bundle=inputs)
+        self.assertEqual("SCOPE_MATCHED_UNVERIFIED", output["status"])
+        self.assertEqual("DERIVED_SCOPE_ASSESSMENT_ONLY", output["authority"])
+        self.assertEqual("NOT_PROVEN", output["provider_authentication"])
+        self.assertEqual("NOT_PROVEN", output["source_currentness"])
+        self.assertNotIn("CustodySafe", output)
+        self.assertEqual(untouched, inputs)
+
+    def test_two_sibling_leaves_cannot_share_one_grant(self):
+        candidate = self.bundle()
+        original = self.graph()
+        self.assertEqual("SCOPE_MATCHED_UNVERIFIED",
+                         self.assess(bundle=candidate, graph=original)["status"])
+        sibling = self.assess(leaf="Common#605", bundle=candidate, graph=original)
+        self.assertEqual("SOURCE_NOT_PROVEN", sibling["status"])
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH", sibling["reason"])
+        other = self.assess(
+            leaf="Common#605",
+            bundle=self.bundle(number=605, ep_id="EP-P4",
+                               lease_id="LEASE-P4", epoch=3))
+        self.assertEqual("SCOPE_MATCHED_UNVERIFIED", other["status"])
+        self.assertEqual(original, self.graph())
+
+    def test_absent_or_ambiguous_source_fails_closed(self):
+        source, state, ep, lease = self.bundle()
+        self.assertEqual("SOURCE_NOT_PROVEN",
+                         self.assess(bundle=(None, state, ep, lease))["status"])
+        incomplete = copy.deepcopy(ep)
+        incomplete.pop("parent_issue")
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH",
+                         self.assess(bundle=(source, state, incomplete, lease))["reason"])
+        incomplete = copy.deepcopy(ep)
+        incomplete.pop("programme_parent")
+        self.assertEqual("EP_PROGRAMME_SCOPE_MISMATCH",
+                         self.assess(bundle=(source, state, incomplete, lease))["reason"])
+        incomplete = copy.deepcopy(ep)
+        incomplete["implementation_plan_basis"]["responsibility_basis_ref"] = "Common#438"
+        self.assertEqual("EP_RESPONSIBILITY_BASIS_MISMATCH",
+                         self.assess(bundle=(source, state, incomplete, lease))["reason"])
+
+    def test_immutable_locator_wrong_repo_and_source_paths_are_rejected(self):
+        source, state, ep, lease = self.bundle()
+        for key, value in [
+            ("repository", "another/repo"),
+            ("revision_sha", "not-an-immutable-commit"),
+            ("ep_path", "relay/WORK/EP.438.7.yaml"),
+            ("lease_path", "relay/LEASES/LEASE.438.7.yaml"),
+        ]:
+            with self.subTest(key=key):
+                bad = {**source, key: value}
+                status = self.assess(bundle=(bad, state, ep, lease))
+                self.assertEqual("SOURCE_NOT_PROVEN", status["status"])
+
+    def test_mismatched_grant_and_unknown_leaf_are_not_authorized(self):
+        source, state, ep, lease = self.bundle()
+        mismatches = [
+            lambda s, e, l: l["custody"].update(epoch=7),
+            lambda s, e, l: l["custody"].update(granted_at="not-date"),
+            lambda s, e, l: l.update(state="REVOKED"),
+            lambda s, e, l: s["execution"].update(route="SERIAL:OTHER"),
+            lambda s, e, l: l.update(scope={"ep_or_task": "EP.438.7"}),
+        ]
+        for change in mismatches:
+            with self.subTest(change=str(change)):
+                s, e, l = copy.deepcopy((state, ep, lease))
+                change(s, e, l)
+                result = self.assess(bundle=(source, s, e, l))
+                self.assertEqual("SOURCE_NOT_PROVEN", result["status"])
+        self.assertEqual(
+            "LEAF_NOT_UNIQUELY_DECLARED",
+            self.assess("Common#999")["reason"],
+        )
+
+
+class PinnedNativeCustodyProviderObservations(unittest.TestCase):
+    """B2.3-C1: provider readback is not execution/custody grant authority."""
+
+    @classmethod
+    def setUpClass(cls):
+        import sys
+        import types
+        source_path = MODULE_PATH.with_name("custody_source_v35.py")
+        source_spec = importlib.util.spec_from_file_location(
+            "custody_source_v35", source_path)
+        source_module = importlib.util.module_from_spec(source_spec)
+        assert source_spec.loader
+        source_spec.loader.exec_module(source_module)
+        sys.modules["custody_source_v35"] = source_module
+        observer_path = MODULE_PATH.with_name("custody_provider_v35.py")
+        spec = importlib.util.spec_from_file_location("custody_provider_v35", observer_path)
+        cls.observer = importlib.util.module_from_spec(spec)
+        assert spec.loader
+        spec.loader.exec_module(cls.observer)
+        cls.fixture = NativeCustodySourceScopeGate()
+
+    def graph(self):
+        return self.fixture.graph()
+
+    def files(self, number=604, ep_id="EP-P3-B8", lease_id="LEASE-P3-B8"):
+        source, state, ep, lease = self.fixture.bundle(
+            number=number, ep_id=ep_id, lease_id=lease_id)
+        return {
+            "relay/STATE.yaml": state,
+            source["ep_path"]: ep,
+            source["lease_path"]: lease,
+        }
+
+    class Provider:
+        repository = "reallaksh19/Common"
+
+        def __init__(self, files, *, moved=False, unavailable=False):
+            self.files = files
+            self.moved = moved
+            self.unavailable = unavailable
+            self.calls = []
+            self.lookups = 0
+
+        def get_commit_sha(self, ref):
+            self.lookups += 1
+            if self.unavailable:
+                raise RuntimeError("provider unavailable")
+            return "b" * 40 if self.moved and self.lookups > 1 else "a" * 40
+
+        def read_native_yaml_at_sha(self, path, sha):
+            self.calls.append((path, sha))
+            if path not in self.files:
+                raise LookupError("native source missing")
+            return copy.deepcopy(self.files[path])
+
+    def observe(self, leaf="Common#604", provider=None, selector=None):
+        candidate = provider if provider is not None else self.Provider(self.files())
+        choice = (selector if selector is not None else
+                  {"repository": "reallaksh19/Common", "ref": "main"})
+        return self.observer.observe_scoped_native_candidate(
+            candidate, self.graph(), leaf, choice)
+
+    def test_pinned_provider_snapshot_still_does_not_authorize_lease(self):
+        provider = self.Provider(self.files())
+        out = self.observe(provider=provider)
+        self.assertEqual("SCOPE_MATCHED_UNVERIFIED", out["status"])
+        self.assertEqual("NOT_PROVEN", out["selector_approval"])
+        self.assertEqual("NOT_PROVEN", out["custody_grant_authority"])
+        self.assertEqual("NOT_PROVEN", out["provider_authentication"])
+        self.assertEqual("a" * 40, out["provider_observation"]["observed_sha"])
+        self.assertEqual(3, len(provider.calls))
+        self.assertEqual(2, provider.lookups)
+        self.assertEqual({"a" * 40}, {sha for _, sha in provider.calls})
+        self.assertNotIn("CustodySafe", out)
+
+    def test_realistic_438_native_source_cannot_be_proven_for_604(self):
+        provider = self.Provider(self.files(
+            number=438, ep_id="EP.438.7", lease_id="LEASE.438.7"))
+        provider.files["relay/WORK/EP.438.7.yaml"]["programme_parent"]["number"] = 438
+        out = self.observe(provider=provider)
+        self.assertEqual("SOURCE_NOT_PROVEN", out["status"])
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH", out["reason"])
+
+    def test_retained_repository_438_state_and_lease_rejected_for_604(self):
+        import yaml
+        repo_root = MODULE_PATH.parents[3]
+        paths = [
+            "relay/STATE.yaml",
+            "relay/WORK/EP.438.7.yaml",
+            "relay/LEASES/LEASE.438.7.yaml",
+        ]
+        native = {}
+        for path in paths:
+            native[path] = yaml.safe_load(
+                (repo_root / path).read_text(encoding="utf-8"))
+        self.assertEqual("EP.438.7", native["relay/STATE.yaml"]["execution"]["ep"])
+        self.assertEqual(438, native["relay/WORK/EP.438.7.yaml"]["parent_issue"]["number"])
+        provider = self.Provider(native)
+        result = self.observe(provider=provider)
+        self.assertEqual("SOURCE_NOT_PROVEN", result["status"])
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH", result["reason"])
+
+    def test_one_leaf_source_cannot_be_used_for_another(self):
+        provider = self.Provider(self.files())
+        out = self.observe(leaf="Common#605", provider=provider)
+        self.assertEqual("SOURCE_NOT_PROVEN", out["status"])
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH", out["reason"])
+        own = self.Provider(self.files(
+            number=605, ep_id="EP-P4", lease_id="LEASE-P4"))
+        self.assertEqual("SCOPE_MATCHED_UNVERIFIED",
+                         self.observe(leaf="Common#605", provider=own)["status"])
+
+    def test_moved_ref_and_missing_provider_fail_closed(self):
+        moved = self.Provider(self.files(), moved=True)
+        result = self.observe(provider=moved)
+        self.assertEqual("SOURCE_NOT_PROVEN", result["status"])
+        self.assertEqual("SOURCE_REF_MOVED_DURING_READ", result["reason"])
+        down = self.Provider(self.files(), unavailable=True)
+        self.assertEqual("SOURCE_REF_UNAVAILABLE", self.observe(provider=down)["reason"])
+
+    def test_invalid_selector_and_parent_absence_do_not_mint_grant(self):
+        provider = self.Provider(self.files())
+        for selector in (
+            {"repository": "other/repo", "ref": "main"},
+            {"repository": "reallaksh19/Common", "ref": "../../refs"},
+            {"repository": "reallaksh19/Common", "ref": "branch?bad"},
+        ):
+            with self.subTest(selector=selector):
+                self.assertEqual("SOURCE_NOT_PROVEN",
+                                 self.observe(provider=provider, selector=selector)["status"])
+        docs = self.files()
+        docs["relay/WORK/EP-P3-B8.yaml"].pop("parent_issue")
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH",
+                         self.observe(provider=self.Provider(docs))["reason"])
+
+    def test_native_identifier_guard_prevents_path_traversal(self):
+        provider = self.Provider(self.files())
+        provider.files["relay/STATE.yaml"]["execution"]["ep"] = "../outside"
+        result = self.observe(provider=provider)
+        self.assertEqual("SOURCE_NATIVE_ID_INVALID", result["reason"])
+        self.assertEqual([("relay/STATE.yaml", "a" * 40)], provider.calls)
+
+    def test_git_transport_validates_pinned_native_file_bytes(self):
+        import base64
+        import yaml
+        good = {"execution": {"ep": "EP-P3-B8"}}
+        raw = yaml.safe_dump(good).encode("utf-8")
+
+        class FakeGitTransport(M.GhTransport):
+            def __init__(self, raw):
+                self.repository = "reallaksh19/Common"
+                self.raw = raw
+            def _gh(self, path):
+                return {
+                    "type": "file", "encoding": "base64",
+                    "size": len(self.raw),
+                    "content": base64.b64encode(self.raw).decode("ascii"),
+                }
+
+        transport = FakeGitTransport(raw)
+        self.assertEqual(good, transport.read_native_yaml_at_sha(
+            "relay/STATE.yaml", "a" * 40))
+        for path in ("relay/../STATE.yaml", "relay/WORK/../../secret.yaml",
+                     "elsewhere.yaml"):
+            with self.subTest(path=path), self.assertRaises(M.DelpError):
+                transport.read_native_yaml_at_sha(path, "a" * 40)
+        with self.assertRaises(M.DelpError):
+            transport.read_native_yaml_at_sha("relay/STATE.yaml", "not-sha")
+        transport.raw = b"x" * 131073
+        with self.assertRaises(M.DelpError):
+            transport.read_native_yaml_at_sha("relay/STATE.yaml", "a" * 40)
+
+
+class NativeIsolatedBootstrapQualification(unittest.TestCase):
+    """#732 M1b: execute the isolated native transaction falsifier in hosted DELP."""
+
+    def test_real_438_root_unchanged_by_synthetic_idle_604_admission(self):
+        from test_relay_tx import RelayTransactionalCommandTests
+
+        case = RelayTransactionalCommandTests(
+            methodName="test_isolated_idle_fixture_admits_604_without_touching_root_438"
+        )
+        case.test_isolated_idle_fixture_admits_604_without_touching_root_438()
 
 
 if __name__ == "__main__":

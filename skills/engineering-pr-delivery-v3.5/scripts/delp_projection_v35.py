@@ -33,6 +33,7 @@ import re
 import subprocess
 import sys
 import types
+from datetime import datetime, timezone
 from fractions import Fraction
 from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping
@@ -3790,6 +3791,8 @@ def partition_ledger(
         order = entry.get("order")
         record = dict(facts)
         record["_source"] = source
+        if isinstance((entry or {}).get("provider"), Mapping):
+            record["_provider"] = copy.deepcopy(entry["provider"])
         accepted.setdefault(leaf_ref, []).append(
             (int(order) if isinstance(order, int) and not isinstance(order, bool) else position, position, record)
         )
@@ -3889,8 +3892,10 @@ def project(
     ledger: Iterable[Mapping[str, Any]] = (),
     observations: Mapping[str, Mapping[str, Any]] | None = None,
     topology_observations: Mapping[str, Mapping[str, Any]] | None = None,
+    custody_state: Mapping[str, Any] | None = None,
+    custody_lease: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Recompute every node from plan, facts, provider truth and topology observations."""
+    """Recompute every node from plan, facts, provider truth, topology and optional active custody."""
     ledger = list(ledger)
     if topology_observations is None:
         topology_observations = {}
@@ -3899,7 +3904,19 @@ def project(
     indexed = validate_graph(graph)
     nodes = indexed["nodes"]
     observations = normalize_observations(indexed, observations)
-    accepted, rejected = partition_ledger(indexed, ledger)
+    accepted_all, rejected = partition_ledger(indexed, ledger)
+    if (custody_state is None) != (custody_lease is None):
+        raise DelpError("custody_state and custody_lease must be supplied together")
+    accepted = accepted_all
+    fenced_facts: list[dict[str, Any]] = []
+    custody_summaries: dict[str, dict[str, Any]] = {}
+    custody_fence = None
+    if custody_state is not None and custody_lease is not None:
+        accepted, fenced_facts, custody_summaries, custody_fence = apply_custody_fact_fence(
+            accepted_all,
+            custody_state,
+            custody_lease,
+        )
     results: dict[str, dict[str, Any]] = {}
     mode = indexed["policy"]["mode"]
 
@@ -3907,7 +3924,21 @@ def project(
         if nodes[ref]["kind"] == "LEAF":
             records = accepted.get(ref, [])
             results[ref] = compute_leaf(nodes[ref], records, observations.get(nodes[ref]["number"]))
-            results[ref]["execution_provenance"] = execution_provenance(records)
+            results[ref]["execution_provenance"] = execution_provenance(accepted_all.get(ref, []))
+            if custody_fence is not None:
+                results[ref]["custody_fence"] = custody_summaries.get(
+                    ref,
+                    {
+                        "active_execution": {
+                            key: custody_fence[key]
+                            for key in ("ep", "lease", "executor", "custody_epoch")
+                        },
+                        "granted_at": custody_fence["granted_at"],
+                        "effective_fact_count": 0,
+                        "fenced_fact_count": 0,
+                        "fenced_sources": [],
+                    },
+                )
     if mode != "OFF":
         # Closed (COMPLETE/SUPERSEDED) leaves are history, not work to release: the gate skips them.
         closed = {ref for ref, leaf in results.items() if leaf["lifecycle"] in _TERMINAL}
@@ -4130,13 +4161,24 @@ def project(
         "root": indexed["root"],
         "nodes": out_nodes,
         "rejected_facts": rejected,
+        "fenced_facts": fenced_facts,
         "input_digest": canonical_digest(
             {
                 "graph": indexed["digest"],
                 "ledger": [
-                    {"source": str((e or {}).get("source") or ""), "order": (e or {}).get("order"), "facts": (e or {}).get("facts")}
+                    {
+                        "source": str((e or {}).get("source") or ""),
+                        "order": (e or {}).get("order"),
+                        "facts": (e or {}).get("facts"),
+                        **(
+                            {"provider": (e or {}).get("provider")}
+                            if custody_fence is not None
+                            else {}
+                        ),
+                    }
                     for e in ledger
                 ],
+                "custody_fence": custody_fence,
                 "observations": {str(k): v for k, v in sorted(observations.items())},
                 "topology_observations": {
                     str(k): v
@@ -4595,9 +4637,9 @@ def frontier(
     )
     leaf = projection["nodes"][ref]
     accepted, _ = partition_ledger(indexed, ledger)
-    mine = [{k: v for k, v in record.items() if k != "_source"} for record in accepted.get(ref, [])]
+    mine = [{k: v for k, v in record.items() if not str(k).startswith("_")} for record in accepted.get(ref, [])]
     dependency_facts = {
-        dep: [{k: v for k, v in record.items() if k != "_source"} for record in accepted.get(dep, [])]
+        dep: [{k: v for k, v in record.items() if not str(k).startswith("_")} for record in accepted.get(dep, [])]
         for dep in indexed["nodes"][ref]["depends_on"]
     }
     material = leaf["material"]
@@ -4931,6 +4973,238 @@ def sync_projection(
     return report
 
 
+def _provider_comment_timestamp(value: Any, label: str) -> tuple[str, datetime]:
+    """Validate and normalize one provider-authored issue-comment timestamp."""
+    if not isinstance(value, str) or not value.strip():
+        raise DelpError(f"{label}: provider timestamp required")
+    raw = value.strip()
+    try:
+        parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise DelpError(f"{label}: valid ISO-8601 provider timestamp required") from exc
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise DelpError(f"{label}: timezone-aware provider timestamp required")
+    utc = parsed.astimezone(timezone.utc)
+    return utc.isoformat().replace("+00:00", "Z"), utc
+
+
+def _github_comment_provider_envelope(comment: Mapping[str, Any]) -> dict[str, Any]:
+    """Return provider-authored publication/edit time for one GitHub issue comment."""
+    created_text, created = _provider_comment_timestamp(
+        comment.get("created_at"),
+        "GitHub comment.created_at",
+    )
+    updated_text, updated = _provider_comment_timestamp(
+        comment.get("updated_at"),
+        "GitHub comment.updated_at",
+    )
+    if updated < created:
+        raise DelpError("GitHub comment.updated_at: cannot precede created_at")
+    return {
+        "kind": "GITHUB_ISSUE_COMMENT",
+        "created_at": created_text,
+        "updated_at": updated_text,
+    }
+
+
+def custody_fence_from_state_lease(
+    state: Mapping[str, Any], lease: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Derive the active custody fence without creating a second custody authority."""
+    binding = execution_binding_from_state_lease(state, lease)
+    custody = lease.get("custody")
+    granted_raw = custody.get("granted_at") if isinstance(custody, Mapping) else None
+    granted_at, _ = _provider_comment_timestamp(
+        granted_raw,
+        "LEASE.custody.granted_at",
+    )
+    return {
+        **binding,
+        "granted_at": granted_at,
+    }
+
+
+def classify_fact_custody(
+    entry: Mapping[str, Any],
+    state: Mapping[str, Any],
+    lease: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Classify one fact against active custody without filtering or changing the fact."""
+    if not isinstance(entry, Mapping) or not isinstance(entry.get("facts"), Mapping):
+        raise DelpError("custody classification requires one ledger entry with facts")
+    errors = validate_facts(entry["facts"])
+    if errors:
+        raise DelpError("cannot classify invalid facts: " + "; ".join(errors))
+
+    fact_execution = entry["facts"].get("execution")
+    fence = custody_fence_from_state_lease(state, lease)
+    base = {
+        "active_execution": {
+            key: fence[key]
+            for key in ("ep", "lease", "executor", "custody_epoch")
+        },
+        "fence_granted_at": fence["granted_at"],
+        "fact_execution": copy.deepcopy(fact_execution),
+        "provider_updated_at": None,
+    }
+
+    provider = entry.get("provider")
+    if not isinstance(provider, Mapping) or provider.get("kind") != "GITHUB_ISSUE_COMMENT":
+        if not isinstance(fact_execution, Mapping):
+            return {
+                **base,
+                "relation": "UNBOUND",
+                "reason": "FACT_EXECUTION_UNBOUND_PROVIDER_TIME_UNAVAILABLE",
+            }
+        return {
+            **base,
+            "relation": "UNKNOWN",
+            "reason": "PROVIDER_TIME_UNAVAILABLE",
+        }
+
+    updated_text, updated = _provider_comment_timestamp(
+        provider.get("updated_at"),
+        "ledger provider.updated_at",
+    )
+    _, granted = _provider_comment_timestamp(
+        fence["granted_at"],
+        "LEASE.custody.granted_at",
+    )
+    base["provider_updated_at"] = updated_text
+
+    if not isinstance(fact_execution, Mapping):
+        if updated < granted:
+            return {
+                **base,
+                "relation": "UNBOUND",
+                "reason": "UNBOUND_PUBLISHED_BEFORE_CURRENT_GRANT",
+            }
+        if updated > granted:
+            return {
+                **base,
+                "relation": "UNKNOWN",
+                "reason": "UNBOUND_POST_FENCE_CANNOT_PROVE_CURRENT_CUSTODY",
+            }
+        return {
+            **base,
+            "relation": "UNKNOWN",
+            "reason": "UNBOUND_FENCE_TIMESTAMP_TIE",
+        }
+
+    fact_epoch = int(fact_execution["custody_epoch"])
+    active_epoch = int(fence["custody_epoch"])
+    exact_binding = all(
+        fact_execution.get(key) == fence[key]
+        for key in ("ep", "lease", "executor", "custody_epoch")
+    )
+
+    if fact_epoch == active_epoch:
+        if not exact_binding:
+            return {
+                **base,
+                "relation": "UNKNOWN",
+                "reason": "CURRENT_EPOCH_IDENTITY_MISMATCH",
+            }
+        if updated < granted:
+            return {
+                **base,
+                "relation": "UNKNOWN",
+                "reason": "CURRENT_EPOCH_PREDATES_GRANT",
+            }
+        return {
+            **base,
+            "relation": "CURRENT_EPOCH",
+            "reason": "ACTIVE_EXECUTION_BINDING_MATCH",
+        }
+
+    if fact_epoch > active_epoch:
+        return {
+            **base,
+            "relation": "UNKNOWN",
+            "reason": "FUTURE_CUSTODY_EPOCH",
+        }
+
+    if updated < granted:
+        return {
+            **base,
+            "relation": "HISTORICAL_PRE_FENCE",
+            "reason": "OLDER_EPOCH_PUBLISHED_BEFORE_CURRENT_GRANT",
+        }
+    if updated > granted:
+        return {
+            **base,
+            "relation": "STALE_POST_FENCE",
+            "reason": "OLDER_EPOCH_PUBLISHED_AFTER_CURRENT_GRANT",
+        }
+    return {
+        **base,
+        "relation": "UNKNOWN",
+        "reason": "FENCE_TIMESTAMP_TIE",
+    }
+
+
+def apply_custody_fact_fence(
+    accepted: Mapping[str, list[dict[str, Any]]],
+    state: Mapping[str, Any],
+    lease: Mapping[str, Any],
+) -> tuple[
+    dict[str, list[dict[str, Any]]],
+    list[dict[str, Any]],
+    dict[str, dict[str, Any]],
+    dict[str, Any],
+]:
+    """Return effective semantic facts while retaining fenced facts as audit evidence."""
+    fence = custody_fence_from_state_lease(state, lease)
+    active_execution = {
+        key: fence[key]
+        for key in ("ep", "lease", "executor", "custody_epoch")
+    }
+    effective: dict[str, list[dict[str, Any]]] = {}
+    fenced: list[dict[str, Any]] = []
+    summaries: dict[str, dict[str, Any]] = {}
+
+    for ref, records in accepted.items():
+        kept: list[dict[str, Any]] = []
+        leaf_fenced: list[str] = []
+        for record in records:
+            facts = {
+                key: copy.deepcopy(value)
+                for key, value in record.items()
+                if not str(key).startswith("_")
+            }
+            entry: dict[str, Any] = {"facts": facts}
+            if isinstance(record.get("_provider"), Mapping):
+                entry["provider"] = copy.deepcopy(record["_provider"])
+            relation = classify_fact_custody(entry, state, lease)
+            unsafe = relation["relation"] in {"STALE_POST_FENCE", "UNKNOWN"}
+            if unsafe:
+                source = str(record.get("_source") or "")
+                leaf_fenced.append(source)
+                fenced.append(
+                    {
+                        "leaf": ref,
+                        "source": source,
+                        "relation": relation["relation"],
+                        "reason": relation["reason"],
+                        "fact_execution": copy.deepcopy(relation["fact_execution"]),
+                        "provider_updated_at": relation["provider_updated_at"],
+                        "fence_granted_at": relation["fence_granted_at"],
+                    }
+                )
+            else:
+                kept.append(record)
+        effective[ref] = kept
+        summaries[ref] = {
+            "active_execution": copy.deepcopy(active_execution),
+            "granted_at": fence["granted_at"],
+            "effective_fact_count": len(kept),
+            "fenced_fact_count": len(leaf_fenced),
+            "fenced_sources": sorted(set(source for source in leaf_fenced if source)),
+        }
+
+    return effective, fenced, summaries, fence
+
+
 def ledger_from_github(transport: Any, graph: Any) -> list[dict[str, Any]]:
     """Collect CHECKPOINT_FACTS_V1 blocks from each declared leaf issue's comments, oldest first.
 
@@ -4950,10 +5224,13 @@ def ledger_from_github(transport: Any, graph: Any) -> list[dict[str, Any]]:
                 if allowlist
                 else str(comment.get("author_association") or "") in TRUSTED_ASSOCIATIONS
             )
-            for facts in extract_facts_blocks(str(comment.get("body") or "")):
+            blocks = extract_facts_blocks(str(comment.get("body") or ""))
+            provider = _github_comment_provider_envelope(comment) if blocks else None
+            for facts in blocks:
                 row = {
                     "source": f"{ref}#issuecomment-{comment.get('id')}",
                     "order": int(comment.get("id") or 0),
+                    "provider": provider,
                     "facts": facts,
                 }
                 if not trusted:
@@ -5066,6 +5343,40 @@ class GhTransport:
         if proc.returncode:
             raise DelpError(proc.stderr.strip() or "gh api failed")
         return json.loads(proc.stdout) if proc.stdout.strip() else {}
+
+    def read_native_yaml_at_sha(self, path: str, commit_sha: str) -> dict[str, Any]:
+        """Read one native Relay YAML document at an immutable GitHub commit.
+
+        Repository/file origin is observed here, NOT approved as a custody
+        grant. Callers must separately bind EP/lease scope and Owner authority.
+        """
+        import base64
+        import binascii
+        import yaml  # type: ignore
+
+        if not re.fullmatch(r"[0-9a-f]{40}", commit_sha):
+            raise DelpError("native custody source: immutable commit SHA required")
+        if not re.fullmatch(
+            r"relay/(?:STATE\.yaml|WORK/EP[-.][A-Za-z0-9_.-]+\.yaml|LEASES/LEASE[-.][A-Za-z0-9_.-]+\.yaml)",
+            path,
+        ) or ".." in path:
+            raise DelpError("native custody source: path outside native STATE/WORK/LEASES")
+        response = self._gh(f"repos/{self.repository}/contents/{path}?ref={commit_sha}")
+        if not isinstance(response, Mapping) or response.get("type") != "file":
+            raise DelpError("native custody source: provider did not return a file")
+        if response.get("encoding") != "base64":
+            raise DelpError("native custody source: provider encoding must be base64")
+        try:
+            encoded = "".join(str(response.get("content") or "").split())
+            raw = base64.b64decode(encoded, validate=True)
+            if len(raw) > 131072 or int(response.get("size") or -1) != len(raw):
+                raise DelpError("native custody source: content exceeds budget or size mismatches")
+            document = yaml.safe_load(raw.decode("utf-8", errors="strict"))
+        except (binascii.Error, UnicodeError, ValueError, yaml.YAMLError) as exc:
+            raise DelpError("native custody source: malformed provider YAML") from exc
+        if not isinstance(document, dict):
+            raise DelpError("native custody source: expected YAML mapping")
+        return document
 
     def get_commit_sha(self, ref: str) -> str:
         return str(self._gh(f"repos/{self.repository}/commits/{ref}").get("sha") or "")
