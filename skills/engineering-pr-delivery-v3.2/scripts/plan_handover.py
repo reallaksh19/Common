@@ -21,6 +21,41 @@ from relay_tx import _assert_event_ids_available, _event, _issue_scoped_id, _tra
 
 
 
+def _assert_native_graph_current_release(repository: str, graph_path: str, pinned_raw: bytes) -> None:
+    """Bind native handover to current default-branch graph, not just a caller SHA.
+
+    The same canonical graph must feed decomposition/scoreboards and a CURRENT
+    successor. An immutable agent-selected commit is insufficient release proof.
+    This is provider-currentness only, not Owner approval or a merge grant.
+    """
+    try:
+        repo_response = subprocess.run(
+            ["gh", "api", "--method", "GET", "repos/" + repository],
+            capture_output=True, text=True, check=True, timeout=45,
+        )
+        repo_meta = json.loads(repo_response.stdout)
+        if (not isinstance(repo_meta, dict)
+                or str(repo_meta.get("full_name") or "").lower() != repository.lower()):
+            raise ValueError("repository identity mismatch")
+        branch = repo_meta.get("default_branch")
+        if not isinstance(branch, str) or not re.fullmatch(r"[A-Za-z0-9_./-]{1,200}", branch):
+            raise ValueError("missing safe default branch")
+        endpoint = ("repos/" + repository + "/contents/"
+                    + quote(graph_path, safe="/") + "?ref=" + quote(branch, safe=""))
+        released_response = subprocess.run(
+            ["gh", "api", "--method", "GET", endpoint],
+            capture_output=True, text=True, check=True, timeout=45,
+        )
+        item = json.loads(released_response.stdout)
+        if not isinstance(item, dict) or item.get("type") != "file" or item.get("encoding") != "base64":
+            raise ValueError("default branch graph not a canonical content file")
+        released_raw = base64.b64decode(item["content"], validate=False)
+    except (OSError, subprocess.SubprocessError, ValueError, KeyError, TypeError) as exc:
+        raise TransactionError("SOURCE_RELEASED_GRAPH_GET_FAILED") from exc
+    if released_raw != pinned_raw:
+        raise TransactionError("SOURCE_GRAPH_NOT_CURRENT_RELEASED")
+
+
 def _native_delp_source(
     *, repository: str, graph_revision: str, graph_path: str,
     leaf_ref: str, frozen_basis_path: Path | None = None,
@@ -68,6 +103,13 @@ def _native_delp_source(
     ):
         raise TransactionError("SOURCE_GRAPH_REPOSITORY_MISMATCH")
 
+    # Mandatory release custody: a pin can identify a candidate PR graph that is
+    # not yet the graph used by the live DELP scoreboard. Do not call that CURRENT.
+    def release_check() -> None:
+        _assert_native_graph_current_release(repository, graph_path, raw)
+
+    release_check()
+
     import delp_projection_v32 as delp
 
     class ReadOnlyGithub:
@@ -100,6 +142,7 @@ def _native_delp_source(
         "leaf_ref": leaf_ref,
         "provider": ReadOnlyGithub(),
         "frozen_basis": frozen_basis,
+        "__native_release_check": release_check,
         "__native_graph_source": {
             "repository": repository,
             "revision": graph_revision,
@@ -232,8 +275,15 @@ def plan_handover(
         delp_source.get("__native_graph_source")
         if isinstance(delp_source, dict) else None
     )
+    native_release_check = (
+        delp_source.get("__native_release_check")
+        if isinstance(delp_source, dict) else None
+    )
+    if native_release_check is not None and not callable(native_release_check):
+        raise TransactionError("SOURCE_RELEASE_CHECK_INVALID")
     context_source = (
-        {k: v for k, v in delp_source.items() if k != "__native_graph_source"}
+        {k: v for k, v in delp_source.items()
+         if k not in {"__native_graph_source", "__native_release_check"}}
         if isinstance(delp_source, dict) else delp_source
     )
     context, snapshot = build_context(
@@ -316,6 +366,8 @@ def plan_handover(
     # immediately before entering the transactional staging/commit boundary.
     # This is a read-only freshness fence, not an external GitHub CAS.
     if source_bound is not None:
+        if native_release_check is not None:
+            native_release_check()
         last_read = build_delp_source_bound_successor(
             context_source["graph"],
             leaf_ref=context_source["leaf_ref"],
