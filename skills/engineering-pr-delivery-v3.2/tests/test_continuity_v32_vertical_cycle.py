@@ -239,5 +239,81 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             result["parent_actual_title"])
 
 
+    def _provider(self, *, child_title=None, pr_title=None, moved=False):
+        """Deterministic GitHub GET-only fake, with exact PR identity/readback."""
+        class Provider:
+            pass
+        p = Provider()
+        p.head = "c" * 40
+        p.count = 0
+        p.get_commit_sha = lambda name: "e" * 40
+        p.get_issue = lambda number: {
+            "number": number,
+            "title": (
+                "🟡 [718] NEXT #733/C4 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine"
+                if number == 718 else
+                child_title or "🟡 [718›733] R-PROJECTION · C4 · PR#740 · UNMATERIALIZED — Issue/PR Views"
+            ),
+            "body": "## Human Owner specification preserved\n"
+        }
+        p.list_comments = lambda number: []
+        def get_pull(number):
+            if number == 740:
+                p.count += 1
+                head = ("d" * 40 if moved and p.count >= 3 else p.head)
+                return {
+                    "number": 740, "head": {"sha": head},
+                    "state": "open", "draft": True, "merged": False,
+                    "title": pr_title or
+                        "🟡 [718›733] DRAFT · VIEW-PR · HEAD:ccccccc · Q:UNPROVEN — Cross-Surface Views",
+                    "body": "## Human PR rationale preserved\n",
+                }
+            if number in (722, 728):
+                sha = ("b3dfba3becf829d3a4e21d6eaa54983f05317b65" if number == 722 else
+                       "7ef9fbdd0c6f0f941fd573c1663c7a142fc41414")
+                return {"number": number, "head": {"sha": sha},
+                        "state": "closed", "draft": False, "merged": True}
+            raise AssertionError(f"unapproved fake PR #{number}")
+        p.get_pull = get_pull
+        return p
+
+    def test_23_live_provider_readback_uses_actual_v32_module_and_no_mutations(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        provider = self._provider()
+        report = replay.live_readback(self.manifest, live, provider)
+        self.assertEqual("BOUND", report["pr_binding"])
+        self.assertEqual("DRIFT_OR_UNPUBLISHED", report["reconciliation"])
+        self.assertEqual("MATCH", report["read_views"]["Common#718"]["title"])
+        self.assertEqual("MATCH", report["read_views"]["Common#733"]["title"])
+        self.assertEqual("MATCH", report["read_views"]["Common#740"]["title"])
+        self.assertEqual("MISSING", report["read_views"]["Common#740"]["managed_block"])
+        self.assertEqual(["Common#720", "Common#724"], report["historical_unreported"])
+        self.assertEqual(0, report["semantic_progress"]["P"])
+        self.assertEqual(0, report["semantic_progress"]["E"])
+        self.assertEqual([], report["authority_effects"])
+        self.assertEqual(3, provider.count)
+
+    def test_24_live_child_title_drift_detected_even_if_parent_matches(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        report = replay.live_readback(self.manifest, live, self._provider(
+            child_title="🟢 [718›733] COMPLETE — Issue/PR Views"))
+        self.assertEqual("MATCH", report["read_views"]["Common#718"]["title"])
+        self.assertEqual("DRIFT", report["read_views"]["Common#733"]["title"])
+        self.assertEqual("DRIFT_OR_UNPUBLISHED", report["reconciliation"])
+
+    def test_25_live_provider_changed_head_midflight_refuses_stale_render(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        with self.assertRaisesRegex(replay.ReplayError, "PROVIDER_MOVED_DURING_RECONCILIATION"):
+            replay.live_readback(self.manifest, live, self._provider(moved=True))
+
+    def test_26_live_PR_title_head_drift_detected_without_fabricating_facts(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        r = replay.live_readback(self.manifest, live, self._provider(
+            pr_title="🟡 [718›733] DRAFT · HEAD:OLD · Q:PROVEN — Cross-Surface Views"))
+        self.assertEqual("DRIFT", r["read_views"]["Common#740"]["title"])
+        self.assertEqual("UNPROVEN", r["qualifier"]["state"])
+        self.assertEqual("DRIFT_OR_UNPUBLISHED", r["reconciliation"])
+
+
 if __name__ == "__main__":
     unittest.main()
