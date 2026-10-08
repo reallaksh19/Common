@@ -28,4 +28,6 @@ jobs:
           RELAY_FULL_CHAIN_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           RELAY_FULL_CHAIN_PR_NUMBER: ${{ github.event.number }}
           RELAY_FULL_CHAIN_READ_TOKEN: ${{ github.token }}
+          RELAY_G2C_CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RELAY_G2C_TOKEN: ${{ github.token }}
         run: node --test skills/engineering-relay-v1/full-chain-rehearsal-v1.test.mjs skills/engineering-relay-v1/github-journal-lineage-v1.test.mjs
