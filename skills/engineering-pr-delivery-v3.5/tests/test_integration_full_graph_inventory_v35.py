@@ -220,6 +220,15 @@ class FullGraphInventoryTests(unittest.TestCase):
             U4.inspect(self.t,candidate)
         self.assertEqual([],self.t.writes)
 
+    def test_fake_graph_approval_marker_never_produces_cli_success(self):
+        self.t.comments[600].append({
+            "id": 999999, "body": U4.GRAPH.APPROVAL_START + "\\nFAKE\\n",
+            "author_association": "CONTRIBUTOR", "user": {"login": "attacker"},
+        })
+        with patch.object(PUBLISH, "ScoreboardTransport", return_value=self.t):
+            self.assertEqual(3, U4.main(["--repository", self.t.repository]))
+        self.assertEqual([], self.t.writes)
+
     def test_cli_realistic_missing_authority_exits_hold_no_write(self):
         with patch.object(PUBLISH,"ScoreboardTransport",return_value=self.t):
             self.assertEqual(3,U4.main(["--repository",self.t.repository]))
