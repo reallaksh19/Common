@@ -1215,3 +1215,15 @@ class HandoverContextTests(unittest.TestCase):
             build_delp_source_bound_successor(
                 graph, leaf_ref="Common#720", provider=provider,
                 owner_source_status="LINKED_ORIGINAL_SOURCE")
+
+    def test_delp_successor_refuses_unbound_esc4_like_leaf(self):
+        # The real C1 graph originally had no primary_pr or candidate_ref for
+        # Common#793. Its live SHA was invisible to observe_github. A leaf
+        # without either binding is never CURRENT, even if other leaves are.
+        graph, provider = self._source_bound_fixture()
+        target = next(n for n in graph["nodes"] if n["ref"] == "Common#733")
+        target.pop("primary_pr", None)
+        target.pop("candidate_ref", None)
+        with self.assertRaisesRegex(HandoverContextError, "SOURCE_CANDIDATE_NOT_BOUND"):
+            build_delp_source_bound_successor(graph, leaf_ref="Common#733", provider=provider)
+
