@@ -234,5 +234,49 @@ class TrustedEventScoreboardTests(unittest.TestCase):
             trusted.gate(case["event_name"], case["event"], self.graph,
                          provider, enabled=True)["decision"])
 
+    def test_16_ten_precommitted_issue_comment_relay_oracles(self):
+        fixture = json.loads((ROOT / ".github/v32-evidence-spine/744-issue-signal-oracles-v1.json").read_text())
+        self.assertEqual("PRECOMMITTED_EXPECTED_NOT_DERIVED_FROM_GATE",fixture["authority"])
+        self.assertEqual("390dffe6aa2e0fe687d256e7a73f14a94b255897",fixture["baseline_source_head"])
+        self.assertEqual(10,len(fixture["cases"]))
+        provider = self.provider()
+        provider["state"], provider["merged"] = "closed", True
+        for case in fixture["cases"]:
+            with self.subTest(id=case["id"]):
+                result = trusted.gate(case["event_name"],case["event"],self.graph,
+                                      provider,enabled=case["enabled"])
+                self.assertEqual(case["expected"],result["decision"])
+                self.assertEqual(0,result["writes"])
+                self.assertEqual("NEVER_ASSIGNED",result["semantic_progress"])
+
+    def test_17_own_DELP_live_status_issue_comment_never_reenters_writer(self):
+        fixture = json.loads((ROOT / ".github/v32-evidence-spine/744-issue-signal-oracles-v1.json").read_text())
+        event = next(x["event"] for x in fixture["cases"] if x["id"]=="ISS-07-MANAGED-STATUS")
+        class ReadOnly:
+            def __init__(self): self.calls=[]
+            def get_pull(self,n):
+                self.calls.append(n)
+                return {"number":740,"head":{"sha":"a"*40,
+                        "repo":{"full_name":"reallaksh19/Common"}},
+                        "base":{"ref":"main","repo":{"full_name":"reallaksh19/Common"}},
+                        "state":"closed","merged":True}
+            def __getattr__(self,name):
+                raise AssertionError("MANAGED_EVENT_MUST_NOT_READ_OR_WRITE:"+name)
+        p = ReadOnly()
+        result=trusted.run("issue_comment",event,enabled=True,apply=True,
+                           transport=p,graph=self.graph,manifest=self.manifest)
+        self.assertEqual("DENY_MANAGED_STATUS_COMMENT",result["decision"])
+        self.assertEqual("SKIPPED_WITHOUT_MUTATION",result["status"])
+        self.assertEqual([740],p.calls)
+
+    def test_18_trusted_workflow_issues_comment_event_is_default_branch_only(self):
+        workflow=WORKFLOW.read_text()
+        self.assertIn("issue_comment:",workflow)
+        self.assertIn("types: [created, edited, deleted]",workflow)
+        self.assertIn("ref: ${{ github.event.repository.default_branch }}",workflow)
+        self.assertIn("cancel-in-progress: false",workflow)
+        self.assertNotIn("ref: ${{ github.event.pull_request.head.sha }}",workflow)
+        self.assertIn("V32_718_LIVE_SCOREBOARD_ENABLED",workflow)
+
 if __name__ == "__main__":
     unittest.main()
