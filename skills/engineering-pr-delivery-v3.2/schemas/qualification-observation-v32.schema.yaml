@@ -1,0 +1,101 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: relay-v3.2-qualification-observation-v1
+title: Source-bound qualification observation; DERIVED_OBSERVATION_ONLY
+type: object
+additionalProperties: false
+required:
+  - schema
+  - authority
+  - repository
+  - responsibility
+  - expected_candidate_sha
+  - observed_candidate_sha
+  - overall
+  - requirements
+properties:
+  schema:
+    const: relay-v3.2-qualification-observation-v1
+  authority:
+    const: DERIVED_OBSERVATION_ONLY
+  repository:
+    type: string
+    pattern: '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$'
+  responsibility:
+    type: string
+    pattern: '^[A-Za-z0-9_.-]+#[0-9]+$'
+  expected_candidate_sha:
+    type: string
+    pattern: '^[0-9a-fA-F]{40}$'
+  observed_candidate_sha:
+    oneOf:
+      - type: 'null'
+      - type: string
+        pattern: '^[0-9a-fA-F]{40}$'
+  overall:
+    enum: [PROVEN, UNPROVEN, UNKNOWN]
+  requirements:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, status, reason, evidence_refs]
+      properties:
+        id:
+          type: string
+          minLength: 1
+        status:
+          enum: [PROVEN, UNPROVEN, UNKNOWN]
+        reason:
+          type: string
+          minLength: 1
+        evidence_refs:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+            minLength: 1
+
+$defs:
+  qualification_contract:
+    type: object
+    additionalProperties: false
+    required: [schema, repository, responsibility, pull_number, candidate_sha, requirements]
+    properties:
+      schema:
+        const: relay-v3.2-qualification-contract-v1
+      repository:
+        type: string
+        pattern: '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$'
+      responsibility:
+        type: string
+        pattern: '^[A-Za-z0-9_.-]+#[0-9]+$'
+      pull_number:
+        type: integer
+        minimum: 1
+      candidate_sha:
+        type: string
+        pattern: '^[0-9a-fA-F]{40}$'
+      requirements:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items:
+          oneOf:
+            - type: object
+              additionalProperties: false
+              required: [id, kind, case_id, job_name, step_name]
+              properties:
+                id: {type: string, minLength: 1}
+                kind: {const: UNITTEST}
+                case_id: {type: string, minLength: 1}
+                job_name: {type: string, minLength: 1}
+                step_name: {type: string, minLength: 1}
+            - type: object
+              additionalProperties: false
+              required: [id, kind, path, expected_blob_sha]
+              properties:
+                id: {type: string, minLength: 1}
+                kind: {const: BLOB}
+                path: {type: string, minLength: 1}
+                expected_blob_sha: {type: string, pattern: '^[0-9a-fA-F]{40}$'}
