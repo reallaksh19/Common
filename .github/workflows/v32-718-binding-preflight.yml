@@ -22,10 +22,11 @@ jobs:
           python-version: '3.12'
       - name: Install checkpoint-fact parser dependency
         run: python -m pip install --disable-pip-version-check PyYAML
-      - name: Revalidate exact V3.2 release and three provider bindings
+      - name: Revalidate released V3.2 contract and four exact provider bindings
         shell: bash
         run: |
           set -euo pipefail
+          git merge-base --is-ancestor 69dd8a80df0a3ac0cacabee7cbe10860ed729545 HEAD
           GRAPH=.github/v32-evidence-spine/718-proposal-v2.json
           DELP=skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py
           python "$DELP" validate-graph --graph "$GRAPH"
@@ -36,26 +37,61 @@ jobs:
           from pathlib import Path
           graph = json.loads(Path('.github/v32-evidence-spine/718-proposal-v2.json').read_text(encoding='utf-8'))
           report = json.loads(Path('/tmp/718-bound-report.json').read_text(encoding='utf-8'))
+          oracle = json.loads(Path('.github/v32-evidence-spine/793-binding-oracles-v1.json').read_text(encoding='utf-8'))
+          assert oracle['schema'] == 'common-v32-793-binding-oracles-v1'
+          assert oracle['authority'] == 'PRECOMMITTED_PROPOSED_EXPECTED_RESULTS_NOT_OWNER_ACCEPTANCE'
           proposal = graph['programme']['decomposition_proposal']
           assert report['proposal_digest'] == proposal['released_proposal_digest'] == 'sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd'
           assert report['release_state'] == 'RELEASEABLE', report
           assert report['summary']['evaluated'] == 6, report
           assert report['summary']['not_releasable'] == 0, report
-          assert graph['nodes'][0]['reserve_weight'] == 35, graph
-          assert {(b['responsibility_id'], b['ref']) for b in proposal['bindings']} == {('R-BASIS','Common#720'),('R-PROOF','Common#724'),('R-PROJECTION','Common#733')}
-          assert {n['ref'] for n in graph['nodes']} == {'Common#718','Common#720','Common#724','Common#733'}
+          # Compare the CURRENT provider graph to a separately precommitted ESC-4
+          # expected-result file. The historic C0 golden oracle stays untouched.
+          assert oracle['released_proposal_digest'] == proposal['released_proposal_digest']
+          assert oracle['expected_reserve_weight'] == 20 and oracle['old_reserve_weight'] == 35
+          assert graph['nodes'][0]['reserve_weight'] == oracle['expected_reserve_weight']
+          expected = {b['responsibility_id']: b for b in oracle['expected_bindings']}
+          observed = {b['responsibility_id']: b['ref'] for b in proposal['bindings']}
+          assert observed == {k: v['ref'] for k,v in expected.items()}, (observed, expected)
+          leaves = {n['responsibility_id']: n for n in graph['nodes'] if n['kind'] == 'LEAF'}
+          assert set(leaves) == set(expected), leaves
+          assert len(graph['nodes']) == oracle['expected']['node_count'] == 5
+          assert sum(n['weight'] for n in leaves.values()) + graph['nodes'][0]['reserve_weight'] == oracle['expected']['total_root_weight'] == 100
+          for identity, fixture in expected.items():
+              node = leaves[identity]
+              assert node['ref'] == fixture['ref'] and node['weight'] == fixture['weight'], node
+          new = oracle['expected_new_node']
+          selected = leaves[new['responsibility_id']]
+          assert selected['ref'] == new['ref'] and selected['parent'] == new['parent']
+          assert selected['kind'] == new['kind'] and selected['work_class'] == new['work_class']
+          assert selected['owns_claims'] == new['owns_claims'] and selected['depends_on'] == new['depends_on']
+          assert not selected.get('primary_pr'), 'NO_PRODUCT_PR_YET'
+          proposed = next(r for r in proposal['responsibilities'] if r['id'] == new['responsibility_id'])
+          assert selected['outcome'] == proposed['outcome']
+          assert selected['independence_basis'] == proposed['independence_basis']
+          assert selected['write_surface'] == proposed['write_surface']
+          assert selected['size_budget'] == proposed['size_budget']
+          assert selected['acceptance_methods'] == proposed['acceptance_methods']
+          assert [(u['id'],u['weight']) for u in selected['units']] == [(u['id'],u['weight']) for u in new['semantic_units']]
+          assert [(u['id'],u['weight'],u['outcome'],u['verify']) for u in selected['units']] == [
+              (u['id'],u['weight'],u['outcome'],u['verify']) for u in proposed['semantic_units']]
+          assert sum(u['weight'] for u in selected['units']) == 100
           path = Path('skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py')
           spec = importlib.util.spec_from_file_location('delp718', path)
           mod = importlib.util.module_from_spec(spec)
           assert spec and spec.loader
           spec.loader.exec_module(mod)
           projected = mod.project(graph, [], {})
-          for ref in ['Common#720', 'Common#724', 'Common#733']:
-              assert projected['nodes'][ref]['plan']['releasable'], projected['nodes'][ref]['plan']
+          for row in leaves.values():
+              assert projected['nodes'][row['ref']]['plan']['releasable'], projected['nodes'][row['ref']]['plan']
+          assert projected['nodes']['Common#793']['progress']['P'] == oracle['expected']['new_leaf_P'] == 0
+          assert projected['nodes']['Common#793']['progress']['E'] == oracle['expected']['new_leaf_E'] == 0
+          assert not projected['rejected_facts'], projected['rejected_facts']
           print('V32_718_BOUND_RELEASE=PASS')
           print('V32_718_PROPOSAL_DIGEST='+report['proposal_digest'])
-          print('V32_718_MATERIALIZED=R-BASIS:R-PROOF:R-PROJECTION')
-          print('V32_718_RESERVE=35')
+          print('V32_718_MATERIALIZED='+':'.join(sorted(leaves)))
+          print('V32_718_RESERVE='+str(graph['nodes'][0]['reserve_weight']))
+          print('V32_793_NO_FACT_OR_PROGRESS_PROMOTION=PASS')
           print('V32_718_PLAN_JOIN=PASS')
           PY
 
