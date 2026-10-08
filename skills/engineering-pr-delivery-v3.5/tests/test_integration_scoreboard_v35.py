@@ -14,6 +14,7 @@ import delp_projection_v35 as M
 import integration_read_model_v35 as R2
 import integration_scoreboard_v35 as R3
 import integration_scoreboard_publish_v35 as R4
+import integration_scoreboard_events_v35 as EVENTS
 
 
 def graph():
@@ -293,6 +294,37 @@ class LivePublisherTests(unittest.TestCase):
         result = self.apply()
         self.assertEqual("WRITTEN_READBACK_VERIFIED", result["pr"]["status"])
         self.assertIn("Concurrent human author edit", self.transport.pr["body"])
+
+    def test_event_routing_resolves_only_related_real_provider_slices(self):
+        candidates = (
+            ("pull_request", {"number": 712, "pull_request": {"number": 712}}, "SELECT"),
+            ("pull_request_review", {"pull_request": {"number": 712}}, "SELECT"),
+            ("issue_comment", {"issue": {"number": 604}}, "SELECT"),
+            ("issue_comment", {"issue": {"number": 600}}, "SELECT"),
+            ("issue_comment", {"issue": {"number": 999}}, "SKIP"),
+            ("pull_request", {"pull_request": {"number": 737}}, "SKIP"),
+            ("check_suite", {"check_suite": {"pull_requests": [{"number": 712}]}}, "SELECT"),
+            ("check_run", {"check_run": {"pull_requests": []}}, "SKIP"),
+            ("unrecognised_event", {"issue": {"number": 604}}, "SKIP"),
+        )
+        for name, payload, expected in candidates:
+            with self.subTest(event=name, payload=payload):
+                result = EVENTS.event_scope(self.graph, "Common#604", 712, name, payload)
+                self.assertEqual(expected, result["decision"])
+
+    def test_bot_publication_event_cannot_recurse(self):
+        decision = EVENTS.event_scope(
+            self.graph, "Common#604", 712,
+            "issue_comment", {"issue": {"number": 604}}, "github-actions[bot]"
+        )
+        self.assertEqual("SKIP", decision["decision"])
+        self.assertEqual("BOT_MANAGED_COMMENT_NO_LOOP", decision["reason"])
+
+    def test_event_foreign_leaf_and_pr_denied_without_work(self):
+        with self.assertRaises(EVENTS.EventError):
+            EVENTS.event_scope(self.graph, "Common#438", 712, "issue_comment", {})
+        with self.assertRaises(EVENTS.EventError):
+            EVENTS.event_scope(self.graph, "Common#604", 738, "issue_comment", {})
 
     def test_foreign_pr_and_repo_refused_before_write(self):
         with self.assertRaises(R4.PublishError):
