@@ -1,0 +1,524 @@
+{
+  "schema": "common-v32-718-precommitted-oracles-v1",
+  "programme": "Common#718",
+  "responsibility": "Common#733",
+  "repository": "reallaksh19/Common",
+  "frozen_graph": ".github/v32-evidence-spine/718-proposal-v2.json",
+  "released_proposal_digest": "sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd",
+  "main_at_precommit": "a40eab949a97aa33b7347ea0fdc27de139ecfbea",
+  "publication_boundary": "NO_V32_CODE_WRITE_OR_GRAPH_CHANGE; NO_PROGRESS_FROM_THIS_FIXTURE",
+  "owner_intents": [
+    {
+      "id": "OI-718-03",
+      "verbatim": "full of stats...\ni dont see any integration on github issue decompostion, issue title scorboard, task evidence, handover prompt and agent metric which is the core...\ni also don't see smart title in issue and draft... I also donot see \"My intent\" or\"Wowner inent\" presenvation i parent issue along with source links and golden fixtures which is mandatory.",
+      "original_source_ref": null,
+      "original_source_status": "UNRESOLVED_CHAT_MESSAGE_LINK",
+      "durable_archive_ref": "https://github.com/reallaksh19/Common/issues/733#issuecomment-6051916044",
+      "requirements": [
+        "OR-718-01",
+        "OR-718-02",
+        "OR-718-03",
+        "OR-718-04",
+        "OR-718-05",
+        "OR-718-06"
+      ]
+    },
+    {
+      "id": "OI-718-04",
+      "verbatim": "update git hub issue... walk the talk,  i.e, show how your implemented cycle will show in issue/OR/task evidence etc.... ensure that stress check achieves the same ie, self run via module once coded and achive same...",
+      "original_source_ref": null,
+      "original_source_status": "UNRESOLVED_CHAT_MESSAGE_LINK",
+      "durable_archive_ref": "https://github.com/reallaksh19/Common/issues/733#issuecomment-6051916044",
+      "requirements": [
+        "OR-718-07"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "id": "OR-718-01",
+      "claims": [
+        "ESC-1"
+      ],
+      "fixture_ids": [
+        "GF-ORIGIN",
+        "GF-ORIGIN-MISSING"
+      ],
+      "responsibility": "R-BASIS",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/718"
+      ]
+    },
+    {
+      "id": "OR-718-02",
+      "claims": [
+        "ESC-1"
+      ],
+      "fixture_ids": [
+        "GF-DECOMPOSE"
+      ],
+      "responsibility": "R-BASIS",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/720"
+      ]
+    },
+    {
+      "id": "OR-718-03",
+      "claims": [
+        "ESC-2"
+      ],
+      "fixture_ids": [
+        "GF-LEGACY",
+        "GF-UNDISCOVERED",
+        "GF-REBASE"
+      ],
+      "responsibility": "R-PROOF",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/724"
+      ]
+    },
+    {
+      "id": "OR-718-04",
+      "claims": [
+        "ESC-3"
+      ],
+      "fixture_ids": [
+        "GF-SMART-SURFACES",
+        "GF-PR-HEAD",
+        "GF-PUBLISH-RACE"
+      ],
+      "responsibility": "R-PROJECTION",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/733"
+      ]
+    },
+    {
+      "id": "OR-718-05",
+      "claims": [
+        "ESC-4"
+      ],
+      "fixture_ids": [
+        "GF-COLD-AGENT"
+      ],
+      "responsibility": "R-RECONSTRUCTION",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/718"
+      ]
+    },
+    {
+      "id": "OR-718-06",
+      "claims": [
+        "ESC-5"
+      ],
+      "fixture_ids": [
+        "GF-AGENT-PROVENANCE"
+      ],
+      "responsibility": "R-QUALITY",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/718"
+      ]
+    },
+    {
+      "id": "OR-718-07",
+      "claims": [
+        "ESC-6"
+      ],
+      "fixture_ids": [
+        "GF-VERTICAL"
+      ],
+      "responsibility": "G-REPLAY",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/733#issuecomment-6051916044"
+      ]
+    }
+  ],
+  "observed_historical_material": [
+    {
+      "responsibility": "R-BASIS",
+      "issue": "Common#720",
+      "pr": "Common#722",
+      "head_sha": "b3dfba3becf829d3a4e21d6eaa54983f05317b65",
+      "pr_state": "MERGED",
+      "checkpoint_facts": "UNREPORTED",
+      "source_ref": "https://github.com/reallaksh19/Common/pull/722"
+    },
+    {
+      "responsibility": "R-PROOF",
+      "issue": "Common#724",
+      "pr": "Common#728",
+      "head_sha": "7ef9fbdd0c6f0f941fd573c1663c7a142fc41414",
+      "pr_state": "MERGED",
+      "checkpoint_facts": "UNREPORTED",
+      "source_ref": "https://github.com/reallaksh19/Common/pull/728"
+    },
+    {
+      "responsibility": "R-PROJECTION",
+      "issue": "Common#733",
+      "pr": null,
+      "head_sha": null,
+      "pr_state": "NOT_MATERIALIZED",
+      "checkpoint_facts": "UNREPORTED",
+      "source_ref": "https://github.com/reallaksh19/Common/issues/733"
+    }
+  ],
+  "frozen_expected_current_views": {
+    "parent_issue": "Common#718",
+    "parent_title": "🟡 [718] NEXT #733/C0 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine",
+    "child_issue": "Common#733",
+    "child_title": "🟡 [718›733] R-PROJECTION · C0 · NO PRODUCT PR · CODE HELD — Issue/PR Views",
+    "child_product_pr": null,
+    "draft_pr_title_template": "🟡 [718›733] DRAFT · VIEW-PR · HEAD:<sha7> · Q:UNPROVEN — Cross-Surface Views",
+    "title_producer": "MANUAL_CURRENT_OBSERVATION_NOT_IMPLEMENTED",
+    "handover_adapter": "NOT_IMPLEMENTED",
+    "agent_matrix_adapter": "NOT_IMPLEMENTED",
+    "full_integrated_replay": "NOT_IMPLEMENTED"
+  },
+  "required_stage_outputs": [
+    "OR_LEDGER",
+    "DECOMPOSITION_BINDING",
+    "TASK_EVIDENCE_INPUT",
+    "SOURCE_OBSERVATION",
+    "RESPONSIBILITY_SNAPSHOT",
+    "PARENT_TITLE",
+    "CHILD_TITLE",
+    "PR_TITLE",
+    "PR_MANAGED_DESCRIPTION",
+    "HANDOVER_PROMPT",
+    "AGENT_MATRIX"
+  ],
+  "fixtures": [
+    {
+      "id": "GF-ORIGIN",
+      "claim": "ESC-1",
+      "responsibility": "R-BASIS",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/733#issuecomment-6051916044",
+        "https://github.com/reallaksh19/Common/issues/718"
+      ],
+      "input": {
+        "owner_intent": "OI-718-03",
+        "original_source_ref": null,
+        "source_status": "UNRESOLVED_CHAT_MESSAGE_LINK"
+      },
+      "expected": {
+        "intent_verbatim_preserved": true,
+        "source_status": "UNRESOLVED_CHAT_MESSAGE_LINK",
+        "archive_is_original": false,
+        "requirement": "OR-718-01"
+      },
+      "consumer_states": [
+        "OR_LEDGER",
+        "DECOMPOSITION_BINDING"
+      ],
+      "negative_mutation": "Replace quotation with paraphrase or pretend GitHub archive is chat source",
+      "oracle_authority": "PRECOMMITTED_SPECIFICATION_NOT_DERIVED_FROM_RENDERER"
+    },
+    {
+      "id": "GF-ORIGIN-MISSING",
+      "claim": "ESC-1",
+      "responsibility": "R-BASIS",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/733#issuecomment-6051916044"
+      ],
+      "input": {
+        "owner_intent": "OI-718-04",
+        "original_source_ref": null
+      },
+      "expected": {
+        "original_source_status": "UNRESOLVED_CHAT_MESSAGE_LINK",
+        "not_automatically_authenticated": true
+      },
+      "consumer_states": [
+        "OR_LEDGER",
+        "HANDOVER_PROMPT"
+      ],
+      "negative_mutation": "Delete source-status field; projector must reject as TRACEABILITY_GAP",
+      "oracle_authority": "PRECOMMITTED_SPECIFICATION_NOT_DERIVED_FROM_RENDERER"
+    },
+    {
+      "id": "GF-DECOMPOSE",
+      "claim": "ESC-1",
+      "responsibility": "R-BASIS",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/718",
+        "https://github.com/reallaksh19/Common/issues/720"
+      ],
+      "input": {
+        "graph": ".github/v32-evidence-spine/718-proposal-v2.json",
+        "release_digest": "sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd"
+      },
+      "expected": {
+        "root": "Common#718",
+        "reserve_weight": 35,
+        "bindings": {
+          "R-BASIS": "Common#720",
+          "R-PROOF": "Common#724",
+          "R-PROJECTION": "Common#733"
+        },
+        "claim_weight_sum": 100,
+        "no_progress_from_issue_creation": true
+      },
+      "consumer_states": [
+        "DECOMPOSITION_BINDING",
+        "RESPONSIBILITY_SNAPSHOT"
+      ],
+      "negative_mutation": "Swap R-PROOF provider PR binding to #999",
+      "oracle_authority": "PRECOMMITTED_SPECIFICATION_NOT_DERIVED_FROM_RENDERER"
+    },
+    {
+      "id": "GF-LEGACY",
+      "claim": "ESC-2",
+      "responsibility": "R-PROOF",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/720",
+        "https://github.com/reallaksh19/Common/issues/724",
+        "https://github.com/reallaksh19/Common/pull/722",
+        "https://github.com/reallaksh19/Common/pull/728"
+      ],
+      "input": {
+        "material_refs": [
+          "Common#720",
+          "Common#724"
+        ],
+        "structured_fact_ledger": []
+      },
+      "expected": {
+        "material_pr_states": [
+          "MERGED",
+          "MERGED"
+        ],
+        "checkpoint_facts": [
+          "UNREPORTED",
+          "UNREPORTED"
+        ],
+        "no_p100_from_merge": true,
+        "programme_complete": false
+      },
+      "consumer_states": [
+        "TASK_EVIDENCE_INPUT",
+        "SOURCE_OBSERVATION",
+        "RESPONSIBILITY_SNAPSHOT",
+        "PARENT_TITLE"
+      ],
+      "negative_mutation": "Convert merged PR without accepted facts into semantic complete and evidenced complete",
+      "oracle_authority": "PRECOMMITTED_SPECIFICATION_NOT_DERIVED_FROM_RENDERER"
+    },
+    {
+      "id": "GF-UNDISCOVERED",
+      "claim": "ESC-2",
+      "responsibility": "R-PROOF",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/pull/715",
+        "https://github.com/reallaksh19/Common/issues/724"
+      ],
+      "input": {
+        "candidate": "51ca8ca68ce2578ef58e5583844c49be3f04b57f",
+        "required_test_discovered": false,
+        "unrelated_ci_green": true
+      },
+      "expected": {
+        "required_qualification": "UNPROVEN",
+        "no_credit_from_unrelated_ci": true
+      },
+      "consumer_states": [
+        "SOURCE_OBSERVATION",
+        "PR_MANAGED_DESCRIPTION"
+      ],
+      "negative_mutation": "Treat a compiled or named-but-not-executed test as PASS",
+      "oracle_authority": "PRECOMMITTED_SPECIFICATION_NOT_DERIVED_FROM_RENDERER"
+    },
+    {
+      "id": "GF-REBASE",
+      "claim": "ESC-2",
+      "responsibility": "R-PROOF",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/pull/611",
+        "https://github.com/reallaksh19/Common/issues/724"
+      ],
+      "input": {
+        "candidate": "b4dbc913dd92135fa088667d45704f637a2022c5",
+        "required_deliverable_blob_present": false
+      },
+      "expected": {
+        "required_qualification": "UNPROVEN",
+        "merged_is_not_qualifying": true
+      },
+      "consumer_states": [
+        "SOURCE_OBSERVATION",
+        "PR_MANAGED_DESCRIPTION"
+      ],
+      "negative_mutation": "Accept result despite missing required delivered blob",
+      "oracle_authority": "PRECOMMITTED_SPECIFICATION_NOT_DERIVED_FROM_RENDERER"
+    },
+    {
+      "id": "GF-SMART-SURFACES",
+      "claim": "ESC-3",
+      "responsibility": "R-PROJECTION",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/718",
+        "https://github.com/reallaksh19/Common/issues/733"
+      ],
+      "input": {
+        "parent": "Common#718",
+        "child": "Common#733",
+        "product_pr": null
+      },
+      "expected": {
+        "parent_title": "🟡 [718] NEXT #733/C0 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine",
+        "child_title": "🟡 [718›733] R-PROJECTION · C0 · NO PRODUCT PR · CODE HELD — Issue/PR Views",
+        "pr_title": "NOT_MATERIALIZED",
+        "input_basis_identical": true,
+        "distinct_issue_pr_lifecycle": true
+      },
+      "consumer_states": [
+        "PARENT_TITLE",
+        "CHILD_TITLE",
+        "PR_TITLE",
+        "PR_MANAGED_DESCRIPTION"
+      ],
+      "negative_mutation": "Child title says CODE COMPLETE or invents #733 product PR",
+      "oracle_authority": "PRECOMMITTED_SPECIFICATION_NOT_DERIVED_FROM_RENDERER"
+    },
+    {
+      "id": "GF-PR-HEAD",
+      "claim": "ESC-3",
+      "responsibility": "R-PROJECTION",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/pull/728"
+      ],
+      "input": {
+        "candidate_before": "7ef9fbdd0c6f0f941fd573c1663c7a142fc41414",
+        "candidate_after": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "evidence_candidate": "7ef9fbdd0c6f0f941fd573c1663c7a142fc41414"
+      },
+      "expected": {
+        "semantic_claim_not_auto_deleted": true,
+        "exact_head_evidence": "STALE",
+        "new_qualification": "UNPROVEN",
+        "smart_title_head": "bbbbbbb"
+      },
+      "consumer_states": [
+        "TASK_EVIDENCE_INPUT",
+        "SOURCE_OBSERVATION",
+        "PARENT_TITLE",
+        "CHILD_TITLE",
+        "PR_TITLE",
+        "HANDOVER_PROMPT"
+      ],
+      "negative_mutation": "Carry exact-head qualification from old SHA onto new SHA",
+      "oracle_authority": "PRECOMMITTED_SPECIFICATION_NOT_DERIVED_FROM_RENDERER"
+    },
+    {
+      "id": "GF-PUBLISH-RACE",
+      "claim": "ESC-3",
+      "responsibility": "R-PROJECTION",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/733"
+      ],
+      "input": {
+        "writer_version": 2,
+        "provider_version_after_competing_write": 3,
+        "partial_issue_title_written": true
+      },
+      "expected": {
+        "sync_status": "INCOMPLETE_SYNC",
+        "owner_spec_preserved": true,
+        "atomic_cas_not_claimed": true
+      },
+      "consumer_states": [
+        "PARENT_TITLE",
+        "CHILD_TITLE",
+        "PR_MANAGED_DESCRIPTION"
+      ],
+      "negative_mutation": "Assume per-field writes are an atomic GitHub transaction",
+      "oracle_authority": "PRECOMMITTED_SPECIFICATION_NOT_DERIVED_FROM_RENDERER"
+    },
+    {
+      "id": "GF-COLD-AGENT",
+      "claim": "ESC-4",
+      "responsibility": "R-RECONSTRUCTION",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/718",
+        "https://github.com/reallaksh19/Common/issues/733"
+      ],
+      "input": {
+        "entry_from_only": "Common#733",
+        "frozen_basis": "a40eab949a97aa33b7347ea0fdc27de139ecfbea",
+        "live_basis_changed": true
+      },
+      "expected": {
+        "must_reconcile": true,
+        "owner_source_status": "UNRESOLVED_CHAT_MESSAGE_LINK",
+        "selected_next": "REVALIDATE_LIVE_FRONTIER",
+        "no_inferred_owner_approval": true
+      },
+      "consumer_states": [
+        "HANDOVER_PROMPT",
+        "RESPONSIBILITY_SNAPSHOT"
+      ],
+      "negative_mutation": "Agent continues solely from stale handover narrative",
+      "oracle_authority": "PRECOMMITTED_SPECIFICATION_NOT_DERIVED_FROM_RENDERER"
+    },
+    {
+      "id": "GF-AGENT-PROVENANCE",
+      "claim": "ESC-5",
+      "responsibility": "R-QUALITY",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/718"
+      ],
+      "input": {
+        "executor_epoch": "AGENT-A/epoch-1",
+        "observation_executor_epoch": "AGENT-B/epoch-2",
+        "independently_adjudicated": false
+      },
+      "expected": {
+        "quality": "UNKNOWN",
+        "authority_effects": [],
+        "must_reject_epoch_misbinding": true
+      },
+      "consumer_states": [
+        "AGENT_MATRIX"
+      ],
+      "negative_mutation": "Attribute another executor's assessment as a valid quality score",
+      "oracle_authority": "PRECOMMITTED_SPECIFICATION_NOT_DERIVED_FROM_RENDERER"
+    },
+    {
+      "id": "GF-VERTICAL",
+      "claim": "ESC-6",
+      "responsibility": "G-REPLAY",
+      "source_refs": [
+        "https://github.com/reallaksh19/Common/issues/718",
+        "https://github.com/reallaksh19/Common/issues/733"
+      ],
+      "input": {
+        "entry_from": [
+          "PARENT_ONLY",
+          "CHILD_ONLY",
+          "PR_ONLY"
+        ],
+        "required_stage_outputs": "ALL"
+      },
+      "expected": {
+        "all_stage_outputs_required": true,
+        "missing_consumer": "NOT_IMPLEMENTED",
+        "full_suite_status": "FAIL_CLOSED_UNTIL_DELIVERED",
+        "self_run_equals_hosted_run": true
+      },
+      "consumer_states": [
+        "OR_LEDGER",
+        "DECOMPOSITION_BINDING",
+        "TASK_EVIDENCE_INPUT",
+        "SOURCE_OBSERVATION",
+        "RESPONSIBILITY_SNAPSHOT",
+        "PARENT_TITLE",
+        "CHILD_TITLE",
+        "PR_TITLE",
+        "PR_MANAGED_DESCRIPTION",
+        "HANDOVER_PROMPT",
+        "AGENT_MATRIX"
+      ],
+      "negative_mutation": "Mask unimplemented handover or metrics consumer as PASS",
+      "oracle_authority": "PRECOMMITTED_SPECIFICATION_NOT_DERIVED_FROM_RENDERER"
+    }
+  ]
+}
