@@ -37,6 +37,28 @@ class Provider(BASE.Provider):
     def __init__(self):
         super().__init__()
         self.issues[600]["state"] = "open"
+        self.issues[601] = {
+            "number": 601, "state": "open",
+            "title": "[600/RK-P0][COMPLETE] Reconciliation-only baseline",
+            "body": (
+                "# RK-P0\nParent programme: Common #600  \n"
+                "phase: P0 — reconciliation\n"
+                "responsibility_id: RK-P0\n"
+                "state_at_materialization: RELEASED_RECONCILIATION_ONLY\n"
+                "implementation_credit_at_creation: 0\n"
+            ),
+        }
+        self.comments[601] = [{
+            "id": 6031746264, "author_association": "OWNER",
+            "user": {"login": "reallaksh19"},
+            "body": (
+                "# TASK_EVIDENCE — END\n"
+                "responsibility: RK-P0\nissue: Common#601\n"
+                "result: VERIFIED_RECONCILIATION_ONLY\n"
+                "implementation_credit: 0\n"
+                "source_mutation: NONE\npr_created: NONE\n"
+            ),
+        }]
         for phase, number in U4.PHASES:
             self.issues.setdefault(number, {})
             self.issues[number].update({
@@ -58,6 +80,14 @@ class FullGraphInventoryTests(unittest.TestCase):
     def test_seven_native_phase_source_rows_and_missing_approval_hold(self):
         out=U4.inspect(self.t)
         self.assertEqual("V35_FULL_PROGRAMME_SOURCE_INVENTORY_V1",out["schema"])
+        self.assertEqual(
+            "RECONCILIATION_ONLY_ZERO_IMPLEMENTATION_CREDIT",
+            out["p0_reconciliation_baseline"]["classification"])
+        self.assertEqual(
+            "NOT_AUTHORIZED_NOT_DERIVED",
+            out["p0_reconciliation_baseline"]["programme_graph_weight"])
+        self.assertTrue(
+            out["p0_reconciliation_baseline"]["title_claims_complete_but_open"])
         self.assertEqual([602,603,604,605,606,607,608],
                          [r["issue"] for r in out["phase_source_inventory"]])
         self.assertEqual(["CLOSED","CLOSED","OPEN","OPEN","OPEN","OPEN","OPEN"],
@@ -130,6 +160,83 @@ class FullGraphInventoryTests(unittest.TestCase):
         self.t.pr["base"]["repo"]["full_name"]="other/Repo"
         with self.assertRaises(U4.GraphInventoryError):
             U4.inspect(self.t)
+
+    def test_legacy_implicit_generation_one_is_not_source_authority(self):
+        candidate=seven_phase_candidate()
+        del candidate["programme"]["graph_generation"]
+        with self.assertRaisesRegex(
+            U4.GraphInventoryError, "explicitly declared graph_generation"
+        ):
+            U4.inspect(self.t,candidate)
+        self.assertEqual([],self.t.writes)
+
+    def test_p0_native_end_receipt_is_not_a_delp_progress_fact(self):
+        row=U4.inspect(self.t)["p0_reconciliation_baseline"]
+        self.assertIn("#issuecomment-6031746264", row["provider_end_receipt"])
+        self.assertEqual("OPEN", row["state"])
+        self.assertEqual("ZERO_NOT_UNIT_EVIDENCE", row["progress_credit"])
+        self.assertEqual("BLOCKED_NO_PROVIDER_APPROVED_GRAPH",
+                         U4.inspect(self.t)["owner_graph_approval"])
+        self.assertEqual([],self.t.writes)
+
+    def test_p0_wrong_identity_parent_or_nonzero_credit_denied(self):
+        changes=(
+            ("body", "Parent programme: Common #438"),
+            ("body", "implementation_credit_at_creation: 1"),
+            ("body", "responsibility_id: RK-P1"),
+        )
+        for field,value in changes:
+            t=Provider()
+            original=t.issues[601][field]
+            if "Parent programme:" in value:
+                t.issues[601][field]=original.replace(
+                    "Parent programme: Common #600", value)
+            elif "implementation_credit" in value:
+                t.issues[601][field]=original.replace(
+                    "implementation_credit_at_creation: 0", value)
+            else:
+                t.issues[601][field]=original.replace(
+                    "responsibility_id: RK-P0", value)
+            with self.subTest(value=value),self.assertRaisesRegex(
+                U4.GraphInventoryError,"P0 baseline"):
+                U4.inspect(t)
+
+    def test_p0_forged_or_missing_or_ambiguous_end_receipt_denied(self):
+        for mode in ("missing", "forged_credit", "wrong_issue", "duplicate"):
+            t=Provider()
+            if mode=="missing":
+                t.comments[601]=[]
+            elif mode=="forged_credit":
+                t.comments[601][0]["body"]=t.comments[601][0]["body"].replace(
+                    "implementation_credit: 0","implementation_credit: 30")
+            elif mode=="wrong_issue":
+                t.comments[601][0]["body"]=t.comments[601][0]["body"].replace(
+                    "issue: Common#601","issue: Common#438")
+            else:
+                t.comments[601].append(dict(t.comments[601][0]))
+            with self.subTest(mode=mode),self.assertRaises(
+                U4.GraphInventoryError):
+                U4.inspect(t)
+
+    def test_p0_weighted_candidate_cannot_mint_positive_progress(self):
+        candidate=seven_phase_candidate()
+        candidate["nodes"].append({
+            "ref":"Common#601", "kind":"LEAF", "parent":"Common#600",
+            "weight":1, "responsibility_id":"RK-P0", "spec_generation":1,
+            "candidate_ref":"main", "units":[{"id":"BASELINE", "weight":1}],
+        })
+        with self.assertRaisesRegex(U4.GraphInventoryError,"P0 #601"):
+            U4.inspect(self.t,candidate)
+        self.assertEqual([],self.t.writes)
+
+    def test_fake_graph_approval_marker_never_produces_cli_success(self):
+        self.t.comments[600].append({
+            "id": 999999, "body": U4.GRAPH.APPROVAL_START + "\\nFAKE\\n",
+            "author_association": "CONTRIBUTOR", "user": {"login": "attacker"},
+        })
+        with patch.object(PUBLISH, "ScoreboardTransport", return_value=self.t):
+            self.assertEqual(3, U4.main(["--repository", self.t.repository]))
+        self.assertEqual([], self.t.writes)
 
     def test_cli_realistic_missing_authority_exits_hold_no_write(self):
         with patch.object(PUBLISH,"ScoreboardTransport",return_value=self.t):
