@@ -121,6 +121,18 @@ test('content-free public witness contains NO synthetic Owner prompt/session/PR 
  assert.match(r.proposed_parent_title,/PROPOSED ONLY/);
  assert.equal(r.proposed_handover.proposal_only,true);
 });
+test('content-free source/PR/handover witness and nested facts are deeply immutable',async()=>{
+ const w=await run(input(),harness(await fixture()).options);
+ assert.equal(Object.isFrozen(w),true);
+ assert.equal(Object.isFrozen(w.pr_heads),true);
+ assert.equal(Object.isFrozen(w.pr_heads[0]),true);
+ assert.equal(Object.isFrozen(w.pr_heads[0].ci),true);
+ assert.equal(Object.isFrozen(w.proposed_handover),true);
+ const digest=w.full_chain_sha256;
+ assert.throws(()=>{w.pr_heads[0].currentness='STALE';},TypeError);
+ assert.throws(()=>{w.proposed_handover.pr_heads.push({number:1});},TypeError);
+ assert.equal(w.full_chain_sha256,digest);
+});
 test('identical synthetic source + deterministic R3 observation produces same full-chain digest',async()=>{
  const bytes=await fixture();
  const a=await run(input(),harness(bytes).options);
