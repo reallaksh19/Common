@@ -10,7 +10,7 @@ import re
 import subprocess
 from urllib.parse import quote
 
-from handover_context import build_context
+from handover_context import build_context, build_delp_source_bound_successor, UNKNOWN_OWNER_SOURCE
 from intelligence_projection import build_improvement, build_task
 from lease_liveness import active_lease_renewal
 from programme_reconciliation import assess_boundary
@@ -290,6 +290,21 @@ def plan_handover(
     if renewal is not None:
         lease_path, renewed_lease = renewal
         replacements[lease_path] = yaml_bytes(renewed_lease)
+
+    # A provider can move after context was first constructed. Freeze the
+    # transaction against the *same* graph/plan/input/provider digests again
+    # immediately before entering the transactional staging/commit boundary.
+    # This is a read-only freshness fence, not an external GitHub CAS.
+    if source_bound is not None:
+        last_read = build_delp_source_bound_successor(
+            delp_source["graph"],
+            leaf_ref=delp_source["leaf_ref"],
+            provider=delp_source["provider"],
+            frozen_basis=source_bound["digests"],
+            owner_source_status=delp_source.get("owner_source_status", UNKNOWN_OWNER_SOURCE),
+        )
+        if last_read["currentness"] != "CURRENT_READ_ONLY":
+            raise TransactionError("SOURCE_BOUND_RECONCILIATION_REQUIRED")
 
     return execute(
         root,
