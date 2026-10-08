@@ -48,6 +48,7 @@ jobs:
           data=Path("/tmp/v32-811-c6-c3-native.log").read_text(encoding="utf-8")
           required=[
               "C6_C3_NATIVE_GITHUB_GET_CLI_REAL_PLAN_HANDOVER=PASS",
+              "C6_C3_NATIVE_SOURCE_GRAPH_PERMALINK_IN_EVENT=PASS",
               "C6_C3_NATIVE_STALE_PIN_FAIL_CLOSED_ZERO_TX=PASS",
               "C6_C3_OWNER_OR_MERGE_AUTHORITY=NOT_GRANTED",
           ]
