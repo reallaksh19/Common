@@ -161,6 +161,15 @@ class FullGraphInventoryTests(unittest.TestCase):
         with self.assertRaises(U4.GraphInventoryError):
             U4.inspect(self.t)
 
+    def test_legacy_implicit_generation_one_is_not_source_authority(self):
+        candidate=seven_phase_candidate()
+        del candidate["programme"]["graph_generation"]
+        with self.assertRaisesRegex(
+            U4.GraphInventoryError, "explicitly declared graph_generation"
+        ):
+            U4.inspect(self.t,candidate)
+        self.assertEqual([],self.t.writes)
+
     def test_p0_native_end_receipt_is_not_a_delp_progress_fact(self):
         row=U4.inspect(self.t)["p0_reconciliation_baseline"]
         self.assertIn("#issuecomment-6031746264", row["provider_end_receipt"])
