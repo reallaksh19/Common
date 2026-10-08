@@ -7,7 +7,9 @@ No absent approval is ever replaced by a historical golden or caller digest.
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
+import sys
 import json
 import re
 from collections.abc import Mapping
@@ -154,7 +156,7 @@ def reconstruct(transport: Any, entry_url: str) -> dict[str, Any]:
         owner_origin=selected["owner_origin"]
     )
     if selected["graph_digest"] != model["source_identity"]["graph_digest"]:
-        raise ColdEntryError("DEL​P read-model digest differs from provider selected graph")
+        raise ColdEntryError("DELP read-model digest differs from provider selected graph")
     if model["candidate_sha"] != (
         transport.get_pull(pr_number).get("head") or {}
     ).get("sha"):
@@ -180,3 +182,27 @@ def reconstruct(transport: Any, entry_url: str) -> dict[str, Any]:
         graph_source="OWNER_APPROVED_IMMUTABLE_GITHUB_SOURCE",
         **core,
     )
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Cold provider check; exit 3 for unapproved source, 2 for invalid source."""
+    parser = argparse.ArgumentParser(description="Read-only V3.5 root/leaf/PR cold source replay")
+    parser.add_argument("--repository", required=True)
+    parser.add_argument("--entry-url", required=True)
+    args = parser.parse_args(argv)
+    try:
+        # Only transport, not the write function. The read-only path never
+        # calls GitHubStore, patch_pull, patch_title or post_comment.
+        import integration_scoreboard_publish_v35 as SCOREBOARD
+        transport = SCOREBOARD.ScoreboardTransport(args.repository)
+        result = reconstruct(transport, args.entry_url)
+        print(json.dumps(result, sort_keys=True, indent=2))
+        return 0 if result["status"] == "GOVERNED_GRAPH_PROVIDER_OBSERVED_READ_ONLY" else 3
+    except (ColdEntryError, GRAPH.GraphSelectionError, DELP.DelpError,
+            MODEL.ReadModelError, OSError, ValueError) as exc:
+        print(f"V3.5 cold-source replay denied: {exc}", file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
