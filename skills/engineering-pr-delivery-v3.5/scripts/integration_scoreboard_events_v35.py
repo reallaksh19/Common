@@ -44,8 +44,14 @@ def event_scope(
     leaf_n, root_n = DELP.ref_number(responsibility_ref), DELP.ref_number(indexed["root"])
     selected = False
     why = "UNRELATED_OR_UNSUPPORTED_EVENT"
+    # A human workflow_dispatch is only a request to *re-fetch* trusted GitHub
+    # graph and scored facts. Event inputs grant no graph, role or write authority;
+    # the production apply path still validates both distinct Owner receipts.
+    if event_name == "workflow_dispatch":
+        selected = True
+        why = "EXPLICIT_MANUAL_PROVIDER_RECONCILIATION_ONLY"
     # Avoid a managed LIVE_STATUS comment recursively triggering itself.
-    if event_name in ("issue_comment", "issues"):
+    elif event_name in ("issue_comment", "issues"):
         observed = _number((event.get("issue") or {}).get("number"))
         selected = observed in (leaf_n, root_n, pr_number)
         why = "DECLARED_RELATED_ISSUE" if selected else "UNRELATED_ISSUE"
