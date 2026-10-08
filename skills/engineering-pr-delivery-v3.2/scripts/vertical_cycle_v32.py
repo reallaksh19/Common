@@ -273,14 +273,23 @@ def _provider_surface(transport: Any, ref: str) -> dict[str, Any]:
 
 
 def _apply_github_patch(transport: Any, ref: str, title: str, body: str) -> Any:
-    """One title+body PATCH per surface; no cross-surface atomic CAS on GitHub."""
-    _require(callable(getattr(transport, "_gh", None)), "PROVIDER_PATCH_ADAPTER_UNAVAILABLE")
+    """Field-separated GitHub transport: DELP owns issue titles, not this patch.
+
+    The issue PATCH edits BODY ONLY, preserving the DELP-owned smart issue
+    title and versioned LIVE_STATUS comment. PR metadata is disjoint.
+    """
+    _require(getattr(transport, "repository", None) == "reallaksh19/Common",
+             "MUTATION_REPOSITORY_NOT_ALLOWED")
     number = int(ref.split("#")[-1])
-    route = "pulls" if ref == "Common#740" else "issues"
-    repo = str(transport.repository)
-    _require(repo == "reallaksh19/Common", "MUTATION_REPOSITORY_NOT_ALLOWED")
-    return transport._gh("--method", "PATCH", f"repos/{repo}/{route}/{number}",
-                         "-f", f"title={title}", "-f", f"body={body}")
+    if ref == "Common#740":
+        _require(callable(getattr(transport, "patch_pull_title_body", None)),
+                 "PR_PATCH_ADAPTER_UNAVAILABLE")
+        return transport.patch_pull_title_body(number, title, body)
+    _require(ref in ("Common#718", "Common#733"),
+             "ISSUE_PATCH_OUTSIDE_SELECTED_RESPONSIBILITY")
+    _require(callable(getattr(transport, "patch_issue_body", None)),
+             "ISSUE_BODY_PATCH_ADAPTER_UNAVAILABLE")
+    return transport.patch_issue_body(number, body)
 
 
 def guarded_publish(
@@ -292,18 +301,19 @@ def guarded_publish(
     expected_input_digest: str,
     apply: bool = False,
 ) -> dict[str, Any]:
-    """Dry-run or explicit opt-in mutation; fail closed on material drift.
+    """Single DELP issue-title/status owner + disjoint body/PR write adapters.
 
-    This is NOT an atomic transaction. No silent retry or rollback after
-    provider ambiguity; a partial mutation is reported INCOMPLETE_SYNC and
-    must be independently reconciled before further publication.
+    No atomic transaction or provider compare-and-swap exists across issues.
+    Fail closed with INCOMPLETE_SYNC after *any* ambiguous/partial write.
+    Human narrative is guarded by whole-body readback and digest, and is never
+    silently rolled back. This owns no Owner approval or progress authority.
     """
-    # Existing DELP sync_projection()/GitHubStore is the authoritative
-    # issue-title/status writer. This sibling multi-surface PATCH writer has
-    # no integration with DELP's versioned managed status. Disallow APPLY
-    # instead of silently racing both engines and claiming live scoreboard.
-    if apply:
-        raise ReplayError("DUAL_ISSUE_PUBLISHERS_UNRECONCILED_NO_LIVE_WRITE")
+    import delp_projection_v32 as delp
+
+    _require(getattr(transport, "repository", None) == "reallaksh19/Common",
+             "MUTATION_REPOSITORY_NOT_ALLOWED")
+    _require(delp._source_view_title_contract(graph),
+             "SINGLE_ISSUE_PUBLISHER_CONTRACT_NOT_RELEASED")
     _require(isinstance(expected_head, str) and len(expected_head) == 40 and
              all(c in "0123456789abcdefABCDEF" for c in expected_head),
              "PINNED_EXACT_HEAD_REQUIRED")
@@ -315,7 +325,8 @@ def guarded_publish(
     _require(before["source_input_digest"] == expected_input_digest,
              "PINNED_INPUT_DIGEST_MOVED")
     _require(before["pr_binding"] == "BOUND", "PR_NOT_BOUND_TO_RELEASED_GRAPH")
-    _require(before["qualifier"]["state"] != "PROVEN", "QUALIFICATION_NOT_PROVEN_BY_THIS_WRITER")
+    _require(before["qualifier"]["state"] != "PROVEN",
+             "QUALIFICATION_NOT_PROVEN_BY_THIS_WRITER")
     refs = ("Common#718", "Common#733", "Common#740")
     planned = {}
     for ref in refs:
@@ -332,57 +343,102 @@ def guarded_publish(
         planned[ref] = {
             "previous_title": surface["title"], "expected_title": observed["expected"],
             "previous_body_digest": observed["body_digest"], "expected_body_digest": view.digest(proposed),
-            "previous_body": surface["body"], "expected_body": proposed,
+            "expected_body": proposed,
             "write_required": surface["title"] != observed["expected"] or proposed != surface["body"],
+            "body_write_required": proposed != surface["body"],
         }
     changes = [ref for ref in refs if planned[ref]["write_required"]]
     report = {
-        "schema": "relay-v32-718-guarded-publication-v1",
-        "authority": "NONATOMIC_GITHUB_PUBLICATION_ONLY",
+        "schema": "relay-v32-718-single-issue-publisher-v2",
+        "authority": "DELP_ISSUE_TITLE_STATUS_AND_SEPARATE_PR_METADATA_NO_ACCEPTANCE",
         "requested_mode": "APPLY" if apply else "DRY_RUN",
         "candidate_sha": expected_head,
         "source_input_digest": expected_input_digest,
+        "delp_input_digest": before["delp_input_digest"],
         "changed_surfaces": changes,
         "applied_surfaces": [],
+        "delp_issue_status": "NOT_RUN",
         "status": "PLANNED" if not apply else "IN_PROGRESS",
         "full_ESC_6_gate": "FAIL_CLOSED_UNRELEASED_CONSUMERS",
         "authority_effects": [],
     }
     if not apply:
         return report
-    if not changes:
-        report["status"] = "VERIFIED_NO_CHANGE"
-        return report
+
     try:
-        # Observe all upstream inputs immediately before the first mutation.
         fresh = live_readback(manifest, graph, transport)
-        if fresh["candidate_sha"] != expected_head or \
-                fresh["source_input_digest"] != expected_input_digest:
+        if fresh["candidate_sha"] != expected_head or fresh["source_input_digest"] != expected_input_digest:
             raise ReplayError("PROVIDER_MOVED_BEFORE_FIRST_WRITE")
-        for ref in changes:
+        # Validate all three original observations before DELP performs any
+        # non-atomic managed-comment/title writes.
+        for ref in refs:
+            surface = _provider_surface(transport, ref)
+            if surface["title"] != planned[ref]["previous_title"] or \
+                    view.digest(surface["body"]) != planned[ref]["previous_body_digest"]:
+                raise ReplayError("PROVIDER_MOVED_BEFORE_FIRST_WRITE:" + ref)
+        report["delp_issue_status"] = "IN_PROGRESS_POSSIBLY_PARTIAL"
+        issue_results = delp.sync_projection(
+            delp.GitHubStore(transport), graph,
+            lambda: delp.ledger_from_github(transport, graph),
+            lambda: delp.observe_github(transport, graph),
+            {ref: planned[ref]["previous_title"] for ref in ("Common#718", "Common#733")},
+            title_overrides={ref: planned[ref]["expected_title"]
+                             for ref in ("Common#718", "Common#733")},
+            selected_refs=("Common#718", "Common#733"),
+            expected_input_digest=before["delp_input_digest"],
+        )
+        report["delp_issue_status"] = issue_results
+        # DELP is the ONLY issue-title + LIVE_STATUS writer. We exclusively
+        # patch issue read-view BODY after confirming its DELP title has landed.
+        for ref in ("Common#733", "Common#718"):
             current = _provider_surface(transport, ref)
-            if (current["title"] != planned[ref]["previous_title"] or
-                    view.digest(current["body"]) != planned[ref]["previous_body_digest"]):
-                raise ReplayError("PROVIDER_MOVED_BEFORE_WRITE:" + ref)
-            _apply_github_patch(transport, ref, planned[ref]["expected_title"],
-                                planned[ref]["expected_body"])
-            report["applied_surfaces"].append(ref)
-            # Validate immediately; never proceed on an ambiguous write.
+            if current["title"] != planned[ref]["expected_title"] or \
+                    view.digest(current["body"]) != planned[ref]["previous_body_digest"]:
+                raise ReplayError("PROVIDER_MOVED_AFTER_DELP_BEFORE_BODY:" + ref)
+            if planned[ref]["body_write_required"]:
+                _apply_github_patch(transport, ref, planned[ref]["expected_title"],
+                                    planned[ref]["expected_body"])
             checked = _provider_surface(transport, ref)
-            if (checked["title"] != planned[ref]["expected_title"] or
-                    view.digest(checked["body"]) != planned[ref]["expected_body_digest"]):
-                raise ReplayError("PROVIDER_FAILED_PER_SURFACE_READBACK:" + ref)
+            if checked["title"] != planned[ref]["expected_title"] or \
+                    view.digest(checked["body"]) != planned[ref]["expected_body_digest"]:
+                raise ReplayError("PROVIDER_FAILED_ISSUE_READBACK:" + ref)
+            if planned[ref]["write_required"]:
+                report["applied_surfaces"].append(ref)
+
+        # Re-observe exact head and whole input before any PR metadata write.
+        mid = live_readback(manifest, graph, transport)
+        if mid["candidate_sha"] != expected_head or mid["source_input_digest"] != expected_input_digest:
+            raise ReplayError("PROVIDER_MOVED_BEFORE_PR_WRITE")
+        pr = planned["Common#740"]
+        current = _provider_surface(transport, "Common#740")
+        if current["title"] != pr["previous_title"] or \
+                view.digest(current["body"]) != pr["previous_body_digest"]:
+            raise ReplayError("PROVIDER_PR_MOVED_BEFORE_WRITE")
+        if pr["write_required"]:
+            _apply_github_patch(transport, "Common#740", pr["expected_title"], pr["expected_body"])
+        checked = _provider_surface(transport, "Common#740")
+        if checked["title"] != pr["expected_title"] or \
+                view.digest(checked["body"]) != pr["expected_body_digest"]:
+            raise ReplayError("PROVIDER_FAILED_PR_READBACK")
+        if pr["write_required"]:
+            report["applied_surfaces"].append("Common#740")
+
         after = live_readback(manifest, graph, transport)
         if after["candidate_sha"] != expected_head or \
                 after["source_input_digest"] != expected_input_digest or \
                 after["reconciliation"] != "MATCH":
             raise ReplayError("POST_PUBLISH_PARITY_OR_INPUT_CHANGED")
+        store = delp.GitHubStore(transport)
+        for ref in ("Common#718", "Common#733"):
+            status = store.read(ref)
+            if status["input_digest"] != before["delp_input_digest"] or not status["version"]:
+                raise ReplayError("DELP_LIVE_STATUS_NOT_VERIFIED:" + ref)
         report["status"] = "VERIFIED_ALL_SURFACES"
+        report["verified_readback"] = after["reconciliation"]
         return report
     except Exception as exc:
         report["status"] = "INCOMPLETE_SYNC"
         report["error"] = str(exc)
-        # Does not undo a write: a rollback could itself destroy new human text.
         raise PublicationIncomplete("INCOMPLETE_SYNC: " + str(exc), report) from exc
 
 
