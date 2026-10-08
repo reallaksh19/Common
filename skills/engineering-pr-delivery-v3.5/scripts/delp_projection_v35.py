@@ -5357,7 +5357,7 @@ class GhTransport:
         if not re.fullmatch(r"[0-9a-f]{40}", commit_sha):
             raise DelpError("native custody source: immutable commit SHA required")
         if not re.fullmatch(
-            r"relay/(?:STATE\\.yaml|WORK/EP[-.][A-Za-z0-9_.-]+\\.yaml|LEASES/LEASE[-.][A-Za-z0-9_.-]+\\.yaml)",
+            r"relay/(?:STATE\.yaml|WORK/EP[-.][A-Za-z0-9_.-]+\.yaml|LEASES/LEASE[-.][A-Za-z0-9_.-]+\.yaml)",
             path,
         ) or ".." in path:
             raise DelpError("native custody source: path outside native STATE/WORK/LEASES")
