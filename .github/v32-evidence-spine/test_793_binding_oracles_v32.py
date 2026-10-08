@@ -56,21 +56,27 @@ class SourceBoundReconstructionAdmission(unittest.TestCase):
             b for b in bad["programme"]["decomposition_proposal"]["bindings"]
             if b["responsibility_id"] != "R-RECONSTRUCTION"
         ]
-        with self.assertRaises(Exception):
-            delp.validate_graph(bad)
+        # Structural parse may succeed; the RELEASE gate must reject semantic drift.
+        verdict = delp.decomposition_report(bad)
+        self.assertEqual("NOT_RELEASEABLE", verdict["release_state"])
+        self.assertGreater(verdict["summary"]["not_releasable"], 0)
 
     def test_04_wrong_claim_ownership_rejected(self):
         bad = copy.deepcopy(self.graph)
         target = next(n for n in bad["nodes"] if n.get("responsibility_id") == "R-RECONSTRUCTION")
         target["owns_claims"] = ["ESC-5"]
-        with self.assertRaises(Exception):
-            delp.validate_graph(bad)
+        # Structural parse may succeed; the RELEASE gate must reject semantic drift.
+        verdict = delp.decomposition_report(bad)
+        self.assertEqual("NOT_RELEASEABLE", verdict["release_state"])
+        self.assertGreater(verdict["summary"]["not_releasable"], 0)
 
     def test_05_reserve_and_denominator_inflation_rejected(self):
         bad = copy.deepcopy(self.graph)
         bad["nodes"][0]["reserve_weight"] = self.oracle["old_reserve_weight"]
-        with self.assertRaises(Exception):
-            delp.validate_graph(bad)
+        # Structural parse may succeed; the RELEASE gate must reject semantic drift.
+        verdict = delp.decomposition_report(bad)
+        self.assertEqual("NOT_RELEASEABLE", verdict["release_state"])
+        self.assertGreater(verdict["summary"]["not_releasable"], 0)
 
     def test_06_no_facts_no_acceptance_or_progress(self):
         view = delp.project(self.graph, [], {})
