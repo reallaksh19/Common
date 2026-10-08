@@ -20,7 +20,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-GRAPH = ROOT / ".github/v32-evidence-spine/718-proposal-v2.json"
+GRAPH = ROOT / ".github/v32-evidence-spine/fixtures/718-c0-source-graph.json" if (ROOT / ".github/v32-evidence-spine/fixtures/718-c0-source-graph.json").is_file() else ROOT / ".github/v32-evidence-spine/718-proposal-v2.json"
 MANIFEST = HERE / "718-golden-fixtures-v1.json"
 SOURCE = ROOT / "skills/engineering-pr-delivery-v3.2/scripts"
 REQUIRED = (
