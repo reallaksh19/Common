@@ -246,7 +246,10 @@ properties:
                 pattern: '^(?:LEASE-[A-Za-z0-9][A-Za-z0-9._-]*|LEASE\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'
               executor: {type: string, minLength: 1, pattern: '.*\S.*'}
               custody_epoch: {type: integer, minimum: 1}
-          granted_at: {type: string, format: date-time}
+          granted_at:
+            type: string
+            format: date-time
+            pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$'
           effective_fact_count: {type: integer, minimum: 0}
           fenced_fact_count: {type: integer, minimum: 0}
           fenced_sources:
