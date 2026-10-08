@@ -8,6 +8,7 @@ import hashlib
 import io
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import sys
@@ -116,16 +117,80 @@ class GitAnchorAdversarialTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "GIT_ANCHOR_FILE_HASH_MISMATCH"):
             anchor.verify_archive_bytes(self.original, changed)
 
+    @staticmethod
+    def _git(root, *args):
+        return subprocess.run(["git", "-C", str(root), *args],
+                              capture_output=True, check=True, timeout=30).stdout
+
+    @classmethod
+    def _create_squash_simulation(cls, root, tamper=False, retain_anchor_objects=True):
+        """Actually make an orphan HEAD with a real tracked anchor file."""
+        if retain_anchor_objects:
+            subprocess.run(["git", "clone", "--quiet", "--shared", "--no-checkout",
+                            str(ROOT), str(root)], check=True, timeout=55)
+            cls._git(root, "checkout", "--orphan", "synthetic-squash")
+            cls._git(root, "read-tree", "--empty")
+        else:
+            subprocess.run(["git", "init", "--quiet", str(root)], check=True, timeout=20)
+        raw = cls._git(ROOT, "show", anchor.ANCHOR_SHA + ":" + anchor.ANCHOR_PATH)
+        if tamper:
+            obj = json.loads(raw)
+            obj["authority"] = "FAKE_OWNER_SIGNED"
+            raw = (json.dumps(obj, sort_keys=True, indent=2) + "\n").encode()
+        output = root / anchor.ANCHOR_PATH
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_bytes(raw)
+        cls._git(root, "add", "--", anchor.ANCHOR_PATH)
+        cls._git(root, "-c", "user.name=CustodyTest",
+                 "-c", "user.email=custody-test@example.invalid", "commit",
+                 "--quiet", "-m", "Simulated squashed anchor manifest, independent HEAD")
+        return output
+
     def test_a06_worktree_manifest_replacement_cannot_change_exact_commit_blob(self):
-        actual = anchor.committed_anchor()
-        with tempfile.TemporaryDirectory() as d:
-            p = Path(d) / "811-c6-c6-git-custody-anchor-v1.json"
-            p.write_text(json.dumps({"authority": "FAKE_OWNER_SIGNED"}))
-            self.assertEqual(actual, anchor.committed_anchor())
-            self.assertNotEqual(json.loads(p.read_text()), actual)
-        # Git is the content address trust root; this is NOT a signed Owner claim.
+        # Earlier test was only writing a fake file in an unrelated directory.
+        # Now mutate the ACTUAL tracked checkout path after a true checkout.
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td) / "real-worktree"
+            subprocess.run(["git", "clone", "--quiet", "--shared", "--no-checkout",
+                            str(ROOT), str(root)], check=True, timeout=55)
+            self._git(root, "checkout", "--detach", anchor.ANCHOR_SHA)
+            original = anchor.committed_anchor(root)
+            modified = root / anchor.ANCHOR_PATH
+            self.assertTrue(modified.is_file())
+            modified.write_text(json.dumps({"authority": "FAKE_OWNER_SIGNED"}))
+            self.assertNotEqual(original, json.loads(modified.read_text()))
+            self.assertEqual(original, anchor.committed_anchor(root))
         self.assertEqual("AGENT_RECORDED_PROVIDER_EVIDENCE_NOT_OWNER_SIGNATURE",
-                         actual["authority"])
+                         original["authority"])
+
+    def test_a08_valid_anchor_blob_survives_synthetic_squash_head(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td) / "squashed"
+            self._create_squash_simulation(root)
+            ancestor = subprocess.run(
+                ["git", "-C", str(root), "merge-base", "--is-ancestor",
+                 anchor.ANCHOR_SHA, "HEAD"], capture_output=True)
+            self.assertEqual(1, ancestor.returncode, "must simulate a real non-ancestor squash")
+            actual_blob = self._git(root, "rev-parse", "HEAD:" + anchor.ANCHOR_PATH)
+            self.assertEqual(anchor.ANCHOR_BLOB_SHA, actual_blob.decode().strip())
+            self.assertEqual(self.anchor, anchor.committed_anchor(root))
+
+    def test_a09_squash_with_forged_manifest_blob_fails_closed(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td) / "forged-squash"
+            self._create_squash_simulation(root, tamper=True)
+            with self.assertRaisesRegex(RuntimeError, "GIT_ANCHOR_BLOB_IDENTITY_MISMATCH"):
+                anchor.committed_anchor(root)
+
+    def test_a10_squash_blob_verifies_even_when_original_commit_not_in_clone(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td) / "new-isolated-history"
+            self._create_squash_simulation(root, retain_anchor_objects=False)
+            original_missing = subprocess.run(
+                ["git", "-C", str(root), "cat-file", "-e",
+                 anchor.ANCHOR_SHA + "^{commit}"], capture_output=True)
+            self.assertNotEqual(0, original_missing.returncode)
+            self.assertEqual(self.anchor, anchor.committed_anchor(root))
 
     def test_a07_offline_replay_needs_no_live_provider_or_token(self):
         with patch.dict(os.environ, {"GH_TOKEN": "", "GITHUB_TOKEN": ""}):
