@@ -268,7 +268,5 @@ amendments:
       distinguish PR lifecycle, fail closed on partial writes and do not
       execute incoming PR head code. Full ESC-6/Owner acceptance stays RED.
     allowed_paths:
-      - .github/v32-evidence-spine/744-event-oracles-v1.json
-      - .github/workflows/v32-718-trusted-live-scoreboard.yml
       - skills/engineering-pr-delivery-v3.2/scripts/trusted_scoreboard_v32.py
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_trusted_scoreboard.py
