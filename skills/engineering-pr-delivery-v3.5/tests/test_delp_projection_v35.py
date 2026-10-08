@@ -6585,6 +6585,15 @@ class HostedV35UnifiedGoldenContract(_unified_golden.IntegrationGoldenV35Contrac
     """Run all six cross-surface golden falsifiers in the actual DELP workflow."""
 
 
+# R1-E: the DELP hosted workflow discovers only test_delp_projection_v35.py.
+# Import and execute the actual independent CLI stress tests, not just file-existence.
+import test_integration_cycle_stress_v35 as _cycle_stress
+
+
+class HostedV35CycleStress(_cycle_stress.IntegrationCycleStressAcceptance):
+    """An executable same-basis issue/PR/OR/TASK_EVIDENCE/handover review cycle."""
+
+
 
 if __name__ == "__main__":
     unittest.main()
