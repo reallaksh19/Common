@@ -1,0 +1,31 @@
+name: relay-reset-provider-facts
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/provider-facts-v1.*'
+      - '.github/workflows/relay-reset-provider-facts.yml'
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  actions: read
+jobs:
+  r3-native-facts:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22','24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Native provider-current parent, child, PR and CI facts
+        env:
+          RELAY_R3_CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RELAY_R3_CI_PR_NUMBER: ${{ github.event.number }}
+          RELAY_R3_TOKEN: ${{ github.token }}
+        run: node --test skills/engineering-relay-v1/provider-facts-v1.test.mjs
