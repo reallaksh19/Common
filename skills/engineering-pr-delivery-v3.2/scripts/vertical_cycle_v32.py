@@ -214,8 +214,8 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
         state[ref] = {
             "observed": actual, "expected": target,
             "title": "MATCH" if target == actual else "DRIFT",
-            "managed_block": "PRESENT" if view.ISSUE_START in managed and
-            view.ISSUE_END in managed else "MISSING",
+            "managed_block": view.inspect_managed_block(
+                managed, expected["issue_read_views"][ref]),
             "body_digest": view.digest(managed),
         }
     pr_body = start_pull.get("body") or ""
@@ -223,8 +223,8 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
         "observed": start_pull["title"],
         "expected": expected["draft_pr_title"],
         "title": "MATCH" if start_pull["title"] == expected["draft_pr_title"] else "DRIFT",
-        "managed_block": "PRESENT" if view.START in pr_body and
-        view.END in pr_body else "MISSING",
+        "managed_block": view.inspect_managed_block(
+            pr_body, expected["pr_managed_block"], pr=True),
         "body_digest": view.digest(pr_body),
     }
     return {
@@ -246,7 +246,7 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
         },
         "reconciliation": (
             "MATCH" if all(s["title"] == "MATCH" and
-                           s["managed_block"] == "PRESENT" for s in state.values())
+                           s["managed_block"] == "MATCH" for s in state.values())
             else "DRIFT_OR_UNPUBLISHED"
         ),
         "full_ESC_6_gate": "FAIL_CLOSED_UNRELEASED_CONSUMERS",
@@ -298,6 +298,12 @@ def guarded_publish(
     provider ambiguity; a partial mutation is reported INCOMPLETE_SYNC and
     must be independently reconciled before further publication.
     """
+    # Existing DELP sync_projection()/GitHubStore is the authoritative
+    # issue-title/status writer. This sibling multi-surface PATCH writer has
+    # no integration with DELP's versioned managed status. Disallow APPLY
+    # instead of silently racing both engines and claiming live scoreboard.
+    if apply:
+        raise ReplayError("DUAL_ISSUE_PUBLISHERS_UNRECONCILED_NO_LIVE_WRITE")
     _require(isinstance(expected_head, str) and len(expected_head) == 40 and
              all(c in "0123456789abcdefABCDEF" for c in expected_head),
              "PINNED_EXACT_HEAD_REQUIRED")
