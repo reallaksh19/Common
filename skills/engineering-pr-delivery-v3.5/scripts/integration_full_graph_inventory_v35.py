@@ -203,7 +203,11 @@ def main(argv: list[str] | None = None) -> int:
     try:
         result=inspect(PUBLISH.ScoreboardTransport(args.repository))
         print(json.dumps(result,indent=2,sort_keys=True,ensure_ascii=False))
-        return 3 if result["owner_graph_approval"].startswith("BLOCKED") else 0
+        # This inventory only observes native *marker presence*; it never
+        # authenticates an Owner grant. R2-C must independently verify a
+        # typed root comment, immutable graph bytes and its issuer.
+        # Therefore a marker alone can never yield a successful (0) CLI.
+        return 3
     except (GraphInventoryError, DELP.DelpError, OSError, ValueError) as exc:
         print(f"R7-U4 inventory SOURCE_REJECTED: {exc}",file=sys.stderr)
         return 2
