@@ -240,44 +240,10 @@ properties:
             properties:
               ep:
                 type: string
-                pattern: '^(?:EP-[A-Za-z0-9][A-Za-z0-9._-]*|EP\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)    allOf:
-      - if:
-          properties: {kind: {const: LEAF}}
-          required: [kind]
-        then:
-          required: [conditions, actual_next, execution_provenance]
-  projection:
-    type: object
-    required: [version, input_digest]
-    properties:
-      version:
-        type: integer
-        minimum: 0
-        description: Compare-and-swap version of this provider surface. A write succeeds only from the version it read.
-      input_digest:
-        type: string
-        pattern: '^sha256:[0-9a-f]{64}$'
-
+                pattern: '^(?:EP-[A-Za-z0-9][A-Za-z0-9._-]*|EP\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'
               lease:
                 type: string
-                pattern: '^(?:LEASE-[A-Za-z0-9][A-Za-z0-9._-]*|LEASE\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)    allOf:
-      - if:
-          properties: {kind: {const: LEAF}}
-          required: [kind]
-        then:
-          required: [conditions, actual_next, execution_provenance]
-  projection:
-    type: object
-    required: [version, input_digest]
-    properties:
-      version:
-        type: integer
-        minimum: 0
-        description: Compare-and-swap version of this provider surface. A write succeeds only from the version it read.
-      input_digest:
-        type: string
-        pattern: '^sha256:[0-9a-f]{64}$'
-
+                pattern: '^(?:LEASE-[A-Za-z0-9][A-Za-z0-9._-]*|LEASE\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'
               executor: {type: string, minLength: 1, pattern: '.*\S.*'}
               custody_epoch: {type: integer, minimum: 1}
           granted_at: {type: string, format: date-time}
