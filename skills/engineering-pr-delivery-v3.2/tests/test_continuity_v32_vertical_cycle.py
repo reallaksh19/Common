@@ -244,6 +244,7 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         class Provider:
             pass
         p = Provider()
+        p.repository = "reallaksh19/Common"
         p.head = "c" * 40
         p.count = 0
         p.get_commit_sha = lambda name: "e" * 40
@@ -350,11 +351,12 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             replay.live_readback(self.manifest, live, transport)
 
 
-    def test_29_actual_guarded_publisher_blocks_competing_issue_writers(self):
+    def test_29_actual_guarded_publisher_blocks_wrong_provider_identity(self):
         live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
-        with self.assertRaisesRegex(replay.ReplayError,
-                                    "DUAL_ISSUE_PUBLISHERS_UNRECONCILED_NO_LIVE_WRITE"):
-            replay.guarded_publish(self.manifest, live, object(),
+        provider = self._provider()
+        provider.repository = "another/repository"
+        with self.assertRaisesRegex(replay.ReplayError, "MUTATION_REPOSITORY_NOT_ALLOWED"):
+            replay.guarded_publish(self.manifest, live, provider,
                 expected_head="c" * 40,
                 expected_input_digest="sha256:" + "a" * 64, apply=True)
 
