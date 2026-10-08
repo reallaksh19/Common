@@ -170,8 +170,10 @@ def build_delp_source_bound_successor(
 
     if not isinstance(graph, dict) or not isinstance(leaf_ref, str):
         raise HandoverContextError("SOURCE_GRAPH_OR_LEAF_INVALID")
-    if owner_source_status != UNKNOWN_OWNER_SOURCE and owner_source_status != "LINKED_ORIGINAL_SOURCE":
-        raise HandoverContextError("OWNER_ORIGIN_STATUS_INVALID")
+    # A caller string alone cannot authenticate an original Owner message.
+    # A future proven original-message source contract can extend this value.
+    if owner_source_status != UNKNOWN_OWNER_SOURCE:
+        raise HandoverContextError("OWNER_ORIGIN_STATUS_UNVERIFIED")
     try:
         indexed = delp.validate_graph(graph)
         repo = str(indexed["programme"].get("repository") or "")
@@ -204,7 +206,9 @@ def build_delp_source_bound_successor(
         facts = delp.ledger_from_github(provider, graph)
         observed_after = delp.observe_github(provider, graph)
         issue_after = issue_readback()
-        if issue_before != issue_after or observed_before != observed_after:
+        facts_after = delp.ledger_from_github(provider, graph)
+        if (issue_before != issue_after or observed_before != observed_after
+                or facts != facts_after):
             raise HandoverContextError("SOURCE_PROVIDER_CHANGED_DURING_READ")
         projection = delp.project(graph, facts, observed_after)
         leaf = projection["nodes"][leaf_ref]
