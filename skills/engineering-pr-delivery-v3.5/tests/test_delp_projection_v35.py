@@ -7176,5 +7176,160 @@ class NativeCustodySourceScopeGate(unittest.TestCase):
         )
 
 
+class PinnedNativeCustodyProviderObservations(unittest.TestCase):
+    """B2.3-C1: provider readback is not execution/custody grant authority."""
+
+    @classmethod
+    def setUpClass(cls):
+        import sys
+        import types
+        source_path = MODULE_PATH.with_name("custody_source_v35.py")
+        source_spec = importlib.util.spec_from_file_location(
+            "custody_source_v35", source_path)
+        source_module = importlib.util.module_from_spec(source_spec)
+        assert source_spec.loader
+        source_spec.loader.exec_module(source_module)
+        sys.modules["custody_source_v35"] = source_module
+        observer_path = MODULE_PATH.with_name("custody_provider_v35.py")
+        spec = importlib.util.spec_from_file_location("custody_provider_v35", observer_path)
+        cls.observer = importlib.util.module_from_spec(spec)
+        assert spec.loader
+        spec.loader.exec_module(cls.observer)
+        cls.fixture = NativeCustodySourceScopeGate()
+
+    def graph(self):
+        return self.fixture.graph()
+
+    def files(self, number=604, ep_id="EP-P3-B8", lease_id="LEASE-P3-B8"):
+        source, state, ep, lease = self.fixture.bundle(
+            number=number, ep_id=ep_id, lease_id=lease_id)
+        return {
+            "relay/STATE.yaml": state,
+            source["ep_path"]: ep,
+            source["lease_path"]: lease,
+        }
+
+    class Provider:
+        repository = "reallaksh19/Common"
+
+        def __init__(self, files, *, moved=False, unavailable=False):
+            self.files = files
+            self.moved = moved
+            self.unavailable = unavailable
+            self.calls = []
+            self.lookups = 0
+
+        def get_commit_sha(self, ref):
+            self.lookups += 1
+            if self.unavailable:
+                raise RuntimeError("provider unavailable")
+            return "b" * 40 if self.moved and self.lookups > 1 else "a" * 40
+
+        def read_native_yaml_at_sha(self, path, sha):
+            self.calls.append((path, sha))
+            if path not in self.files:
+                raise LookupError("native source missing")
+            return copy.deepcopy(self.files[path])
+
+    def observe(self, leaf="Common#604", provider=None, selector=None):
+        candidate = provider if provider is not None else self.Provider(self.files())
+        choice = (selector if selector is not None else
+                  {"repository": "reallaksh19/Common", "ref": "main"})
+        return self.observer.observe_scoped_native_candidate(
+            candidate, self.graph(), leaf, choice)
+
+    def test_pinned_provider_snapshot_still_does_not_authorize_lease(self):
+        provider = self.Provider(self.files())
+        out = self.observe(provider=provider)
+        self.assertEqual("SCOPE_MATCHED_UNVERIFIED", out["status"])
+        self.assertEqual("NOT_PROVEN", out["selector_approval"])
+        self.assertEqual("NOT_PROVEN", out["custody_grant_authority"])
+        self.assertEqual("NOT_PROVEN", out["provider_authentication"])
+        self.assertEqual("a" * 40, out["provider_observation"]["observed_sha"])
+        self.assertEqual(3, len(provider.calls))
+        self.assertEqual(2, provider.lookups)
+        self.assertEqual({"a" * 40}, {sha for _, sha in provider.calls})
+        self.assertNotIn("CustodySafe", out)
+
+    def test_realistic_438_native_source_cannot_be_proven_for_604(self):
+        provider = self.Provider(self.files(
+            number=438, ep_id="EP.438.7", lease_id="LEASE.438.7"))
+        provider.files["relay/WORK/EP.438.7.yaml"]["programme_parent"]["number"] = 438
+        out = self.observe(provider=provider)
+        self.assertEqual("SOURCE_NOT_PROVEN", out["status"])
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH", out["reason"])
+
+    def test_one_leaf_source_cannot_be_used_for_another(self):
+        provider = self.Provider(self.files())
+        out = self.observe(leaf="Common#605", provider=provider)
+        self.assertEqual("SOURCE_NOT_PROVEN", out["status"])
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH", out["reason"])
+        own = self.Provider(self.files(
+            number=605, ep_id="EP-P4", lease_id="LEASE-P4"))
+        self.assertEqual("SCOPE_MATCHED_UNVERIFIED",
+                         self.observe(leaf="Common#605", provider=own)["status"])
+
+    def test_moved_ref_and_missing_provider_fail_closed(self):
+        moved = self.Provider(self.files(), moved=True)
+        result = self.observe(provider=moved)
+        self.assertEqual("SOURCE_NOT_PROVEN", result["status"])
+        self.assertEqual("SOURCE_REF_MOVED_DURING_READ", result["reason"])
+        down = self.Provider(self.files(), unavailable=True)
+        self.assertEqual("SOURCE_REF_UNAVAILABLE", self.observe(provider=down)["reason"])
+
+    def test_invalid_selector_and_parent_absence_do_not_mint_grant(self):
+        provider = self.Provider(self.files())
+        for selector in (
+            {"repository": "other/repo", "ref": "main"},
+            {"repository": "reallaksh19/Common", "ref": "../../refs"},
+            {"repository": "reallaksh19/Common", "ref": "branch?bad"},
+        ):
+            with self.subTest(selector=selector):
+                self.assertEqual("SOURCE_NOT_PROVEN",
+                                 self.observe(provider=provider, selector=selector)["status"])
+        docs = self.files()
+        docs["relay/WORK/EP-P3-B8"].pop("parent_issue", None) if "relay/WORK/EP-P3-B8" in docs else None
+        docs["relay/WORK/EP-P3-B8.yaml"].pop("parent_issue")
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH",
+                         self.observe(provider=self.Provider(docs))["reason"])
+
+    def test_native_identifier_guard_prevents_path_traversal(self):
+        provider = self.Provider(self.files())
+        provider.files["relay/STATE.yaml"]["execution"]["ep"] = "../outside"
+        result = self.observe(provider=provider)
+        self.assertEqual("SOURCE_NATIVE_ID_INVALID", result["reason"])
+        self.assertEqual([("relay/STATE.yaml", "a" * 40)], provider.calls)
+
+    def test_git_transport_validates_pinned_native_file_bytes(self):
+        import base64
+        import yaml
+        good = {"execution": {"ep": "EP-P3-B8"}}
+        raw = yaml.safe_dump(good).encode("utf-8")
+
+        class FakeGitTransport(M.GhTransport):
+            def __init__(self, raw):
+                self.repository = "reallaksh19/Common"
+                self.raw = raw
+            def _gh(self, path):
+                return {
+                    "type": "file", "encoding": "base64",
+                    "size": len(self.raw),
+                    "content": base64.b64encode(self.raw).decode("ascii"),
+                }
+
+        transport = FakeGitTransport(raw)
+        self.assertEqual(good, transport.read_native_yaml_at_sha(
+            "relay/STATE.yaml", "a" * 40))
+        for path in ("relay/../STATE.yaml", "relay/WORK/../../secret.yaml",
+                     "elsewhere.yaml"):
+            with self.subTest(path=path), self.assertRaises(M.DelpError):
+                transport.read_native_yaml_at_sha(path, "a" * 40)
+        with self.assertRaises(M.DelpError):
+            transport.read_native_yaml_at_sha("relay/STATE.yaml", "not-sha")
+        transport.raw = b"x" * 131073
+        with self.assertRaises(M.DelpError):
+            transport.read_native_yaml_at_sha("relay/STATE.yaml", "a" * 40)
+
+
 if __name__ == "__main__":
     unittest.main()
