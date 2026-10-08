@@ -18,10 +18,11 @@ function safe(v,label){
   try{return JSON.parse(canonicalJSON(v));}
   catch{fail('INVALID',label+' is not safe canonical input');}
 }
-function boundedOpts(value,label){
+function boundedOpts(value,label,allowObservedAt=false){
+  const allowed=allowObservedAt?['fetchImpl','readToken','observedAt']:['fetchImpl','readToken'];
   if(!value||typeof value!=='object'||Array.isArray(value)||
-    Object.keys(value).some(k=>!['fetchImpl','readToken'].includes(k)))
-    fail('INVALID',label+' must contain only a bounded read-only fetch or token');
+    Object.keys(value).some(k=>!allowed.includes(k)))
+    fail('INVALID',label+' must contain only bounded read-only inputs');
 }
 function dataOnlyView(source,provider,preview,digest){
   const custody=source.custody;
@@ -81,7 +82,7 @@ export async function rehearseNativeFullChain(rawInput,options={}) {
     fail('INVALID','unexpected options');
   const sourceRead=options.sourceRead??{},providerRead=options.providerRead??{};
   boundedOpts(sourceRead,'source read');
-  boundedOpts(providerRead,'provider read');
+  boundedOpts(providerRead,'provider read',true);
   if(!options.evaluation||typeof options.evaluation!=='object'||Array.isArray(options.evaluation)||
     Object.keys(options.evaluation).sort().join()!=='evaluated_at,max_age_seconds')
     fail('INVALID','bounded pure-render evaluation required');
