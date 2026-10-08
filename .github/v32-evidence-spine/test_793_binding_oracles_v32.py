@@ -31,7 +31,7 @@ class SourceBoundReconstructionAdmission(unittest.TestCase):
     def test_01_clean_bound_release_and_reserve(self):
         g, o = self.graph, self.oracle
         self.assertEqual(o["released_proposal_digest"], self.released["released_proposal_digest"])
-        self.assertEqual("RELEASEABLE", delp.decompose_check(g)["release_state"])
+        self.assertEqual("RELEASEABLE", delp.decomposition_report(g)["release_state"])
         self.assertEqual(o["expected_reserve_weight"], g["nodes"][0]["reserve_weight"])
         bindings = {b["responsibility_id"]: b["ref"] for b in self.released["bindings"]}
         self.assertEqual({x["responsibility_id"]: x["ref"] for x in o["expected_bindings"]}, bindings)
