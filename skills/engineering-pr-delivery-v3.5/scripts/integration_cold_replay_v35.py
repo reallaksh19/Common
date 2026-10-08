@@ -34,7 +34,10 @@ def _unique_routes(transport: Any, urls: tuple[str, str, str]) -> dict[str, str]
         raise ColdReplayError("exactly three distinct native GitHub entry URLs required")
     routes: dict[str, str] = {}
     for url in urls:
-        route = COLD._input_route(transport, url)
+        try:
+            route = COLD._input_route(transport, url)
+        except COLD.ColdEntryError as exc:
+            raise ColdReplayError(f"invalid native provider entry route: {exc}") from exc
         kind = route["entry_kind"]
         if kind in routes:
             raise ColdReplayError("duplicate entry kind, need PARENT, CHILD, PR")
