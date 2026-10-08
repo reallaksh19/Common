@@ -1,0 +1,501 @@
+{
+  "schema": "relay-v3.2-delp-execution-graph",
+  "programme": {
+    "id": "COMMON-718-V32-EVIDENCE-SPINE",
+    "root": "Common#718",
+    "repository": "reallaksh19/Common",
+    "base_ref": "main",
+    "total_weight": 100,
+    "acceptance_claims": [
+      {
+        "id": "ESC-1",
+        "claim": "A released parent acceptance contract uniquely identifies each bounded responsibility and conserves claim ownership, obligations and provider bindings without relying on hand-written status.",
+        "kind": "SEMANTIC",
+        "weight": 20
+      },
+      {
+        "id": "ESC-2",
+        "claim": "An exact material candidate and accepted facts are reconciled with actual execution coverage of required verification methods; omitted or undiscovered verification cannot qualify a claim.",
+        "kind": "SEMANTIC",
+        "weight": 25
+      },
+      {
+        "id": "ESC-3",
+        "claim": "Parent and child issue read models and the related pull-request read view share one verifiable responsibility basis while retaining separate delivery and review lifecycles.",
+        "kind": "SEMANTIC",
+        "weight": 20
+      },
+      {
+        "id": "ESC-4",
+        "claim": "A successor receives a source-bound, frozen reconstruction basis and is required to detect stale material and obligations before any unsafe continuation; custody does not emerge from the projection.",
+        "kind": "SEMANTIC",
+        "weight": 15
+      },
+      {
+        "id": "ESC-5",
+        "claim": "Agent/reviewer quality observations link to an exact responsibility and independently assessed corpus; unavailable adjudication stays unknown, and advisory health cannot govern progress or acceptance.",
+        "kind": "SEMANTIC",
+        "weight": 15
+      },
+      {
+        "id": "ESC-6",
+        "claim": "An integrated real-history replay demonstrates consistent reconstruction of plan, current material, verification, provider views, successor context and agent advice under misleading and clean controls.",
+        "kind": "DELIVERY_GATE",
+        "weight": 5
+      }
+    ],
+    "decomposition_policy": {
+      "mode": "ENFORCED",
+      "claim_first": {
+        "mode": "ENFORCED",
+        "require_independence_basis": true
+      }
+    },
+    "decomposition_proposal": {
+      "version": "V2",
+      "responsibilities": [
+        {
+          "id": "R-BASIS",
+          "work_class": "PRODUCT",
+          "owns_claims": [
+            "ESC-1"
+          ],
+          "claim_allocations": [
+            {
+              "claim_id": "ESC-1",
+              "weight": 20
+            }
+          ],
+          "outcome": "One released acceptance contract uniquely identifies its responsible owner, exact obligations, and current material binding without relying on titles or prose.",
+          "independence_basis": "This contract can be accepted or rejected from parent-claim allocation, frozen digest and provider identity before any qualification or status view exists.",
+          "semantic_units": [
+            {
+              "id": "BASIS-IDENTITY",
+              "kind": "SEMANTIC",
+              "weight": 34,
+              "outcome": "A programme's acceptance obligations are traceable to one immutable responsibility identity and release.",
+              "verify": "Parent/contract/provider identity conservation oracle"
+            },
+            {
+              "id": "BASIS-CONSERVATION",
+              "kind": "SEMANTIC",
+              "weight": 33,
+              "outcome": "A changed claim, unit or bound provider reference cannot silently retain the preceding contract's authority.",
+              "verify": "Mutated-plan and old-digest rejection oracle"
+            },
+            {
+              "id": "BASIS-UNKNOWN",
+              "kind": "SEMANTIC",
+              "weight": 33,
+              "outcome": "A missing or stale canonical plan is surfaced as an explicit unresolved source rather than a fabricated percentage.",
+              "verify": "No-plan and stale-release negative controls"
+            }
+          ],
+          "size_budget": {
+            "target_loc": 450,
+            "hard_loc": 1000,
+            "target_minutes": 15,
+            "hard_minutes": 20
+          },
+          "write_surface": [
+            "skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py",
+            "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_basis_reconciliation.py"
+          ],
+          "acceptance_methods": [
+            "Adversarial source-bound replay of ESC-1 including one clean and one mismatched case",
+            "Recompute outcome at exact candidate and confirm rejection of unavailable or out-of-scope truth"
+          ],
+          "depends_on": []
+        },
+        {
+          "id": "R-PROOF",
+          "work_class": "PRODUCT",
+          "owns_claims": [
+            "ESC-2"
+          ],
+          "claim_allocations": [
+            {
+              "claim_id": "ESC-2",
+              "weight": 25
+            }
+          ],
+          "outcome": "Each claimed obligation exposes whether its required verification actually ran for the live candidate rather than treating green unrelated checks or merged state as proof.",
+          "independence_basis": "Independent verification coverage is measurable on a frozen candidate and named acceptance oracle without requiring issue titles, successor work or quality scoring.",
+          "semantic_units": [
+            {
+              "id": "PROOF-CANDIDATE",
+              "kind": "SEMANTIC",
+              "weight": 34,
+              "outcome": "A provider candidate and claimed verified obligation are bound to the same exact material revision.",
+              "verify": "Exact-head, moved-head, missing-material oracle"
+            },
+            {
+              "id": "PROOF-EXECUTION",
+              "kind": "SEMANTIC",
+              "weight": 33,
+              "outcome": "An absent or undiscovered required verification remains not run regardless of unrelated successful jobs.",
+              "verify": "PR 715 discoverability and raw job-step oracle"
+            },
+            {
+              "id": "PROOF-COMPLETENESS",
+              "kind": "SEMANTIC",
+              "weight": 33,
+              "outcome": "A merged candidate that omitted required deliverables remains unqualified against the declared acceptance contract.",
+              "verify": "PR 611 omitted-surface and clean completeness oracle"
+            }
+          ],
+          "size_budget": {
+            "target_loc": 450,
+            "hard_loc": 1000,
+            "target_minutes": 15,
+            "hard_minutes": 20
+          },
+          "write_surface": [
+            "skills/engineering-pr-delivery-v3.2/scripts/qualification_observation_v32.py",
+            "skills/engineering-pr-delivery-v3.2/schemas/qualification-observation-v32.schema.yaml",
+            "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_qualification_observation.py"
+          ],
+          "acceptance_methods": [
+            "Adversarial source-bound replay of ESC-2 including one clean and one mismatched case",
+            "Recompute outcome at exact candidate and confirm rejection of unavailable or out-of-scope truth"
+          ],
+          "depends_on": [
+            "R-BASIS"
+          ]
+        },
+        {
+          "id": "R-PROJECTION",
+          "work_class": "PRODUCT",
+          "owns_claims": [
+            "ESC-3"
+          ],
+          "claim_allocations": [
+            {
+              "claim_id": "ESC-3",
+              "weight": 20
+            }
+          ],
+          "outcome": "Parent and child issue states and an associated PR read view reconcile to the same input identity without assigning authority to either title or to a merged PR.",
+          "independence_basis": "Cross-surface truth and drift are independently accepted from one immutable projected basis after responsibility material and qualification are known.",
+          "semantic_units": [
+            {
+              "id": "VIEW-CONSISTENCY",
+              "kind": "SEMANTIC",
+              "weight": 34,
+              "outcome": "A parent and child show compatible current obligations, qualified outcomes and active frontier at one input basis.",
+              "verify": "Parent/child equal-source and changed-frontier oracle"
+            },
+            {
+              "id": "VIEW-PR",
+              "kind": "SEMANTIC",
+              "weight": 33,
+              "outcome": "The associated PR view identifies its own delivery stage and qualification gap without equating its title to responsibility progress.",
+              "verify": "PR-green-but-unqualified and stable-title oracle"
+            },
+            {
+              "id": "VIEW-DRIFT",
+              "kind": "SEMANTIC",
+              "weight": 33,
+              "outcome": "Changed upstream input or a conflicting provider update is recognized without overwriting Owner-owned specification.",
+              "verify": "Digest divergence and compare-and-swap race oracle"
+            }
+          ],
+          "size_budget": {
+            "target_loc": 450,
+            "hard_loc": 1000,
+            "target_minutes": 15,
+            "hard_minutes": 20
+          },
+          "write_surface": [
+            "skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py",
+            "skills/engineering-pr-delivery-v3.2/scripts/pr_responsibility_view_v32.py",
+            "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_cross_surface_view.py"
+          ],
+          "acceptance_methods": [
+            "Adversarial source-bound replay of ESC-3 including one clean and one mismatched case",
+            "Recompute outcome at exact candidate and confirm rejection of unavailable or out-of-scope truth"
+          ],
+          "depends_on": [
+            "R-BASIS",
+            "R-PROOF"
+          ]
+        },
+        {
+          "id": "R-RECONSTRUCTION",
+          "work_class": "PRODUCT",
+          "owns_claims": [
+            "ESC-4"
+          ],
+          "claim_allocations": [
+            {
+              "claim_id": "ESC-4",
+              "weight": 15
+            }
+          ],
+          "outcome": "A new executor can identify the governing contract, current material/qualification frontier and unsafe next decision, and reject a frozen basis that no longer describes GitHub reality.",
+          "independence_basis": "This result is independently verifiable by a fresh successor over exact frozen and current inputs, before any further implementation is admitted.",
+          "semantic_units": [
+            {
+              "id": "RECON-IDENTITY",
+              "kind": "SEMANTIC",
+              "weight": 34,
+              "outcome": "The successor's context names the same currently governed responsibility and source digests as the accepted plan.",
+              "verify": "Frozen context vs source contract identity oracle"
+            },
+            {
+              "id": "RECON-FRESHNESS",
+              "kind": "SEMANTIC",
+              "weight": 33,
+              "outcome": "Changed candidate, plan, obligation or provider visibility is surfaced for fresh reconciliation before unsafe continuation.",
+              "verify": "Rebase/head/plan drift successor oracle"
+            },
+            {
+              "id": "RECON-BOUNDARY",
+              "kind": "SEMANTIC",
+              "weight": 33,
+              "outcome": "The successor context preserves unresolved reasoning and authority limits without creating new custody or merge permission.",
+              "verify": "No-mutation/no-approval/no-automatic-replan oracle"
+            }
+          ],
+          "size_budget": {
+            "target_loc": 450,
+            "hard_loc": 1000,
+            "target_minutes": 15,
+            "hard_minutes": 20
+          },
+          "write_surface": [
+            "skills/engineering-pr-delivery-v3.2/schemas/handover-context.schema.yaml",
+            "skills/engineering-pr-delivery-v3.2/scripts/handover_context.py",
+            "skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py"
+          ],
+          "acceptance_methods": [
+            "Adversarial source-bound replay of ESC-4 including one clean and one mismatched case",
+            "Recompute outcome at exact candidate and confirm rejection of unavailable or out-of-scope truth"
+          ],
+          "depends_on": [
+            "R-BASIS",
+            "R-PROOF"
+          ]
+        },
+        {
+          "id": "R-QUALITY",
+          "work_class": "PRODUCT",
+          "owns_claims": [
+            "ESC-5"
+          ],
+          "claim_allocations": [
+            {
+              "claim_id": "ESC-5",
+              "weight": 15
+            }
+          ],
+          "outcome": "An agent performance observation can be traced to the correct executor, responsibility and assessment basis while unadjudicated reports remain unknown and recommendations remain advisory.",
+          "independence_basis": "A separate adjudication-and-clean-control oracle can accept or reject this provenance record without depending on generated progress or transfer decisions.",
+          "semantic_units": [
+            {
+              "id": "QUAL-IDENTITY",
+              "kind": "SEMANTIC",
+              "weight": 34,
+              "outcome": "The observation identifies one executor context and one applicable responsibility/assessment generation.",
+              "verify": "Cross-agent/cross-epoch misbinding oracle"
+            },
+            {
+              "id": "QUAL-GROUNDING",
+              "kind": "SEMANTIC",
+              "weight": 33,
+              "outcome": "Unverified assessment labels and mismatched challenge corpora cannot masquerade as independently observed agent performance.",
+              "verify": "Independent corpus/readback and missing ground-truth oracle"
+            },
+            {
+              "id": "QUAL-ISOLATION",
+              "kind": "SEMANTIC",
+              "weight": 33,
+              "outcome": "The existing quality evaluator may advise but cannot change product verification, issue progress or Owner control.",
+              "verify": "M1-M3 source-digest and P/E/authority isolation oracle"
+            }
+          ],
+          "size_budget": {
+            "target_loc": 450,
+            "hard_loc": 1000,
+            "target_minutes": 15,
+            "hard_minutes": 20
+          },
+          "write_surface": [
+            "skills/engineering-pr-delivery-v3.2/scripts/agent_quality_provenance_v32.py",
+            "skills/engineering-pr-delivery-v3.2/schemas/agent-quality-provenance-v32.schema.yaml",
+            "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_quality_provenance.py"
+          ],
+          "acceptance_methods": [
+            "Adversarial source-bound replay of ESC-5 including one clean and one mismatched case",
+            "Recompute outcome at exact candidate and confirm rejection of unavailable or out-of-scope truth"
+          ],
+          "depends_on": [
+            "R-BASIS",
+            "R-PROOF"
+          ]
+        },
+        {
+          "id": "G-REPLAY",
+          "work_class": "GATE",
+          "owns_claims": [
+            "ESC-6"
+          ],
+          "claim_allocations": [
+            {
+              "claim_id": "ESC-6",
+              "weight": 5
+            }
+          ],
+          "outcome": "Demonstrate that the entire accepted responsibility chain yields truthful and consistent results under retained real-history failures and clean controls.",
+          "independence_basis": "The completed semantic chain can be rejected as a whole using retained source-bound controls on one exact integrated candidate.",
+          "semantic_units": [
+            {
+              "id": "G1",
+              "kind": "DELIVERY_GATE",
+              "weight": 100,
+              "outcome": "Qualify real-history parent/child/PR, change integrity, stale successor, quality-unavailable and clean-path consistency as one integrated result.",
+              "verify": "Run exact-head retained replay with actual discovered executable cases, negative cases and zero authority leakage"
+            }
+          ],
+          "size_budget": {
+            "target_loc": 180,
+            "hard_loc": 320,
+            "target_minutes": 10,
+            "hard_minutes": 20
+          },
+          "write_surface": [
+            "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_evidence_spine_replay.py"
+          ],
+          "acceptance_methods": [
+            "Executed exact-head retained integration replay; six named scenarios and no hidden tests",
+            "Source-bound independent review of qualification coverage, success and negative cases"
+          ],
+          "depends_on": [
+            "R-BASIS",
+            "R-PROOF",
+            "R-PROJECTION",
+            "R-RECONSTRUCTION",
+            "R-QUALITY"
+          ]
+        }
+      ],
+      "released_proposal_digest": "sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd",
+      "bindings": [
+        {
+          "responsibility_id": "R-BASIS",
+          "ref": "Common#720"
+        },
+        {
+          "responsibility_id": "R-PROOF",
+          "ref": "Common#724"
+        }
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "ref": "Common#718",
+      "kind": "ROOT",
+      "reserve_weight": 55
+    },
+    {
+      "ref": "Common#720",
+      "kind": "LEAF",
+      "parent": "Common#718",
+      "weight": 20,
+      "responsibility_id": "R-BASIS",
+      "work_class": "PRODUCT",
+      "owns_claims": [
+        "ESC-1"
+      ],
+      "outcome": "One released acceptance contract uniquely identifies its responsible owner, exact obligations, and current material binding without relying on titles or prose.",
+      "independence_basis": "This contract can be accepted or rejected from parent-claim allocation, frozen digest and provider identity before any qualification or status view exists.",
+      "size_budget": {
+        "target_loc": 450,
+        "hard_loc": 1000,
+        "target_minutes": 15,
+        "hard_minutes": 20
+      },
+      "write_surface": [
+        "skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py",
+        "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_basis_reconciliation.py"
+      ],
+      "acceptance_methods": [
+        "Adversarial source-bound replay of ESC-1 including one clean and one mismatched case",
+        "Recompute outcome at exact candidate and confirm rejection of unavailable or out-of-scope truth"
+      ],
+      "depends_on": [],
+      "units": [
+        {
+          "id": "BASIS-IDENTITY",
+          "weight": 34,
+          "outcome": "A programme's acceptance obligations are traceable to one immutable responsibility identity and release.",
+          "verify": "Parent/contract/provider identity conservation oracle"
+        },
+        {
+          "id": "BASIS-CONSERVATION",
+          "weight": 33,
+          "outcome": "A changed claim, unit or bound provider reference cannot silently retain the preceding contract's authority.",
+          "verify": "Mutated-plan and old-digest rejection oracle"
+        },
+        {
+          "id": "BASIS-UNKNOWN",
+          "weight": 33,
+          "outcome": "A missing or stale canonical plan is surfaced as an explicit unresolved source rather than a fabricated percentage.",
+          "verify": "No-plan and stale-release negative controls"
+        }
+      ]
+    },
+    {
+      "ref": "Common#724",
+      "kind": "LEAF",
+      "parent": "Common#718",
+      "weight": 25,
+      "responsibility_id": "R-PROOF",
+      "work_class": "PRODUCT",
+      "owns_claims": [
+        "ESC-2"
+      ],
+      "outcome": "Each claimed obligation exposes whether its required verification actually ran for the live candidate rather than treating green unrelated checks or merged state as proof.",
+      "independence_basis": "Independent verification coverage is measurable on a frozen candidate and named acceptance oracle without requiring issue titles, successor work or quality scoring.",
+      "size_budget": {
+        "target_loc": 450,
+        "hard_loc": 1000,
+        "target_minutes": 15,
+        "hard_minutes": 20
+      },
+      "write_surface": [
+        "skills/engineering-pr-delivery-v3.2/scripts/qualification_observation_v32.py",
+        "skills/engineering-pr-delivery-v3.2/schemas/qualification-observation-v32.schema.yaml",
+        "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_qualification_observation.py"
+      ],
+      "acceptance_methods": [
+        "Adversarial source-bound replay of ESC-2 including one clean and one mismatched case",
+        "Recompute outcome at exact candidate and confirm rejection of unavailable or out-of-scope truth"
+      ],
+      "depends_on": [
+        "Common#720"
+      ],
+      "units": [
+        {
+          "id": "PROOF-CANDIDATE",
+          "weight": 34,
+          "outcome": "A provider candidate and claimed verified obligation are bound to the same exact material revision.",
+          "verify": "Exact-head, moved-head, missing-material oracle"
+        },
+        {
+          "id": "PROOF-EXECUTION",
+          "weight": 33,
+          "outcome": "An absent or undiscovered required verification remains not run regardless of unrelated successful jobs.",
+          "verify": "PR 715 discoverability and raw job-step oracle"
+        },
+        {
+          "id": "PROOF-COMPLETENESS",
+          "weight": 33,
+          "outcome": "A merged candidate that omitted required deliverables remains unqualified against the declared acceptance contract.",
+          "verify": "PR 611 omitted-surface and clean completeness oracle"
+        }
+      ]
+    }
+  ]
+}
