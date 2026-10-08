@@ -1,0 +1,54 @@
+{
+  "schema": "common-v32-718-unreleased-join-probe-v1",
+  "owner_root": "Common#718",
+  "intent": "source-level cross-chain reality check, not a release/merger/review approval",
+  "authority": "TEST_ONLY_NOT_GOVERNED_RELEASE",
+  "current_main": "28841b5cfed9e9b6057a1a6f09090adcc512e1b8",
+  "graph_chain_source": "066e2393ca8b0c4093f832b23764d834183c6948",
+  "runtime_chain_source": "218a7e53e8eb6504d0824995d9ffe86ca674ab98",
+  "staged_graph_plus_grants": "80067007fd99cf9ea7dbdf8656299b493e327b75",
+  "staged_product": "aa7a3ada4034c883d44306bdb99c9d547e66e427",
+  "changed_source_paths": {
+    "graph": 7,
+    "runtime": 31,
+    "overlap": 0
+  },
+  "provider_graph_leaf": "Common#793",
+  "provider_graph_material_pr": "Common#800",
+  "expected_root_reserve": 20,
+  "tests": [
+    {
+      "id": "J01",
+      "expected": "exact deployed candidate graph is RELEASEABLE with ESC-4 bound to actual PR #800; no CHECKPOINT_FACTS or P/E credited"
+    },
+    {
+      "id": "J02",
+      "expected": "actual native PLAN_HANDOVER commits source-bound context/event from real read-only GitHub graph, no new Owner authority"
+    },
+    {
+      "id": "J03",
+      "expected": "current V3.2/V3.5 handover tests and C6 atomicity remain executable after independent A+B overlay"
+    },
+    {
+      "id": "J04",
+      "expected": "C5 authentic GitHub provider cold readback validates actual SHA/currentness and source racing"
+    },
+    {
+      "id": "J05",
+      "expected": "Git content custody remains source-bound and rejects joint forgery on integrated files, but is NOT release-signing"
+    },
+    {
+      "id": "J06",
+      "expected": "Synthetic integration is descendant of current main, source paths match independent A/B heads, and no branch or PR was merged"
+    }
+  ],
+  "explicit_limits": [
+    "GIT_HISTORY_ARTIFICIALLY_RECONSTRUCTED_SINGLE_PARENT",
+    "NOT_REAL_MERGE_COMMIT",
+    "NOT_BASE_RESIDENT_RELEASE_GRANT_FOR_FIRST_PR",
+    "CI_STATUS_DOES_NOT_PROVE_INDEPENDENT_REVIEW",
+    "NO_OWNER_CHAT_LINK_OR_ACCEPTED_CHECKPOINT_FACTS",
+    "NO_MAIN_MODIFICATION",
+    "CURRENT_PROVIDER_STATE_COULD_CHANGE_AFTER_TEST"
+  ]
+}
