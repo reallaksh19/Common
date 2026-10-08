@@ -59,10 +59,16 @@ def gate(event_name: str, event: Mapping[str, Any], graph: Mapping[str, Any],
         code = "DENY_REPOSITORY"
     elif event_name == "pull_request_target" and event.get("action") not in ACTIONS:
         code = "DENY_EVENT_ACTION"
+    elif event_name == "pull_request_target" and not isinstance(event.get("pull_request"), Mapping):
+        code = "DENY_MISSING_PR_EVENT"
+    elif event_name == "workflow_dispatch" and not isinstance(event.get("inputs"), Mapping):
+        code = "DENY_MISSING_DISPATCH_INPUTS"
     else:
-        event_pr = (event.get("pull_request") or {}) if event_name == "pull_request_target" else {}
-        pin = event_pr.get("head", {}).get("sha") if event_pr else (event.get("inputs") or {}).get("expected_head")
-        number = event_pr.get("number") if event_pr else (event.get("inputs") or {}).get("pr_number")
+        event_pr = event["pull_request"] if event_name == "pull_request_target" else None
+        pin = ((event_pr.get("head") or {}).get("sha") if event_pr is not None
+               else event["inputs"].get("expected_head"))
+        number = (event_pr.get("number") if event_pr is not None
+                  else event["inputs"].get("pr_number"))
         if str(number) != str(target["pr_number"]):
             code = "DENY_UNBOUND_PR"
         elif event_pr and (event_pr.get("head", {}).get("repo") or {}).get("full_name") != target["repository"]:
