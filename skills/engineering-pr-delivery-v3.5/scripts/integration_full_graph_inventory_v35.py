@@ -21,6 +21,7 @@ import integration_scoreboard_publish_v35 as PUBLISH
 
 PHASES = ((1,602),(2,603),(3,604),(4,605),(5,606),(6,607),(7,608))
 ROOT_ISSUE = 600
+P0_ISSUE = 601  # reconciliation-only, ZERO semantic progress credit
 CANDIDATE_PR = 712
 _PHASE = re.compile(r"(?im)^phase:\s*P([1-7])\b")
 _PARENT = re.compile(r"(?im)^Parent programme:\s*Common\s*#([0-9]+)\b")
@@ -29,6 +30,63 @@ _SHA = re.compile(r"^[a-f0-9]{40}$")
 
 class GraphInventoryError(ValueError):
     """Invalid/foreign native source; do not infer missing authority."""
+
+
+def _p0_baseline(transport: Any) -> dict[str, Any]:
+    """Verify P0 as a native zero-credit *reconciliation*, never a plan leaf.
+
+    A title that says COMPLETE does not close an issue or mint semantic
+    progress. A TASK_EVIDENCE comment is evidence of P0 reconciliation,
+    not graph plan, owner approval, Local custody or weighted DELP facts.
+    """
+    issue = transport.get_issue(P0_ISSUE)
+    if not isinstance(issue, Mapping) or issue.get("number") != P0_ISSUE:
+        raise GraphInventoryError("P0 native programme baseline #601 missing")
+    body = str(issue.get("body") or "")
+    required = (
+        r"(?im)^Parent programme:\s*Common\s*#600\s*$",
+        r"(?im)^phase:\s*P0\b",
+        r"(?im)^responsibility_id:\s*RK-P0\s*$",
+        r"(?im)^implementation_credit_at_creation:\s*0\s*$",
+        r"(?im)^state_at_materialization:\s*RELEASED_RECONCILIATION_ONLY\s*$",
+    )
+    if not all(re.search(pattern, body) for pattern in required):
+        raise GraphInventoryError("P0 baseline must identify ROOT/P0 and zero credit")
+    comments = transport.list_comments(P0_ISSUE)
+    if not isinstance(comments, list):
+        raise GraphInventoryError("P0 native evidence comments unavailable")
+    ends = [c for c in comments if isinstance(c, Mapping) and
+            re.search(r"(?im)^# TASK_EVIDENCE\s*[—-]\s*END\b",
+                      str(c.get("body") or ""))]
+    if len(ends) != 1:
+        raise GraphInventoryError("P0 requires exactly one native END reconciliation receipt")
+    evidence = ends[0]
+    statement = str(evidence.get("body") or "")
+    evidence_claims = (
+        r"(?im)^responsibility:\s*RK-P0\s*$",
+        r"(?im)^issue:\s*Common#601\s*$",
+        r"(?im)^result:\s*VERIFIED_RECONCILIATION_ONLY\s*$",
+        r"(?im)^implementation_credit:\s*0\s*$",
+        r"(?im)^source_mutation:\s*NONE\s*$",
+    )
+    if not all(re.search(pattern, statement) for pattern in evidence_claims):
+        raise GraphInventoryError("P0 END claim is not source-bound zero-credit reconciliation")
+    identifier = evidence.get("id")
+    if type(identifier) is not int or identifier <= 0:
+        raise GraphInventoryError("P0 END lacks a native GitHub comment identity")
+    state = str(issue.get("state") or "UNKNOWN").upper()
+    title = str(issue.get("title") or "")
+    return {
+        "issue": P0_ISSUE,
+        "state": state,
+        "title_claims_complete_but_open": state == "OPEN" and "COMPLETE" in title.upper(),
+        "provider_end_receipt":
+            f"https://github.com/reallaksh19/Common/issues/601#issuecomment-{identifier}",
+        "end_sha256": hashlib.sha256(statement.encode("utf-8")).hexdigest(),
+        "classification": "RECONCILIATION_ONLY_ZERO_IMPLEMENTATION_CREDIT",
+        "programme_graph_weight": "NOT_AUTHORIZED_NOT_DERIVED",
+        "progress_credit": "ZERO_NOT_UNIT_EVIDENCE",
+    }
 
 
 def _full_index(graph: Mapping[str,Any]) -> dict[str,Any]:
@@ -41,6 +99,10 @@ def _full_index(graph: Mapping[str,Any]) -> dict[str,Any]:
     if index["root"] != "Common#600":
         raise GraphInventoryError("candidate root not the governed Common#600")
     nodes = index["nodes"]
+    if "Common#601" in nodes:
+        raise GraphInventoryError(
+            "P0 #601 is reconciliation-only zero credit: no invented weighted DELP leaf"
+        )
     missing = [f"Common#{n}" for _,n in PHASES if f"Common#{n}" not in nodes]
     if missing:
         raise GraphInventoryError("partial graph would erase governed P1–P7 phases: " + ", ".join(missing))
@@ -68,6 +130,7 @@ def inspect(transport: Any, candidate: Mapping[str,Any] | None = None) -> dict[s
         "<!-- V35_PARENT_OWNER_INTENT_BEGIN -->" not in str(root.get("body") or "")
     ):
         raise GraphInventoryError("native #600 root identity and Owner-intent marker unavailable")
+    p0 = _p0_baseline(transport)
     observations = []
     for phase,number in PHASES:
         issue = transport.get_issue(number)
@@ -109,6 +172,7 @@ def inspect(transport: Any, candidate: Mapping[str,Any] | None = None) -> dict[s
         "schema":"V35_FULL_PROGRAMME_SOURCE_INVENTORY_V1",
         "repository":transport.repository,
         "root":"Common#600",
+        "p0_reconciliation_baseline": p0,
         "source_phase_count":len(observations),
         "phase_source_inventory": observations,
         "p3_pr":CANDIDATE_PR,
