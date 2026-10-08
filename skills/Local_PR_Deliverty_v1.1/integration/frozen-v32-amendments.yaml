@@ -270,3 +270,32 @@ amendments:
     allowed_paths:
       - skills/engineering-pr-delivery-v3.2/scripts/trusted_scoreboard_v32.py
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_trusted_scoreboard.py
+
+  - id: AMEND-V32-ES-RRECON-014
+    owner_authorized: false
+    owner_basis: >-
+      PENDING exact-path Owner confirmation. The Owner's 2026-10-08 continuation
+      'ok next' authorizes proceeding with source audit and amendment proposal,
+      not an independently authenticated approval or a merge authorization
+      for the three frozen V3.2 paths. Common #718 preserves the Owner's desired
+      parent-to-intent-to-decomposition-to-facts-to-issue/PR-to-handover chain.
+      Common #793 is the released ESC-4 R-RECONSTRUCTION claim. Graph proposal
+      in draft #794 and separate golden handover preflight in stacked draft
+      #798 are candidate input; their green checks alone grant no Owner review,
+      source-mutation, or merge authority. This row MUST remain false until an
+      explicit Owner authorization of these exact paths is recorded and admitted.
+    summary: >-
+      PROPOSED only, not an active exception. Add optional source-bound successor
+      reconstruction from the SAME released V3.2 DELP input/plan digest,
+      independently read-back candidate/head and verified provenance status;
+      reject moved material/plan/provider and unknown evidence, keep the
+      original Owner-message source UNKNOWN when the only durable ref is a
+      GitHub mirror, preserve legacy handover and separate execution custody.
+      Do not manufacture CHECKPOINT_FACTS, claim independent qualification,
+      publish issue or PR titles, write GitHub, create a session-history ledger,
+      alter acceptance or DELP maths, or touch V3.5. The approval must already
+      be present in the product PR base, never solely in the PR head.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/scripts/handover_context.py
+      - skills/engineering-pr-delivery-v3.2/schemas/handover-context.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py
