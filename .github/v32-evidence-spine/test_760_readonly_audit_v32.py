@@ -126,5 +126,41 @@ class ReadonlyScoreboardAuditTests(unittest.TestCase):
             self.assertIn("READ_ONLY_PROVIDER_REPLAY_FAILED_EXIT_4",saved["error"])
 
 
+    def test_11_five_PRECOMMITTED_failure_codes_are_exact_and_never_leak(self):
+        fixture=json.loads((HERE/"767-readback-error-oracles-v1.json").read_text())
+        self.assertEqual("relay-v32-767-safe-failure-oracle-v1", fixture["schema"])
+        self.assertEqual(5,len(fixture["cases"]))
+        for row in fixture["cases"]:
+            with self.subTest(oracle_id=row["id"]):
+                got=mod.classify_provider_failure(row["exit"],row["stderr"])
+                self.assertEqual((row["category"],row["exception"],row["code"]),
+                    (got["category"],got["exception_class"],got["reason_code"]))
+                self.assertEqual(row["exit"],got["exit_code"])
+                self.assertEqual(0, got["stderr_bytes"] if not row["stderr"] else
+                                    got["stderr_bytes"]-len(row["stderr"].encode("utf-8")))
+                self.assertTrue(got["stderr_sha256"].startswith("sha256:"))
+                self.assertFalse(got["raw_stderr_exposed"])
+                self.assertNotIn("TOKEN_PRIVATE_SAMPLE",json.dumps(got))
+                self.assertNotIn("ghp_FAKE_PRIVATE_BEARER_SHOULD_NOT_LEAK",json.dumps(got))
+
+    def test_12_real_wrapper_failure_retains_safe_diagnostic_artifact(self):
+        with TemporaryDirectory() as td:
+            report=Path(td)/"audit.json"
+            argv=["audit_live_scoreboard_v32.py","--output",str(report),
+                  "--event-name","issue_comment","--writer-job-result","skipped"]
+            stderr="Traceback...\\nDelpError: gh: HTTP 403: TOKEN_PRIVATE_SAMPLE"
+            responses=[subprocess.CompletedProcess([],0,stdout="c"*40+"\\n"),
+                       subprocess.CompletedProcess([],1,stdout="",stderr=stderr)]
+            with patch.object(sys,"argv",argv),patch.object(mod.subprocess,"run",side_effect=responses):
+                self.assertEqual(3,mod.main())
+            saved=json.loads(report.read_text())
+            self.assertEqual("FAILED_UNVERIFIED",saved["status"])
+            self.assertEqual(0,saved["write_count"])
+            self.assertEqual("GH_HTTP",saved["provider_failure"]["category"])
+            self.assertEqual("HTTP_403",saved["provider_failure"]["reason_code"])
+            self.assertEqual(1,saved["provider_failure"]["exit_code"])
+            self.assertNotIn("TOKEN_PRIVATE_SAMPLE",report.read_text())
+
+
 if __name__=="__main__":
     unittest.main()

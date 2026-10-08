@@ -1,0 +1,60 @@
+{
+  "schema": "relay-v32-767-safe-failure-oracle-v1",
+  "base_main": "c8eb92a9d530869a8d48bf56616e908eff2ecebb",
+  "source_failure_run": "https://github.com/reallaksh19/Common/actions/runs/37756552163",
+  "independent_before_consumer": true,
+  "cases": [
+    {
+      "id": "ERR-01",
+      "exit": 1,
+      "stderr": "V32-718-REPLAY-FAILED: ReplayError: PROVIDER_ISSUE_MOVED_DURING_RECONCILIATION\n",
+      "category": "SOURCE_CONTRACT",
+      "exception": "ReplayError",
+      "code": "PROVIDER_ISSUE_MOVED_DURING_RECONCILIATION"
+    },
+    {
+      "id": "ERR-02",
+      "exit": 1,
+      "stderr": "Traceback...\\nDelpError: gh: HTTP 403: Resource not accessible by integration (TOKEN_PRIVATE_SAMPLE)\n",
+      "category": "GH_HTTP",
+      "exception": "DelpError",
+      "code": "HTTP_403"
+    },
+    {
+      "id": "ERR-03",
+      "exit": 1,
+      "stderr": "Traceback (most recent call last):\nSensitiveError: token=ghp_FAKE_PRIVATE_BEARER_SHOULD_NOT_LEAK\n",
+      "category": "PYTHON_EXCEPTION",
+      "exception": "SensitiveError",
+      "code": "UNCLASSIFIED_EXCEPTION"
+    },
+    {
+      "id": "ERR-04",
+      "exit": 1,
+      "stderr": "",
+      "category": "NO_STDERR",
+      "exception": "UNKNOWN",
+      "code": "SUBPROCESS_EXIT_1"
+    },
+    {
+      "id": "ERR-05",
+      "exit": 1,
+      "stderr": "Traceback...\\nDelpError: gh: HTTP 404: Not Found",
+      "category": "GH_HTTP",
+      "exception": "DelpError",
+      "code": "HTTP_404"
+    }
+  ],
+  "always": {
+    "status": "FAILED_UNVERIFIED",
+    "write_count": 0,
+    "auth_effects": [],
+    "no_raw_stderr": true,
+    "has_stderr_sha256": true
+  },
+  "positive": {
+    "status": "OBSERVED_DRIFT_OR_UNPUBLISHED",
+    "write_count": 0,
+    "auth_effects": []
+  }
+}
