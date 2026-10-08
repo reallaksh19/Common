@@ -26,7 +26,7 @@ class VerticalResponsibilityCycle(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.manifest = json.loads((ROOT / ".github/v32-evidence-spine/718-golden-fixtures-v1.json").read_text())
-        cls.graph = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        cls.graph = json.loads((ROOT / ".github/v32-evidence-spine/fixtures/718-c0-source-graph.json").read_text())
 
     def test_01_release_claim_and_owner_source_bound_real_chain(self):
         r = replay.replay(self.manifest, self.graph)
@@ -120,7 +120,7 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             report = Path(td) / "phase-report.json"
             command = [sys.executable, str(V32 / "scripts" / "vertical_cycle_v32.py"),
                        "--manifest", str(ROOT / ".github/v32-evidence-spine/718-golden-fixtures-v1.json"),
-                       "--graph", str(ROOT / ".github/v32-evidence-spine/718-proposal-v2.json"),
+                       "--graph", str(ROOT / ".github/v32-evidence-spine/fixtures/718-c0-source-graph.json"),
                        "--report", str(report)]
             run = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
             self.assertEqual(0, run.returncode, run.stderr)
