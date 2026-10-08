@@ -214,6 +214,20 @@ class GraphSelectionTests(unittest.TestCase):
             )
         self.assertFalse(any(w[0] == "patch_pull" for w in self.t.writes))
 
+    def test_cli_apply_uses_provider_graph_source_and_protects_human_content(self):
+        with patch.object(PUBLISH, "ScoreboardTransport", return_value=self.t):
+            outcome = PUBLISH.main([
+                "--repository", self.t.repository,
+                "--responsibility", "Common#604", "--pr", "712",
+                "--apply", "--approval-ref", SCORE_URL,
+                "--graph-source-ref", GRAPH_URL,
+            ])
+        self.assertEqual(0, outcome)
+        self.assertIn("CI:PASS", self.t.pr["title"])
+        self.assertIn("Human authored PR prose", self.t.pr["body"])
+        self.assertTrue(any("LIVE_STATUS_V1" in row["body"]
+                            for row in self.t.comments[600]))
+
     def test_cli_apply_denies_missing_graph_approval_prior_to_provider_writes(self):
         with patch.object(PUBLISH, "ScoreboardTransport", return_value=self.t):
             self.assertEqual(2, PUBLISH.main([
