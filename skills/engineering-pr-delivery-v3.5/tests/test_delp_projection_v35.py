@@ -6607,5 +6607,18 @@ class HostedV35ActualSourceReadModel(_source_read_model.DELPSourceReadModelTests
     """Real graph/fact/provider/observed head integration contract."""
 
 
+# R3/R4: exercise the actual source-bound Github scoreboard publisher in the
+# hosted DELP workflow; do not merely add an undiscovered test file.
+import test_integration_scoreboard_v35 as _smart_scoreboard
+
+
+class HostedV35SmartTitleRendering(_smart_scoreboard.PureSmartTitles):
+    """Parent/child/PR title+managed block from same DELP source and real head."""
+
+
+class HostedV35SmartScoreboardPublication(_smart_scoreboard.LivePublisherTests):
+    """Fake-provider real DELP LIVE_STATUS and PR writer race/readback gates."""
+
+
 if __name__ == "__main__":
     unittest.main()
