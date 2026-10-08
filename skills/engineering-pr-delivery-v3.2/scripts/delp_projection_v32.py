@@ -4370,6 +4370,16 @@ class GhTransport:
     def patch_title(self, number: int, title: str) -> dict[str, Any]:
         return self._gh("--method", "PATCH", f"repos/{self.repository}/issues/{number}", "-f", f"title={title}")
 
+    def patch_issue_body(self, number: int, body: str) -> dict[str, Any]:
+        """Only body: DELP's GitHubStore exclusively owns issue titles/status."""
+        return self._gh("--method", "PATCH", f"repos/{self.repository}/issues/{number}",
+                        "-f", f"body={body}")
+
+    def patch_pull_title_body(self, number: int, title: str, body: str) -> dict[str, Any]:
+        """PR-specific provider write; PR titles are NOT DELP issue titles."""
+        return self._gh("--method", "PATCH", f"repos/{self.repository}/pulls/{number}",
+                        "-f", f"title={title}", "-f", f"body={body}")
+
 
 class GitHubStore:
     """Managed LIVE_STATUS comment + issue title per node, written with detect-and-retry CAS.
