@@ -210,5 +210,72 @@ class SchemaBoundaryTests(unittest.TestCase):
 
 
 
+
+class AuthenticatedProviderTests(unittest.TestCase):
+    def test_provider_requires_authentication_without_exposing_secret(self):
+        from unittest import mock
+        with mock.patch.dict("os.environ", {}, clear=True):
+            with self.assertRaises(RuntimeError):
+                M.GhReadOnlyProvider()
+
+    def test_authenticated_reads_use_get_only_and_exact_commit_tree(self):
+        import json
+        import subprocess
+        from unittest import mock
+        commit = "d" * 40
+        tree_hash = "e" * 40
+        responses = {
+            "/repos/reallaksh19/Common/pulls/715": {"head": {"sha": HEAD}},
+            f"/repos/reallaksh19/Common/actions/runs?head_sha={HEAD}&per_page=100":
+                {"total_count": 1, "workflow_runs": [{"id": 9001, "head_sha": HEAD}]},
+            "/repos/reallaksh19/Common/actions/runs/9001/jobs?per_page=100":
+                {"total_count": 1, "jobs": [{"id": 9002}]},
+            f"/repos/reallaksh19/Common/git/commits/{HEAD}": {"tree": {"sha": tree_hash}},
+            f"/repos/reallaksh19/Common/git/trees/{tree_hash}?recursive=1":
+                {"tree": [{"path": ARTIFACT, "sha": BLOB, "type": "blob"}], "truncated": False},
+        }
+        calls = []
+        def fake_run(argv, **kw):
+            calls.append((argv, kw))
+            uri = argv[-1]
+            raw = TEST_LINE if uri.endswith("/actions/jobs/9002/logs") else json.dumps(responses[uri])
+            return subprocess.CompletedProcess(argv, 0, stdout=raw.encode(), stderr=b"")
+        with mock.patch.dict("os.environ", {"GH_TOKEN": "canary-never-printed"}, clear=True):
+            with mock.patch.object(M.subprocess, "run", side_effect=fake_run):
+                provider = M.GhReadOnlyProvider()
+                self.assertEqual(HEAD, provider.get_pull(REPO, 715)["head"]["sha"])
+                self.assertEqual(1, len(provider.list_runs(REPO, HEAD)))
+                self.assertEqual(1, len(provider.list_jobs(REPO, 9001)))
+                self.assertIn(TEST_LINE, provider.get_job_log(REPO, 9002))
+                self.assertEqual(BLOB, provider.get_tree(REPO, HEAD)["tree"][0]["sha"])
+        self.assertEqual(6, len(calls))
+        for argv, kw in calls:
+            self.assertEqual(["gh", "api", "--method", "GET"], argv[:4])
+            self.assertFalse(kw.get("shell", False))
+            self.assertNotIn("canary-never-printed", " ".join(argv))
+
+    def test_incomplete_runs_page_returns_unknown(self):
+        import json
+        import subprocess
+        from unittest import mock
+        def fake_run(argv, **kw):
+            return subprocess.CompletedProcess(argv, 0,
+                stdout=json.dumps({"total_count": 101, "workflow_runs": [{"id": 1}]}).encode(), stderr=b"")
+        with mock.patch.dict("os.environ", {"GH_TOKEN": "canary"}, clear=True):
+            with mock.patch.object(M.subprocess, "run", side_effect=fake_run):
+                self.assertIsNone(M.GhReadOnlyProvider().list_runs(REPO, HEAD))
+
+    def test_provider_api_failure_fails_closed_as_unknown(self):
+        import subprocess
+        from unittest import mock
+        def failed(argv, **kw):
+            return subprocess.CompletedProcess(argv, 1, stdout=b"", stderr=b"private-error-with-token")
+        with mock.patch.dict("os.environ", {"GH_TOKEN": "canary"}, clear=True):
+            with mock.patch.object(M.subprocess, "run", side_effect=failed):
+                output = self.check(reader=M.GhReadOnlyProvider())
+        self.assertEqual("UNKNOWN", output["overall"])
+        self.assertFalse(any(q["status"] == "PROVEN" for q in output["requirements"]))
+
+
 if __name__ == "__main__":
     unittest.main()
