@@ -112,7 +112,8 @@ function status(p,observedFresh,native){
   if(states.includes('UNKNOWN'))return 'UNKNOWN';
   if(states.includes('FAIL'))return 'CI_NON_SUCCESS';
   if(states.includes('PENDING'))return 'PENDING';
-  return states.every(x=>x==='PASS')?'CI_PASS_OBSERVED':'UNKNOWN';
+  // Scope lists selected workflow paths, not the repo's authoritative required checks.
+  return states.every(x=>x==='PASS')?'SELECTED_CI_PASS_ONLY':'UNKNOWN';
 }
 function compactTitle(parts){
   const out=parts.join(' | ');
@@ -131,6 +132,9 @@ export function renderRelayPreviews(rawSnapshot,rawOptions){
     const health=status(p,fresh,native);
     return {number:p.number,source_url:p.source_url,head_sha:p.head_sha,
       state:health,original_provider_state:p.state,
+      workflow_scope:'CALLER_SELECTED_NOT_REQUIRED_POLICY',
+      checked_workflow_paths:p.ci_workflows.map(w=>w.path),
+      consistency:s.consistency, freshness:fresh,
       title:compactTitle(['RELAY PROPOSED ONLY','PR#'+p.number,
         'HEAD '+p.head_sha.slice(0,8),'CI '+health,'REVIEW NOT_EVALUATED']),
       snapshot_sha256:source,proposal_only:true};
@@ -139,7 +143,8 @@ export function renderRelayPreviews(rawSnapshot,rawOptions){
     number:c.number,source_url:c.source_url,state:c.state,
     title:compactTitle(['RELAY PROPOSED ONLY','ISSUE#'+c.number,
       'STATE '+c.state.toUpperCase(),'ACCEPTANCE NOT_EVALUATED']),
-    snapshot_sha256:source,proposal_only:true
+    snapshot_sha256:source,proposal_only:true,
+    freshness:fresh,consistency:s.consistency
   }));
   const parent=s.parent_issue;
   const summary={
@@ -147,6 +152,7 @@ export function renderRelayPreviews(rawSnapshot,rawOptions){
     title:compactTitle(['RELAY PROPOSED ONLY','PARENT#'+parent.number,
       'PRs '+s.pr_facts.length,'REVIEWS NOT_EVALUATED','ACCEPTANCE UNKNOWN']),
     child_count:children.length,pr_count:prTitles.length,
+    freshness:fresh,consistency:s.consistency,
     states:prTitles.map(p=>({number:p.number,state:p.state})),
     snapshot_sha256:source,proposal_only:true,
     managed_block_preview:'<!-- RELAY_R4_DRAFT_ONLY; DO NOT WRITE -->\n'+
@@ -154,6 +160,7 @@ export function renderRelayPreviews(rawSnapshot,rawOptions){
       'Snapshot SHA256: '+source+'\n'+
       'Provider: '+s.source_state+'; '+s.consistency+'\n'+
       'Reviewer status: NOT_EVALUATED; Owner authority: NOT_AUTHENTICATED\n'+
+      'CI paths are CALLER_SELECTED, NOT proven required policy checks\n'+
       prTitles.map(p=>'PR #'+p.number+' '+p.head_sha.slice(0,8)+' '+p.state).join('\n')+
       '\n<!-- END RELAY_R4_DRAFT_ONLY -->'
   };
@@ -165,7 +172,8 @@ export function renderRelayPreviews(rawSnapshot,rawOptions){
     pr_heads:prTitles.map(p=>({number:p.number,head_sha:p.head_sha,state:p.state})),
     instructions:[
       'Fetch canonical parent and original Owner instructions; source chat permalink UNKNOWN',
-      'Do not treat issue/PR titles, hosted green CI or this preview as accepted TaskEvidence',
+      'Do not treat issue/PR titles, selected hosted green CI or this preview as accepted TaskEvidence',
+      'CI workflow paths are caller-selected, NOT independently verified required checks',
       'Qualify independent source reviewers and merge/restack dependencies before R3-B integration',
       'Preserve human privacy/retention/Owner grant HOLD; do not activate R5 writer',
       'Read a new provider-current snapshot; this is bounded and non-atomic'
