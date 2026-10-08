@@ -14,6 +14,16 @@ export class FullChainError extends Error {
 const fail=(code,why)=>{throw new FullChainError(code,why);};
 const HEX=/^[0-9a-f]{64}$/;
 const sha=x=>createHash('sha256').update(canonicalJSON(x)).digest('hex');
+function deepFreeze(value){
+  const seen=new Set(),stack=[value];
+  while(stack.length){
+    const v=stack.pop();if(!v||typeof v!=='object'||seen.has(v))continue;
+    seen.add(v);
+    for(const child of Object.values(v))if(child&&typeof child==='object')stack.push(child);
+    Object.freeze(v);
+  }
+  return value;
+}
 function safe(v,label){
   try{return JSON.parse(canonicalJSON(v));}
   catch{fail('INVALID',label+' is not safe canonical input');}
@@ -65,7 +75,7 @@ function dataOnlyView(source,provider,preview,digest){
   };
   // A unified digest binds the exact immutable source SHA/lineage, provider
   // observation and the full pure preview; no new independent trust anchor.
-  return Object.freeze({...view,full_chain_sha256:digest});
+  return deepFreeze({...view,full_chain_sha256:digest});
 }
 
 /** Compose ONE actual G2c source read and ONE actual R3 read. Never export raw
