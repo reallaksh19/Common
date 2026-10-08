@@ -67,7 +67,10 @@ jobs:
           assert selected['ref'] == new['ref'] and selected['parent'] == new['parent']
           assert selected['kind'] == new['kind'] and selected['work_class'] == new['work_class']
           assert selected['owns_claims'] == new['owns_claims'] and selected['depends_on'] == new['depends_on']
-          assert not selected.get('primary_pr'), 'NO_PRODUCT_PR_YET'
+          registration = json.loads(Path('.github/v32-evidence-spine/793-c4-material-binding-v1.json').read_text(encoding='utf-8'))
+          assert registration['responsibility'] == 'R-RECONSTRUCTION'
+          assert selected.get('primary_pr') == registration['proposed_acceptance']['graph_primary_pr'] == 'Common#800'
+          assert selected.get('primary_pr') != 'Common#794'
           proposed = next(r for r in proposal['responsibilities'] if r['id'] == new['responsibility_id'])
           assert selected['outcome'] == proposed['outcome']
           assert selected['independence_basis'] == proposed['independence_basis']
@@ -97,7 +100,7 @@ jobs:
           print('V32_718_PLAN_JOIN=PASS')
           PY
 
-      - name: Run seven named ESC-4 graph-binding source/oracle tests
+      - name: Run eight named ESC-4 graph-binding source/oracle tests
         shell: bash
         run: |
           set -euo pipefail
@@ -105,10 +108,10 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           log = Path('/tmp/v32-793-tests.log').read_text(encoding='utf-8')
-          missing = [f'test_{i:02d}_' for i in range(1,8) if f'test_{i:02d}_' not in log]
-          if missing or 'Ran 7 tests' not in log or 'OK' not in log:
+          missing = [f'test_{i:02d}_' for i in range(1,9) if f'test_{i:02d}_' not in log]
+          if missing or 'Ran 8 tests' not in log or 'OK' not in log:
               raise SystemExit(f'ESC4_NAMED_TESTS_NOT_EXECUTED: {missing}')
-          print('V32_793_NAMED_SOURCE_BINDING_TESTS=7_PASS')
+          print('V32_793_NAMED_SOURCE_BINDING_TESTS=8_PASS')
           PY
 
       - name: Actual source-bound PR material (read-only dry-run)
