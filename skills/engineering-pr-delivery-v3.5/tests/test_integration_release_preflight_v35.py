@@ -1,6 +1,7 @@
 """R7-U2 release preflight: no source approval means HOLD, no silent deployment."""
 from __future__ import annotations
 
+import hashlib
 import sys
 import unittest
 from pathlib import Path
@@ -22,8 +23,24 @@ class Provider(COLD_TESTS.Provider):
         self.workflow_state = "active"
         self.workflow_path = R7.DEFAULT_WORKFLOW
         self.workflow_guards = True
+        self.workflow_marker_spoof = False
+        self.workflow_blob_override = None
+        self.workflow_move_head = False
+        self.workflow_file_fetched = False
+        self.workflow_head_reads = 0
         self.workflow_calls = []
         self.default_head = "9" * 40
+        self.workflows_source = (
+            ROOT.parents[1] / R7._AUDITED_TEMPLATE_PATH
+        ).read_text(encoding="utf-8")
+
+    def get_commit_sha(self, ref):
+        if ref == "main":
+            self.workflow_head_reads += 1
+            if self.workflow_move_head and self.workflow_file_fetched:
+                return "8" * 40
+            return self.default_head
+        return super().get_commit_sha(ref)
 
     def _gh(self, *args):
         self.workflow_calls.append(args)
@@ -40,9 +57,27 @@ class Provider(COLD_TESTS.Provider):
             return super().get_file_at(commit_sha, path)
         if commit_sha != self.default_head:
             raise DELP.DelpError("workflow commit not the default branch head")
+        self.workflow_file_fetched = True
         if not self.workflow_guards:
-            return {"content": "name: insecure-event-handler\non: workflow_dispatch\n"}
-        return {"content": "\n".join(R7._REQUIRED_WORKFLOW_SOURCE)}
+            source = "name: insecure-event-handler\\non: workflow_dispatch\\n"
+        elif self.workflow_marker_spoof:
+            source = (
+                "# --graph-source-ref --approval-ref --apply --event-name "
+                "--event-payload github.event.repository.default_branch\\n"
+                "name: TROJAN\\non: [workflow_dispatch]\\n"
+                "permissions: write-all\\njobs: {unsafe: {runs-on: ubuntu-latest, "
+                "steps: [{run: 'echo unsafe'}]}}\\n"
+            )
+        else:
+            source = self.workflows_source
+        content = source.encode("utf-8")
+        git_sha = hashlib.sha1(
+            b"blob " + str(len(content)).encode("ascii") + b"\x00" + content
+        ).hexdigest()
+        return {"content": source, "blob_sha": (
+            self.workflow_blob_override if self.workflow_blob_override is not None
+            else git_sha
+        )}
 
 
 class ReleasePreflightTests(unittest.TestCase):
@@ -96,11 +131,63 @@ class ReleasePreflightTests(unittest.TestCase):
         self.t.set_selected_source()
         self.t.workflow_guards = False
         bad = self.preflight(GRAPH_TESTS.SCORE_URL)
-        self.assertEqual("WORKFLOW_GUARDS_NOT_PRESENT", bad["workflow"]["status"])
+        self.assertEqual("WORKFLOW_NOT_AUDITED_TEMPLATE", bad["workflow"]["status"])
         self.t.workflow_guards = True
         self.t.workflow_path = ".github/workflows/something-else.yml"
         changed = self.preflight(GRAPH_TESTS.SCORE_URL)
         self.assertEqual("WORKFLOW_IDENTITY_MISMATCH", changed["workflow"]["status"])
+        self.assertEqual([], self.t.writes)
+
+    def test_reviewed_inert_workflow_template_bytes_match_pinned_digest(self):
+        data = self.t.workflows_source.encode("utf-8")
+        calculated = hashlib.sha1(
+            b"blob " + str(len(data)).encode("ascii") + b"\x00" + data
+        ).hexdigest()
+        self.assertEqual(R7._AUDITED_WORKFLOW_BLOB_SHA, calculated)
+        self.assertIn("--graph-source-ref", self.t.workflows_source)
+
+    def test_comment_marker_spoof_does_not_pass_trusted_workflow_check(self):
+        self.t.set_selected_source()
+        self.t.workflow_marker_spoof = True
+        result = self.preflight(GRAPH_TESTS.SCORE_URL)
+        self.assertEqual("HOLD_DEFAULT_BRANCH_WORKFLOW_NOT_VERIFIED", result["status"])
+        self.assertEqual("WORKFLOW_NOT_AUDITED_TEMPLATE",
+                         result["workflow"]["status"])
+        self.assertEqual([], self.t.writes)
+
+    def test_changed_permissions_or_checkout_break_audited_identity(self):
+        self.t.set_selected_source()
+        for edit in (
+            lambda code: code.replace("issues: write", "issues: read"),
+            lambda code: code.replace("ref: ${{ github.event.repository.default_branch }}",
+                                      "ref: ${{ github.event.pull_request.head.sha }}"),
+            lambda code: code.replace("persist-credentials: false",
+                                      "persist-credentials: true"),
+            lambda code: code + "\\n# --graph-source-ref --approval-ref --apply\\n",
+        ):
+            self.t.workflows_source = (
+                ROOT.parents[1] / R7._AUDITED_TEMPLATE_PATH
+            ).read_text(encoding="utf-8")
+            self.t.workflows_source = edit(self.t.workflows_source)
+            result = self.preflight(GRAPH_TESTS.SCORE_URL)
+            self.assertEqual("WORKFLOW_NOT_AUDITED_TEMPLATE",
+                             result["workflow"]["status"])
+        self.assertEqual([], self.t.writes)
+
+    def test_same_bytes_but_wrong_provider_blob_sha_rejected(self):
+        self.t.set_selected_source()
+        self.t.workflow_blob_override = "f" * 40
+        result = self.preflight(GRAPH_TESTS.SCORE_URL)
+        self.assertEqual("WORKFLOW_NOT_AUDITED_TEMPLATE",
+                         result["workflow"]["status"])
+        self.assertEqual([], self.t.writes)
+
+    def test_default_branch_head_drifts_during_workflow_readback(self):
+        self.t.set_selected_source()
+        self.t.workflow_move_head = True
+        result = self.preflight(GRAPH_TESTS.SCORE_URL)
+        self.assertEqual("HOLD_DEFAULT_BRANCH_WORKFLOW_NOT_VERIFIED", result["status"])
+        self.assertEqual("WORKFLOW_DEFAULT_HEAD_MOVED", result["workflow"]["status"])
         self.assertEqual([], self.t.writes)
 
     def test_unreachable_workflow_api_remains_unverified_not_absent(self):
@@ -122,6 +209,10 @@ class ReleasePreflightTests(unittest.TestCase):
         self.assertEqual("PREFLIGHT_GATES_OBSERVED_NOT_OPERATIONALLY_ACCEPTED", passed["status"])
         self.assertEqual("TRUSTED_DEFAULT_BRANCH_WORKFLOW_OBSERVED",
                          passed["workflow"]["status"])
+        self.assertEqual("AUDITED_TEMPLATE_BYTES_VERIFIED",
+                         passed["workflow"]["workflow_source_integrity"])
+        self.assertEqual(R7._AUDITED_WORKFLOW_BLOB_SHA,
+                         passed["workflow"]["audited_blob_sha"])
         self.assertEqual("NOT_OBSERVED", passed["independent_reviewer"])
         self.assertEqual("NOT_INFERRED", passed["separate_owner_activation"])
         self.assertEqual("NONE", passed["programme_ic_credit"])

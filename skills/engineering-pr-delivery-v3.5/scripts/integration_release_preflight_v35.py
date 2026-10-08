@@ -8,6 +8,7 @@ Workflow presence/active state is re-observed on a verified default-branch SHA.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import sys
@@ -20,13 +21,13 @@ import integration_graph_authority_v35 as GRAPH
 import integration_scoreboard_publish_v35 as PUBLISH
 
 DEFAULT_WORKFLOW = ".github/workflows/v35-smart-scoreboard.yml"
-_REQUIRED_WORKFLOW_SOURCE = (
-    "--graph-source-ref",
-    "--approval-ref",
-    "--apply",
-    "--event-name",
-    "--event-payload",
-    "github.event.repository.default_branch",
+# Explicitly audited in R7-U3 at main c8eb92a (inert V3.5 workflow).
+# This is Git's SHA-1 of "blob <length>\\0<utf8-bytes>", NOT a substring
+# marker match. Any workflow change requires independent review and pin update.
+_AUDITED_WORKFLOW_BLOB_SHA = "95716cf41a58832fa0d813ab968ea0466474b99a"
+_AUDITED_TEMPLATE_PATH = (
+    "skills/engineering-pr-delivery-v3.5/"
+    "examples/integration/v35-scoreboard-workflow.template.yml"
 )
 _SHA = re.compile(r"^[a-f0-9]{40}$")
 
@@ -67,12 +68,43 @@ def _checked_workflow(transport: Any, path: str) -> dict[str, Any]:
     if workflow.get("state") != "active":
         return {"status": "WORKFLOW_NOT_ACTIVE", "default_head": head,
                 "native_state": str(workflow.get("state") or "UNKNOWN")}
-    if not all(marker in code for marker in _REQUIRED_WORKFLOW_SOURCE):
-        return {"status": "WORKFLOW_GUARDS_NOT_PRESENT", "default_head": head}
-    # Presence/markers is not equivalent to a security audit or real event replay.
+    # Require exact reviewed bytes, not strings that could be in comments,
+    # harmless steps or an unrelated unsafe workflow. Check both the native
+    # GitHub reported blob id and an independent Git-blob hash of the bytes.
+    encoded = code.encode("utf-8")
+    blob_sha = hashlib.sha1(
+        b"blob " + str(len(encoded)).encode("ascii") + b"\x00" + encoded
+    ).hexdigest()
+    reported_blob = file.get("blob_sha")
+    if (blob_sha != _AUDITED_WORKFLOW_BLOB_SHA or
+            reported_blob != _AUDITED_WORKFLOW_BLOB_SHA):
+        return {
+            "status": "WORKFLOW_NOT_AUDITED_TEMPLATE",
+            "default_head": head,
+            "source_audit": "EXACT_GIT_BLOB_ID_MISMATCH",
+            "native_blob_id": str(reported_blob or "UNKNOWN"),
+            "calculated_blob_id": blob_sha,
+        }
+    # The default branch can move while we read file bytes and workflow
+    # metadata. A stale but previously audited commit is NOT current readiness.
+    try:
+        latest_head = transport.get_commit_sha(branch)
+    except (DELP.DelpError, OSError, LookupError, ValueError) as exc:
+        return {"status": "WORKFLOW_PROVIDER_UNVERIFIED",
+                "reason": "DEFAULT_BRANCH_HEAD_REREAD_FAILED",
+                "detail": str(exc)[:180]}
+    if latest_head != head:
+        return {"status": "WORKFLOW_DEFAULT_HEAD_MOVED",
+                "initial_head": head, "current_head": str(latest_head)}
+    # A successful blob check proves audited workflow content only. An external
+    # security review, two Owner approvals and actual event readback remain
+    # separate release obligations.
     return {"status": "TRUSTED_DEFAULT_BRANCH_WORKFLOW_OBSERVED",
             "default_branch": branch, "default_head": head,
             "path": path, "native_state": "active",
+            "workflow_source_integrity": "AUDITED_TEMPLATE_BYTES_VERIFIED",
+            "audited_template_path": _AUDITED_TEMPLATE_PATH,
+            "audited_blob_sha": _AUDITED_WORKFLOW_BLOB_SHA,
             "independent_security_review": "NOT_PERFORMED"}
 
 
