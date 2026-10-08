@@ -26,6 +26,7 @@ const workflow=(head=SHA,path=WF,status='completed',conclusion='success',id=190)
 const runs=(r=[workflow()])=>({total_count:r.length,workflow_runs:r});
 function mock(s,changes={}){
   const urls=[],prefix=api('');
+  let prReads=0;
   const fetchImpl=async url=>{
     urls.push(url);
     const endpoint=url.slice(prefix.length);
@@ -33,7 +34,11 @@ function mock(s,changes={}){
     const prNum=endpoint.startsWith('pulls/')?Number(endpoint.split('/')[1]):null;
     let payload=issueNum?issue(issueNum):prNum?pr(prNum):runs();
     if(issueNum)payload=changes['issue'+issueNum]??payload;
-    if(prNum)payload=changes['pr'+prNum]??payload;
+    if(prNum){
+      prReads++;
+      payload=(prReads>1?changes['prRecheck'+prNum]:undefined)??
+        changes['pr'+prNum]??payload;
+    }
     if(endpoint.startsWith('actions/'))payload=changes.runs??payload;
     return {url:changes.responseUrl??url,status:changes.httpStatus??200,
       redirected:changes.redirected??false,headers:{get:()=>null},
@@ -56,8 +61,10 @@ test('one bounded native-source scope produces issue/PR/current-head CI facts',a
   assert.equal(r.pr_facts[0].currentness,'MATCH');
   assert.equal(r.pr_facts[0].ci_workflows[0].state,'PASS');
   assert.deepEqual(urls,[api('issues/787'),api('issues/833'),api('pulls/830'),
-    api('actions/runs?head_sha='+SHA+'&per_page=100')]);
-  assert.equal(r.read_count,4);
+    api('actions/runs?head_sha='+SHA+'&per_page=100'),
+    api('pulls/830')]);
+  assert.equal(r.read_count,5);
+  assert.equal(r.consistency,'PR_DOUBLE_READ_NON_ATOMIC');
   assert.equal(r.source_state,'INJECTED_UNVERIFIED');
   assert.equal(r.relationship_assertion,'CALLER_SCOPED_UNVERIFIED');
   assert.equal(r.evidence_acceptance,'NOT_EVALUATED');
@@ -99,6 +106,28 @@ test('repo-transplanted PR and contradictory open+merged REFUTED',async()=>{
   await refuses(read(s,{fetchImpl:mock(s,{pr830:{...pr(),head:{...pr().head,repo:{full_name:'attacker/Repo'}}}}).fetchImpl}),'REFUTED');
   await refuses(read(s,{fetchImpl:mock(s,{pr830:{...pr(),url:'https://api.github.com/repos/evil/a/pulls/830'}}).fetchImpl}),'REFUTED');
   await refuses(read(s,{fetchImpl:mock(s,{pr830:{...pr(),merged:true}}).fetchImpl}),'REFUTED');
+});
+test('a PR head force-push during the CI GET cannot publish a mixed-current snapshot',async()=>{
+  const s=scope();
+  await refuses(read(s,{fetchImpl:mock(s,{prRecheck830:pr(830,BASE)}).fetchImpl}),'STALE');
+});
+test('a PR draft, merged, title or base mutation mid-read fails closed',async()=>{
+  const s=scope();
+  for(const changed of [
+    {...pr(),draft:false},{...pr(),title:'MOVED'},
+    {...pr(),state:'closed',merged:true},
+    {...pr(),base:{...pr().base,sha:'c'.repeat(40)}}
+  ])await refuses(read(s,{fetchImpl:mock(s,{prRecheck830:changed}).fetchImpl}),'STALE');
+});
+test('child issue endpoint cannot silently accept a PR object as an issue',async()=>{
+  const s=scope();
+  await refuses(read(s,{fetchImpl:mock(s,{issue833:{...issue(833),pull_request:{url:api('pulls/833')}}}).fetchImpl}),'REFUTED');
+});
+test('forged or prefix-only Actions run URL and contradictory count never certify CI',async()=>{
+  const s=scope();
+  const bad={...workflow(),html_url:'https://github.com/'+REPO+'/actions/runs/190/evil'};
+  await refuses(read(s,{fetchImpl:mock(s,{runs:runs([bad])}).fetchImpl}),'REFUTED');
+  await refuses(read(s,{fetchImpl:mock(s,{runs:{total_count:0,workflow_runs:[workflow()]}}).fetchImpl}),'REFUTED');
 });
 test('stale expected head visible, no independently accepted evidence',async()=>{
   const s=scope();s.pull_requests[0].expected_head_sha=BASE;
