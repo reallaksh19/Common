@@ -213,6 +213,7 @@ def build_views(
     historical_unreported = [
         n["ref"] for n in graph["nodes"]
         if n["kind"] == "LEAF" and n.get("primary_pr") and
+        (observations or {}).get(n["ref"], {}).get("pr_state") == "MERGED" and
         nodes[n["ref"]]["progress"]["P"] == 0 and nodes[n["ref"]]["progress"]["E"] == 0 and
         nodes[n["ref"]]["state"] in {"UNMATERIALIZED", "EVIDENCE_GAP"}
     ]
