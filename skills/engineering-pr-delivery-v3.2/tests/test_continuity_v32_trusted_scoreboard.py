@@ -117,7 +117,7 @@ class TrustedEventScoreboardTests(unittest.TestCase):
             def get_pull(self,n):
                 return {"number":740,"head":{"sha":"a"*40,
                     "repo":{"full_name":"reallaksh19/Common"}},
-                    "base":{"ref":"main"}}
+                    "base":{"ref":"main","repo":{"full_name":"reallaksh19/Common"}}}
             def __getattr__(self,n):
                 raise AssertionError("NOT_ALLOWED_WHILE_DISABLED")
         r=trusted.run(case["event_name"],case["event"],enabled=False,apply=True,
@@ -141,7 +141,7 @@ class TrustedEventScoreboardTests(unittest.TestCase):
                     return {"number":740,"head":{"sha":"a"*40,
                         "repo":{"full_name":"reallaksh19/Common"}},
                         "state":"open","draft":True,"merged":False,
-                        "base":{"ref":"main"},
+                        "base":{"ref":"main","repo":{"full_name":"reallaksh19/Common"}},
                         "title":"🟡 [718›733] DRAFT · VIEW-PR · HEAD:aaaaaaa · Q:UNPROVEN — Cross-Surface Views",
                         "body":"## Human PR rationale preserved\n"}
                 if n in (722,728):
@@ -210,6 +210,29 @@ class TrustedEventScoreboardTests(unittest.TestCase):
             self.assertEqual("INCOMPLETE_SYNC",saved["status"])
             self.assertEqual(["Common#733"],saved["applied_surfaces"])
             self.assertEqual(3,saved["exit_code"])
+
+    def test_14_historical_merged_PR_requires_explicit_manual_dispatch(self):
+        case = self.oracle["cases"][0]
+        provider = self.provider()
+        provider["state"] = "closed"
+        provider["merged"] = True
+        automatic = trusted.gate("pull_request_target", case["event"], self.graph, provider, enabled=True)
+        self.assertEqual("DENY_MERGED_AUTO_EVENT", automatic["decision"])
+        deliberate = trusted.gate("workflow_dispatch", self.oracle["cases"][8]["event"],
+                                  self.graph, provider, enabled=True)
+        self.assertEqual("ALLOW", deliberate["decision"])
+
+    def test_15_provider_base_repository_is_independently_restricted(self):
+        case = self.oracle["cases"][0]
+        provider = self.provider()
+        provider["base"]["repo"]["full_name"] = "foreign/repository"
+        self.assertEqual("DENY_PROVIDER_BASE_REPOSITORY",
+            trusted.gate(case["event_name"], case["event"], self.graph,
+                         provider, enabled=True)["decision"])
+        del provider["base"]["repo"]
+        self.assertEqual("DENY_PROVIDER_BASE_REPOSITORY",
+            trusted.gate(case["event_name"], case["event"], self.graph,
+                         provider, enabled=True)["decision"])
 
 if __name__ == "__main__":
     unittest.main()
