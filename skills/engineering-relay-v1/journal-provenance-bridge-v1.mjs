@@ -154,3 +154,16 @@ export async function projectPortableJournal(bytes,expected,seed,bindings) {
     reject('INVALID_TRUST','portable reader unexpectedly claimed authority');
   return assemble(state,seed,bindings,'PORTABLE_UNANCHORED');
 }
+
+/** Narrow composition entry: exactly the replay result obtained from merged R2-B1.
+ * Structurally valid check objects remain UNTRUSTED unless accompanied by a
+ * separate native custody witness and independently supplied expectation.
+ * This method does not authenticate the caller or the original Owner.
+ */
+export function projectVerifiedPortableReplay(replay,seed,bindings) {
+  if(!replay||replay.schema!=='relay-portable-check-v1'
+    ||replay.authorization_granted!==false||replay.externally_anchored!==false
+    ||replay.independently_accepted!==false||replay.live_writer_enabled!==false)
+    reject('UNTRUSTED_REPLAY','R2-B1 replay shape/authority does not match verified-reader contract');
+  return assemble(replay,seed,bindings,'PORTABLE_UNANCHORED');
+}
