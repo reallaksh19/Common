@@ -100,6 +100,13 @@ def _native_delp_source(
         "leaf_ref": leaf_ref,
         "provider": ReadOnlyGithub(),
         "frozen_basis": frozen_basis,
+        "__native_graph_source": {
+            "repository": repository,
+            "revision": graph_revision,
+            "path": graph_path,
+            "permalink": "https://github.com/" + repository
+                         + "/blob/" + graph_revision + "/" + graph_path,
+        },
     }
 
 
@@ -218,6 +225,17 @@ def plan_handover(
         successor_challenge_count,
     )
     improvement_view = build_improvement(root)
+    # Source locations are custody metadata for the EVENT; keep the existing
+    # C4 handover-context schema strictly unchanged and pass only its
+    # authoritative source input keys to the source-bound DELP builder.
+    native_graph_source = (
+        delp_source.get("__native_graph_source")
+        if isinstance(delp_source, dict) else None
+    )
+    context_source = (
+        {k: v for k, v in delp_source.items() if k != "__native_graph_source"}
+        if isinstance(delp_source, dict) else delp_source
+    )
     context, snapshot = build_context(
         root,
         base_ref=base_ref,
@@ -229,7 +247,7 @@ def plan_handover(
         improvement_view_override=improvement_view,
         successor_challenge_count=resolved_challenge_count,
         successor_boundary_constraints=owner_boundary_constraints,
-        delp_source=delp_source,
+        delp_source=context_source,
     )
     source_bound = context.get("source_bound_successor")
     if delp_source is not None:
@@ -278,6 +296,8 @@ def plan_handover(
                 "source_bound_graph_digest": source_bound["digests"]["graph"],
                 "source_bound_provider_digest": source_bound["digests"]["provider"],
             } if source_bound is not None else {}),
+            **({"source_graph_pinned_location": native_graph_source}
+               if native_graph_source is not None else {}),
         },
     ))
 
@@ -297,11 +317,11 @@ def plan_handover(
     # This is a read-only freshness fence, not an external GitHub CAS.
     if source_bound is not None:
         last_read = build_delp_source_bound_successor(
-            delp_source["graph"],
-            leaf_ref=delp_source["leaf_ref"],
-            provider=delp_source["provider"],
+            context_source["graph"],
+            leaf_ref=context_source["leaf_ref"],
+            provider=context_source["provider"],
             frozen_basis=source_bound["digests"],
-            owner_source_status=delp_source.get("owner_source_status", UNKNOWN_OWNER_SOURCE),
+            owner_source_status=context_source.get("owner_source_status", UNKNOWN_OWNER_SOURCE),
         )
         if last_read["currentness"] != "CURRENT_READ_ONLY":
             raise TransactionError("SOURCE_BOUND_RECONCILIATION_REQUIRED")
