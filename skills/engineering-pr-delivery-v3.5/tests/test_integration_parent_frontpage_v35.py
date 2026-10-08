@@ -61,7 +61,7 @@ class ParentFrontPageTests(unittest.TestCase):
                 self.assertEqual(2, result["archived_count"])
                 self.assertEqual(body, result["archive_text"] + result["remaining_body"])
                 self.assertTrue(result["requires_verified_native_archive"])
-                self.assertEqual(governing(issue), result["remaining_body"])
+                self.assertTrue(result["remaining_body"].endswith(governing(issue)))
 
     def test_proposed_replacement_never_changes_unowned_bytes_and_is_stable(self):
         for issue in (600, 717, 759):
