@@ -6654,5 +6654,13 @@ class HostedV35UnifiedRelayConsumers(_unified_relay_consumers.UnifiedRelaySource
     """Three-entry cold source feeds one actual DELP-basis nine-consumer view."""
 
 
+# R6: independently re-observe source through parent/child/PR for cold-agent relay.
+import test_integration_cold_replay_v35 as _cold_replay
+
+
+class HostedV35ColdAgent6Stress(_cold_replay.ColdAgent6StressTests):
+    """Authority drift, source readback disagreement and false acceptance cannot pass."""
+
+
 if __name__ == "__main__":
     unittest.main()
