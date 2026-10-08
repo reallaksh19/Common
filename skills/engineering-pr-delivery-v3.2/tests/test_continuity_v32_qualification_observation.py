@@ -184,5 +184,31 @@ class ContractObservationTests(unittest.TestCase):
             self.check(plan=plan)
 
 
+
+class SchemaBoundaryTests(unittest.TestCase):
+    def test_source_bound_result_conforms_to_schema(self):
+        import jsonschema
+        import yaml
+        document = yaml.safe_load(
+            (Path(__file__).resolve().parents[1] / "schemas" /
+             "qualification-observation-v32.schema.yaml").read_text(encoding="utf-8")
+        )
+        self.assertEqual(M.RESULT_SCHEMA, document["$id"])
+        jsonschema.validate(M.assess(contract(), Provider()), document)
+
+    def test_schema_disallows_progress_or_task_result_fields(self):
+        import jsonschema
+        import yaml
+        document = yaml.safe_load(
+            (Path(__file__).resolve().parents[1] / "schemas" /
+             "qualification-observation-v32.schema.yaml").read_text(encoding="utf-8")
+        )
+        fake = M.assess(contract(), Provider())
+        fake["progress"] = {"P": 100}
+        with self.assertRaises(jsonschema.ValidationError):
+            jsonschema.validate(fake, document)
+
+
+
 if __name__ == "__main__":
     unittest.main()
