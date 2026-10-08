@@ -5,12 +5,14 @@ on:
     paths:
       - '.github/v32-evidence-spine/811-c6-c4-*'
       - '.github/v32-evidence-spine/811_c6_c4_*'
+      - '.github/v32-evidence-spine/test_811_c6_c4_*'
       - '.github/workflows/v32-811-c6-cold-successor.yml'
   push:
     branches: ['v32/811-c6-c4-cold-successor-replay']
     paths:
       - '.github/v32-evidence-spine/811-c6-c4-*'
       - '.github/v32-evidence-spine/811_c6_c4_*'
+      - '.github/v32-evidence-spine/test_811_c6_c4_*'
       - '.github/workflows/v32-811-c6-cold-successor.yml'
 
 permissions:
@@ -31,6 +33,10 @@ jobs:
           python-version: '3.12'
       - name: Existing schema dependencies
         run: python -m pip install --disable-pip-version-check PyYAML jsonschema
+      - name: COLD-08 superseded graph fails before successor source admission
+        run: |
+          python -m unittest discover -s .github/v32-evidence-spine -p 'test_811_c6_c4_release_currentness.py' -v
+          echo COLD_08_RELEASED_GRAPH_DRIFT_FAIL_CLOSED=PASS
       - name: Precommitted golden before any implementation
         run: |
           git merge-base --is-ancestor 7b1dbbaa4f325a92974d576995771daef2c76018 HEAD
