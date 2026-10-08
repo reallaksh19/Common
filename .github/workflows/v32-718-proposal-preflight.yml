@@ -9,6 +9,8 @@ on:
 
 permissions:
   contents: read
+  issues: read
+  pull-requests: read
 
 jobs:
   claim-first:
@@ -96,4 +98,28 @@ jobs:
               print(f'R_BASIS_{name}=REJECTED expected={expected}')
 
           print('R_BASIS_BOUNDARY_REPLAY=PASS')
+          PY
+      - name: Read current GitHub issue frontier through the existing DELP dry-run
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py sync-github \
+            --graph .github/v32-evidence-spine/718-proposal-v2.json \
+            --repository reallaksh19/Common \
+            --dry-run > /tmp/v32-718-real-provider-read.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          row = json.loads(Path('/tmp/v32-718-real-provider-read.json').read_text(encoding='utf-8'))
+          assert 'Common#718' in row['expected_titles'], row
+          assert 'Common#720' in row['expected_titles'], row
+          assert isinstance(row['input_digest'], str) and row['input_digest'].startswith('sha256:'), row
+          print('R_BASIS_REAL_PROVIDER_DRY_RUN=PASS')
+          print('R_BASIS_REAL_PROVIDER_INPUT_DIGEST=' + row['input_digest'])
+          print('R_BASIS_REAL_PROVIDER_TITLES_TO_UPDATE=' + str(row['would_write_titles']))
+          print('R_BASIS_REAL_PROVIDER_REJECTED_FACT_COUNT=' + str(len(row['rejected_facts'])))
+          print('R_BASIS_ROOT_EXPECTED_TITLE=' + row['expected_titles']['Common#718'])
+          print('R_BASIS_LEAF_EXPECTED_TITLE=' + row['expected_titles']['Common#720'])
           PY
