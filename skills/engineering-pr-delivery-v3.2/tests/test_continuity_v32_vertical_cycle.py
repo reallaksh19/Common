@@ -315,5 +315,40 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         self.assertEqual("DRIFT_OR_UNPUBLISHED", r["reconciliation"])
 
 
+    def test_27_issue_body_changes_during_readback_fail_closed(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        transport = self._provider()
+        original = transport.get_issue
+        reads = [0]
+        def moving_issue(number):
+            response = original(number)
+            if number == 733:
+                reads[0] += 1
+                if reads[0] == 2:
+                    response["body"] = "Some new Owner edit requiring a new read"
+            return response
+        transport.get_issue = moving_issue
+        with self.assertRaisesRegex(replay.ReplayError,
+                                    "PROVIDER_ISSUE_MOVED_DURING_RECONCILIATION"):
+            replay.live_readback(self.manifest, live, transport)
+
+    def test_28_PR_human_description_changes_during_readback_fail_closed(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        transport = self._provider()
+        original = transport.get_pull
+        reads = [0]
+        def moving_pr(number):
+            response = original(number)
+            if number == 740:
+                reads[0] += 1
+                if reads[0] == 3:
+                    response["body"] = "New human purpose discovered during readback"
+            return response
+        transport.get_pull = moving_pr
+        with self.assertRaisesRegex(replay.ReplayError,
+                                    "PROVIDER_PR_METADATA_MOVED_DURING_RECONCILIATION"):
+            replay.live_readback(self.manifest, live, transport)
+
+
 if __name__ == "__main__":
     unittest.main()
