@@ -188,3 +188,28 @@ amendments:
     allowed_paths:
       - skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_basis_reconciliation.py
+
+  - id: AMEND-V32-ES-RPROOF-011
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner instruction 2026-10-08 to proceed with V3.2 after the
+      #718 evidence spine programme was created. The exact source-bound
+      claim-first Proposal V2 was RELEASEABLE with digest
+      sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd.
+      Common #724 is the bound R-PROOF PRODUCT for claim ESC-2, after
+      #720/R-BASIS delivered and closed. Independent provider-contract
+      reconstruction and negative controls are recorded at
+      https://github.com/reallaksh19/Common/issues/724#issuecomment-6050688889.
+      This amendment authorizes only the listed three R-PROOF paths and
+      never grants merge authority.
+    summary: >-
+      Bounded V3.2-only source-bound required-execution and delivered-obligation
+      observation contract. Fail closed when an expected named test did not
+      execute for the exact candidate or an expected delivered blob is absent
+      or mismatched. Keep provider uncertainty explicit and results advisory
+      to existing DELP progress, task acceptance, review, custody, PR title
+      and merge authority. No V3.5 or #689/#713 scope expansion.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/scripts/qualification_observation_v32.py
+      - skills/engineering-pr-delivery-v3.2/schemas/qualification-observation-v32.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_qualification_observation.py
