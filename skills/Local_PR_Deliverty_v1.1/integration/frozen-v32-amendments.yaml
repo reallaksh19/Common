@@ -272,18 +272,23 @@ amendments:
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_trusted_scoreboard.py
 
   - id: AMEND-V32-ES-RRECON-014
-    owner_authorized: false
+    owner_authorized: true
     owner_basis: >-
-      PENDING exact-path Owner confirmation. The Owner's 2026-10-08 continuation
-      'ok next' authorizes proceeding with source audit and amendment proposal,
-      not an independently authenticated approval or a merge authorization
-      for the three frozen V3.2 paths. Common #718 preserves the Owner's desired
-      parent-to-intent-to-decomposition-to-facts-to-issue/PR-to-handover chain.
-      Common #793 is the released ESC-4 R-RECONSTRUCTION claim. Graph proposal
-      in draft #794 and separate golden handover preflight in stacked draft
-      #798 are candidate input; their green checks alone grant no Owner review,
-      source-mutation, or merge authority. This row MUST remain false until an
-      explicit Owner authorization of these exact paths is recorded and admitted.
+      Direct Owner continuation on 2026-10-08: 'ok next', immediately after
+      the previous agent specified that the next gate was authorizing these
+      exact three V3.2 handover paths in PR #799 before implementing DELP-to-
+      handover integration. This is the Owner's contextual instruction to
+      proceed with that bounded exact-path amendment, not a separate approval
+      of CI/reviewer results or any PR merge. The original ChatGPT message
+      permalink was not supplied (SOURCE_REF: UNKNOWN); the durable mirror and
+      implementation scope are linked at https://github.com/reallaksh19/Common/issues/793
+      and https://github.com/reallaksh19/Common/pull/799. Common #718 remains
+      the programme Owner outcome; Common #793 owns ESC-4. Draft #794 and
+      #798 remain unmerged and require independent review. The new exception
+      is effective ONLY for a distinct product PR whose base commit already
+      contains this approved manifest, never for a PR that merely adds it in
+      its own head; no CI success grants merge, provenance, custody or delivery
+      authority.
     summary: >-
       PROPOSED only, not an active exception. Add optional source-bound successor
       reconstruction from the SAME released V3.2 DELP input/plan digest,
