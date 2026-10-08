@@ -88,8 +88,9 @@ function issueFact(v,repository,n){
     v.html_url!==html||!['open','closed'].includes(v.state)||
     typeof v.title!=='string'||!v.title.trim()||
     !iso(v.created_at)||!iso(v.updated_at)||
-    Date.parse(v.created_at)>Date.parse(v.updated_at))
-    fail('REFUTED','issue identity or dates disagree with requested native scope');
+    Date.parse(v.created_at)>Date.parse(v.updated_at)||
+    Object.hasOwn(v,'pull_request'))
+    fail('REFUTED','issue identity/dates invalid or target is really a PR');
   return Object.freeze({
     number:n,source_url:html,state:v.state,title:v.title,
     updated_at:v.updated_at,observed_from:'GITHUB_ISSUES_API',
@@ -131,6 +132,8 @@ function workflowResult(payload,repository,head,paths){
     !Array.isArray(payload.workflow_runs)||payload.workflow_runs.length>100)
     fail('REFUTED','unbounded/invalid Actions response');
   // The first 100 entries are not proof of absent runs if GitHub paginated.
+  if(payload.total_count<payload.workflow_runs.length)
+    fail('REFUTED','Actions total_count fewer than supplied workflow runs');
   if(payload.total_count>100)return paths.map(path=>({
     path,state:'UNKNOWN',reason:'UNREAD_PAGINATED_RESULTS',run_id:null,
     source_url:null,head_sha:head
@@ -142,7 +145,7 @@ function workflowResult(payload,repository,head,paths){
     const path=typeof run.path==='string'?run.path.split('@')[0]:null;
     if(!paths.includes(path))continue;
     if(!Number.isSafeInteger(run.id)||run.id<1||
-      typeof run.html_url!=='string'||!run.html_url.startsWith('https://github.com/'+repository+'/actions/runs/')||
+      run.html_url!=='https://github.com/'+repository+'/actions/runs/'+run.id||
       typeof run.status!=='string'||!iso(run.created_at)||
       !(typeof run.conclusion==='string'||run.conclusion===null))
       fail('REFUTED','invalid provider Actions run for expected workflow');
@@ -215,7 +218,16 @@ export async function reconcileGitHubFacts(rawScope,options={}){
     const facts=workflowResult(
       await get('actions/runs?head_sha='+fact.head_sha+'&per_page=100'),
       scope.repository,fact.head_sha,scope.workflow_paths);
-    prs.push(Object.freeze({...fact,ci_workflows:Object.freeze(facts)}));
+    // Re-read the PR after its CI. The first head is not a current-state
+    // guarantee if a force-push, draft toggle, merge or title change races us.
+    const after=prFact(await get('pulls/'+p.number),scope.repository,p);
+    if(fact.head_sha!==after.head_sha||fact.base_sha!==after.base_sha||
+      fact.head_ref!==after.head_ref||fact.base_ref!==after.base_ref||
+      fact.draft!==after.draft||fact.merged!==after.merged||
+      fact.state!==after.state||fact.title!==after.title||
+      fact.updated_at!==after.updated_at)
+      fail('STALE','PR changed while fetching exact-head CI; repeat entire read');
+    prs.push(Object.freeze({...after,ci_workflows:Object.freeze(facts)}));
   }
   const core={
     schema:'relay-provider-facts-v1',repository:scope.repository,observed_at:observed,
@@ -223,6 +235,7 @@ export async function reconcileGitHubFacts(rawScope,options={}){
     relationship_assertion:'CALLER_SCOPED_UNVERIFIED',
     provider_transport:injected?'INJECTED_UNVERIFIED':'NATIVE_GITHUB_GET',
     read_count:reads,source_state:injected?'INJECTED_UNVERIFIED':'PROVIDER_OBSERVED',
+    consistency:'PR_DOUBLE_READ_NON_ATOMIC',
     evidence_acceptance:'NOT_EVALUATED',human_review:'NOT_EVALUATED',
     owner_intent:'NOT_AUTHENTICATED',independent_journal_tip:'NOT_ANCHORED',
     actual_next:'REQUIRE_INDEPENDENT_SOURCE_REVIEWS_THEN_BIND_G2C',
