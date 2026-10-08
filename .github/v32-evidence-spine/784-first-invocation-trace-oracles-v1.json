@@ -1,0 +1,71 @@
+{
+  "schema": "relay-v32-784-first-invocation-audit-oracle-v1",
+  "base_main": "e64342b3775d1fbc551be720337df2af3de9bca5",
+  "scope": "PRIMARY_GUARDED_INVOCATION_NOT_REPLAY",
+  "requirements": {
+    "primary_source": "unmodified V3.2 live_readback called ONCE via GET-only adapter",
+    "first_source_trace": "written before initial caller processes outcome",
+    "secondary_replay": "optional and explicitly marked NEW_GUARDED_REPLAY_AFTER_ORIGINAL_FAILURE",
+    "on_source_failure": "FAILED_UNVERIFIED and original error code retained",
+    "on_source_success": "summary validates same released V3.2 provider report, no acceptance",
+    "no_write_methods": [
+      "patch_title",
+      "patch_issue_body",
+      "patch_pull_title_body",
+      "post_comment",
+      "patch_comment"
+    ],
+    "no_retries_to_green": true,
+    "full_ESC_6": "FAIL_CLOSED_UNRELEASED_CONSUMERS"
+  },
+  "cases": [
+    {
+      "id": "FIRST-01",
+      "calls": [
+        "d511fc0210ee823272f41c43621bc90bc290e739",
+        "d511fc0210ee823272f41c43621bc90bc290e739",
+        "d511fc0210ee823272f41c43621bc90bc290e739"
+      ],
+      "source": "SOURCE_REPLAY_SUCCEEDED_NO_ACCEPTANCE",
+      "expected": "MATCH",
+      "wrapper": "OBSERVED_DRIFT_OR_UNPUBLISHED"
+    },
+    {
+      "id": "FIRST-02",
+      "calls": [
+        "d511fc0210ee823272f41c43621bc90bc290e739",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      ],
+      "source": "SOURCE_REPLAY_FAILED_UNVERIFIED",
+      "expected": "DELP_OBSERVER_MISMATCH",
+      "wrapper": "FAILED_UNVERIFIED"
+    },
+    {
+      "id": "FIRST-03",
+      "calls": [
+        "d511fc0210ee823272f41c43621bc90bc290e739"
+      ],
+      "source": "SOURCE_REPLAY_FAILED_UNVERIFIED",
+      "expected": "UNOBSERVED_SECOND_CALL",
+      "wrapper": "FAILED_UNVERIFIED"
+    },
+    {
+      "id": "FIRST-04",
+      "calls": [
+        "d511fc0210ee823272f41c43621bc90bc290e739",
+        "d511fc0210ee823272f41c43621bc90bc290e739",
+        "cccccccccccccccccccccccccccccccccccccccc"
+      ],
+      "source": "SOURCE_REPLAY_FAILED_UNVERIFIED",
+      "expected": "PROVIDER_HEAD_MOVED",
+      "wrapper": "FAILED_UNVERIFIED"
+    },
+    {
+      "id": "FIRST-05",
+      "calls": [],
+      "source": "SOURCE_REPLAY_FAILED_UNVERIFIED",
+      "expected": "NO_BOUND_PULL_OBSERVATION",
+      "wrapper": "FAILED_UNVERIFIED"
+    }
+  ]
+}
