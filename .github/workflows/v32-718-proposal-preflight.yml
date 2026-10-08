@@ -1,0 +1,45 @@
+name: v32-718-proposal-preflight
+
+on:
+  pull_request:
+    paths:
+      - '.github/v32-evidence-spine/718-proposal-v2.json'
+      - '.github/workflows/v32-718-proposal-preflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  claim-first:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@v4
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate V3.2 graph and execute actual Proposal-V2 gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          GRAPH=.github/v32-evidence-spine/718-proposal-v2.json
+          DELP=skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py
+          python "$DELP" validate-graph --graph "$GRAPH"
+          python "$DELP" decompose-check --graph "$GRAPH" --json > /tmp/v32-718-decomposition-report.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('/tmp/v32-718-decomposition-report.json').read_text(encoding='utf-8'))
+          print('V32_718_RELEASE_STATE=' + report['release_state'])
+          print('V32_718_PROPOSAL_DIGEST=' + report['proposal_digest'])
+          print('V32_718_EVALUATED=' + str(report['summary']['evaluated']))
+          print('V32_718_NOT_RELEASABLE=' + str(report['summary']['not_releasable']))
+          print('V32_718_ADVISORIES=' + str(report['summary']['advisories']))
+          for responsibility_id, item in sorted(report['leaves'].items()):
+              print(f"{responsibility_id}: {item['work_class']} weight={item['weight']} releasable={item['releasable']} blockers={item['blockers']}")
+          assert report['release_state'] == 'RELEASEABLE', report
+          assert report['summary']['evaluated'] == 6, report
+          assert report['summary']['not_releasable'] == 0, report
+          PY
