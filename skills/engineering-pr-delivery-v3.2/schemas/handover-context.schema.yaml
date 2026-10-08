@@ -356,7 +356,7 @@ properties:
       leaf: {type: string, minLength: 3}
       responsibility: {type: [string, 'null']}
       claim_ids: {type: array, uniqueItems: true, items: {type: string, minLength: 1}}
-      owner_source_status: {enum: [UNRESOLVED_CHAT_MESSAGE_LINK, LINKED_ORIGINAL_SOURCE]}
+      owner_source_status: {const: UNRESOLVED_CHAT_MESSAGE_LINK}
       currentness: {enum: [CURRENT_READ_ONLY, RECONCILE_REQUIRED]}
       moved_axes: {type: array, uniqueItems: true, items: {enum: [graph, plan, input, provider]}}
       digests:
