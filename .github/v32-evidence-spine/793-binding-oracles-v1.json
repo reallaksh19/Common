@@ -1,0 +1,91 @@
+{
+  "schema": "common-v32-793-binding-oracles-v1",
+  "programme": "Common#718",
+  "responsible_issue": "Common#793",
+  "authority": "PRECOMMITTED_PROPOSED_EXPECTED_RESULTS_NOT_OWNER_ACCEPTANCE",
+  "owner_original_chat_ref_status": "UNKNOWN",
+  "old_graph_head": "957377de11843f78dd7210450c8e5a99b859eea9",
+  "old_reserve_weight": 35,
+  "expected_reserve_weight": 20,
+  "released_proposal_digest": "sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd",
+  "expected_bindings": [
+    {
+      "responsibility_id": "R-BASIS",
+      "ref": "Common#720",
+      "weight": 20
+    },
+    {
+      "responsibility_id": "R-PROOF",
+      "ref": "Common#724",
+      "weight": 25
+    },
+    {
+      "responsibility_id": "R-PROJECTION",
+      "ref": "Common#733",
+      "weight": 20
+    },
+    {
+      "responsibility_id": "R-RECONSTRUCTION",
+      "ref": "Common#793",
+      "weight": 15
+    }
+  ],
+  "expected_new_node": {
+    "ref": "Common#793",
+    "parent": "Common#718",
+    "kind": "LEAF",
+    "responsibility_id": "R-RECONSTRUCTION",
+    "owns_claims": [
+      "ESC-4"
+    ],
+    "work_class": "PRODUCT",
+    "weight": 15,
+    "depends_on": [
+      "Common#720",
+      "Common#724"
+    ],
+    "semantic_units": [
+      {
+        "id": "RECON-IDENTITY",
+        "weight": 34
+      },
+      {
+        "id": "RECON-FRESHNESS",
+        "weight": 33
+      },
+      {
+        "id": "RECON-BOUNDARY",
+        "weight": 33
+      }
+    ]
+  },
+  "expected": {
+    "claim_count": 6,
+    "claim_weights_sum": 100,
+    "total_root_weight": 100,
+    "node_count": 5,
+    "proposal_release_state": "RELEASEABLE",
+    "accepted_checkpoint_facts": "UNREPORTED",
+    "new_leaf_P": 0,
+    "new_leaf_E": 0,
+    "product_changes_allowed": 0,
+    "live_writes": 0,
+    "full_ESC6_qualification": "NOT_QUALIFIED",
+    "historic_C0_golden_fixture": "UNCHANGED_MUST_EXECUTE_FROM_FROZEN_C0_GRAPH"
+  },
+  "reject": [
+    "new node claims ESC-5 instead of ESC-4",
+    "reserve remains 35 or becomes 5",
+    "same responsibility bound twice",
+    "new node silently changes released semantic units",
+    "new node acquires product PR before product work",
+    "new node claims completed facts from binding alone",
+    "an existing R-BASIS or R-PROOF identity/PR changes"
+  ],
+  "source_refs": [
+    "https://github.com/reallaksh19/Common/issues/718",
+    "https://github.com/reallaksh19/Common/issues/793",
+    "https://github.com/reallaksh19/Common/blob/main/.github/v32-evidence-spine/718-proposal-v2.json",
+    "https://github.com/reallaksh19/Common/actions/runs/37798782617"
+  ]
+}
