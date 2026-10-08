@@ -6646,5 +6646,13 @@ class HostedV35ColdEntry(_cold_entry.ColdEntryTests):
     """Same provider source or same HOLD across parent, child and PR entry."""
 
 
+# R5: nine one-source handover/evidence/Owner/advisory/reviewer consumers.
+import test_integration_relay_consumers_v35 as _unified_relay_consumers
+
+
+class HostedV35UnifiedRelayConsumers(_unified_relay_consumers.UnifiedRelaySourceConsumers):
+    """Three-entry cold source feeds one actual DELP-basis nine-consumer view."""
+
+
 if __name__ == "__main__":
     unittest.main()
