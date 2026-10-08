@@ -228,6 +228,11 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
         "historical_unreported": expected["historical_unreported"],
         "semantic_progress": expected["leaf_semantic"],
         "read_views": state,
+        "expected_managed_blocks": {
+            root: expected["issue_read_views"][root],
+            child: expected["issue_read_views"][child],
+            "Common#740": expected["pr_managed_block"],
+        },
         "reconciliation": (
             "MATCH" if all(s["title"] == "MATCH" and
                            s["managed_block"] == "PRESENT" for s in state.values())
