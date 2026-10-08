@@ -51,6 +51,11 @@ class Provider(BASE.Provider):
         self.comments[601] = [{
             "id": 6031746264, "author_association": "OWNER",
             "user": {"login": "reallaksh19"},
+            "issue_url": "https://api.github.com/repos/reallaksh19/Common/issues/601",
+            "html_url": (
+                "https://github.com/reallaksh19/Common/issues/601"
+                "#issuecomment-6031746264"
+            ),
             "body": (
                 "# TASK_EVIDENCE — END\n"
                 "responsibility: RK-P0\nissue: Common#601\n"
@@ -237,6 +242,43 @@ class FullGraphInventoryTests(unittest.TestCase):
         with patch.object(PUBLISH, "ScoreboardTransport", return_value=self.t):
             self.assertEqual(3, U4.main(["--repository", self.t.repository]))
         self.assertEqual([], self.t.writes)
+
+    def test_p0_provider_end_receipt_false_origin_is_rejected(self):
+        mutations=(
+            ("contributor", lambda c: c.update(author_association="CONTRIBUTOR")),
+            ("wrong_owner", lambda c: c.update(user={"login": "other"})),
+            ("wrong_issue", lambda c: c.update(
+                issue_url="https://api.github.com/repos/reallaksh19/Common/issues/438")),
+            ("wrong_permalink", lambda c: c.update(
+                html_url="https://github.com/reallaksh19/Common/issues/438"
+                         "#issuecomment-6031746264")),
+            ("missing_permalink", lambda c: c.pop("html_url")),
+            ("missing_association", lambda c: c.pop("author_association")),
+            ("missing_user", lambda c: c.pop("user")),
+            ("wrong_id_in_permalink", lambda c: c.update(
+                html_url="https://github.com/reallaksh19/Common/issues/601"
+                         "#issuecomment-6031746263")),
+        )
+        for name, mutate in mutations:
+            t=Provider()
+            mutate(t.comments[601][0])
+            with self.subTest(name=name),self.assertRaisesRegex(
+                U4.GraphInventoryError,"provider author/issue/permalink"):
+                U4.inspect(t)
+            self.assertEqual([],t.writes)
+
+    def test_verified_end_provider_origin_is_not_owner_graph_approval(self):
+        out=U4.inspect(self.t)
+        end=out["p0_reconciliation_baseline"]
+        self.assertEqual("reallaksh19",end["provider_end_author"])
+        self.assertEqual("OWNER",end["provider_end_association"])
+        self.assertEqual(
+            "https://github.com/reallaksh19/Common/issues/601"
+            "#issuecomment-6031746264",end["provider_end_receipt"])
+        self.assertEqual("BLOCKED_NO_PROVIDER_APPROVED_GRAPH",
+                         out["owner_graph_approval"])
+        self.assertEqual("NOT_DERIVED",out["integration_acceptance"])
+        self.assertEqual([],self.t.writes)
 
     def test_cli_realistic_missing_authority_exits_hold_no_write(self):
         with patch.object(PUBLISH,"ScoreboardTransport",return_value=self.t):
