@@ -1362,3 +1362,30 @@ class HandoverContextTests(unittest.TestCase):
                 _native_delp_source(**{**opts, "graph_revision": "main"})
             with self.assertRaisesRegex(TransactionError, "SOURCE_GRAPH_PATH_NOT_REPOSITORY_RELATIVE"):
                 _native_delp_source(**{**opts, "graph_path": "../bad.json"})
+
+    def test_c6_p09_provider_moves_after_context_before_actual_execute(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            graph, provider = self._source_bound_fixture()
+            getter = provider.get_issue
+            count = [0]
+            def move_at_commit_boundary(n):
+                count[0] += 1
+                issue = getter(n)
+                if count[0] > 4:
+                    issue["title"] = "Live issue changed after source context froze"
+                return issue
+            provider.get_issue = move_at_commit_boundary
+            event_before = (root / "relay/EVENTS.jsonl").read_bytes()
+            with self.assertRaisesRegex(TransactionError, "SOURCE_BOUND_RECONCILIATION_REQUIRED"):
+                plan_handover(
+                    root, tx_id="TX-C6-P09", event_id="EVT-C6-P09",
+                    actor="owner", target_path=target_observation(root),
+                    base_ref=base_ref, complex_mode=False,
+                    delp_source={"graph": graph, "leaf_ref": "Common#720", "provider": provider},
+                )
+            self.assertGreater(count[0], 4)
+            self.assertEqual(event_before, (root / "relay/EVENTS.jsonl").read_bytes())
+            self.assertFalse((root / "relay/TRANSACTIONS/TX-C6-P09").exists())
+            self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
