@@ -146,9 +146,27 @@ def main() -> int:
             args.report.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n", encoding="utf-8")
         print(json.dumps(report, sort_keys=True, indent=2))
         return 0 if report["decision"] in ("ALLOW","DISABLED_BY_OWNER_FLAG") or report["decision"].startswith("DENY_") else 2
+    except cycle.PublicationIncomplete as exc:
+        # GitHub has no cross-surface transaction: keep the partial write
+        # report even when the job fails so the next agent can reconcile.
+        failed = dict(exc.report)
+        failed["source_event_name"] = args.event_name
+        failed["exit_code"] = 3
+        if args.report:
+            args.report.parent.mkdir(parents=True, exist_ok=True)
+            args.report.write_text(json.dumps(failed, sort_keys=True, indent=2) + "\n",
+                                   encoding="utf-8")
+        print(json.dumps(failed, sort_keys=True, indent=2), file=sys.stderr)
+        return 3
     except Exception as exc:
-        # Do not claim success after a partial GitHub REST update.
-        print("V32_744_TRUSTED_PUBLICATION_INCOMPLETE: "+type(exc).__name__+": "+str(exc), file=sys.stderr)
+        # A pre-write failure is still not a successful live scoreboard sync.
+        failed = {"schema": SCHEMA, "status": "FAILED_UNVERIFIED",
+                  "error": type(exc).__name__ + ": " + str(exc), "exit_code": 3}
+        if args.report:
+            args.report.parent.mkdir(parents=True, exist_ok=True)
+            args.report.write_text(json.dumps(failed, sort_keys=True, indent=2) + "\n",
+                                   encoding="utf-8")
+        print("V32_744_TRUSTED_PUBLICATION_INCOMPLETE: "+failed["error"], file=sys.stderr)
         return 3
 
 
