@@ -272,7 +272,7 @@ class AuthenticatedProviderTests(unittest.TestCase):
             return subprocess.CompletedProcess(argv, 1, stdout=b"", stderr=b"private-error-with-token")
         with mock.patch.dict("os.environ", {"GH_TOKEN": "canary"}, clear=True):
             with mock.patch.object(M.subprocess, "run", side_effect=failed):
-                output = self.check(reader=M.GhReadOnlyProvider())
+                output = M.assess(contract(), M.GhReadOnlyProvider())
         self.assertEqual("UNKNOWN", output["overall"])
         self.assertFalse(any(q["status"] == "PROVEN" for q in output["requirements"]))
 
