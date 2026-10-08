@@ -79,14 +79,14 @@ jobs:
           env -u GH_TOKEN -u GITHUB_TOKEN python .github/v32-evidence-spine/811_c6_c6_verify_git_anchor.py \
             --archive /tmp/v32-c6-c6-retained.zip | tee /tmp/v32-c6-c6-offline.log
           grep -q 'C6_C6_OFFLINE_RETAINED_ARCHIVE=VERIFIED_TWO_FILES' /tmp/v32-c6-c6-offline.log
-      - name: Seven REAL adversarial tests, including coherent double-file rewrite
+      - name: Ten REAL adversarial tests, including squash-merge survival and coherent forgery
         run: |
           set -euo pipefail
           env -u GH_TOKEN -u GITHUB_TOKEN python .github/v32-evidence-spine/test_811_c6_c6_git_anchor.py \
             --archive /tmp/v32-c6-c6-retained.zip -v 2>&1 | tee /tmp/v32-c6-c6-test.log
-          grep -q 'Ran 7 tests' /tmp/v32-c6-c6-test.log
+          grep -q 'Ran 10 tests' /tmp/v32-c6-c6-test.log
           grep -q 'OK' /tmp/v32-c6-c6-test.log
-          echo 'C6_C6_GIT_ANCHOR_7_REAL_NEGATIVE_ORACLES=PASS'
+          echo 'C6_C6_GIT_ANCHOR_10_REAL_NEGATIVE_ORACLES=PASS'
       - name: State deliberately limited custody conclusion
         run: |
           echo 'C6_C6_HASH_ONLY_COMMIT_ANCHOR=PASS_NOT_OWNER_SIGNED'
