@@ -83,21 +83,33 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
         self.assertEqual("NOT_IMPLEMENTED", result["unreleased_consumers"]["handover"])
 
     def test_05_changed_head_invalidates_old_independent_candidate_proof(self):
-        qa = {"authority": "DERIVED_OBSERVATION_ONLY",
+        qa = {"schema": "relay-v3.2-qualification-observation-v1",
+              "repository": "reallaksh19/Common",
+              "responsibility": "Common#733",
+              "expected_candidate_sha": HEAD_A,
+              "authority": "DERIVED_OBSERVATION_ONLY",
               "observed_candidate_sha": HEAD_A, "overall": "PROVEN"}
         with self.assertRaisesRegex(view.ViewError, "UNBOUND_PR_CANNOT_ACQUIRE_QUALIFICATION"):
             self.views(draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"},
                        qualification=qa)
 
     def test_06_cannot_forge_proven_qualification_for_unbound_PR(self):
-        qa = {"authority": "DERIVED_OBSERVATION_ONLY",
+        qa = {"schema": "relay-v3.2-qualification-observation-v1",
+              "repository": "reallaksh19/Common",
+              "responsibility": "Common#733",
+              "expected_candidate_sha": HEAD_A,
+              "authority": "DERIVED_OBSERVATION_ONLY",
               "observed_candidate_sha": HEAD_A, "overall": "PROVEN"}
         with self.assertRaisesRegex(view.ViewError, "UNBOUND_PR_CANNOT_ACQUIRE_QUALIFICATION"):
             self.views(draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"},
                        qualification=qa)
 
     def test_07_changed_head_produces_unproven_view_and_new_input_digest(self):
-        qa = {"authority": "DERIVED_OBSERVATION_ONLY",
+        qa = {"schema": "relay-v3.2-qualification-observation-v1",
+              "repository": "reallaksh19/Common",
+              "responsibility": "Common#733",
+              "expected_candidate_sha": HEAD_A,
+              "authority": "DERIVED_OBSERVATION_ONLY",
               "observed_candidate_sha": HEAD_A, "overall": "PROVEN"}
         stale = self.views(draft_pr={"number": 740, "head_sha": HEAD_B, "lifecycle": "DRAFT"},
                            qualification=qa)
@@ -168,6 +180,37 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
         self.assertTrue(result["draft_pr_title"].endswith(" — Preserved engineering purpose"))
         self.assertEqual("NOT_IMPLEMENTED", result["unreleased_consumers"]["agent_matrix"])
         self.assertEqual([], result["authority_effects"])
+
+
+    def test_16_wrong_but_valid_parent_claim_cannot_replace_selected_claim(self):
+        owner = copy.deepcopy(self.owner)
+        next(r for r in owner["requirements"] if r["id"] == "OR-718-04")["claims"] = ["ESC-1"]
+        with self.assertRaisesRegex(view.ViewError, "SELECTED_OR_CLAIM_OWNERSHIP_DRIFT"):
+            self.views_owner(owner)
+
+    def test_17_qualifier_for_other_responsibility_cannot_qualify_this_PR(self):
+        qa = {"schema": "relay-v3.2-qualification-observation-v1",
+              "repository": "reallaksh19/Common",
+              "responsibility": "Common#724", "expected_candidate_sha": HEAD_A,
+              "observed_candidate_sha": HEAD_A, "overall": "PROVEN",
+              "authority": "DERIVED_OBSERVATION_ONLY"}
+        with self.assertRaisesRegex(view.ViewError, "QUALIFIER_WRONG_RESPONSIBILITY"):
+            self.views(draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"},
+                       qualification=qa)
+
+    def test_18_wrong_repository_or_qualifier_schema_rejected(self):
+        qa = {"schema": "relay-v3.2-qualification-observation-v1",
+              "repository": "somebody/other", "responsibility": "Common#733",
+              "expected_candidate_sha": HEAD_A, "observed_candidate_sha": HEAD_A,
+              "overall": "UNPROVEN", "authority": "DERIVED_OBSERVATION_ONLY"}
+        with self.assertRaisesRegex(view.ViewError, "QUALIFIER_WRONG_REPOSITORY"):
+            self.views(draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"},
+                       qualification=qa)
+        qa["repository"] = "reallaksh19/Common"
+        qa["schema"] = "agent-authored-verdict"
+        with self.assertRaisesRegex(view.ViewError, "QUALIFIER_SCHEMA_MISMATCH"):
+            self.views(draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"},
+                       qualification=qa)
 
 
 if __name__ == "__main__":
