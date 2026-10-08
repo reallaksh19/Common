@@ -1,0 +1,226 @@
+{
+  "schema": "relay-v32-744-issue-comment-signal-oracles-v1",
+  "authority": "PRECOMMITTED_EXPECTED_NOT_DERIVED_FROM_GATE",
+  "programme": "Common#718",
+  "leaf": "Common#733",
+  "baseline_source_head": "390dffe6aa2e0fe687d256e7a73f14a94b255897",
+  "source_criterion": "EVENT_IS_SIGNAL_NOT_ACCEPTED_FACT; DELP_PROVIDER_LEDGER_RECOMPUTES_ALL_ACCEPTANCE",
+  "cases": [
+    {
+      "id": "ISS-01-LEAF-CREATED",
+      "event_name": "issue_comment",
+      "event": {
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "action": "created",
+        "issue": {
+          "number": 733
+        },
+        "comment": {
+          "id": 123456,
+          "body": "TASK_EVIDENCE with CHECKPOINT_FACTS_V1 source material",
+          "user": {
+            "login": "executor"
+          }
+        }
+      },
+      "enabled": true,
+      "expected": "ALLOW"
+    },
+    {
+      "id": "ISS-02-LEAF-EDITED",
+      "event_name": "issue_comment",
+      "event": {
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "action": "edited",
+        "issue": {
+          "number": 733
+        },
+        "comment": {
+          "id": 123456,
+          "body": "TASK_EVIDENCE with CHECKPOINT_FACTS_V1 source material",
+          "user": {
+            "login": "executor"
+          }
+        }
+      },
+      "enabled": true,
+      "expected": "ALLOW"
+    },
+    {
+      "id": "ISS-03-LEAF-DELETED",
+      "event_name": "issue_comment",
+      "event": {
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "action": "deleted",
+        "issue": {
+          "number": 733
+        },
+        "comment": {
+          "id": 123456,
+          "body": "TASK_EVIDENCE with CHECKPOINT_FACTS_V1 source material",
+          "user": {
+            "login": "executor"
+          }
+        }
+      },
+      "enabled": true,
+      "expected": "ALLOW"
+    },
+    {
+      "id": "ISS-04-PARENT",
+      "event_name": "issue_comment",
+      "event": {
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "action": "created",
+        "issue": {
+          "number": 718
+        },
+        "comment": {
+          "id": 123456,
+          "body": "TASK_EVIDENCE with CHECKPOINT_FACTS_V1 source material",
+          "user": {
+            "login": "executor"
+          }
+        }
+      },
+      "enabled": true,
+      "expected": "DENY_UNBOUND_ISSUE"
+    },
+    {
+      "id": "ISS-05-FOREIGN-ISSUE",
+      "event_name": "issue_comment",
+      "event": {
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "action": "created",
+        "issue": {
+          "number": 999
+        },
+        "comment": {
+          "id": 123456,
+          "body": "TASK_EVIDENCE with CHECKPOINT_FACTS_V1 source material",
+          "user": {
+            "login": "executor"
+          }
+        }
+      },
+      "enabled": true,
+      "expected": "DENY_UNBOUND_ISSUE"
+    },
+    {
+      "id": "ISS-06-PR-DISCUSSION",
+      "event_name": "issue_comment",
+      "event": {
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "action": "created",
+        "issue": {
+          "number": 733,
+          "pull_request": {
+            "url": "https://api.github.com/repos/reallaksh19/Common/pulls/740"
+          }
+        },
+        "comment": {
+          "id": 123456,
+          "body": "TASK_EVIDENCE with CHECKPOINT_FACTS_V1 source material",
+          "user": {
+            "login": "executor"
+          }
+        }
+      },
+      "enabled": true,
+      "expected": "DENY_PR_COMMENT_SURFACE"
+    },
+    {
+      "id": "ISS-07-MANAGED-STATUS",
+      "event_name": "issue_comment",
+      "event": {
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "action": "created",
+        "issue": {
+          "number": 733
+        },
+        "comment": {
+          "id": 123456,
+          "body": "<!-- relay-delp:live-status:start -->\nLIVE_STATUS_V1",
+          "user": {
+            "login": "executor"
+          }
+        }
+      },
+      "enabled": true,
+      "expected": "DENY_MANAGED_STATUS_COMMENT"
+    },
+    {
+      "id": "ISS-08-MISSING-COMMENT",
+      "event_name": "issue_comment",
+      "event": {
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "action": "created",
+        "issue": {
+          "number": 733
+        }
+      },
+      "enabled": true,
+      "expected": "DENY_UNVERIFIABLE_COMMENT"
+    },
+    {
+      "id": "ISS-09-WRONG-ACTION",
+      "event_name": "issue_comment",
+      "event": {
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "action": "transferred",
+        "issue": {
+          "number": 733
+        },
+        "comment": {
+          "id": 123456,
+          "body": "TASK_EVIDENCE with CHECKPOINT_FACTS_V1 source material",
+          "user": {
+            "login": "executor"
+          }
+        }
+      },
+      "enabled": true,
+      "expected": "DENY_EVENT_ACTION"
+    },
+    {
+      "id": "ISS-10-DISABLED",
+      "event_name": "issue_comment",
+      "event": {
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "action": "created",
+        "issue": {
+          "number": 733
+        },
+        "comment": {
+          "id": 123456,
+          "body": "TASK_EVIDENCE with CHECKPOINT_FACTS_V1 source material",
+          "user": {
+            "login": "executor"
+          }
+        }
+      },
+      "enabled": false,
+      "expected": "DISABLED_BY_OWNER_FLAG"
+    }
+  ]
+}

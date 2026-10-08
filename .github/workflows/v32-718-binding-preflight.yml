@@ -83,11 +83,16 @@ jobs:
           assert observation['Common#724']['pr_state'] == 'MERGED', observation
           selected = next(n for n in graph['nodes'] if n.get('responsibility_id') == 'R-PROJECTION')
           if selected.get('primary_pr') == 'Common#740':
-              assert observation['Common#733']['pr_state'] == 'OPEN', observation
+              product_pr = transport.get_pull(740)
+              provider_state = ('MERGED' if product_pr.get('merged') else
+                                str(product_pr.get('state') or 'UNKNOWN').upper())
+              assert observation['Common#733']['pr_state'] == provider_state, observation
               head = observation['Common#733']['candidate_sha']
+              assert head == (product_pr.get('head') or {}).get('sha'), observation
               assert isinstance(head, str) and len(head) == 40, observation
               print('V32_733_PRODUCT_PR_BOUND=Common#740')
-              print('V32_733_LIVE_DRAFT_HEAD=' + head)
+              print('V32_733_LIVE_BOUND_HEAD=' + head)
+              print('V32_733_LIVE_BOUND_STATE=' + provider_state)
           else:
               assert 'Common#733' not in observation, observation
           preview = module.plan_github(transport, graph)
@@ -119,8 +124,16 @@ jobs:
           assert r["authority"] == "READ_ONLY_SELF_REPLAY_NO_ACCEPTANCE", r
           assert r["pr_binding"] == "BOUND", r
           assert r["candidate_sha"] and len(r["candidate_sha"]) == 40, r
-          assert r["historical_unreported"] == ["Common#720", "Common#724"], r
-          assert r["semantic_progress"]["P"] == 0 and r["semantic_progress"]["E"] == 0, r
+          # Never freeze OPEN/MERGED historical candidates or zero progress:
+          # accepted facts may arrive after the source PR is merged. Test
+          # integrity/shape and print actual provider-derived state instead.
+          historical = r["historical_unreported"]
+          assert isinstance(historical, list) and len(historical) == len(set(historical)), r
+          assert set(historical).issubset({"Common#720","Common#724","Common#733"}), r
+          progress = r["semantic_progress"]
+          assert all(isinstance(progress.get(k), int) and progress[k] >= 0
+                     for k in ("P","E","D","DE")), r
+          assert all(progress[k] <= 100 for k in ("P","E","D","DE")), r
           assert r["qualifier"]["state"] == "UNPROVEN", r
           assert r["full_ESC_6_gate"] == "FAIL_CLOSED_UNRELEASED_CONSUMERS", r
           assert r["authority_effects"] == [], r
@@ -129,6 +142,8 @@ jobs:
           print("V32_733_CURRENT_HEAD=" + r["candidate_sha"])
           print("V32_733_LIVE_INPUT_DIGEST=" + r["source_input_digest"])
           print("V32_733_LIVE_SYNC_STATE=" + r["reconciliation"])
+          print("V32_733_PROVIDER_UNREPORTED="+json.dumps(historical))
+          print("V32_733_DERP_PROGRESS="+json.dumps(progress, sort_keys=True))
           for ref,x in sorted(r["read_views"].items()):
               print(ref+"_SMART_TITLE="+x["title"]+";MANAGED_BLOCK="+x["managed_block"])
               print(ref+"_EXPECTED_TITLE="+x["expected"])
