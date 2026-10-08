@@ -166,7 +166,7 @@ amendments:
     allowed_paths:
       - skills/engineering-pr-delivery-v3.2/tests/test_agent_health_retained_replay_v32.py
 
-- id: AMEND-V32-ES-RBASIS-010
+  - id: AMEND-V32-ES-RBASIS-010
     owner_authorized: true
     owner_basis: >-
       Direct Owner request, 2026-10-08: 'create a new github issue dedicated to v3.2,
