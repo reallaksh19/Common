@@ -308,6 +308,7 @@ class LivePublisherTests(unittest.TestCase):
     def test_event_routing_resolves_only_related_real_provider_slices(self):
         candidates = (
             ("pull_request", {"number": 712, "pull_request": {"number": 712}}, "SELECT"),
+            ("pull_request_target", {"number": 712, "pull_request": {"number": 712}}, "SELECT"),
             ("pull_request_review", {"pull_request": {"number": 712}}, "SELECT"),
             ("issue_comment", {"issue": {"number": 604}}, "SELECT"),
             ("issue_comment", {"issue": {"number": 600}}, "SELECT"),
