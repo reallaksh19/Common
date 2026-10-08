@@ -30,7 +30,7 @@ class Provider(COLD_TESTS.Provider):
         self.workflow_calls = []
         self.default_head = "9" * 40
         self.workflows_source = (
-            ROOT / R7._AUDITED_TEMPLATE_PATH
+            ROOT.parents[1] / R7._AUDITED_TEMPLATE_PATH
         ).read_text(encoding="utf-8")
 
     def get_commit_sha(self, ref):
@@ -164,7 +164,7 @@ class ReleasePreflightTests(unittest.TestCase):
             lambda code: code + "\\n# --graph-source-ref --approval-ref --apply\\n",
         ):
             self.t.workflows_source = (
-                ROOT / R7._AUDITED_TEMPLATE_PATH
+                ROOT.parents[1] / R7._AUDITED_TEMPLATE_PATH
             ).read_text(encoding="utf-8")
             self.t.workflows_source = edit(self.t.workflows_source)
             result = self.preflight(GRAPH_TESTS.SCORE_URL)
