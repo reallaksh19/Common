@@ -1,0 +1,32 @@
+name: relay-reset-cold-process
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/cold-recovery-v1.*'
+      - 'skills/engineering-relay-v1/fixtures/cold-synthetic-recovery-manifest-v1.json'
+      - '.github/workflows/relay-reset-cold-process.yml'
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  actions: read
+jobs:
+  synthetic-cold-process:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22','24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Fresh Node process from immutable public GitHub manifest/PR links
+        env:
+          RELAY_COLD_CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RELAY_COLD_CI_PR_NUMBER: ${{ github.event.number }}
+          RELAY_COLD_CI_TOKEN: ${{ github.token }}
+        run: node --test skills/engineering-relay-v1/cold-recovery-v1.test.mjs
