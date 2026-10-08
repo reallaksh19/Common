@@ -421,5 +421,74 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         self.assertEqual([], result["authority_effects"])
 
 
+    def test_33_legacy_DELP_issue_title_writer_rejected_for_bound_718(self):
+        import delp_projection_v32 as delp
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        store = delp.InMemoryStore()
+        with self.assertRaisesRegex(delp.DelpError, "SOURCE_SMART_TITLE_POLICY_REQUIRED"):
+            delp.sync_projection(store, live, lambda: [], lambda: {}, {})
+        self.assertEqual([], store.writes)
+
+    def test_34_single_DELP_issue_writer_publishes_source_smart_titles(self):
+        import delp_projection_v32 as delp
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        observation = {
+            "Common#720": {"candidate_sha": "b3dfba3becf829d3a4e21d6eaa54983f05317b65", "pr_state": "MERGED"},
+            "Common#724": {"candidate_sha": "7ef9fbdd0c6f0f941fd573c1663c7a142fc41414", "pr_state": "MERGED"},
+            "Common#733": {"candidate_sha": "c"*40, "pr_state": "OPEN"},
+        }
+        snapshot = replay.view.build_views(live, self.manifest, ledger=[],
+            observations=observation, selected_leaf="Common#733", phase="C4",
+            human_titles={"Common#718":"V3.2 Evidence Spine",
+                          "Common#733":"Issue/PR Views", "PR":"Cross-Surface Views"},
+            draft_pr={"number":740,"head_sha":"c"*40,"lifecycle":"DRAFT"})
+        projection = delp.project(live, [], observation)
+        store = delp.InMemoryStore()
+        results = delp.sync_projection(store, live, lambda: [], lambda: observation,
+            {"Common#718":"V3.2 Evidence Spine", "Common#733":"Issue/PR Views"},
+            title_overrides=snapshot["issue_titles"],
+            selected_refs=("Common#718","Common#733"),
+            expected_input_digest=projection["input_digest"])
+        self.assertEqual(["Common#733","Common#718"], list(results))
+        self.assertEqual(snapshot["issue_titles"]["Common#718"], store.titles["Common#718"])
+        self.assertEqual(snapshot["issue_titles"]["Common#733"], store.titles["Common#733"])
+        self.assertEqual(2, len(store.writes))
+        self.assertEqual(projection["input_digest"], store.status["Common#733"]["digest"])
+        self.assertEqual(0, store.status["Common#733"]["document"]["node"]["progress"]["P"])
+        self.assertEqual(0, store.status["Common#733"]["document"]["node"]["progress"]["E"])
+
+    def test_35_single_DELP_writer_rejects_stale_input_before_any_write(self):
+        import delp_projection_v32 as delp
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        store = delp.InMemoryStore()
+        with self.assertRaisesRegex(delp.DelpError, "ISSUE_PUBLISHER_INPUT_MOVED"):
+            delp.sync_projection(store, live, lambda: [], lambda: {},
+                {"Common#718":"V3.2 Evidence Spine", "Common#733":"Issue/PR Views"},
+                title_overrides={"Common#718":"safe parent", "Common#733":"safe child"},
+                selected_refs=("Common#718","Common#733"),
+                expected_input_digest="sha256:"+"0"*64)
+        self.assertEqual([], store.writes)
+
+    def test_36_single_DELP_writer_rejects_partial_title_ownership_or_scope(self):
+        import delp_projection_v32 as delp
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        kwargs = dict(title_overrides={"Common#718":"root", "Common#733":"child"},
+                      selected_refs=("Common#718","Common#733"),
+                      expected_input_digest="sha256:"+"a"*64)
+        for key,value,error in (
+            ("title_overrides",{"Common#718":"root"},"SOURCE_SMART_TITLE_POLICY_REQUIRED"),
+            ("selected_refs",("Common#718","Common#720","Common#733"),
+             "SOURCE_SMART_TITLE_SCOPE_MISMATCH"),
+            ("title_overrides",{"Common#718":"root","Common#733":"child","Common#0":"x"},
+             "ISSUE_PUBLISHER_INVALID_TITLE_OVERRIDE"),
+        ):
+            store = delp.InMemoryStore()
+            args=dict(kwargs)
+            args[key]=value
+            with self.subTest(key=key):
+                with self.assertRaisesRegex(delp.DelpError, error):
+                    delp.sync_projection(store, live, lambda: [], lambda: {}, {}, **args)
+                self.assertEqual([], store.writes)
+
 if __name__ == "__main__":
     unittest.main()
