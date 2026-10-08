@@ -69,7 +69,7 @@ def gate(event_name: str, event: Mapping[str, Any], graph: Mapping[str, Any],
             code = "DENY_FOREIGN_HEAD_REPOSITORY"
         elif event_pr and (event_pr.get("base") or {}).get("ref") != target["base"]:
             code = "DENY_WRONG_BASE"
-        elif (provider_pull.get("head") or {}).get("repo", {}).get("full_name") not in (None,target["repository"]):
+        elif ((provider_pull.get("head") or {}).get("repo") or {}).get("full_name") != target["repository"]:
             code = "DENY_PROVIDER_HEAD_REPOSITORY"
         elif provider_pull.get("number") != target["pr_number"]:
             code = "DENY_PROVIDER_PR_IDENTITY"
