@@ -95,13 +95,24 @@ class IntegrationGoldenV35ContractTests(unittest.TestCase):
         data = self.source()
         view = G.derive(data)
         self.assertEqual(10, len(view["review_checklist"]))
+        self.assertEqual(10, len(view["project_review_checklist"]))
+        self.assertEqual("CR-01 Basis, scope and coverage", view["review_checklist"][0]["criterion"])
+        self.assertEqual("CR-10 Integration, regression and release fitness", view["review_checklist"][-1]["criterion"])
         self.assertEqual({"NOT_REVIEWED"}, {x["state"] for x in view["review_checklist"]})
+        self.assertEqual({"NOT_REVIEWED"}, {x["state"] for x in view["project_review_checklist"]})
         self.assertIn("SELF REVIEW: NOT_REVIEWED", view["handover_prompt"])
         self.assertIn("independent review: NOT_REVIEWED", view["handover_prompt"])
         forged = copy.deepcopy(data)
         forged["review_observation"]["independent"] = "APPROVED"
         with self.assertRaises(G.GoldenContractError):
             G.derive(forged)
+
+    def test_persisted_foreign_leaf_fixture_rejected_as_intended(self):
+        bad_path = ROOT / "examples/integration/foreign-leaf.rejected.json"
+        source = json.loads(bad_path.read_text(encoding="utf-8"))
+        self.assertEqual("DELIBERATELY_INVALID_FOREIGN_CHILD_NEGATIVE", source["fixture_kind"])
+        with self.assertRaisesRegex(G.GoldenContractError, source["expected_rejection"]):
+            G.derive(source)
 
 
 if __name__ == "__main__":
