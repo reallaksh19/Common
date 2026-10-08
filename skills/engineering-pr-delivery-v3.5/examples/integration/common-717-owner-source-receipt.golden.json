@@ -1,0 +1,18 @@
+{
+  "schema": "V35_PROVIDER_MIRROR_GOLDEN_V1",
+  "source_classification": "PROVIDER_GITHUB_MIRROR_NOT_ORIGINAL_OWNER_CHAT",
+  "provider_source_url": "https://api.github.com/repos/reallaksh19/Common/issues/comments/6051883834",
+  "observed_source": {
+    "id": 6051883834,
+    "html_url": "https://github.com/reallaksh19/Common/issues/717#issuecomment-6051883834",
+    "issue_url": "https://api.github.com/repos/reallaksh19/Common/issues/717",
+    "body": "OWNER_INTENT_SOURCE_RECEIPT_V1 — direct prompt, 2026-10-08\n\n**Verbatim Owner utterance (new, supplied in current ChatGPT conversation):**\n\n> WHy i don't see any integration on GitHub issue decomposition, issue title scoreboard, task evidence, handover prompt and agent metric which is the core...\n> i also don't see smart title in issue and draft... I also don't see \"My intent\" or \"owner inent\" presenvation i parent issue along with source links and golden fixtures which is mandatory.\n>\n> I still don't see reviewer checklist/self checklist\n\n**Original source class:** DIRECT_OWNER_CHAT; original message permalink / stable message ID **UNAVAILABLE**, not fabricated. This GitHub comment is the **first durable copy**, not the original source. Governing programme parent #600, design #570, integration child #717. This Owner directive explicitly prioritizes a visible, testable unified integration of: decomposition→claim/evidence→issue/PR title+status→handover→agent metrics→self/reviewer assurance, plus lossless Owner prompts, source provenance and golden replay fixtures.\n\n**Self-audit result:** prior code at PR #712 and exact-head 453 tests addresses P3 custody *only*. It does **not** qualify #717 IC1–IC8 or R1–R6. Issue and draft titles are manual, PR sync absent, Owner intent stored on #717 only (not losslessly in #600), missing integrated cold-agent acceptance fixture and effective review checklist. Previously reported green tests must not be relabelled as integration PASS.\n\n**Authority:** user demand authorizes returning integration to the governing roadmap/issue acceptance; it does not alter V3.2 frozen files, Local review/merge ownership, native #438/#604 custody truth, or permit PR #712 merge. Next: create an independent bounded R1 integration responsibility; preserve upstream P3 semantic blocker, but do not allow it to excuse absent source-link/fixture/renderer governance.",
+    "user": {
+      "login": "reallaksh19"
+    },
+    "author_association": "OWNER",
+    "created_at": "2026-10-08T03:58:15Z",
+    "updated_at": "2026-10-08T03:58:15Z"
+  },
+  "notes": "One time actual GitHub provider readback; exact source text for regression, not currentness or original-chat authentication."
+}
