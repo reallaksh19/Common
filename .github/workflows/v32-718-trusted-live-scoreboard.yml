@@ -26,12 +26,14 @@ permissions:
   issues: write
   pull-requests: write
 
-concurrency:
-  group: v32-718-single-issue-scoreboard-publisher
-  cancel-in-progress: false
-
 jobs:
   trusted-reconcile:
+    # Only the authorized WRITE job needs singleton serialization.
+    # The prior global lock also serialized GET-only audits and unrelated
+    # issue-comment events before job-level filters could skip their work.
+    concurrency:
+      group: v32-718-single-issue-scoreboard-publisher
+      cancel-in-progress: false
     # Default-off until independent source-level review and Owner opt-in.
     if: ${{ vars.V32_718_LIVE_SCOREBOARD_ENABLED == 'true' }}
     runs-on: ubuntu-latest

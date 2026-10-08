@@ -216,14 +216,15 @@ jobs:
           git merge-base --is-ancestor 13437eca8483f04ad97d7611c95f0af65a13ac1b 95959bdbec6ae71058f5b56c79a9d6f5376726ad
           git merge-base --is-ancestor 5a42ecee3577d1f8f91b9610a47a2d73e5673d3 4756fa2880460738c9dad4e9f15b088edf7e49eb
           git merge-base --is-ancestor c2cbcbc5a7f2b532dd0b57e3df80e2c034884fda 1666d3bc75f2d213a81c1a8f06c4daaac1de2f59
+          git merge-base --is-ancestor a56b6e115abce229e658850903aabdc9d0083bff ac0f4ddbcc51dda4fb770f7b32e211c15f31d5cb
           python -m unittest discover -s .github/v32-evidence-spine -p 'test_760_readonly_audit_v32.py' -v 2>&1 | tee artifacts/v32-760-audit-tests.log
           python - <<'PY'
           from pathlib import Path
           log=Path('artifacts/v32-760-audit-tests.log').read_text()
-          missing=[f'test_{n:02d}_' for n in range(1,16) if f'test_{n:02d}_' not in log]
-          if missing or 'Ran 15 tests' not in log or 'OK' not in log:
-              raise SystemExit(f'S5_D1_D2_D3_NAMED_AUDIT_CASES_NOT_EXECUTED: {missing}')
-          print('V32_760_767_773_READONLY_AUDIT_PRECOMMITTED_TESTS=15_PASS')
+          missing=[f'test_{n:02d}_' for n in range(1,17) if f'test_{n:02d}_' not in log]
+          if missing or 'Ran 16 tests' not in log or 'OK' not in log:
+              raise SystemExit(f'S5_D1_D2_D3_D4_NAMED_AUDIT_CASES_NOT_EXECUTED: {missing}')
+          print('V32_760_767_773_776_READONLY_AUDIT_PRECOMMITTED_TESTS=16_PASS')
           PY
       - name: Retain golden preflight evidence
         if: always()

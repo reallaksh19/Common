@@ -207,5 +207,29 @@ class ReadonlyScoreboardAuditTests(unittest.TestCase):
             self.assertEqual([],audit["authority_effects"])
 
 
+    def test_16_precommitted_writer_only_concurrency_scope(self):
+        fixture=json.loads((HERE/"776-writer-lock-oracles-v1.json").read_text())
+        self.assertEqual("relay-v32-776-job-scoped-writer-concurrency-oracle-v1",fixture["schema"])
+        self.assertEqual(5,len(fixture["cases"]))
+        self.assertFalse(fixture["requirements"]["root_workflow_lock"])
+        self.assertTrue(fixture["requirements"]["audit_no_concurrency"])
+        # Root-level YAML must not serialize unrelated read-only events.
+        pre_jobs, jobs=WORKFLOW.split("\njobs:\n",1)
+        self.assertNotIn("\nconcurrency:",pre_jobs)
+        writer, audit=jobs.split("\n  audit-readback:",1)
+        self.assertIn("  trusted-reconcile:\n",writer)
+        self.assertIn("    concurrency:\n      group: v32-718-single-issue-scoreboard-publisher\n      cancel-in-progress: false",writer)
+        self.assertEqual(1,WORKFLOW.count("group: v32-718-single-issue-scoreboard-publisher"))
+        self.assertIn("vars.V32_718_LIVE_SCOREBOARD_ENABLED == 'true'",writer)
+        self.assertIn("needs: trusted-reconcile",audit)
+        self.assertIn("always()",audit)
+        self.assertNotIn("concurrency:",audit)
+        self.assertNotIn("--apply",audit)
+        self.assertIn("contents: read\n      issues: read\n      pull-requests: read",audit)
+        self.assertIn("github.event.issue.number == 733",audit)
+        self.assertIn("github.event.pull_request.number == 740",audit)
+        self.assertIn("relay-delp:live-status:start",audit)
+
+
 if __name__=="__main__":
     unittest.main()
