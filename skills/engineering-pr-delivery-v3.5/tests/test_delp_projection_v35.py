@@ -6576,6 +6576,15 @@ class ProjectionEndToEndAgreement(unittest.TestCase):
         self.assertEqual("STALE_OR_HAND_EDITED", drift["status"])
         self.assertEqual("CONTINUE_UNIT", a["actual_next"]["action"])
 
+# Host-discovered R1-B/C integration oracle: DELP workflow selects only this
+# test module explicitly, so merely storing a new test file is insufficient.
+import test_integration_golden_v35 as _unified_golden
+
+
+class HostedV35UnifiedGoldenContract(_unified_golden.IntegrationGoldenV35ContractTests):
+    """Run all six cross-surface golden falsifiers in the actual DELP workflow."""
+
+
 
 if __name__ == "__main__":
     unittest.main()
