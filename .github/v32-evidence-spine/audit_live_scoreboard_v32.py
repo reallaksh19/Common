@@ -142,6 +142,58 @@ def classify_provider_failure(exit_code: int, stderr: str) -> dict[str, Any]:
     }
 
 
+
+def three_head_verdict(initial: Any, observed: Any, final: Any) -> dict[str, Any]:
+    """Pure, independently frozen three-observer candidate parity; no authority."""
+    def exact(value: Any) -> str | None:
+        return value if isinstance(value, str) and VALID_SHA.fullmatch(value) else None
+
+    a, b, z = exact(initial), exact(observed), exact(final)
+    if not a or not z:
+        verdict = "HEAD_UNAVAILABLE"
+    elif a != z:
+        verdict = "PROVIDER_HEAD_MOVED"
+    elif b != a:
+        verdict = "DELP_OBSERVER_MISMATCH"
+    else:
+        verdict = "MATCH"
+    return {"schema": "relay-v32-773-three-observer-snapshot-v1",
+            "direct_initial_sha": a, "delp_observed_sha": b,
+            "direct_final_sha": z, "verdict": verdict,
+            "pr": "Common#740", "responsibility": "Common#733",
+            "write_count": 0, "authority_effects": []}
+
+
+def live_three_head_probe() -> dict[str, Any]:
+    """GET-only re-observation; invoked ONLY following the named source guard.
+
+    Do not change the source guard's failure verdict; this is an independent
+    diagnostic snapshot of the same authenticated, default-branch provider.
+    """
+    script_dir = ROOT / "skills/engineering-pr-delivery-v3.2/scripts"
+    sys.path.insert(0, str(script_dir))
+    import delp_projection_v32 as delp
+
+    graph = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+    require(graph["programme"]["repository"] == "reallaksh19/Common",
+            "PROBE_REPOSITORY_NOT_RELEASED")
+    nodes = [n for n in graph["nodes"] if n.get("ref") == "Common#733"]
+    require(len(nodes) == 1 and nodes[0].get("primary_pr") == "Common#740",
+            "PROBE_PR_NOT_SOURCE_BOUND")
+    provider = delp.GhTransport("reallaksh19/Common")
+    first = provider.get_pull(740)
+    observations = delp.observe_github(provider, graph)
+    last = provider.get_pull(740)
+    require(first.get("number") == 740 and last.get("number") == 740,
+            "PROBE_PROVIDER_IDENTITY_MISMATCH")
+    return three_head_verdict(
+        (first.get("head") or {}).get("sha"),
+        (observations.get("Common#733") or {}).get("candidate_sha"),
+        (last.get("head") or {}).get("sha"),
+    )
+
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -179,6 +231,18 @@ def main() -> int:
         }
         if provider_failure is not None:
             report["provider_failure"] = provider_failure
+            if (provider_failure.get("category") == "SOURCE_CONTRACT" and
+                    provider_failure.get("reason_code") ==
+                    "CANDIDATE_CHANGED_DURING_OBSERVATION"):
+                try:
+                    report["candidate_observer_probe"] = live_three_head_probe()
+                except Exception as probe_exc:
+                    # Preserve the *original* error; a diagnostic failure
+                    # must never turn source readback into green.
+                    report["candidate_observer_probe"] = {
+                        "verdict": "PROBE_FAILED_UNVERIFIED",
+                        "exception_class": type(probe_exc).__name__,
+                        "write_count": 0, "authority_effects": []}
         code = 3
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n", encoding="utf-8")
