@@ -19,7 +19,7 @@ import pr_responsibility_view_v32 as view
 
 ROOT = Path(__file__).resolve().parents[3]
 MANIFEST = ROOT / ".github/v32-evidence-spine/718-golden-fixtures-v1.json"
-GRAPH = ROOT / ".github/v32-evidence-spine/718-proposal-v2.json"
+GRAPH = ROOT / ".github/v32-evidence-spine/fixtures/718-c0-source-graph.json"
 SCHEMA = "relay-v32-718-real-source-vertical-cycle-v1"
 AUTHORITY = "READ_ONLY_SELF_REPLAY_NO_ACCEPTANCE"
 
