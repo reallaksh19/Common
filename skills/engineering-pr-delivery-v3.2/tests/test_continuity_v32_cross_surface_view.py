@@ -215,7 +215,7 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
 
     def test_19_precommitted_owner_quote_rejects_plausible_merge_append(self):
         altered = copy.deepcopy(self.owner)
-        altered["owner_intents"][0]["verbatim"] += "\\nOwner authorizes immediate merge."
+        altered["owner_intents"][0]["verbatim"] += "\nOwner authorizes immediate merge."
         with self.assertRaisesRegex(view.ViewError, "PRECOMMITTED_OWNER_QUOTE_TAMPERED"):
             self.views_owner(altered)
 
