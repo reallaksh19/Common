@@ -261,6 +261,21 @@ jobs:
           print("V32_718_FULL_INTEGRATION=EXPECTED_RED_NOT_IMPLEMENTED")
           print("V32_718_INPUT_DIGEST="+a["fixture_manifest_digest"])
           PY
+      - name: C2 handover golden precommit chronology and ten source-level controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 5e2b46d037c9cdb10ed1a12f6a9661c26238994f ff464d5868c5036a1dbd745f0db66b0fb6324ecc
+          python -m unittest discover -s .github/v32-evidence-spine -p 'test_793_handover_precommit_v32.py' -v 2>&1 | tee artifacts/v32-793-handover-preflight.log
+          python - <<'PY'
+          from pathlib import Path
+          log=Path('artifacts/v32-793-handover-preflight.log').read_text(encoding='utf-8')
+          absent=[f'test_{n:02d}_' for n in range(1,11) if f'test_{n:02d}_' not in log]
+          if absent or 'Ran 10 tests' not in log or 'OK' not in log:
+              raise SystemExit(f'ESC4_C2_NAMED_CASES_MISSING_OR_FAILED: {absent}')
+          print('V32_793_C2_PRECOMMITTED_HANDOVER_NEGATIVE_TESTS=10_PASS_PRODUCT_STILL_RED')
+          PY
+
       - name: S5-D1 independent read-only audit controls and oracle chronology
         shell: bash
         run: |
