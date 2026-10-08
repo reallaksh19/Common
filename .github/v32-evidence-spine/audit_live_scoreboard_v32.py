@@ -19,7 +19,7 @@ from tempfile import TemporaryDirectory
 from typing import Any, Mapping
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = ROOT / "skills/engineering-pr-delivery-v3.2/scripts/vertical_cycle_v32.py"
+FIRST_SOURCE = ROOT / ".github/v32-evidence-spine/same_guarded_readback_trace_v32.py"
 SCHEMA = "relay-v32-760-provider-audit-v1"
 VALID_SHA = re.compile(r"^[0-9a-f]{40}$", re.IGNORECASE)
 DIGEST = re.compile(r"^sha256:[0-9a-f]{64}$")
@@ -201,26 +201,37 @@ def main() -> int:
     parser.add_argument("--writer-job-result", required=True)
     args = parser.parse_args()
     provider_failure = None
+    first_trace = None
     try:
         sha = subprocess.run(
             ["git", "rev-parse", "HEAD"], check=True, capture_output=True, text=True,
             cwd=ROOT).stdout.strip()
         with TemporaryDirectory(prefix="v32-760-audit-") as temp:
             report_path = Path(temp) / "readback.json"
-            # Deliberately omit --apply, --plan-publication, or any write mode.
+            first_trace_path = Path(temp) / "first-invocation.json"
+            # The FIRST source readback is traced by a GET-only adapter.
+            # The source guard itself remains unchanged; never try/retry to green.
             result = subprocess.run([
-                sys.executable, str(SOURCE), "--live-readback",
-                "--report", str(report_path),
+                sys.executable, str(FIRST_SOURCE),
+                "--first-source-report", str(report_path),
+                "--first-trace-report", str(first_trace_path),
             ], cwd=ROOT, capture_output=True, text=True, check=False)
+            if first_trace_path.exists():
+                first_trace = json.loads(first_trace_path.read_text(encoding="utf-8"))
             if result.returncode != 0:
                 provider_failure = classify_provider_failure(result.returncode, result.stderr)
                 raise AuditError("READ_ONLY_PROVIDER_REPLAY_FAILED_EXIT_" + str(result.returncode))
+            require(isinstance(first_trace, dict) and
+                    first_trace.get("invocation_scope") == "PRIMARY_AUDIT_SOURCE_INVOCATION" and
+                    first_trace.get("source_outcome") == "SOURCE_REPLAY_SUCCEEDED_NO_ACCEPTANCE",
+                    "FIRST_GUARDED_TRACE_MISSING_OR_INVALID")
             observed = json.loads(report_path.read_text(encoding="utf-8"))
         report = summary(
             observed, checkout_sha=sha, event_name=args.event_name,
             enabled_flag=os.environ.get("V32_718_LIVE_SCOREBOARD_ENABLED", ""),
             writer_job_result=args.writer_job_result,
         )
+        report["first_guarded_invocation_trace"] = first_trace
         code = 0
     except Exception as exc:
         report = {
@@ -229,6 +240,9 @@ def main() -> int:
             "error": type(exc).__name__ + ": " + str(exc),
             "authority_effects": [], "full_ESC_6_gate": "FAIL_CLOSED_UNRELEASED_CONSUMERS",
         }
+        if first_trace is not None:
+            # Include the SAME FIRST source call's read evidence on failure.
+            report["first_guarded_invocation_trace"] = first_trace
         if provider_failure is not None:
             report["provider_failure"] = provider_failure
             if (provider_failure.get("category") == "SOURCE_CONTRACT" and
