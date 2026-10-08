@@ -1,0 +1,33 @@
+name: relay-reset-full-chain-rehearsal
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/full-chain-rehearsal-v1.*'
+      - '.github/workflows/relay-reset-full-chain-rehearsal.yml'
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  actions: read
+jobs:
+  full-native-chain:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22','24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Immutable native journal through R1 plus current GitHub R3 to R4 preview
+        env:
+          RELAY_FULL_CHAIN_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RELAY_FULL_CHAIN_PR_NUMBER: ${{ github.event.number }}
+          RELAY_FULL_CHAIN_READ_TOKEN: ${{ github.token }}
+          RELAY_G2C_CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RELAY_G2C_TOKEN: ${{ github.token }}
+        run: node --test skills/engineering-relay-v1/full-chain-rehearsal-v1.test.mjs skills/engineering-relay-v1/github-journal-lineage-v1.test.mjs
