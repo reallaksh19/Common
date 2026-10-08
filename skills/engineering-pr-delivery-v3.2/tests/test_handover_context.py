@@ -1337,3 +1337,28 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual(["ROLLED_BACK"], [v["status"] for v in recover_all(root)])
             self.assertEqual(before, (root / "relay/EVENTS.jsonl").read_bytes())
             self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+
+    def test_c6_p06_native_cli_rejects_unauthenticated_or_unpinned_source(self):
+        import os
+        from unittest.mock import patch
+        from plan_handover import _native_delp_source
+        opts = {
+            "repository": "reallaksh19/Common",
+            "graph_revision": "b4e61d8f61e9738833564795971692241c2e3df9",
+            "graph_path": ".github/v32-evidence-spine/718-proposal-v2.json",
+            "leaf_ref": "Common#793",
+        }
+        with patch.dict(os.environ, {"GH_TOKEN": "", "GITHUB_TOKEN": "",
+                                      "GITHUB_REPOSITORY": "reallaksh19/Common"}, clear=True):
+            with self.assertRaisesRegex(TransactionError, "SOURCE_GITHUB_TOKEN_REQUIRED"):
+                _native_delp_source(**opts)
+        with patch.dict(os.environ, {"GH_TOKEN": "FAKE_TEST_TOKEN",
+                                      "GITHUB_REPOSITORY": "another/repository"}, clear=True):
+            with self.assertRaisesRegex(TransactionError, "SOURCE_REPOSITORY_NOT_AUTHENTICATED"):
+                _native_delp_source(**opts)
+        with patch.dict(os.environ, {"GH_TOKEN": "FAKE_TEST_TOKEN",
+                                      "GITHUB_REPOSITORY": "reallaksh19/Common"}, clear=True):
+            with self.assertRaisesRegex(TransactionError, "SOURCE_GRAPH_REVISION_MUST_BE_EXACT_SHA"):
+                _native_delp_source(**{**opts, "graph_revision": "main"})
+            with self.assertRaisesRegex(TransactionError, "SOURCE_GRAPH_PATH_NOT_REPOSITORY_RELATIVE"):
+                _native_delp_source(**{**opts, "graph_path": "../bad.json"})
