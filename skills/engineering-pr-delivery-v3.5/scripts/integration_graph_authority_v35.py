@@ -106,6 +106,18 @@ def load_approved_source(
     }
     if any(data.get(key) != value for key, value in required.items()):
         raise GraphSelectionError("approved graph scope/identity/revocation/authority mismatch")
+    # It is insufficient for an Owner comment to self-identify its own issue
+    # number: the issue must be the native governing root of the selected
+    # programme. Otherwise a caller can bypass R2-D root-comment discovery.
+    root_ref = required["root"]
+    try:
+        root_issue = DELP.ref_number(root_ref)
+    except (DELP.DelpError, ValueError, TypeError) as exc:
+        raise GraphSelectionError("approved graph has no valid governing root reference") from exc
+    if root_issue != approval_issue:
+        raise GraphSelectionError(
+            "graph selection approval must reside on the governing root issue"
+        )
     commit = data.get("graph_commit_sha")
     if not isinstance(commit, str) or not SHA.fullmatch(commit):
         raise GraphSelectionError("graph source requires immutable 40-char commit SHA")
