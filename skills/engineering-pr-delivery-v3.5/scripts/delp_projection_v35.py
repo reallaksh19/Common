@@ -5199,7 +5199,7 @@ def apply_custody_fact_fence(
             "granted_at": fence["granted_at"],
             "effective_fact_count": len(kept),
             "fenced_fact_count": len(leaf_fenced),
-            "fenced_sources": sorted(source for source in leaf_fenced if source),
+            "fenced_sources": sorted(set(source for source in leaf_fenced if source)),
         }
 
     return effective, fenced, summaries, fence
