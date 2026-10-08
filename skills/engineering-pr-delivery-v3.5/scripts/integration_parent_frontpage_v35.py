@@ -176,7 +176,7 @@ def propose(body: str, issue: int, current: str) -> dict[str, Any]:
     if remaining.startswith(START):
         end = _paired(remaining, _FRONT)
         remaining = remaining[end:]
-    result = START + "\n" + current.strip() + "\n" + END + "\n\n" + remaining.lstrip("\n")
+    result = START + "\n" + current.strip() + "\n" + END + remaining
     check = validate_current(result, issue)
     return {
         "schema": "V35_PARENT_FRONT_PAGE_PROPOSAL_V1",
