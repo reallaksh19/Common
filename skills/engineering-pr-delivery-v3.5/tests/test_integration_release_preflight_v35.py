@@ -26,6 +26,7 @@ class Provider(COLD_TESTS.Provider):
         self.workflow_marker_spoof = False
         self.workflow_blob_override = None
         self.workflow_move_head = False
+        self.workflow_file_fetched = False
         self.workflow_head_reads = 0
         self.workflow_calls = []
         self.default_head = "9" * 40
@@ -36,7 +37,7 @@ class Provider(COLD_TESTS.Provider):
     def get_commit_sha(self, ref):
         if ref == "main":
             self.workflow_head_reads += 1
-            if self.workflow_move_head and self.workflow_head_reads >= 2:
+            if self.workflow_move_head and self.workflow_file_fetched:
                 return "8" * 40
             return self.default_head
         return super().get_commit_sha(ref)
@@ -56,6 +57,7 @@ class Provider(COLD_TESTS.Provider):
             return super().get_file_at(commit_sha, path)
         if commit_sha != self.default_head:
             raise DELP.DelpError("workflow commit not the default branch head")
+        self.workflow_file_fetched = True
         if not self.workflow_guards:
             source = "name: insecure-event-handler\\non: workflow_dispatch\\n"
         elif self.workflow_marker_spoof:
