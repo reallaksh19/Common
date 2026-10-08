@@ -111,6 +111,13 @@ def _full_index(graph: Mapping[str,Any]) -> dict[str,Any]:
         raise GraphInventoryError("P3 #604 must be a governed selected LEAF or replan before R2-C publication")
     if not selected.get("primary_pr") or DELP.ref_number(selected["primary_pr"]) != CANDIDATE_PR:
         raise GraphInventoryError("P3 #604 must identify real primary PR #712")
+    # DELP keeps legacy-compatible graphs by normalizing a missing
+    # graph_generation to 1. That fallback has no production-source authority.
+    if "graph_generation" not in (graph.get("programme") or {}):
+        raise GraphInventoryError(
+            "candidate missing explicitly declared graph_generation; "
+            "legacy implicit generation 1 is not an Owner-current source"
+        )
     if not index["programme"].get("graph_generation"):
         raise GraphInventoryError("graph must have a current monotonic generation")
     # This result is shape-only, never source authority, even if a caller also
