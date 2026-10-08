@@ -1,0 +1,55 @@
+{
+  "schema": "v32-793-c5-real-provider-cold-replay-v1",
+  "parent": "Common#718",
+  "leaf": "Common#793",
+  "product_pr": 800,
+  "exact_released_graph_sha": "b4e61d8f61e9738833564795971692241c2e3df9",
+  "exact_product_code_base": "82ba85564d284f87cadfdedaba5d449cf3c7bc7f",
+  "expected_graph_material": "Common#800",
+  "expected_claim": "ESC-4",
+  "oracle_status": "PRECOMMITTED_EXPECTATIONS_NOT_ACTUAL_PROVIDER_EVIDENCE",
+  "source": "GitHub authenticated GET via gh in a read-only Action; original ChatGPT message permalink UNKNOWN",
+  "cases": [
+    {
+      "id": "LIVE-01",
+      "hypothesis": "GET released graph pinned to exact candidate, compare actual issue & product PR head",
+      "expect": "CURRENT_READ_ONLY with zero authority; exact PR #800 SHA == actual provider; no fact credit"
+    },
+    {
+      "id": "LIVE-02",
+      "hypothesis": "Re-read same live GitHub provider without material change",
+      "expect": "frozen digest unchanged or fail closed on real concurrent change"
+    },
+    {
+      "id": "LIVE-03",
+      "hypothesis": "Corrupt source input SHA from frozen digest",
+      "expect": "RECONCILE_REQUIRED; moved_axes includes input"
+    },
+    {
+      "id": "LIVE-04",
+      "hypothesis": "Mutate released claim in graph",
+      "expect": "rejected as NOT_RELEASEABLE; cannot mint current successor"
+    },
+    {
+      "id": "LIVE-05",
+      "hypothesis": "Adversarial mock provider differs from real PR #800",
+      "expect": "frozen real source digest changes, currentness RECONCILE_REQUIRED"
+    },
+    {
+      "id": "LIVE-06",
+      "hypothesis": "No original Owner URL / no reviewer acceptance",
+      "expect": "origin UNRESOLVED_CHAT_MESSAGE_LINK; NEVER_FROM_RECONSTRUCTION; no product or owner merge grant"
+    }
+  ],
+  "no_go": [
+    "No git mutation, GitHub writes or reviewer/Owner actions",
+    "Not C4 review or full ESC-4 acceptance",
+    "Do not use PR issue titles as provider truth",
+    "No original Owner URL authentication",
+    "Do not grant P/E/D from passing tests",
+    "Do not automatically invoke production plan_handover transaction"
+  ],
+  "escalation": "If GitHub provider unavailable or changes mid-read, FAIL/UNKNOWN; do not reclassify as proven",
+  "restack_reason": "C4 selected-leaf material fail-closed guards were qualified red-first; replay against revised exact source",
+  "previous_qualified_source": "783460ea58a01a366ba4e2a9ceb0cccb0fe55f3d"
+}

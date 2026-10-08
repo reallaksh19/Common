@@ -1,0 +1,51 @@
+name: v32-811-c6-atomicity-preflight
+
+on:
+  pull_request:
+    paths:
+      - '.github/v32-evidence-spine/811-c6-c2-*'
+      - '.github/v32-evidence-spine/test_811_c6_c2_*'
+      - '.github/workflows/v32-811-c6-atomicity-preflight.yml'
+  push:
+    branches:
+      - 'v32/811-c6-c2-restack-c4fix-v2'
+    paths:
+      - '.github/v32-evidence-spine/811-c6-c2-*'
+      - '.github/v32-evidence-spine/test_811_c6_c2_*'
+      - '.github/workflows/v32-811-c6-atomicity-preflight.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  interrupted-transaction-and-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install unchanged V3.2 schema dependencies
+        run: python -m pip install --disable-pip-version-check PyYAML jsonschema
+      - name: Enforce golden-before-executable-test order
+        run: |
+          git merge-base --is-ancestor 7a76c99ea638f82850eb2f1b765b9d4e247f0ee7 HEAD
+      - name: Actually execute legacy handover failures, recover and tamper checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python -m unittest discover -s .github/v32-evidence-spine -p 'test_811_c6_c2_atomicity.py' -v 2>&1 | tee artifacts/811-c6-c2-atomicity.log
+          python - <<'PY'
+          from pathlib import Path
+          data=Path("artifacts/811-c6-c2-atomicity.log").read_text(encoding="utf-8")
+          missing=[f"test_a{i:02d}_" for i in range(1,6) if f"test_a{i:02d}_" not in data]
+          if missing or "Ran 5 tests" not in data or "OK" not in data:
+              raise SystemExit(f"C6_C2_NAMED_REAL_TRANSACTION_CONTROLS_NOT_PASS: {missing}")
+          print("C6_C2_ACTUAL_TRANSACTION_RECOVERY=5_PASS")
+          print("C6_C2_SOURCE_BOUND_PLAN_HANDOVER=STILL_RED_UNIMPLEMENTED")
+          print("C6_C2_PROTECTED_FROZEN_SOURCE=UNMODIFIED")
+          PY

@@ -147,6 +147,134 @@ def validate_visibility(context: dict[str, Any]) -> list[str]:
 
 
 
+SOURCE_BOUND_SCHEMA = "relay-v3.2-source-bound-successor-v1"
+SOURCE_BOUND_AUTHORITY = "DERIVED_RECONSTRUCTION_READ_ONLY"
+UNKNOWN_OWNER_SOURCE = "UNRESOLVED_CHAT_MESSAGE_LINK"
+
+
+def build_delp_source_bound_successor(
+    graph: dict[str, Any],
+    *,
+    leaf_ref: str,
+    provider: Any,
+    frozen_basis: dict[str, Any] | None = None,
+    owner_source_status: str = UNKNOWN_OWNER_SOURCE,
+) -> dict[str, Any]:
+    """Read one DELP source basis twice from the supplied read-only provider.
+
+    Authenticated provider construction is the caller's responsibility; this
+    function authenticates neither a caller-controlled graph nor a fake
+    transport. It never writes and grants no continuation/merge authority.
+    """
+    import delp_projection_v32 as delp  # Do not change legacy imports/behavior.
+
+    if not isinstance(graph, dict) or not isinstance(leaf_ref, str):
+        raise HandoverContextError("SOURCE_GRAPH_OR_LEAF_INVALID")
+    # A caller string alone cannot authenticate an original Owner message.
+    # A future proven original-message source contract can extend this value.
+    if owner_source_status != UNKNOWN_OWNER_SOURCE:
+        raise HandoverContextError("OWNER_ORIGIN_STATUS_UNVERIFIED")
+    try:
+        indexed = delp.validate_graph(graph)
+        repo = str(indexed["programme"].get("repository") or "")
+        if not repo or "/" not in repo:
+            raise HandoverContextError("SOURCE_REPOSITORY_REQUIRED")
+        delp.require_repository_match(graph, repo, live=True)
+        if leaf_ref not in indexed["nodes"] or indexed["nodes"][leaf_ref]["kind"] != "LEAF":
+            raise HandoverContextError("SOURCE_RESPONSIBILITY_NOT_BOUND")
+        leaf_material = indexed["nodes"][leaf_ref]
+        if not (leaf_material.get("primary_pr") or leaf_material.get("candidate_ref")):
+            raise HandoverContextError("SOURCE_CANDIDATE_NOT_BOUND")
+        report = delp.decomposition_report(graph)
+        if report["release_state"] != "RELEASEABLE":
+            raise HandoverContextError("SOURCE_PROPOSAL_NOT_RELEASEABLE")
+
+        parent_ref = indexed["root"]
+        def issue_readback() -> dict[str, Any]:
+            values = {}
+            for ref in (parent_ref, leaf_ref):
+                issue = provider.get_issue(delp.ref_number(ref))
+                if not isinstance(issue, dict) or issue.get("number") != delp.ref_number(ref):
+                    raise HandoverContextError("SOURCE_ISSUE_PROVIDER_IDENTITY_MISMATCH")
+                if str(issue.get("state") or "").lower() not in {"open", "closed"}:
+                    raise HandoverContextError("SOURCE_ISSUE_PROVIDER_STATE_UNKNOWN")
+                values[ref] = {
+                    "number": issue["number"], "state": issue["state"],
+                    "title": issue.get("title"), "body_digest": canonical_digest(issue.get("body")),
+                }
+            return values
+
+        issue_before = issue_readback()
+        observed_before = delp.observe_github(provider, graph)
+        facts = delp.ledger_from_github(provider, graph)
+        observed_after = delp.observe_github(provider, graph)
+        issue_after = issue_readback()
+        facts_after = delp.ledger_from_github(provider, graph)
+        if (issue_before != issue_after or observed_before != observed_after
+                or facts != facts_after):
+            raise HandoverContextError("SOURCE_PROVIDER_CHANGED_DURING_READ")
+        # DELP's general projection deliberately tolerates an absent provider
+        # head (UNREPORTED is valid for dashboards). A *successor handover*
+        # must not reinterpret that missing evidence as CURRENT_READ_ONLY.
+        # Check only the selected leaf: unrelated future leaves may legitimately
+        # be unmaterialized and must not invalidate this leaf's reconstruction.
+        observed_leaf = observed_after.get(leaf_ref) or {}
+        candidate_sha = observed_leaf.get("candidate_sha")
+        if not isinstance(candidate_sha, str) or not re.fullmatch(r"[0-9a-f]{40}", candidate_sha):
+            raise HandoverContextError("SOURCE_CANDIDATE_SHA_UNVERIFIED")
+        base_sha = observed_leaf.get("base_sha")
+        if not isinstance(base_sha, str) or not re.fullmatch(r"[0-9a-f]{40}", base_sha):
+            raise HandoverContextError("SOURCE_BASE_SHA_UNVERIFIED")
+        if leaf_material.get("primary_pr") and observed_leaf.get("pr_state") not in {"OPEN", "CLOSED", "MERGED"}:
+            raise HandoverContextError("SOURCE_PR_STATE_UNVERIFIED")
+        projection = delp.project(graph, facts, observed_after)
+        leaf = projection["nodes"][leaf_ref]
+        admission = delp.admit(projection, leaf_ref, command="continue")
+    except HandoverContextError:
+        raise
+    except (ValueError, KeyError, TypeError, RuntimeError, OSError, AttributeError) as exc:
+        raise HandoverContextError("SOURCE_READ_OR_DELP_INVALID") from exc
+
+    digests = {
+        "graph": canonical_digest(graph),
+        "plan": projection["plan_digest"],
+        "input": projection["input_digest"],
+        "provider": canonical_digest({"issues": issue_after, "material": observed_after}),
+    }
+    if frozen_basis is not None:
+        if not isinstance(frozen_basis, dict) or set(frozen_basis) != set(digests):
+            raise HandoverContextError("FROZEN_SOURCE_BASIS_INCOMPLETE")
+        if any(not isinstance(frozen_basis[k], str) or not frozen_basis[k].startswith("sha256:")
+               for k in digests):
+            raise HandoverContextError("FROZEN_SOURCE_BASIS_INVALID")
+    moved = ([k for k in digests if frozen_basis is not None and digests[k] != frozen_basis[k]])
+    currentness = "RECONCILE_REQUIRED" if moved else "CURRENT_READ_ONLY"
+    owner_status = owner_source_status
+    return {
+        "schema": SOURCE_BOUND_SCHEMA,
+        "authority": SOURCE_BOUND_AUTHORITY,
+        "provider_trust": "CALLER_SUPPLIED_READ_ONLY_TRANSPORT_NOT_SELF_AUTHENTICATING",
+        "repository": repo,
+        "root": parent_ref,
+        "leaf": leaf_ref,
+        "responsibility": indexed["nodes"][leaf_ref].get("responsibility_id"),
+        "claim_ids": list(indexed["nodes"][leaf_ref].get("owns_claims") or []),
+        "owner_source_status": owner_status,
+        "currentness": currentness,
+        "moved_axes": moved,
+        "digests": digests,
+        "provider_observation": issue_after,
+        "fact_count": len(facts),
+        "rejected_fact_count": len(projection["rejected_facts"]),
+        "progress": {"P": leaf["progress"]["P"], "E": leaf["progress"]["E"]},
+        "source_action": admission["action"],
+        "source_action_detail": admission["next"],
+        "execution_admission": "NEVER_FROM_RECONSTRUCTION",
+        "owner_merge_authority": "NOT_GRANTED",
+        "authority_effects": [],
+    }
+
+
 def _successor_entry(
     context: dict[str, Any],
     challenge_count: int | None,
@@ -172,14 +300,18 @@ def _successor_entry(
     inherited_first_action = str(learning.get("first_successor_action") or "").strip() or None
     current_task_next = str(((task_snapshot.get("next") or {}).get("immediate_action")) or "").strip() or None
     terminal_target = target_state in {"CLOSED", "MERGED"}
-    advanced_frontier = bool(latest_reconciliation_ref or latest_reconciliation_summary or terminal_target)
+    source_bound = context.get("source_bound_successor") or {}
+    source_stale = source_bound.get("currentness") == "RECONCILE_REQUIRED"
+    advanced_frontier = bool(latest_reconciliation_ref or latest_reconciliation_summary or terminal_target or source_stale)
     if latest_reconciliation_ref or latest_reconciliation_summary:
         freshness = "CURRENT_RECONCILIATION_SUPERSEDES_HANDOFF"
     elif terminal_target:
         freshness = "TERMINAL_TARGET_REQUIRES_RECONCILIATION"
     else:
         freshness = "HANDOFF_FRONTIER_ACTIVE"
-    if advanced_frontier:
+    if source_stale:
+        decision = "RECONCILE_LIVE_DELP_PROVIDER_BEFORE_NEXT_DECISION"
+    elif advanced_frontier:
         decision = current_task_next or "VERIFY_CURRENT_DISPOSITION_AND_NEXT_CONSUMER"
     else:
         decision = inherited_first_action or current_task_next or "the next bounded engineering decision"
@@ -368,6 +500,12 @@ def _successor_entry(
         "inherited_negative_knowledge": rejected,
         "protected_invariants": invariants,
     }
+    if source_bound:
+        challenge_basis["source_currentness"] = source_bound["currentness"]
+        challenge_basis["source_input_digest"] = source_bound["digests"]["input"]
+        challenge_basis["source_plan_digest"] = source_bound["digests"]["plan"]
+        challenge_basis["source_leaf"] = source_bound["leaf"]
+        challenge_basis["source_moved_axes"] = list(source_bound["moved_axes"])
     challenge_digest = (
         canonical_digest(
             {
@@ -407,6 +545,7 @@ def build_context(
     protocol_root: Path | None = None,
     successor_challenge_count: int | None = None,
     successor_boundary_constraints: list[str] | None = None,
+    delp_source: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     _validate_target(target)
     # Custody preparation is independent of the optional standalone reasoning
@@ -553,6 +692,17 @@ def build_context(
             },
         },
     }
+    if delp_source is not None:
+        if not isinstance(delp_source, dict) or not {"graph", "leaf_ref", "provider"}.issubset(delp_source):
+            raise HandoverContextError("SOURCE_BOUND_INPUT_INCOMPLETE")
+        if set(delp_source) - {"graph", "leaf_ref", "provider", "frozen_basis", "owner_source_status"}:
+            raise HandoverContextError("SOURCE_BOUND_INPUT_UNKNOWN_KEYS")
+        context["source_bound_successor"] = build_delp_source_bound_successor(
+            delp_source["graph"],
+            leaf_ref=delp_source["leaf_ref"], provider=delp_source["provider"],
+            frozen_basis=delp_source.get("frozen_basis"),
+            owner_source_status=delp_source.get("owner_source_status", UNKNOWN_OWNER_SOURCE),
+        )
     context["successor_entry"] = _successor_entry(
         context,
         successor_challenge_count,

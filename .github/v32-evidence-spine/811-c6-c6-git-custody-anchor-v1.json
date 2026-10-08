@@ -1,0 +1,50 @@
+{
+  "schema": "common-v32-c6-c6-git-content-anchor-v1",
+  "authority": "AGENT_RECORDED_PROVIDER_EVIDENCE_NOT_OWNER_SIGNATURE",
+  "programme": {
+    "parent_issue": "Common#718",
+    "source_issue": "Common#793",
+    "child_issue": "Common#811",
+    "custody_pr": "Common#836"
+  },
+  "source": {
+    "provider": "GITHUB_ACTIONS_V4_ARTIFACT",
+    "repository": "reallaksh19/Common",
+    "repository_id": 1207996454,
+    "workflow_run_id": 37826161172,
+    "workflow_run_conclusion": "success",
+    "workflow_event": "pull_request",
+    "workflow_head_sha": "c14f41abbd0f5a0ee4d738a8c4927c2faf5149ac",
+    "artifact_id": 11571023434,
+    "artifact_name": "c6-c5-provider-anchored-handover",
+    "artifact_created_at": "2026-10-08T18:41:25Z",
+    "artifact_expires_at": "2026-10-15T18:41:24Z",
+    "artifact_zip_sha256": "8715742b23afe186e9052d32be2a8d44429916beedd2430569a00717f45551e4",
+    "artifact_zip_bytes": 7419
+  },
+  "files": [
+    {
+      "name": "EVENTS.jsonl",
+      "bytes": 1965,
+      "sha256": "bcc3d9089209a3eaeec0c594b691e832bdbaab79e1da66068fff6bcdf05526d9"
+    },
+    {
+      "name": "HANDOVER_CONTEXT.yaml",
+      "bytes": 20107,
+      "sha256": "21058fcdf3da79c99aae01a6982171f1d2a83fe60fdc1a21487f8dfea13087cf"
+    }
+  ],
+  "privacy": "COMMIT_ONLY_HASHES_AND_SOURCE_SELECTORS; RAW_HANDOVER_BYTES_NOT_COMMITTED",
+  "trust_limits": [
+    "GITHUB_PROVIDER_AND_ANCHORED_GIT_COMMIT_ARE_ASSUMED_TRUSTED",
+    "ANCHORED_HASHES_VERIFY_ONLY_SEPARATELY_RETAINED_ORIGINAL_BYTES",
+    "GITHUB_REPO_WRITE_ACCESS_OR_PROVIDER_COMPROMISE_CAN_REWRITE_ANCHOR_HISTORY",
+    "NOT_SIGNED_OWNER_OR_ORIGINAL_CHAT_MESSAGE",
+    "NOT_IMMUTABLE_TRANSPARENCY_LOG",
+    "NO_AUTOMATED_MERGE_EXECUTION_OR_SCOREBOARD_AUTHORITY"
+  ],
+  "owner_original_message_permalink": "UNKNOWN",
+  "cold_acceptance": "NOT_INDEPENDENT_NEW_AGENT_APPROVAL",
+  "provider_archive_expires": true,
+  "source_review": "REQUIRED_PER_EXACT_SHA"
+}

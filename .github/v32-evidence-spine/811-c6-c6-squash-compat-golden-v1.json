@@ -1,0 +1,31 @@
+{
+  "schema": "common-v32-c6-c6-squash-compat-golden-v1",
+  "source_pr": "Common#838",
+  "source_head_at_review": "989182c327aff0db0b07c8f03a0a05e7a5318f58",
+  "verified_anchor_commit": "de3cac5d2c19b4301500fede250f4c56c226fda1",
+  "verified_git_blob_sha1": "c78fa3bf496feb21c76dac64874204252bc4c09b",
+  "oracles": [
+    {
+      "id": "A06-REPAIR",
+      "setup": "create independent shared-object Git worktree with real anchor file; rewrite actual worktree manifest to fake Owner-signed status",
+      "expected": "committed_anchor(root=checkout) ignores changed worktree, compares original pinned content blob and returns unaltered source data"
+    },
+    {
+      "id": "A08",
+      "setup": "construct orphan HEAD representing a squash merge that retains exact original manifest content as Git blob but not anchor-commit ancestry; keep original anchor commit object reachable in Git object store",
+      "expected": "verifier accepts exact whitelisted blob SHA-1 while verifying expected content and no Owner signature, despite ancestry absent"
+    },
+    {
+      "id": "A09",
+      "setup": "squashed/orphan checkout contains subtly changed manifest resulting in different Git blob SHA",
+      "expected": "verifier fails closed with GIT_ANCHOR_BLOB_IDENTITY_MISMATCH, never reading forged owner/source metadata"
+    },
+    {
+      "id": "A10",
+      "setup": "original anchor commit object absent but exact manifest blob available under squash HEAD",
+      "expected": "content-addressed fallback requires exact pinned Git blob SHA and rejects anything else; original Owner signature remains UNPROVEN"
+    }
+  ],
+  "authority": "EXPECTED_NEGATIVES_PRECOMMITTED_NOT_RELEASE_APPROVAL",
+  "no_root_merge": true
+}

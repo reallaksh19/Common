@@ -1,0 +1,56 @@
+name: v32-793-real-provider-cold-replay
+
+on:
+  pull_request:
+    paths:
+      - '.github/v32-evidence-spine/793-c5-*'
+      - '.github/v32-evidence-spine/793_c5_*'
+      - '.github/workflows/v32-793-real-provider-cold-replay.yml'
+  push:
+    branches:
+      - 'v32/793-c5-restack-c4-source-v2'
+    paths:
+      - '.github/v32-evidence-spine/793-c5-*'
+      - '.github/v32-evidence-spine/793_c5_*'
+      - '.github/workflows/v32-793-real-provider-cold-replay.yml'
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  native-provider-cold-entry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout implementation source (never execute remote repository input)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install existing V3.2 schema dependencies
+        run: python -m pip install --disable-pip-version-check PyYAML jsonschema
+      - name: Enforce independently precommitted C5 oracle chronology
+        run: |
+          git merge-base --is-ancestor 722e3afba298b2d1bda23fb4d044391734298ee8 HEAD
+          gh --version
+      - name: Real GitHub provider C5 source-bound cold replay (GET only)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python .github/v32-evidence-spine/793_c5_live_provider_readback.py 2>&1 | tee /tmp/v32-793-c5-live-provider.log
+          python - <<'PY'
+          from pathlib import Path
+          data=Path('/tmp/v32-793-c5-live-provider.log').read_text(encoding='utf-8')
+          need=[f'LIVE-{i:02d}=PASS' for i in range(1,7)]
+          missing=[s for s in need if s not in data]
+          if missing or 'C5_NATIVE_GITHUB_SOURCE_READBACK=PASS_SIX_CASES_NOT_INDEPENDENT_ACCEPTANCE' not in data:
+              raise SystemExit(f'C5_MISSING_REAL_GITHUB_NEGATIVE_CASES: {missing}')
+          print('C5_ALL_SIX_NATIVE_PROVIDER_CASES=PASS_NO_RELEASE_AUTHORITY')
+          PY
