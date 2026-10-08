@@ -1,0 +1,23 @@
+# R4 Batch-01 — one R3 snapshot, multiple pure non-authorizing views
+
+**Owner:** [parent #787](https://github.com/reallaksh19/Common/issues/787), [batch task #837](https://github.com/reallaksh19/Common/issues/837). This R4 preview depends on **draft** R3-A [PR #834](https://github.com/reallaksh19/Common/pull/834) at exact `72f52535f6b5d71d09686af479ad7e819f2ab644`. G1 #823 / B2a #826 / G2c #830 remain **draft**, reviews #824/#827/#831/#835 **pending**. No real session ingest, accepted Owner grant or live GitHub writer.
+
+## What is implemented — one batch, not micro PRs
+
+`renderRelayPreviews(providerFacts, {evaluated_at,max_age_seconds})` is **pure and synchronous**, with zero network calls and no GitHub mutation. Its only source is one exact `relay-provider-facts-v1` snapshot from the real R3-A reader. It recomputes the provider-facts canonical SHA256 before rendering; changed nested PR/CI/head fields under an old digest are refused. It validates caller-scoped parent/child/PR identities, repository URLs, PR head currentness and CI state; refuses any Owner-granted/independently-accepted/currentness “atomic” claims that the actual R3 provider reader cannot authenticate. A forged but internally consistent hash *is not a signature* and carries no external authority.
+
+One call yields **four preview surfaces** (parent scoreboard title and managed-block draft, child issue status titles, each PR smart title, and one successor handover). **All surfaces carry exactly the same input `snapshot_sha256`**; a distinct `projection_sha256` binds the entire set of outputs. This ensures parent/PR/handover cannot quietly compute from different underlying provider states during one render. It does **not** make native PR/issue/Actions GET an atomic GitHub multi-resource snapshot.
+
+Titles deliberately avoid user-authored issue/PR title text and do **not** emit fake Owner adoption or AC8/8. They are prefixed `RELAY PROPOSED ONLY`, capped at 235 characters and never sent to GitHub. CI-specific state may be `CI_PASS_OBSERVED` only for native, fresh, current HEAD with all expected exact-head workflow paths green; success is not task acceptance, reviewer verdict, human Owner consent or authorization. `INJECTED_UNVERIFIED`, stale, unpinned, unknown, queued, failed states are separate. A proposed handover contains *only provider facts and source URLs*, explains the original-chat UNKNOWN status, unmerged source dependencies, privacy/authority HOLD, and warns against treating it as a true cold successor proof.
+
+**Privacy:** No raw GitHub issue/PR bodies, live session prompt/responses, public Owner content, credentials or session bundle bytes appear in any preview. Parent managed block is explicitly tagged `RELAY_R4_DRAFT_ONLY; DO NOT WRITE`. There is no writer or authorized block insertion algorithm in this batch. Root **AC0/8**, all release flags false.
+
+## Native end-to-end proof and anti-draft
+
+`projection-preview-v1.test.mjs` calls the genuine R3-A provider-facts `reconcileGitHubFacts()` for both injected adversarial fixtures and a **real** Node22/24 GitHub API read at the exact integration PR HEAD: actual parent #787, child #833, this PR number and Actions workflow. Native results feed the exact same pure `renderRelayPreviews()` API. CI asserts every surface has the same snapshot SHA256 and that native provider is not mistaken for independent Owner approval, while its own hosted workflow will be `PENDING` during execution. Native test must never be skipped in Actions. Test list: digest mutation of nested PR/CI, injected fake source status, 8/8 agent title spoof, private issue/PR bodies exclusion, freshness, time-bound refusal, no fetch/writer, deep immutability, deterministic stable digest, length limits, source URLs/head binding, negative stale/unknown CI.
+
+The read-only `pull_request` workflow uses token scopes `contents:read`, `issues:read`, `pull-requests:read`, `actions:read`, checkout credentials not persisted. **No `pull_request_target` and no write or issue/PR mutation.**
+
+## Integration and review boundary
+
+This branch is **stacked on the R3-A feature branch** and PR base must point to `feat/833-relay-r3-provider-facts`, NOT main. Only new four R4 paths are permitted, no edits to R3-A or any G1/B2a/G2c module. Independent reviewer must source-check live workflow, output contract, snapshot hash validation and trust separation. **Do not merge a stacked draft before independently qualifying R3-A #834, merging it under normal policy, restacking only R4 onto main, and rerunning exact-head native CI.** G2c lineage will be joined to R3-B only after #823/#826/#830 source reviews and governed merges. R5 GitHub writer remains OFF pending authenticated Owner privacy/retention/grant.
