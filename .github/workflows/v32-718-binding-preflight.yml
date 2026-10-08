@@ -101,6 +101,39 @@ jobs:
           print('V32_733_NO_MUTATION=PASS')
           PY
 
+      - name: Source-based live issue and draft PR smart-title readback (GET only)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python skills/engineering-pr-delivery-v3.2/scripts/vertical_cycle_v32.py \
+            --live-readback \
+            --graph .github/v32-evidence-spine/718-proposal-v2.json \
+            --manifest .github/v32-evidence-spine/718-golden-fixtures-v1.json \
+            --report /tmp/v32-718-live-readback.json > /tmp/v32-718-live-readback.stdout
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("/tmp/v32-718-live-readback.json").read_text(encoding="utf-8"))
+          assert r["authority"] == "READ_ONLY_SELF_REPLAY_NO_ACCEPTANCE", r
+          assert r["pr_binding"] == "BOUND", r
+          assert r["candidate_sha"] and len(r["candidate_sha"]) == 40, r
+          assert r["historical_unreported"] == ["Common#720", "Common#724"], r
+          assert r["semantic_progress"]["P"] == 0 and r["semantic_progress"]["E"] == 0, r
+          assert r["qualifier"]["state"] == "UNPROVEN", r
+          assert r["full_ESC_6_gate"] == "FAIL_CLOSED_UNRELEASED_CONSUMERS", r
+          assert r["authority_effects"] == [], r
+          assert set(r["read_views"]) == {"Common#718","Common#733","Common#740"},r
+          print("V32_733_PROVIDER_LIVE_READBACK=PASS_NO_MUTATION")
+          print("V32_733_CURRENT_HEAD=" + r["candidate_sha"])
+          print("V32_733_LIVE_INPUT_DIGEST=" + r["source_input_digest"])
+          print("V32_733_LIVE_SYNC_STATE=" + r["reconciliation"])
+          for ref,x in sorted(r["read_views"].items()):
+              print(ref+"_SMART_TITLE="+x["title"]+";MANAGED_BLOCK="+x["managed_block"])
+              print(ref+"_EXPECTED_TITLE="+x["expected"])
+          PY
+
   golden-oracle-preflight:
     runs-on: ubuntu-latest
     steps:
