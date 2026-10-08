@@ -1,0 +1,29 @@
+# RELAY RESET R1-A: isolated read-only qualification of the new provenance spine.
+# No issue/PR mutation, no pull_request_target, no workflow_dispatch writer.
+name: relay-reset-provenance
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/**'
+      - '.github/workflows/relay-reset-provenance.yml'
+permissions:
+  contents: read
+jobs:
+  pure-node:
+    name: provenance-structural-node-${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22', '24']
+    steps:
+      - name: Checkout submitted PR candidate (read-only token)
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Prepare Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Run provenance-only Node tests
+        run: node --test skills/engineering-relay-v1/provenance-v1.test.mjs

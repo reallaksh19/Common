@@ -7,6 +7,7 @@ function provenanceAPI() {
   const HASH = /^[a-f0-9]{64}$/;
   const PARENT = /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+#[1-9][0-9]*$/;
   const TYPES = Object.freeze(["owner_intents","claims","responsibilities","sessions","task_evidence","research_findings","owner_decisions"]);
+  const MAX_ITEMS_PER_ARRAY = 10000; // Fail closed on unbounded agent/provider documents
   class ProvenanceError extends Error { constructor(message) { super(message); this.name = "ProvenanceError"; } }
   function fail(where, why) { throw new ProvenanceError(`${where}: ${why}`); }
   function obj(value, where, required, optional = []) {
@@ -16,7 +17,7 @@ function provenanceAPI() {
     for(const k of required) if(!Object.hasOwn(value,k)) fail(where,`missing key ${k}`);
   }
   function str(value,where) { if(typeof value !== "string" || !value.trim()) fail(where,"expected nonempty string"); }
-  function arr(value,where,minimum=0) { if(!Array.isArray(value)||value.length<minimum) fail(where,`expected array (min ${minimum})`); }
+  function arr(value,where,minimum=0) { if(!Array.isArray(value)||value.length<minimum||value.length>MAX_ITEMS_PER_ARRAY) fail(where,`expected array size ${minimum}..${MAX_ITEMS_PER_ARRAY}`); }
   function id(value,where) { if(typeof value!=="string"||!ID.test(value)) fail(where,"invalid immutable ID"); }
   function ids(value,where,min=0) { arr(value,where,min); const s=new Set(); value.forEach((x,i)=>{id(x,`${where}[${i}]`);if(s.has(x))fail(where,`duplicate reference ${x}`);s.add(x);}); }
   function one(value,options,where){if(!options.includes(value))fail(where,`expected one of ${options.join(", ")}`);}
@@ -113,15 +114,21 @@ function provenanceAPI() {
       if(v.kind==="END" && session.changed_files.length && v.commit_sha===null)fail("task_evidence",`code END needs exact SHA ${v.id}`);
     }
     for(const v of doc.owner_decisions){check("owner_intents",[v.intent_id],`owner_decisions.${v.id}`);check("research_findings",v.finding_ids,`owner_decisions.${v.id}`);}
-    const visiting=new Set(),visited=new Set();
-    function dfs(item){
-      if(visiting.has(item))fail("responsibilities",`dependency cycle through ${item}`);
-      if(visited.has(item))return;
-      visiting.add(item);
-      for(const dep of index.responsibilities.get(item).depends_on)dfs(dep);
-      visiting.delete(item);visited.add(item);
+    // Iterative DFS: a legitimate deep responsibility chain must not overflow JS stack.
+    const visitState=new Map(); // 1=in current path, 2=finished
+    for(const root of index.responsibilities.keys()){
+      if(visitState.get(root)===2)continue;
+      visitState.set(root,1);
+      const stack=[{id:root,next:0}];
+      while(stack.length){
+        const top=stack[stack.length-1];
+        const deps=index.responsibilities.get(top.id).depends_on;
+        if(top.next===deps.length){visitState.set(top.id,2);stack.pop();continue;}
+        const dep=deps[top.next++];
+        if(visitState.get(dep)===1)fail("responsibilities",`dependency cycle through ${dep}`);
+        if(visitState.get(dep)!==2){visitState.set(dep,1);stack.push({id:dep,next:0});}
+      }
     }
-    for(const item of index.responsibilities.keys())dfs(item);
     return Object.freeze({valid:true,counts:Object.fromEntries(TYPES.map(k=>[k,doc[k].length])),no_authority_asserted:true});
   }
   function canonicalJSON(value){
@@ -129,7 +136,7 @@ function provenanceAPI() {
       if(x===null||typeof x==="string"||typeof x==="boolean")return x;
       if(typeof x==="number"){if(!Number.isFinite(x))throw new ProvenanceError("non-finite number");return x;}
       if(Array.isArray(x))return x.map(normal);
-      if(x&&typeof x==="object"){const out={};for(const k of Object.keys(x).sort())out[k]=normal(x[k]);return out;}
+      if(x&&typeof x==="object"){const out=Object.create(null);for(const k of Object.keys(x).sort())out[k]=normal(x[k]);return out;}
       throw new ProvenanceError("unsupported canonical JSON type");
     }
     return JSON.stringify(normal(value));

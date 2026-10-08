@@ -143,3 +143,27 @@ test('unadopted research remains unadopted',()=>{
   assert.equal(f.owner_decisions.length,0);
   assert.equal(validate(f).no_authority_asserted,true);
 });
+
+test('canonical JSON preserves special own keys without changing the prototype',()=>{
+  const payload=JSON.parse('{"__proto__":{"x":1},"constructor":{"v":2}}');
+  assert.equal(canonicalJSON(payload),'{"__proto__":{"x":1},"constructor":{"v":2}}');
+});
+test('deep dependency chain is bounded and non-recursive',()=>{
+  const f=fixture();
+  for(let i=0;i<5000;i++){
+    f.responsibilities.push({
+      id:'CHAIN-'+i,claim_ids:['AC1'],
+      depends_on:i===0?['R1-A']:['CHAIN-'+(i-1)],
+      scope:'Deep chain regression',write_surface:['skills/engineering-relay-v1/README.md']
+    });
+  }
+  assert.equal(validate(f).valid,true);
+  f.responsibilities[0].depends_on=['CHAIN-4999'];
+  assert.throws(()=>validate(f),ProvenanceError);
+});
+test('unbounded event arrays are rejected before expensive validation',()=>{
+  const f=fixture();
+  const original=f.sessions[0].events[0];
+  f.sessions[0].events=Array.from({length:10001},()=>original);
+  assert.throws(()=>validate(f),ProvenanceError);
+});
