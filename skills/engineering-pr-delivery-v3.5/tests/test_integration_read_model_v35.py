@@ -139,10 +139,10 @@ class DELPSourceReadModelTests(unittest.TestCase):
             "id": 123,
             "user": {"login": "owner"},
             "author_association": "OWNER",
-            "body": ("```yaml\\n" +
+            "body": ("```yaml\n" +
                      yaml.safe_dump({"CHECKPOINT_FACTS_V1": fact(frozen_graph)},
                                     sort_keys=False) +
-                     "```\\n"),
+                     "```\n"),
         }
         observed = FakeReadOnlyProvider(comments=[comment])
         current = R.from_provider(frozen_graph, "Common#604", observed)
