@@ -69,6 +69,16 @@ test('one bounded native-source scope produces issue/PR/current-head CI facts',a
   assert.equal(JSON.stringify(r).includes('We wrote all files'),false);
   assert.equal(JSON.stringify(r).includes('Agent-authored title and body'),false);
 });
+test('nested issue/PR/CI objects are immutable under the published digest',async()=>{
+  const r=(await observed()).result;
+  for(const target of [r,r.parent_issue,r.child_issues,r.child_issues[0],
+    r.pr_facts,r.pr_facts[0],r.pr_facts[0].ci_workflows,
+    r.pr_facts[0].ci_workflows[0]])assert.equal(Object.isFrozen(target),true);
+  const digest=r.snapshot_sha256;
+  assert.throws(()=>{r.pr_facts[0].ci_workflows[0].state='PASS_INVENTED';},TypeError);
+  assert.throws(()=>{r.child_issues.push(issue(99));},TypeError);
+  assert.equal(r.snapshot_sha256,digest);
+});
 test('fixed observed_at and identical provider data give deterministic snapshot digest',async()=>{
   assert.equal((await observed()).result.snapshot_sha256,(await observed()).result.snapshot_sha256);
 });
