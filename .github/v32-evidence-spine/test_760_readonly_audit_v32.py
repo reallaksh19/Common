@@ -1,0 +1,130 @@
+"""Independent frozen-oracle tests for default-off S5-D1 provider audit."""
+import json
+from pathlib import Path
+import subprocess
+import sys
+from tempfile import TemporaryDirectory
+import unittest
+from unittest.mock import patch
+
+HERE=Path(__file__).resolve().parent
+ROOT=HERE.parents[1]
+sys.path.insert(0,str(HERE))
+import audit_live_scoreboard_v32 as mod
+
+ORACLE=json.loads((HERE/"760-readonly-audit-oracles-v1.json").read_text())
+WORKFLOW=(ROOT/".github/workflows/v32-718-trusted-live-scoreboard.yml").read_text()
+SOURCE=(HERE/"audit_live_scoreboard_v32.py").read_text()
+
+def observed(match=False):
+    state="MATCH" if match else "MISSING"
+    return {
+        "authority":"READ_ONLY_SELF_REPLAY_NO_ACCEPTANCE",
+        "pr_binding":"BOUND",
+        "full_ESC_6_gate":"FAIL_CLOSED_UNRELEASED_CONSUMERS",
+        "authority_effects":[],
+        "candidate_sha":"d511fc0210ee823272f41c43621bc90bc290e739",
+        "source_input_digest":"sha256:"+"a"*64,
+        "delp_input_digest":"sha256:"+"b"*64,
+        "semantic_progress":{"P":0,"E":0,"D":0,"DE":0},
+        "read_views":{ref:{"title":"MATCH","managed_block":state}
+                      for ref in ("Common#718","Common#733","Common#740")},
+        "reconciliation":"MATCH" if match else "DRIFT_OR_UNPUBLISHED",
+    }
+
+def check(view,flag="",writer="skipped"):
+    return mod.summary(view,checkout_sha="c"*40,event_name="issue_comment",
+                       enabled_flag=flag,writer_job_result=writer)
+
+
+class ReadonlyScoreboardAuditTests(unittest.TestCase):
+    def test_01_precommitted_independent_audit_contract(self):
+        self.assertEqual("relay-v32-760-readonly-activation-audit-oracle-v1",ORACLE["schema"])
+        self.assertEqual(10,len(ORACLE["cases"]))
+        self.assertEqual("Common#760",ORACLE["child"])
+        self.assertIn("NO_--apply",ORACLE["required"]["audit_no_mutation"])
+
+    def test_02_ungated_read_job_still_separate_from_optin_writer(self):
+        self.assertIn("audit-readback:",WORKFLOW)
+        writer,audit=WORKFLOW.split("\n  audit-readback:",1)
+        self.assertIn("vars.V32_718_LIVE_SCOREBOARD_ENABLED == 'true'",writer)
+        self.assertIn("--apply",writer)
+        self.assertIn("needs: trusted-reconcile",audit)
+        self.assertIn("always()",audit)
+        self.assertNotIn("--apply",audit)
+        self.assertNotIn("vars.V32_718_LIVE_SCOREBOARD_ENABLED == 'true'",audit)
+
+    def test_03_audit_job_scope_and_actual_read_only_permissions(self):
+        audit=WORKFLOW.split("\n  audit-readback:",1)[1]
+        self.assertIn("github.event.issue.number == 733",audit)
+        self.assertIn("github.event.pull_request.number == 740",audit)
+        self.assertIn("github.event_name == 'workflow_dispatch'",audit)
+        self.assertIn("!startsWith(github.event.comment.body, '<!-- relay-delp:live-status:start -->')",audit)
+        self.assertIn("permissions:\n      contents: read\n      issues: read\n      pull-requests: read",audit)
+        self.assertNotIn("issues: write",audit)
+        self.assertNotIn("pull-requests: write",audit)
+
+    def test_04_only_trusted_checkout_and_no_cli_write_invocation(self):
+        audit=WORKFLOW.split("\n  audit-readback:",1)[1]
+        self.assertIn("ref: ${{ github.event.repository.default_branch }}",audit)
+        self.assertIn("persist-credentials: false",audit)
+        self.assertIn("audit_live_scoreboard_v32.py",audit)
+        self.assertNotIn("github.event.pull_request.head.sha }}",audit)
+        self.assertIn('"--live-readback"',SOURCE)
+        self.assertNotIn('"--apply",',SOURCE)
+        self.assertNotIn(".patch_title(",SOURCE)
+        self.assertNotIn(".patch_issue_body(",SOURCE)
+        self.assertNotIn(".patch_pull_title_body(",SOURCE)
+
+    def test_05_unsupported_true_flag_never_promotes_audit_to_mutation(self):
+        out=check(observed(False),flag="true")
+        self.assertEqual("ENABLED",out["repository_flag_state"])
+        self.assertEqual(0,out["write_count"])
+        self.assertEqual([] ,out["authority_effects"])
+        self.assertEqual("OBSERVED_DRIFT_OR_UNPUBLISHED",out["status"])
+
+    def test_06_unset_false_flag_still_audits_source(self):
+        self.assertEqual("NOT_OBSERVED_ENABLED",check(observed(False))["repository_flag_state"])
+        self.assertEqual("DISABLED",check(observed(False),flag="false")["repository_flag_state"])
+        self.assertEqual("OBSERVED_DRIFT_OR_UNPUBLISHED",check(observed(False))["status"])
+
+    def test_07_full_match_still_no_owner_acceptance(self):
+        out=check(observed(True))
+        self.assertEqual("OBSERVED_MATCH_NO_ACCEPTANCE",out["status"])
+        self.assertEqual("MATCH",out["observed_reconciliation"])
+        self.assertEqual("FAIL_CLOSED_UNRELEASED_CONSUMERS",out["full_ESC_6_gate"])
+        self.assertEqual(0,out["write_count"])
+
+    def test_08_false_green_reconciliation_and_missing_surface_refused(self):
+        x=observed(False)
+        x["reconciliation"]="MATCH"
+        with self.assertRaisesRegex(mod.AuditError,"READBACK_FALSE_SUCCESS"):
+            check(x)
+        x=observed(True)
+        del x["read_views"]["Common#740"]
+        with self.assertRaisesRegex(mod.AuditError,"THREE_SURFACE_READBACK_MISSING"):
+            check(x)
+
+    def test_09_writer_failure_does_not_show_verified_status(self):
+        out=check(observed(True),flag="true",writer="failure")
+        self.assertEqual("FAILED_WRITER_REVIEW_PROVIDER_STATE",out["status"])
+        self.assertEqual("MATCH",out["observed_reconciliation"])
+        self.assertEqual(0,out["write_count"])
+
+    def test_10_provider_error_persists_failure_artifact(self):
+        with TemporaryDirectory() as td:
+            report=Path(td)/"audit.json"
+            argv=["audit_live_scoreboard_v32.py","--output",str(report),
+                  "--event-name","issue_comment","--writer-job-result","skipped"]
+            responses=[subprocess.CompletedProcess([],0,stdout="c"*40+"\n"),
+                       subprocess.CompletedProcess([],4,stdout="",stderr="GET failed")]
+            with patch.object(sys,"argv",argv),patch.object(mod.subprocess,"run",side_effect=responses):
+                self.assertEqual(3,mod.main())
+            saved=json.loads(report.read_text())
+            self.assertEqual("FAILED_UNVERIFIED",saved["status"])
+            self.assertEqual(0,saved["write_count"])
+            self.assertIn("READ_ONLY_PROVIDER_REPLAY_FAILED_EXIT_4",saved["error"])
+
+
+if __name__=="__main__":
+    unittest.main()
