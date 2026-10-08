@@ -105,12 +105,12 @@ def classify_provider_failure(exit_code: int, stderr: str) -> dict[str, Any]:
     admitted to the audit artifact. The actual provider cause is not guessed.
     """
     raw = stderr or ""
-    class_match = re.search(r"(?m)(?:^|\\n)([A-Za-z_][A-Za-z0-9_]{1,63}):", raw)
+    class_match = re.search(r"(?m)(?:^|\n|\\n)([A-Za-z_][A-Za-z0-9_]{1,63}):", raw)
     source_match = re.search(
-        r"V32-718-REPLAY-FAILED:\\s*([A-Za-z_][A-Za-z0-9_]{1,63}):\\s*([A-Z][A-Z0-9_]{2,100})",
+        r"V32-718-REPLAY-FAILED:\s*([A-Za-z_][A-Za-z0-9_]{1,63}):\s*([A-Z][A-Z0-9_]{2,100})",
         raw,
     )
-    http_match = re.search(r"\\bHTTP\\s+(401|403|404|422|429|500|502|503)\\b", raw, re.I)
+    http_match = re.search(r"\bHTTP\s+(401|403|404|422|429|500|502|503)\b", raw, re.I)
     if source_match:
         category = "SOURCE_CONTRACT"
         exc = source_match.group(1)
