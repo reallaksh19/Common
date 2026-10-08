@@ -6595,5 +6595,14 @@ class HostedV35CycleStress(_cycle_stress.IntegrationCycleStressAcceptance):
 
 
 
+# R2-A actual source-engine bridge: hosted suite executes the production DELP
+# projector and mocked real provider ingestion, not a title-only golden fixture.
+import test_integration_read_model_v35 as _source_read_model
+
+
+class HostedV35ActualSourceReadModel(_source_read_model.DELPSourceReadModelTests):
+    """Real graph/fact/provider/observed head integration contract."""
+
+
 if __name__ == "__main__":
     unittest.main()
