@@ -27,3 +27,7 @@ This leaf delivers **structural** referential integrity, typed source statuses a
 The canonical serializer builds null-prototype output objects before assigning arbitrarily named own keys; JSON keys such as `__proto__` and `constructor` remain data, not prototype setters. `validate()` uses iterative graph traversal so a deep, acyclic responsibility chain does not overflow the JavaScript call stack; arrays are limited to 10,000 items to refuse obviously unbounded provider payloads. Tests cover 5,000-step dependencies, cyclic mutation, prototype-key round-trip and oversized event streams.
 
 The [read-only Node CI workflow](../../.github/workflows/relay-reset-provenance.yml) runs `node --test` on pull requests touching the isolated new module. It has `contents: read`, no issue/PR write permissions and no access to a source-authenticity approval channel. Its green result is **structural test evidence only**, never programme AC acceptance.
+
+## Canonical JSON input hardening (R1-A)
+
+The pure canonical serializer now bounds nesting (256), aggregate visited objects (100,000) and arrays (10,000); rejects cyclic objects, accessor properties and sparse arrays with controlled ProvenanceError rather than executing a getter, silently serializing holes or overflowing the recursive stack. Repeated non-cyclic object references are duplicated as ordinary JSON values. This structural boundary is **not** source-authenticity or approval.

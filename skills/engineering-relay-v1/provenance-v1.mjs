@@ -132,14 +132,40 @@ function provenanceAPI() {
     return Object.freeze({valid:true,counts:Object.fromEntries(TYPES.map(k=>[k,doc[k].length])),no_authority_asserted:true});
   }
   function canonicalJSON(value){
-    function normal(x){
+    // Bounded serialization is needed even before provider authenticity is established.
+    const active=new Set();
+    const MAX_DEPTH=256,MAX_NODES=100000;
+    let nodes=0;
+    function normal(x,depth){
+      if(depth>MAX_DEPTH)throw new ProvenanceError("canonical JSON nesting limit exceeded");
       if(x===null||typeof x==="string"||typeof x==="boolean")return x;
       if(typeof x==="number"){if(!Number.isFinite(x))throw new ProvenanceError("non-finite number");return x;}
-      if(Array.isArray(x))return x.map(normal);
-      if(x&&typeof x==="object"){const out=Object.create(null);for(const k of Object.keys(x).sort())out[k]=normal(x[k]);return out;}
-      throw new ProvenanceError("unsupported canonical JSON type");
+      if(!x||typeof x!=="object")throw new ProvenanceError("unsupported canonical JSON type");
+      if(active.has(x))throw new ProvenanceError("cyclic canonical JSON input");
+      if(++nodes>MAX_NODES)throw new ProvenanceError("canonical JSON node limit exceeded");
+      active.add(x);
+      try{
+        if(Array.isArray(x)){
+          if(x.length>MAX_ITEMS_PER_ARRAY)throw new ProvenanceError("canonical JSON array size limit exceeded");
+          const result=[];
+          for(let i=0;i<x.length;i++){
+            if(!Object.hasOwn(x,i))throw new ProvenanceError("sparse arrays unsupported");
+            const descriptor=Object.getOwnPropertyDescriptor(x,String(i));
+            if(!descriptor||!Object.hasOwn(descriptor,"value"))throw new ProvenanceError("accessor arrays unsupported");
+            result.push(normal(descriptor.value,depth+1));
+          }
+          return result;
+        }
+        const out=Object.create(null);
+        for(const k of Object.keys(x).sort()){
+          const descriptor=Object.getOwnPropertyDescriptor(x,k);
+          if(!descriptor||!Object.hasOwn(descriptor,"value"))throw new ProvenanceError("accessor property unsupported");
+          out[k]=normal(descriptor.value,depth+1);
+        }
+        return out;
+      }finally{active.delete(x);}
     }
-    return JSON.stringify(normal(value));
+    return JSON.stringify(normal(value,0));
   }
   function traceClaim(doc,claimId){
     validate(doc);

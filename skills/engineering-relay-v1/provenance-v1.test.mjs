@@ -167,3 +167,28 @@ test('unbounded event arrays are rejected before expensive validation',()=>{
   f.sessions[0].events=Array.from({length:10001},()=>original);
   assert.throws(()=>validate(f),ProvenanceError);
 });
+
+test('canonicalJSON rejects cyclic objects and arrays with controlled errors',()=>{
+  const node={};node.self=node;
+  assert.throws(()=>canonicalJSON(node),ProvenanceError);
+  const array=[];array.push(array);
+  assert.throws(()=>canonicalJSON(array),ProvenanceError);
+});
+test('canonicalJSON rejects deep nesting before JavaScript stack overflow',()=>{
+  let nested={value:'leaf'};
+  for(let i=0;i<300;i++)nested={child:nested};
+  assert.throws(()=>canonicalJSON(nested),ProvenanceError);
+});
+test('canonicalJSON never evaluates getter-based agent input',()=>{
+  let invoked=false;
+  const payload={};
+  Object.defineProperty(payload,'secret',{enumerable:true,get(){invoked=true;return 'leak';}});
+  assert.throws(()=>canonicalJSON(payload),ProvenanceError);
+  assert.equal(invoked,false);
+});
+test('canonicalJSON handles repeated non-cyclic objects but rejects sparse arrays',()=>{
+  const ref={v:1};
+  assert.equal(canonicalJSON({left:ref,right:ref}),'{"left":{"v":1},"right":{"v":1}}');
+  const sparse=Array(2);sparse[0]='x';
+  assert.throws(()=>canonicalJSON(sparse),ProvenanceError);
+});
