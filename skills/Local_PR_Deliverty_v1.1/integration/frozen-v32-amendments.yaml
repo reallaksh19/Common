@@ -166,3 +166,25 @@ amendments:
     allowed_paths:
       - skills/engineering-pr-delivery-v3.2/tests/test_agent_health_retained_replay_v32.py
 
+- id: AMEND-V32-ES-RBASIS-010
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner request, 2026-10-08: 'create a new github issue dedicated to v3.2,
+      link with parent issue, add my prompt intents, then proceed v3.2 since you
+      analysis is great'. Common #718 preserves the V3.2-only Owner intent and
+      machine-released claim-first Proposal-V2 digest
+      sha256:f86b7caf62dfbea4df9b1e342a6c306fd0abe708a973d84f75df8c0fbf27c3bd.
+      Common #720 is the single bound R-BASIS responsibility. Exact V3.2
+      project() versus Proposal-V2 gate contradiction was independently replayed
+      at https://github.com/reallaksh19/Common/issues/720#issuecomment-6050415535.
+      This amendment grants only the two released R-BASIS paths and no merge authority.
+    summary: >-
+      R-BASIS source-bound claim-first progressive binding repair, V3.2 only.
+      Make live DELP plan readiness consistent with the exact released
+      Proposal-V2 provider binding while retaining fail-closed bad binding,
+      legacy graph behavior and unchanged P/E, titles, handover and Agent Health.
+      No V3.5 code changes, new progress authority, automatic live sync, or
+      review/merge/release authority is created.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_basis_reconciliation.py
