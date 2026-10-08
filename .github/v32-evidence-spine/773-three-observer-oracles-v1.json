@@ -1,0 +1,47 @@
+{
+  "schema": "relay-v32-773-three-observer-golden-v1",
+  "baseline": "ec9d8daa23fbb3e589b5992e9c20a3bf4d9c4229",
+  "binding": {
+    "issue": "Common#733",
+    "primary_pr": 740,
+    "expected_repo": "reallaksh19/Common"
+  },
+  "authority": "INDEPENDENT_EXPECTATIONS_COMMITTED_BEFORE_PROBE",
+  "cases": [
+    {
+      "id": "OBS-01-MATCH",
+      "direct_initial": "d511fc0210ee823272f41c43621bc90bc290e739",
+      "delp_observed": "d511fc0210ee823272f41c43621bc90bc290e739",
+      "direct_final": "d511fc0210ee823272f41c43621bc90bc290e739",
+      "expected": "MATCH"
+    },
+    {
+      "id": "OBS-02-DELP-MISMATCH",
+      "direct_initial": "d511fc0210ee823272f41c43621bc90bc290e739",
+      "delp_observed": null,
+      "direct_final": "d511fc0210ee823272f41c43621bc90bc290e739",
+      "expected": "DELP_OBSERVER_MISMATCH"
+    },
+    {
+      "id": "OBS-03-PROVIDER-RACE",
+      "direct_initial": "d511fc0210ee823272f41c43621bc90bc290e739",
+      "delp_observed": "d511fc0210ee823272f41c43621bc90bc290e739",
+      "direct_final": "cccccccccccccccccccccccccccccccccccccccc",
+      "expected": "PROVIDER_HEAD_MOVED"
+    },
+    {
+      "id": "OBS-04-MISSING-HEAD",
+      "direct_initial": null,
+      "delp_observed": null,
+      "direct_final": null,
+      "expected": "HEAD_UNAVAILABLE"
+    },
+    {
+      "id": "OBS-05-DIFFERENT-CANDIDATE",
+      "direct_initial": "d511fc0210ee823272f41c43621bc90bc290e739",
+      "delp_observed": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "direct_final": "d511fc0210ee823272f41c43621bc90bc290e739",
+      "expected": "DELP_OBSERVER_MISMATCH"
+    }
+  ]
+}

@@ -162,5 +162,50 @@ class ReadonlyScoreboardAuditTests(unittest.TestCase):
             self.assertNotIn("TOKEN_PRIVATE_SAMPLE",report.read_text())
 
 
+    def test_13_precommitted_three_observer_candidate_guard_cases(self):
+        fixture=json.loads((HERE/"773-three-observer-oracles-v1.json").read_text())
+        self.assertEqual("INDEPENDENT_EXPECTATIONS_COMMITTED_BEFORE_PROBE",fixture["authority"])
+        self.assertEqual(5,len(fixture["cases"]))
+        for row in fixture["cases"]:
+            with self.subTest(case=row["id"]):
+                got=mod.three_head_verdict(row["direct_initial"],
+                                           row["delp_observed"],row["direct_final"])
+                self.assertEqual(row["expected"],got["verdict"])
+                self.assertEqual(row["direct_initial"],got["direct_initial_sha"])
+                self.assertEqual(row["delp_observed"],got["delp_observed_sha"])
+                self.assertEqual(row["direct_final"],got["direct_final_sha"])
+                self.assertEqual(0,got["write_count"])
+                self.assertEqual([],got["authority_effects"])
+
+    def test_14_probe_is_READ_ONLY_and_only_guarded_source_failure(self):
+        import inspect
+        source=inspect.getsource(mod.live_three_head_probe)
+        self.assertIn("provider.get_pull(740)",source)
+        self.assertIn("delp.observe_github(provider, graph)",source)
+        self.assertNotIn("patch_",source)
+        self.assertNotIn("post_comment",source)
+        self.assertNotIn("--apply",source)
+        main=inspect.getsource(mod.main)
+        self.assertIn("CANDIDATE_CHANGED_DURING_OBSERVATION",main)
+        self.assertIn("live_three_head_probe()",main)
+
+    def test_15_source_failure_probe_stays_FAILED_UNVERIFIED(self):
+        with TemporaryDirectory() as td:
+            path=Path(td)/"report.json"
+            argv=["audit_live_scoreboard_v32.py","--output",str(path),
+                  "--event-name","issue_comment","--writer-job-result","skipped"]
+            err="V32-718-REPLAY-FAILED: ReplayError: CANDIDATE_CHANGED_DURING_OBSERVATION"
+            responses=[subprocess.CompletedProcess([],0,stdout="c"*40+"\\n"),
+                       subprocess.CompletedProcess([],1,stdout="",stderr=err)]
+            heads=mod.three_head_verdict("d"*40,None,"d"*40)
+            with patch.object(sys,"argv",argv),patch.object(mod.subprocess,"run",side_effect=responses),patch.object(mod,"live_three_head_probe",return_value=heads):
+                self.assertEqual(3,mod.main())
+            audit=json.loads(path.read_text())
+            self.assertEqual("FAILED_UNVERIFIED",audit["status"])
+            self.assertEqual("DELP_OBSERVER_MISMATCH",audit["candidate_observer_probe"]["verdict"])
+            self.assertEqual(0,audit["write_count"])
+            self.assertEqual([],audit["authority_effects"])
+
+
 if __name__=="__main__":
     unittest.main()
