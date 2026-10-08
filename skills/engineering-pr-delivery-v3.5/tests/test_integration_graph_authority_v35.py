@@ -1,6 +1,7 @@
 """R2-C source selection: actual DELP+publisher with simulated provider-authority falsifiers."""
 from __future__ import annotations
 
+import base64
 import copy
 import hashlib
 import json
@@ -213,6 +214,27 @@ class GraphSelectionTests(unittest.TestCase):
                 pr_number=712, scoreboard_approval_ref=SCORE_URL,
             )
         self.assertFalse(any(w[0] == "patch_pull" for w in self.t.writes))
+
+    def test_real_github_transport_fetches_and_decodes_immutable_blob(self):
+        transport = PUBLISH.ScoreboardTransport("reallaksh19/Common")
+        source = self.t.graph_json
+        raw = {
+            "type": "file", "encoding": "base64",
+            "content": base64.b64encode(source.encode("utf-8")).decode("ascii"),
+            "sha": "c" * 40,
+        }
+        with patch.object(transport, "_gh", return_value=raw) as native:
+            result = transport.get_file_at(COMMIT, PATH)
+        self.assertEqual(source, result["content"])
+        self.assertEqual("c" * 40, result["blob_sha"])
+        self.assertIn("ref=" + COMMIT, native.call_args.args)
+        for changed in ({"type": "dir"}, {"type": "file", "encoding": "none"},
+                        {"type": "file", "encoding": "base64", "content": "////"}):
+            with self.subTest(changed=changed), patch.object(transport, "_gh", return_value=changed):
+                with self.assertRaises((PUBLISH.PublishError, ValueError)):
+                    transport.get_file_at(COMMIT, PATH)
+        with self.assertRaises(PUBLISH.PublishError):
+            transport.get_file_at("main", PATH)
 
     def test_cli_apply_uses_provider_graph_source_and_protects_human_content(self):
         with patch.object(PUBLISH, "ScoreboardTransport", return_value=self.t):
