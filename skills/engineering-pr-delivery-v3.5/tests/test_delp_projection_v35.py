@@ -6620,5 +6620,14 @@ class HostedV35SmartScoreboardPublication(_smart_scoreboard.LivePublisherTests):
     """Fake-provider real DELP LIVE_STATUS and PR writer race/readback gates."""
 
 
+# R2-B source identity and provider-currentness verification. Use the same
+# existing DELP test module singleton as R2-A/R3/R4; no duplicate engine.
+import test_integration_source_authority_v35 as _source_authority
+
+
+class HostedV35ProviderSourceAuthority(_source_authority.VerifiedSourcePreflight):
+    """Source receipt, exact Owner quote, provider head and foreign-leaf negatives."""
+
+
 if __name__ == "__main__":
     unittest.main()
