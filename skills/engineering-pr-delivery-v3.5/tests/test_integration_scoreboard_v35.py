@@ -203,7 +203,7 @@ class LivePublisherTests(unittest.TestCase):
         self.source = "https://github.com/reallaksh19/Common/issues/741#issuecomment-123"
         self.transport.approval_comment = {
             "id": 123, "html_url": self.source, "user": {"login": "owner"},
-            "body": (R4._APPROVAL_START + "\\n" + json.dumps({
+            "body": (R4._APPROVAL_START + "\n" + json.dumps({
                 "schema": "V35_SCOREBOARD_APPROVAL_V1",
                 "scope": "ISSUE_PR_SCOREBOARD_TITLE_AND_MANAGED_BODY_ONLY",
                 "repository": "reallaksh19/Common",
@@ -212,7 +212,7 @@ class LivePublisherTests(unittest.TestCase):
                 "pr_number": 712,
                 "graph_digest": self.digest,
                 "revoked": False,
-            }) + "\\n" + R4._APPROVAL_END),
+            }) + "\n" + R4._APPROVAL_END),
         }
 
     def apply(self):
@@ -254,7 +254,7 @@ class LivePublisherTests(unittest.TestCase):
                 else:
                     payload["scope"] = "UNRESTRICTED"
                 transport.approval_comment["body"] = (
-                    R4._APPROVAL_START + "\\n" + json.dumps(payload) + "\\n" + R4._APPROVAL_END
+                    R4._APPROVAL_START + "\n" + json.dumps(payload) + "\n" + R4._APPROVAL_END
                 )
             with self.subTest(mutation=mutation), self.assertRaises(R4.PublishError):
                 R4.publish(
