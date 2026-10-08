@@ -7349,5 +7349,17 @@ class PinnedNativeCustodyProviderObservations(unittest.TestCase):
             transport.read_native_yaml_at_sha("relay/STATE.yaml", "a" * 40)
 
 
+class NativeIsolatedBootstrapQualification(unittest.TestCase):
+    """#732 M1b: execute the isolated native transaction falsifier in hosted DELP."""
+
+    def test_real_438_root_unchanged_by_synthetic_idle_604_admission(self):
+        from test_relay_tx import RelayTransactionalCommandTests
+
+        case = RelayTransactionalCommandTests(
+            methodName="test_isolated_idle_fixture_admits_604_without_touching_root_438"
+        )
+        case.test_isolated_idle_fixture_admits_604_without_touching_root_438()
+
+
 if __name__ == "__main__":
     unittest.main()
