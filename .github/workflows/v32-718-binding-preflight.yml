@@ -124,8 +124,16 @@ jobs:
           assert r["authority"] == "READ_ONLY_SELF_REPLAY_NO_ACCEPTANCE", r
           assert r["pr_binding"] == "BOUND", r
           assert r["candidate_sha"] and len(r["candidate_sha"]) == 40, r
-          assert r["historical_unreported"] == ["Common#720", "Common#724"], r
-          assert r["semantic_progress"]["P"] == 0 and r["semantic_progress"]["E"] == 0, r
+          # Never freeze OPEN/MERGED historical candidates or zero progress:
+          # accepted facts may arrive after the source PR is merged. Test
+          # integrity/shape and print actual provider-derived state instead.
+          historical = r["historical_unreported"]
+          assert isinstance(historical, list) and len(historical) == len(set(historical)), r
+          assert set(historical).issubset({"Common#720","Common#724","Common#733"}), r
+          progress = r["semantic_progress"]
+          assert all(isinstance(progress.get(k), int) and progress[k] >= 0
+                     for k in ("P","E","D","DE")), r
+          assert all(progress[k] <= 100 for k in ("P","E","D","DE")), r
           assert r["qualifier"]["state"] == "UNPROVEN", r
           assert r["full_ESC_6_gate"] == "FAIL_CLOSED_UNRELEASED_CONSUMERS", r
           assert r["authority_effects"] == [], r
@@ -134,6 +142,8 @@ jobs:
           print("V32_733_CURRENT_HEAD=" + r["candidate_sha"])
           print("V32_733_LIVE_INPUT_DIGEST=" + r["source_input_digest"])
           print("V32_733_LIVE_SYNC_STATE=" + r["reconciliation"])
+          print("V32_733_PROVIDER_UNREPORTED="+json.dumps(historical))
+          print("V32_733_DERP_PROGRESS="+json.dumps(progress, sort_keys=True))
           for ref,x in sorted(r["read_views"].items()):
               print(ref+"_SMART_TITLE="+x["title"]+";MANAGED_BLOCK="+x["managed_block"])
               print(ref+"_EXPECTED_TITLE="+x["expected"])
