@@ -94,7 +94,7 @@ function decodedBlob(p,spec,bound) {
  * Injected transport proves parsing only; native default fetch proves present
  * committed provider bytes, NOT human authorship or an independent trust root.
  */
-export async function readCommittedPortableJournal(rawSpec,options={}) {
+async function readInternal(rawSpec,options={}) {
   let spec;
   try{spec=JSON.parse(canonicalJSON(rawSpec));}
   catch{fail('INVALID','source specification contains unsafe JSON');}
@@ -126,7 +126,7 @@ export async function readCommittedPortableJournal(rawSpec,options={}) {
   } catch(e) { fail('REFUTED','real R2-B1 cold replay rejected GitHub bundle: '+e.code); }
   if(replay.authorization_granted!==false||replay.externally_anchored!==false)
     fail('REFUTED','R2-B1 falsely elevated authority');
-  return Object.freeze({
+  const custody=Object.freeze({
     schema:'relay-github-content-custody-v1',
     status:injected?'INJECTED_UNVERIFIED':'GITHUB_COMMITTED_BYTES_OBSERVED',
     repository:spec.repository,parent_issue:spec.parent_issue,
@@ -140,4 +140,20 @@ export async function readCommittedPortableJournal(rawSpec,options={}) {
     externally_anchored:false,owner_message_authenticated:false,
     authorization_granted:false,independently_accepted:false,live_writer_enabled:false
   });
+  // The consumer view is available only by an explicit in-process API; the
+  // longstanding public summary-only API NEVER includes raw event text.
+  return Object.freeze({custody,replay});
+}
+
+/** Status/commit/blob/tip summary only; no raw event text released. */
+export async function readCommittedPortableJournal(rawSpec,options={}) {
+  return (await readInternal(rawSpec,options)).custody;
+}
+
+/** Opt-in INTERNAL recovery view. Read-only; may contain PUBLIC session text.
+ * Never send the replay object to GitHub issues, logs or public status surfaces.
+ * The single verified native GET and R2-B1 disk replay are shared with summary API.
+ */
+export async function readCommittedPortableJournalForLineage(rawSpec,options={}) {
+  return readInternal(rawSpec,options);
 }
