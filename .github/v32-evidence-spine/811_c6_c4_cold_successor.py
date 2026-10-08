@@ -114,7 +114,7 @@ def authenticated_read_only_graph(origin):
         item = json.loads(raw.stdout)
         require(item.get("type") == "file" and item.get("encoding") == "base64",
                 "COLD_GRAPH_BLOB_NOT_CANONICAL")
-        packed = re.sub(r"\\s+", "", item["content"])
+        packed = re.sub(r"\s+", "", item["content"])
         graph_bytes = base64.b64decode(packed, validate=True)
         require(len(graph_bytes) <= 5_000_000, "COLD_GRAPH_TOO_LARGE")
         graph = json.loads(graph_bytes)
