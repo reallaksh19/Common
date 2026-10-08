@@ -1,0 +1,52 @@
+{
+  "schema": "common-v32-811-c6-c5-provider-anchor-oracles-v1",
+  "owner": "Common#718",
+  "task": "Common#811",
+  "parent_product": "Common#832",
+  "base_commit": "b6546ce2f5ace14d1f50e89a27134cbf9470f89e",
+  "owner_original_chat_permalink": "UNKNOWN",
+  "anchor": "GitHub Actions artifact API server-stored archive sha256 digest and run/head/repository identity",
+  "attestation_status": "NOT_SIGSTORE_ATTESTED",
+  "scope": "time-limited provider custody evidence, not owner signature nor permanent cryptographic transparency log",
+  "scenarios": [
+    {
+      "id": "ANCHOR-01",
+      "expected": "Actual native production PLAN_HANDOVER writes exactly two durable bundle files uploaded to Actions v4 artifact storage; independent job GETs artifact by numeric ID, checks provider run ID, repository ID and exact run head SHA"
+    },
+    {
+      "id": "ANCHOR-02",
+      "expected": "Independent verifier GETs server-side sha256 artifact digest and compares actual downloaded zip bytes with it, without trusting an inline claimed digest or upload action output"
+    },
+    {
+      "id": "ANCHOR-03",
+      "expected": "Verified archive contains only exact two named ordinary handover files, no path traversal, duplicates, extra files, zip bombs or symlinks; cold replay checks source against live GitHub GET"
+    },
+    {
+      "id": "ANCHOR-04",
+      "expected": "A coordinated alteration of BOTH context and event basis can still fool two-file offline-only self-consistency; verifier must demonstrably reject it against server anchored original file hashes"
+    },
+    {
+      "id": "ANCHOR-05",
+      "expected": "Altered archive bytes cannot match GitHub API stored digest; verifier must reject without running cold successor"
+    },
+    {
+      "id": "ANCHOR-06",
+      "expected": "Wrong artifact run id, source SHA, repository identity, missing digest, expired or missing artifact fail closed"
+    },
+    {
+      "id": "ANCHOR-07",
+      "expected": "Remote artifact lookup requires authenticated Actions read token; no ability to publish title, issue, PR, grant merge/Owner proof"
+    },
+    {
+      "id": "ANCHOR-08",
+      "expected": "Provider anchor is expiry-bound and repository administrator may delete it; no claim of signed owner custody or durable archive once expired"
+    },
+    {
+      "id": "ANCHOR-09",
+      "expected": "Read-only source replay still rejects changed input pin and grants no execution; provider artifact anchoring does not prove original Owner chat message"
+    }
+  ],
+  "golden_first": true,
+  "allowed_changed_paths": ".github/v32-evidence-spine/** and .github/workflows/** only",
+  "gate": "NO_FROZEN_V32_OR_V35_CHANGES_NO_MAIN_MERGE_NO_INDEPENDENT_APPROVAL"
+}
