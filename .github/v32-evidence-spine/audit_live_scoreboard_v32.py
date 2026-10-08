@@ -223,7 +223,11 @@ def main() -> int:
                 raise AuditError("READ_ONLY_PROVIDER_REPLAY_FAILED_EXIT_" + str(result.returncode))
             require(isinstance(first_trace, dict) and
                     first_trace.get("invocation_scope") == "PRIMARY_AUDIT_SOURCE_INVOCATION" and
-                    first_trace.get("source_outcome") == "SOURCE_REPLAY_SUCCEEDED_NO_ACCEPTANCE",
+                    first_trace.get("source_outcome") == "SOURCE_REPLAY_SUCCEEDED_NO_ACCEPTANCE" and
+                    first_trace.get("verdict") == "MATCH" and
+                    first_trace.get("read_count") == 3 and
+                    first_trace.get("write_count") == 0 and
+                    first_trace.get("authority_effects") == [],
                     "FIRST_GUARDED_TRACE_MISSING_OR_INVALID")
             observed = json.loads(report_path.read_text(encoding="utf-8"))
         report = summary(
