@@ -1,0 +1,24 @@
+name: relay-reset-session-journal
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/session-journal-v1.*'
+      - '.github/workflows/relay-reset-session-journal.yml'
+permissions:
+  contents: read
+jobs:
+  session-journal-node:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Real filesystem append, CAS, crash and tamper tests
+        run: node --test skills/engineering-relay-v1/session-journal-v1.test.mjs
