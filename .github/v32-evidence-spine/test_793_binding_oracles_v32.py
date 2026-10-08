@@ -48,7 +48,10 @@ class SourceBoundReconstructionAdmission(unittest.TestCase):
         for left, right in zip(spec["semantic_units"], row["units"], strict=True):
             for key in ("id", "weight", "outcome", "verify"):
                 self.assertEqual(left[key], right[key])
-        self.assertNotIn("primary_pr", row)
+        registration = json.loads((HERE / "793-c4-material-binding-v1.json").read_text(encoding="utf-8"))
+        self.assertEqual(registration["proposed_acceptance"]["graph_primary_pr"], row["primary_pr"])
+        self.assertEqual("Common#800", row["primary_pr"])
+        self.assertNotEqual("Common#794", row["primary_pr"], "planning PR is not the product candidate")
 
     def test_03_missing_binding_rejected(self):
         bad = copy.deepcopy(self.graph)
@@ -93,6 +96,42 @@ class SourceBoundReconstructionAdmission(unittest.TestCase):
         self.assertEqual(12, report["fixture_count"])
         self.assertEqual("Common#718", manifest["programme"])
         self.assertNotIn("Common#793", {n["ref"] for n in frozen["nodes"]})
+
+
+    def test_08_actual_esc4_candidate_sha_is_in_delp_material_basis(self):
+        registration = json.loads((HERE / "793-c4-material-binding-v1.json").read_text(encoding="utf-8"))
+        graph = self.graph
+        sha = "a" * 40
+
+        class ReadOnlyMaterial:
+            def __init__(self):
+                self.product_sha = sha
+
+            def get_commit_sha(self, ref):
+                return "b" * 40
+
+            def get_pull(self, number):
+                return {
+                    "head": {"sha": self.product_sha if number == 800 else "c" * 40},
+                    "merged": False,
+                    "state": "open",
+                }
+
+        provider = ReadOnlyMaterial()
+        before = delp.observe_github(provider, graph)
+        self.assertEqual(sha, before["Common#793"]["candidate_sha"])
+        self.assertEqual("OPEN", before["Common#793"]["pr_state"])
+        self.assertEqual(registration["proposed_acceptance"]["graph_primary_pr"],
+                         next(n for n in graph["nodes"] if n["ref"] == "Common#793")["primary_pr"])
+        first = delp.project(graph, [], before)
+        provider.product_sha = "d" * 40
+        after = delp.observe_github(provider, graph)
+        self.assertEqual("d" * 40, after["Common#793"]["candidate_sha"])
+        second = delp.project(graph, [], after)
+        self.assertNotEqual(first["input_digest"], second["input_digest"])
+        self.assertEqual(0, second["nodes"]["Common#793"]["progress"]["P"])
+        self.assertEqual(0, second["nodes"]["Common#793"]["progress"]["E"])
+
 
 
 if __name__ == "__main__":
