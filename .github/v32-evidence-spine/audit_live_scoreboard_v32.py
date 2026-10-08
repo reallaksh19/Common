@@ -8,6 +8,7 @@ even when provider reads fail. Do not use a passing audit as Owner acceptance.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -96,12 +97,58 @@ def summary(view: Mapping[str, Any], *, checkout_sha: str, event_name: str,
     }
 
 
+def classify_provider_failure(exit_code: int, stderr: str) -> dict[str, Any]:
+    """Retain non-secret failure evidence, NEVER raw stderr or token content.
+
+    The entire stderr is hashed to pin the observed failure. Only a narrowly
+    typed exception class/HTTP status or an uppercase source error code is
+    admitted to the audit artifact. The actual provider cause is not guessed.
+    """
+    raw = stderr or ""
+    class_match = re.search(r"(?m)(?:^|\\n)([A-Za-z_][A-Za-z0-9_]{1,63}):", raw)
+    source_match = re.search(
+        r"V32-718-REPLAY-FAILED:\\s*([A-Za-z_][A-Za-z0-9_]{1,63}):\\s*([A-Z][A-Z0-9_]{2,100})",
+        raw,
+    )
+    http_match = re.search(r"\\bHTTP\\s+(401|403|404|422|429|500|502|503)\\b", raw, re.I)
+    if source_match:
+        category = "SOURCE_CONTRACT"
+        exc = source_match.group(1)
+        code = source_match.group(2)
+    elif http_match:
+        category = "GH_HTTP"
+        exc = class_match.group(1) if class_match else "UNKNOWN"
+        code = "HTTP_" + http_match.group(1)
+    elif not raw:
+        category = "NO_STDERR"
+        exc = "UNKNOWN"
+        code = "SUBPROCESS_EXIT_" + str(exit_code)
+    elif class_match:
+        category = "PYTHON_EXCEPTION"
+        exc = class_match.group(1)
+        code = "UNCLASSIFIED_EXCEPTION"
+    else:
+        category = "UNCLASSIFIED_STDERR"
+        exc = "UNKNOWN"
+        code = "UNCLASSIFIED_SUBPROCESS_EXIT"
+    return {
+        "category": category,
+        "exception_class": exc,
+        "reason_code": code,
+        "exit_code": exit_code,
+        "stderr_sha256": "sha256:" + hashlib.sha256(raw.encode("utf-8")).hexdigest(),
+        "stderr_bytes": len(raw.encode("utf-8")),
+        "raw_stderr_exposed": False,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--event-name", required=True)
     parser.add_argument("--writer-job-result", required=True)
     args = parser.parse_args()
+    provider_failure = None
     try:
         sha = subprocess.run(
             ["git", "rev-parse", "HEAD"], check=True, capture_output=True, text=True,
@@ -114,6 +161,7 @@ def main() -> int:
                 "--report", str(report_path),
             ], cwd=ROOT, capture_output=True, text=True, check=False)
             if result.returncode != 0:
+                provider_failure = classify_provider_failure(result.returncode, result.stderr)
                 raise AuditError("READ_ONLY_PROVIDER_REPLAY_FAILED_EXIT_" + str(result.returncode))
             observed = json.loads(report_path.read_text(encoding="utf-8"))
         report = summary(
@@ -129,6 +177,8 @@ def main() -> int:
             "error": type(exc).__name__ + ": " + str(exc),
             "authority_effects": [], "full_ESC_6_gate": "FAIL_CLOSED_UNRELEASED_CONSUMERS",
         }
+        if provider_failure is not None:
+            report["provider_failure"] = provider_failure
         code = 3
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n", encoding="utf-8")
