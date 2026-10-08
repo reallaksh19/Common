@@ -25,7 +25,7 @@ class PublishError(ValueError):
 
 
 class ScoreboardTransport(DELP.GhTransport):
-    """Thin GitHub API extension; DE​LP remains the issue status authority."""
+    """Thin GitHub API extension; DELP remains the issue status authority."""
 
     def get_check_runs(self, head_sha: str) -> dict[str, Any]:
         # Explicit count+full retrieval prevents false CI PASS on paginated results.
@@ -117,13 +117,7 @@ def plan(
         human_titles=titles,
     )
     expected_body = R3.managed_body(str(pull.get("body") or ""), rendered["pr_managed_body"])
-    issue_title_map = DELP.expected_titles(
-        # from_provider intentionally returns view, not entire projection;
-        # source-driven titles already originate from this exact R2 read.
-        {"nodes": {ref: {
-            "title_prefix": DELP.split_title(titles.get(ref, ""))[0] or ""
-        } for ref in ()}}, {}
-    ) if False else rendered["issue_titles"]
+    issue_title_map = rendered["issue_titles"]
     return {
         "status": "DRY_RUN_NO_MUTATION",
         "basis_sha256": rendered["basis_sha256"],
