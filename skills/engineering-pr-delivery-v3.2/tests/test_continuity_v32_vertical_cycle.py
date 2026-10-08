@@ -12,6 +12,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+import subprocess
 
 HERE = Path(__file__).resolve()
 V32 = HERE.parents[1]
@@ -112,6 +113,39 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             loaded = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual("PASS_PURE_READ_VIEWS", loaded["R_PROJECTION_phase_gate"])
             self.assertTrue(loaded["fixture_manifest_digest"].startswith("sha256:"))
+
+
+    def test_15_executable_source_module_phase_gate_and_report(self):
+        with tempfile.TemporaryDirectory() as td:
+            report = Path(td) / "phase-report.json"
+            command = [sys.executable, str(V32 / "scripts" / "vertical_cycle_v32.py"),
+                       "--manifest", str(ROOT / ".github/v32-evidence-spine/718-golden-fixtures-v1.json"),
+                       "--graph", str(ROOT / ".github/v32-evidence-spine/718-proposal-v2.json"),
+                       "--report", str(report)]
+            run = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
+            self.assertEqual(0, run.returncode, run.stderr)
+            result = json.loads(report.read_text(encoding="utf-8"))
+            self.assertEqual("PASS_PURE_READ_VIEWS", result["R_PROJECTION_phase_gate"])
+            self.assertEqual("FAIL_CLOSED_UNRELEASED_CONSUMERS", result["full_ESC_6_gate"])
+            self.assertEqual(0, result["exit_code"])
+            print("V32_733_REAL_CLI_PHASE=PASS")
+            print("V32_733_CLI_FIXTURE_DIGEST=" + result["fixture_manifest_digest"])
+
+    def test_16_executable_source_module_full_gate_must_fail_closed(self):
+        with tempfile.TemporaryDirectory() as td:
+            report = Path(td) / "full-expected-red.json"
+            command = [sys.executable, str(V32 / "scripts" / "vertical_cycle_v32.py"),
+                       "--assert-all-consumers", "--report", str(report)]
+            run = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
+            self.assertEqual(2, run.returncode, run.stderr)
+            result = json.loads(report.read_text(encoding="utf-8"))
+            self.assertEqual("FAIL_CLOSED_UNRELEASED_CONSUMERS", result["full_ESC_6_gate"])
+            self.assertEqual(2, result["exit_code"])
+            self.assertEqual("NOT_IMPLEMENTED_NOT_RELEASED",
+                             result["stage_results"]["HANDOVER_PROMPT"])
+            self.assertEqual("NOT_IMPLEMENTED_NOT_RELEASED",
+                             result["stage_results"]["AGENT_MATRIX"])
+            print("V32_733_REAL_CLI_FULL=EXPECTED_RED_UNRELEASED")
 
 
 if __name__ == "__main__":
