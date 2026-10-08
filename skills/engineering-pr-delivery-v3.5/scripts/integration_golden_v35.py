@@ -143,10 +143,28 @@ def derive(snapshot: Mapping[str, Any]) -> dict[str, Any]:
         f"ONE NEXT: {next_step}",
     ])
     checks_required = (
-        "CR-01 outcome-first", "CR-02 source provenance", "CR-03 claim/evidence",
-        "CR-04 candidate head", "CR-05 stale/custody", "CR-06 issue/PR drift",
-        "CR-07 handover", "CR-08 agent metric isolation",
-        "CR-09 self/independent distinction", "CR-10 cold Agent-6 entry",
+        "CR-01 Basis, scope and coverage",
+        "CR-02 Design and system fit",
+        "CR-03 Functional correctness and negative behavior",
+        "CR-04 Simplicity, readability and maintainability",
+        "CR-05 Tests and verification quality",
+        "CR-06 Interfaces, data and compatibility",
+        "CR-07 Security, privacy and trust boundaries",
+        "CR-08 Reliability, errors, concurrency and operability",
+        "CR-09 Documentation and change communication",
+        "CR-10 Integration, regression and release fitness",
+    )
+    project_checks = (
+        "R-01 Outcome-first wrong-world falsifier",
+        "R-02 Original Owner text/source status",
+        "R-03 Claim/leaf/task-evidence/spec lineage",
+        "R-04 Candidate SHA/CI currentness",
+        "R-05 #438 source and sibling custody isolation",
+        "R-06 Parent/child/PR status drift",
+        "R-07 Handover cold-entry without chat",
+        "R-08 Health/advisory cannot grant progress",
+        "R-09 Self-review vs distinct independence",
+        "R-10 Agent-6 replay from three entry URLs",
     )
     return {
         "authority": "DERIVED_GOLDEN_ONLY_NOT_PRODUCTION",
@@ -171,5 +189,9 @@ def derive(snapshot: Mapping[str, Any]) -> dict[str, Any]:
         "review_checklist": [
             {"criterion": criterion, "state": "NOT_REVIEWED"}
             for criterion in checks_required
+        ],
+        "project_review_checklist": [
+            {"criterion": criterion, "state": "NOT_REVIEWED"}
+            for criterion in project_checks
         ],
     }
