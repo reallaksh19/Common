@@ -361,6 +361,119 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             self.assertTrue({"EVT-ADMIT-001-OWNER", "EVT-ADMIT-001-EP", "EVT-ADMIT-001-LEASE"}.issubset(ids))
             self.assertEqual([], validate(root))
 
+    def test_isolated_idle_fixture_admits_604_without_touching_root_438(self):
+        """M1b: synthetic IDLE admission feasibility, NOT fresh-genesis authority."""
+        repo_root = ROOT.parents[2]
+        retained = [
+            repo_root / "relay/STATE.yaml",
+            repo_root / "relay/LEASES/LEASE.438.7.yaml",
+        ]
+        original_bytes = [path.read_bytes() for path in retained]
+        self.assertIn(b"EP.438.7", original_bytes[0])
+        with tempfile.TemporaryDirectory() as td:
+            isolated = Path(td)
+            _, base_ref = prepare_git(isolated)
+            release_lease(
+                isolated,
+                tx_id="TX-ISOLATED-IDLE",
+                event_id="EVT-ISOLATED-IDLE",
+                actor="synthetic-fixture",
+                reason="ADMINISTRATIVE",
+            )
+            idle = load_yaml(isolated / "relay/STATE.yaml")
+            self.assertEqual("IDLE", idle["execution"]["lifecycle"])
+            self.assertIsNone(idle["execution"]["lease"])
+            self.assertFalse(list((isolated / "relay/LEASES").glob("LEASE.438.*.yaml")))
+
+            baseline = install_parent_issue(isolated, number=604)
+            source_ep = load_yaml(isolated / "relay/WORK/EP-TA-011.yaml")
+            ep = copy.deepcopy(source_ep)
+            ep.pop("id", None)
+            ep["parent_issue"]["repository"] = "reallaksh19/Common"
+            ep["parent_issue"]["url"] = (
+                "https://github.com/reallaksh19/Common/issues/604"
+            )
+            ep["programme_parent"] = {
+                "provider": "GITHUB",
+                "repository": "reallaksh19/Common",
+                "number": 600,
+                "title": "Synthetic programme fixture #600",
+                "url": "https://github.com/reallaksh19/Common/issues/600",
+            }
+            ep["implementation_plan_basis"] = {
+                "provider_ref": "synthetic-fixture:Common#604",
+                "revision": 1,
+                "digest": "sha256:" + "a" * 64,
+                "observed_at": "2026-10-08T00:00:00Z",
+                "responsibility_basis_ref": "Common#604",
+                "responsibility_basis_digest": "sha256:" + "b" * 64,
+            }
+            wp = {
+                "id": "WP-TA-109", "title": "Current work",
+                "weight": 50, "state": "ACTIVE",
+                "depends_on": ["WP-TA-108"],
+            }
+            request = {
+                "schema_version": "relay-v3.1-task-admission",
+                "roadmap": {
+                    "disposition": "MAPPED_EXISTING_WP",
+                    "new_revision": "RM-0013",
+                    "basis": ["Isolated synthetic fixture only, not Owner grant."],
+                    "work_package": wp,
+                },
+                "ep": ep,
+                "lease": {
+                    "executor_id": "synthetic-test-executor",
+                    "method": "DETERMINISTIC",
+                },
+                "delivery": {
+                    "required": False,
+                    "primary_vehicle": None,
+                },
+            }
+            admission_path = isolated / "synthetic-604-admission.yaml"
+            dump(admission_path, request)
+            observed = parent_issue_observation(
+                baseline=baseline, number=604,
+                state="OPEN", disposition="NO_CHANGE",
+                acceptance_state="PENDING",
+            )
+            observed["repository"] = "reallaksh19/Common"
+            observed["url"] = "https://github.com/reallaksh19/Common/issues/604"
+
+            outcome = admit_task(
+                isolated, tx_id=None, event_id=None,
+                actor="synthetic-fixture",
+                admission_path=admission_path, base_ref=base_ref,
+                programme_issue_observations=[observed],
+                selected_programme_ref="reallaksh19/Common#604",
+            )
+            self.assertEqual("COMMITTED", outcome["status"])
+            self.assertEqual("TX.604.1", outcome["id"])
+            state = load_yaml(isolated / "relay/STATE.yaml")
+            self.assertEqual("EP.604.1", state["execution"]["ep"])
+            self.assertEqual("LEASE.604.1", state["execution"]["lease"])
+            self.assertEqual(1, state["execution"]["custody_epoch"])
+            native_ep = load_yaml(isolated / "relay/WORK/EP.604.1.yaml")
+            self.assertEqual(604, native_ep["parent_issue"]["number"])
+            self.assertEqual(600, native_ep["programme_parent"]["number"])
+            native_lease = load_yaml(isolated / "relay/LEASES/LEASE.604.1.yaml")
+            self.assertEqual("ACTIVE", native_lease["state"])
+            self.assertNotIn("MERGE", native_lease["authority"]["actions"])
+            self.assertNotIn("RELEASE", native_lease["authority"]["actions"])
+            events, errors = load_events(isolated / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            new_events = [event for event in events
+                          if str(event["event_id"]).startswith("EVT.604.")]
+            self.assertEqual(3, len(new_events))
+            self.assertNotIn("LEASE_REVOKED", {event["type"] for event in new_events})
+            self.assertFalse(any("438" in str(event)
+                                 for event in new_events))
+            self.assertEqual([], validate_authority(isolated))
+
+        # Absolute repository-root native authority is *read only* throughout.
+        self.assertEqual(original_bytes, [path.read_bytes() for path in retained])
+
     def test_provider_backed_admission_can_allocate_execution_identities(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
