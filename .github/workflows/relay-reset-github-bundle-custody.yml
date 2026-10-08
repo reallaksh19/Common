@@ -1,0 +1,28 @@
+name: relay-reset-github-bundle-custody
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/github-bundle-custody-v1.*'
+      - 'skills/engineering-relay-v1/fixtures/b2a-synthetic-journal-v1.json'
+      - '.github/workflows/relay-reset-github-bundle-custody.yml'
+permissions:
+  contents: read
+jobs:
+  source-custody:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22','24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Prove native immutable GitHub readback and real merged R2-B1 replay
+        env:
+          RELAY_B2A_CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RELAY_B2A_TOKEN: ${{ github.token }}
+        run: node --test skills/engineering-relay-v1/github-bundle-custody-v1.test.mjs
