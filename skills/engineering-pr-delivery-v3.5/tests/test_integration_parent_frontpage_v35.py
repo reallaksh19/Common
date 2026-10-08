@@ -5,6 +5,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -135,6 +136,81 @@ class ParentFrontPageTests(unittest.TestCase):
                 PAGE.propose(body, 600, content)
         with self.assertRaises(PAGE.FrontPageError):
             PAGE.validate_current(body, 527)
+
+    def test_native_issue_readback_is_bound_to_repository_issue_and_body(self):
+        class Provider:
+            repository = "reallaksh19/Common"
+            def __init__(self):
+                self.rows = []
+                self.calls = 0
+            def get_issue(self, number):
+                self.calls += 1
+                return {
+                    "number": number,
+                    "html_url": f"https://github.com/reallaksh19/Common/issues/{number}",
+                    "title": "Current native title",
+                    "body": front("CURRENT") + governing(number),
+                }
+        for issue in (600, 717, 759):
+            provider = Provider()
+            row = PAGE.inspect_native(provider, issue)
+            with self.subTest(issue=issue):
+                self.assertEqual(2, provider.calls)
+                self.assertEqual(
+                    "TWO_OBSERVATIONS_MATCH_NOT_ATOMIC_CAS", row["readback"])
+                self.assertEqual(
+                    "MANUAL_NAVIGATION_ONLY_NOT_DELP_OR_OWNER",
+                    row["status_authority"])
+                self.assertFalse(row["writes"])
+
+    def test_native_forged_source_and_race_fail_closed(self):
+        class Provider:
+            repository = "reallaksh19/Common"
+            def __init__(self, mode):
+                self.mode, self.calls = mode, 0
+            def get_issue(self, number):
+                self.calls += 1
+                row = {
+                    "number": number,
+                    "html_url": f"https://github.com/reallaksh19/Common/issues/{number}",
+                    "title": "one title",
+                    "body": front("CURRENT") + governing(number),
+                }
+                if self.mode == "bad_number":
+                    row["number"] = 438
+                elif self.mode == "bad_url":
+                    row["html_url"] = "https://github.com/other/repo/issues/600"
+                elif self.mode == "no_body":
+                    row["body"] = None
+                elif self.mode == "drift" and self.calls > 1:
+                    row["title"] = "a new title"
+                return row
+        for mode in ("bad_number", "bad_url", "no_body", "drift"):
+            with self.subTest(mode=mode), self.assertRaises(PAGE.FrontPageError):
+                PAGE.inspect_native(Provider(mode), 600)
+        outside = Provider("none")
+        outside.repository = "untrusted/repo"
+        with self.assertRaises(PAGE.FrontPageError):
+            PAGE.inspect_native(outside, 600)
+
+    def test_native_pinned_body_mismatch_and_cli_never_write(self):
+        class Provider:
+            repository = "reallaksh19/Common"
+            def get_issue(self, issue):
+                return {
+                    "number": issue,
+                    "html_url": f"https://github.com/reallaksh19/Common/issues/{issue}",
+                    "title": "native",
+                    "body": front("current") + governing(issue),
+                }
+        provider=Provider()
+        with self.assertRaisesRegex(PAGE.FrontPageError, "differs from pinned"):
+            PAGE.inspect_native(provider, 600, expected_body_sha256="0" * 64)
+        import delp_projection_v35 as DELP
+        with patch.object(DELP, "GhTransport", return_value=provider):
+            self.assertEqual(0, PAGE.main(["--issue", "600", "--repository",
+                                           "reallaksh19/Common"]))
+        self.assertEqual("reallaksh19/Common", provider.repository)
 
     def test_cli_is_read_only_no_write_and_fail_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
