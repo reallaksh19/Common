@@ -143,7 +143,7 @@ def main() -> int:
     trace, view = run_guarded_trace(first_invocation=True, include_source_view=True)
     args.first_trace_report.parent.mkdir(parents=True, exist_ok=True)
     args.first_trace_report.write_text(
-        json.dumps(trace, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+        json.dumps(trace, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     if trace["source_outcome"] != "SOURCE_REPLAY_SUCCEEDED_NO_ACCEPTANCE":
         # Only a whitelisted class + reason code, not provider stderr/body.
         exc_class = trace["source_exception_class"]
@@ -158,7 +158,7 @@ def main() -> int:
         return 1
     args.first_source_report.parent.mkdir(parents=True, exist_ok=True)
     args.first_source_report.write_text(
-        json.dumps(view, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+        json.dumps(view, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return 0
 
 
