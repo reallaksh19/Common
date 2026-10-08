@@ -610,7 +610,8 @@
           "outcome": "The successor context preserves unresolved reasoning and authority limits without creating new custody or merge permission.",
           "verify": "No-mutation/no-approval/no-automatic-replan oracle"
         }
-      ]
+      ],
+      "primary_pr": "Common#800"
     }
   ]
 }
