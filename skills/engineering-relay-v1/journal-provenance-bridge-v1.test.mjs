@@ -84,7 +84,6 @@ function expected(b) {
   return {repository:'reallaksh19/Common',parent_issue:PARENT,source_sha:SHA,
     bundle_sha256:b.sha256,tip_sha256:b.manifest.tip.sha256};
 }
-const refused=(p,code)=>assert.rejects(p,e=>e.code===code,e=>e.message);
 const bridgeRefused=(p,code)=>assert.rejects(p,e=>e instanceof JournalLineageError&&e.code===code);
 
 test('real two-agent R2-A replay projects into actual R1 validate/forward/reverse APIs',async()=>{
@@ -132,7 +131,7 @@ test('forged Owner text or swapped original source is refused, not silently join
   const a=seed();a.owner_intents[0].raw_text='a different owner instruction';
   await bridgeRefused(projectLocalJournal(f.dir,a,bindings()),'OWNER_SOURCE_MISMATCH');
   const b=seed();b.owner_intents[0].original_source={kind:'GITHUB_ISSUE',
-    status:'FIRST_DURABLE_MIRROR',locator:'https://github.com/reallaksh19/Common/issues/787'};
+    status:'CLAIMED',locator:'https://github.com/reallaksh19/Common/issues/787'};
   await bridgeRefused(projectLocalJournal(f.dir,b,bindings()),'OWNER_SOURCE_MISMATCH');
 });
 test('a prompt needs one explicit binding to an existing seed OwnerIntent',async()=>{
@@ -160,11 +159,10 @@ test('R1 structural seed cannot inject producer-owned session/evidence rows',asy
 });
 test('R1 global ID namespace collisions fail closed rather than shadow Owner claims',async()=>{
   const f=await fixture();
-  const s=seed();s.owner_intents[0].id='S1';s.claims[0].intent_ids=['S1'];
-  await refused(projectLocalJournal(f.dir,s,bindings()),undefined).catch(()=>{});
-  // Alias a real session ID to another R1 object while keeping valid seed links.
-  const t=seed();t.responsibilities[0].id='S1';t.responsibilities[1].depends_on=['S1'];
-  await assert.rejects(projectLocalJournal(f.dir,t,bindings()));
+  const s=seed();s.claims[0].id='S1';
+  s.responsibilities[0].claim_ids=['S1'];s.responsibilities[1].claim_ids=['S1'];
+  await assert.rejects(projectLocalJournal(f.dir,s,bindings()),
+    e=>e.name==='ProvenanceError'&&e.message.includes('duplicate global ID S1'));
 });
 test('redacted Owner prompt is not fabricated into R1 raw_text',async()=>{
   const f=await fixture(items=>{items[0].content={visibility:'REDACTED',
