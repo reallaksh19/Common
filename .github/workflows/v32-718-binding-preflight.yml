@@ -3,7 +3,7 @@ name: v32-718-binding-preflight
 on:
   pull_request:
     paths:
-      - '.github/v32-evidence-spine/718-proposal-v2.json'
+      - '.github/v32-evidence-spine/**'
       - '.github/workflows/v32-718-binding-preflight.yml'
   workflow_dispatch:
 
@@ -92,3 +92,69 @@ jobs:
           print('V32_733_DRY_RUN_REJECTED_FACTS=' + str(len(preview['rejected_facts'])))
           print('V32_733_NO_MUTATION=PASS')
           PY
+
+  golden-oracle-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check Oracle PRECOMMIT precedes implementation
+        run: |
+          git cat-file -e 80a9c03d8f33ace129d21cb868c93e9359a8868a^{commit}
+          git cat-file -e 6a61041f1aadaf9fb4975b225f4ca48e379f508f^{commit}
+          git merge-base --is-ancestor 80a9c03d8f33ace129d21cb868c93e9359a8868a 6a61041f1aadaf9fb4975b225f4ca48e379f508f
+          echo 'PRECOMMITTED_ORACLE_ORDER=PASS'
+      - name: Run ten named golden preflight tests on REAL V3.2 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python -m unittest discover -s .github/v32-evidence-spine -p 'test_vertical_cycle_preflight_v32.py' -v 2>&1 | tee artifacts/test-discovery.log
+          python - <<'PY'
+          from pathlib import Path
+          raw = Path("artifacts/test-discovery.log").read_text()
+          names = [f"test_{n:02d}_" for n in range(1, 11)]
+          missing = [name for name in names if name not in raw]
+          if missing or "Ran 10 tests" not in raw or "OK" not in raw:
+              raise SystemExit(f"NAMED_CASES_NOT_EXECUTED: {missing}")
+          print("V32_718_NAMED_TEST_EXECUTION=10")
+          PY
+      - name: Run golden preflight and deliberate full-chain RED
+        shell: bash
+        run: |
+          set -euo pipefail
+          python .github/v32-evidence-spine/vertical_cycle_preflight_v32.py \
+            --mode preflight --report artifacts/v32-718-preflight.json > artifacts/preflight.log
+          set +e
+          python .github/v32-evidence-spine/vertical_cycle_preflight_v32.py \
+            --mode full --report artifacts/v32-718-full-expected-red.json > artifacts/full.log
+          rc=$?
+          set -e
+          if [ "$rc" -ne 2 ]; then
+            echo "MISSING_EXPECTED_RED: $rc"
+            exit 1
+          fi
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path("artifacts/v32-718-preflight.json").read_text())
+          b=json.loads(Path("artifacts/v32-718-full-expected-red.json").read_text())
+          assert a["exit_code"] == 0 and len(a["negative_mutations"]) == 9
+          assert a["consumer_results"]["AGENT_MATRIX"] == "NOT_IMPLEMENTED"
+          assert b["exit_code"] == 2
+          assert b["full_integrated_gate"] == "FAIL_CLOSED_UNIMPLEMENTED_CONSUMERS"
+          print("V32_718_READ_ONLY_GOLDEN_PREFLIGHT=PASS")
+          print("V32_718_FULL_INTEGRATION=EXPECTED_RED_NOT_IMPLEMENTED")
+          print("V32_718_INPUT_DIGEST="+a["fixture_manifest_digest"])
+          PY
+      - name: Retain golden preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v32-718-precommitted-golden-preflight
+          path: artifacts/
+          retention-days: 30
