@@ -278,6 +278,24 @@ class AuthenticatedProviderTests(unittest.TestCase):
             self.assertFalse(kw.get("shell", False))
             self.assertNotIn("canary-never-printed", " ".join(argv))
 
+    def test_real_job_log_requests_explicit_safe_escape_handling(self):
+        import subprocess
+        from unittest import mock
+        args_seen = []
+        def fake_run(argv, **kw):
+            args_seen.append(argv)
+            return subprocess.CompletedProcess(
+                argv, 0, stdout=("2026-10-08T00:00:00Z " + TEST_LINE + "\\n").encode(), stderr=b""
+            )
+        with mock.patch.dict("os.environ", {"GH_TOKEN": "canary"}, clear=True):
+            with mock.patch.object(M.subprocess, "run", side_effect=fake_run):
+                text = M.GhReadOnlyProvider().get_job_log(REPO, 9002)
+        self.assertIn(TEST_LINE, text)
+        self.assertIn("--allow-escape-sequences", args_seen[0],
+                      "GitHub CLI refuses real ANSI-bearing logs without this flag")
+        self.assertEqual("--method", args_seen[0][2])
+        self.assertEqual("GET", args_seen[0][3])
+
     def test_incomplete_runs_page_returns_unknown(self):
         import json
         import subprocess
