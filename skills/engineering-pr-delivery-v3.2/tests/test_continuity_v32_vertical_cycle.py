@@ -206,7 +206,7 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         result = view.build_views(
             live, self.manifest, observations=observations, selected_leaf="Common#733",
             phase="C4", human_titles={"Common#718": "V3.2 Evidence Spine",
-            "Common#733": "Issue/PR Views"})
+            "Common#733": "Issue/PR Views"}, title_contract="C4-S6")
         self.assertEqual(
             "🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine",
             result["issue_titles"]["Common#718"])
