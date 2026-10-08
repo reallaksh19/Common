@@ -1,7 +1,7 @@
 {
   "schema": "common-v32-811-c6-runtime-red-golden-v1",
   "owner_outcome": "Parent issue → Owner intent → task decomposition → task evidence → live issue scoreboards → smart PR title and description → session-memory research → successor handover",
-  "release": "RED_PREFLIGHT_ONLY",
+  "release": "LEGACY_BASELINE_TRANSITION_TO_SOURCE_BOUND_CANDIDATE",
   "governing_refs": [
     "Common#718",
     "Common#793",
@@ -10,7 +10,7 @@
   "product_base": "7d7dc0af38b113fb4ce9447226671e8d657727b9",
   "intended_product_path": "skills/engineering-pr-delivery-v3.2/scripts/plan_handover.py",
   "source_guard": "FROZEN_PATH_ADDITIONAL_OWNER_AUTHORIZATION_REQUIRED",
-  "exact_auth_status": "NOT_GRANTED",
+  "exact_auth_status": "BASE_RESIDENT_C6_EXACT_TWO_PATHS_CANDIDATE",
   "scenarios": [
     {
       "id": "R01",
@@ -19,27 +19,27 @@
     },
     {
       "id": "R02",
-      "action": "Attempt to pass delp_source to existing plan_handover signature",
-      "expected": "Reject unexpected delp_source parameter; proves product C6 caller gap"
+      "action": "Reject invalid explicitly supplied source rather than rejecting the delp_source argument itself",
+      "expected": "Source opt-in accepted by signature; malformed graph fails closed before transaction"
     },
     {
       "id": "R03",
       "action": "Instrument actual source adapter in legacy transaction",
-      "expected": "Legacy transaction does not invoke source adapter; adapter remains opt-in to build_context only"
+      "expected": "Legacy non-opted handover must still avoid source adapter, no implicit authority"
     },
     {
       "id": "R04",
-      "action": "Check real build_context interface separately",
-      "expected": "Source-bound opt-in exists in build_context but is not passed by plan_handover"
+      "action": "Both actual builder and production PLAN_HANDOVER accept explicit source input",
+      "expected": "Both source binding signatures exist; no implicit source if omitted"
     },
     {
       "id": "R05",
       "action": "Verify source/code and frozen boundary after suite",
-      "expected": "No modified V3.2 source, no V3.5 change, no accepting facts, no PR merge or inferred original-chat authentication"
+      "expected": "Legacy three-question mode still functions without source input or newly inferred Owner origin"
     }
   ],
-  "expected_currentness": "SOURCE_BINDING_NOT_IN_NORMAL_HANDOVER",
-  "expected_release_state": "NOT_IMPLEMENTED",
+  "expected_currentness": "LEGACY_HANDOVER_UNBOUND_UNLESS_EXPLICIT_OPT_IN",
+  "expected_release_state": "C6_PRODUCT_CANDIDATE_NOT_INDEPENDENT_ACCEPTANCE",
   "protected": [
     "No new fifth publication family",
     "No handover P/E progress",
@@ -48,7 +48,7 @@
     "No production write or trusted scoreboard activation"
   ],
   "long_term_acceptance": [
-    "Real CLI and plan_handover caller include source pin validated against native authenticated GET-only provider",
+    "C6 product candidate now wires CLI source input; independent native CLI and cold-successor review still required",
     "Generated HANDOVER_CONTEXT records exact DELP source graph/plan/input/provider basis",
     "HANDOVER_PLANNED event recorded exactly once with failure atomicity",
     "Changed live source blocks stale source-bound continuation but legacy caller remains usable",
