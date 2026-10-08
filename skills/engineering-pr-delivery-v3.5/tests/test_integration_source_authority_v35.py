@@ -15,6 +15,8 @@ import integration_source_authority_v35 as SOURCE
 
 FIXTURE = ROOT / "examples/integration/real-common-600-604-712.golden.json"
 OWNER = json.loads(FIXTURE.read_text(encoding="utf-8"))["owner_origin"]
+RECEIPT_PATH = ROOT / "examples/integration/common-717-owner-source-receipt.golden.json"
+RECEIPT = json.loads(RECEIPT_PATH.read_text(encoding="utf-8"))["observed_source"]
 
 
 def graph():
@@ -41,19 +43,7 @@ class SourceProvider:
         self.head = "a" * 40
         self.move_head_after_read = False
         self.calls = []
-        self.comment = {
-            "id": 6051883834,
-            "html_url": OWNER["first_durable_mirror"],
-            "issue_url": "https://api.github.com/repos/reallaksh19/Common/issues/717",
-            "author_association": "OWNER",
-            "user": {"login": "reallaksh19"},
-            "updated_at": "2026-10-08T03:58:15Z",
-            "body": ("OWNER_INTENT_SOURCE_RECEIPT_V1\n\n"
-                     "**Verbatim Owner utterance (first durable copy):**\n\n"
-                     + "\n".join("> " + line if line else ">"
-                                 for line in OWNER["verbatim"].split("\n")) +
-                     "\n\n**Original source:** UNAVAILABLE"),
-        }
+        self.comment = copy.deepcopy(RECEIPT)
         self.issue = {"number": 717, "title": "Owner claim issue"}
         self.pull = {
             "number": 712, "state": "open", "draft": True,
@@ -104,6 +94,17 @@ class VerifiedSourcePreflight(unittest.TestCase):
         )
         args.update(kwargs)
         return SOURCE.assess(**args)
+
+    def test_retained_provider_receipt_is_independent_full_text_oracle(self):
+        self.assertEqual(
+            OWNER["verbatim"],
+            SOURCE._full_mirror_quote(RECEIPT["body"])
+        )
+        self.assertEqual(
+            "https://github.com/reallaksh19/Common/issues/717#issuecomment-6051883834",
+            RECEIPT["html_url"]
+        )
+        self.assertEqual("OWNER", RECEIPT["author_association"])
 
     def test_mirror_verified_but_original_source_and_custody_not_promoted(self):
         record = self.run_preflight()
