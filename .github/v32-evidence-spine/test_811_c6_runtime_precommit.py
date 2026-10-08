@@ -1,6 +1,6 @@
-"""C6 frozen RED oracle over actual V3.2 PLAN_HANDOVER transaction.
+"""C6 legacy compatibility and explicit source transition over actual PLAN_HANDOVER.
 
-Tests intentionally prove a missing runtime feature. They do not approve C6.
+Tests verify source is optional; passing never constitutes independent C6 approval.
 """
 from __future__ import annotations
 
@@ -34,9 +34,9 @@ class RealC6RuntimeRedPrecommit(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         assert ORACLE["schema"] == "common-v32-811-c6-runtime-red-golden-v1"
-        assert ORACLE["release"] == "RED_PREFLIGHT_ONLY"
+        assert ORACLE["release"] == "LEGACY_BASELINE_TRANSITION_TO_SOURCE_BOUND_CANDIDATE"
         assert [x["id"] for x in ORACLE["scenarios"]] == [f"R{i:02d}" for i in range(1, 6)]
-        assert ORACLE["expected_release_state"] == "NOT_IMPLEMENTED"
+        assert ORACLE["expected_release_state"] == "C6_PRODUCT_CANDIDATE_NOT_INDEPENDENT_ACCEPTANCE"
 
     @staticmethod
     def _run(root, base, *, count=None):
@@ -66,7 +66,8 @@ class RealC6RuntimeRedPrecommit(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base = prepare_git(root)
-            with self.assertRaisesRegex(TypeError, "delp_source"):
+            from handover_context import HandoverContextError
+            with self.assertRaises(HandoverContextError):
                 plan_handover(
                     root, tx_id="TX-C6-RED-002", event_id="EVT-C6-RED-002",
                     actor="owner", target_path=target_observation(root),
@@ -88,8 +89,8 @@ class RealC6RuntimeRedPrecommit(unittest.TestCase):
     def test_r04_real_source_supports_opt_in_but_runtime_does_not(self):
         self.assertTrue(callable(build_delp_source_bound_successor))
         self.assertIn("delp_source", inspect.signature(build_context).parameters)
-        self.assertNotIn("delp_source", inspect.signature(plan_handover).parameters)
-        self.assertEqual("SOURCE_BINDING_NOT_IN_NORMAL_HANDOVER",
+        self.assertIn("delp_source", inspect.signature(plan_handover).parameters)
+        self.assertEqual("LEGACY_HANDOVER_UNBOUND_UNLESS_EXPLICIT_OPT_IN",
                          ORACLE["expected_currentness"])
 
     def test_r05_requested_real_successor_challenge_still_isnt_source_bound(self):

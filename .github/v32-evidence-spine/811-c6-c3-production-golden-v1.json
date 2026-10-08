@@ -1,0 +1,74 @@
+{
+  "schema": "common-v32-c6-c3-production-golden-v1",
+  "owner_ref": "Common#718",
+  "child_ref": "Common#811",
+  "base_sha": "9fa0a4030ddadb901757ee42f3ab0a79b2571720",
+  "owner_original_message_permalink": "UNKNOWN",
+  "expectations": [
+    {
+      "id": "P01",
+      "situation": "actual PLAN_HANDOVER with explicit source-bound DELP graph/leaf/read-only provider",
+      "expected": "COMMITTED, context source_bound_successor CURRENT_READ_ONLY, source digests in entry and event, one HANDOVER_PLANNED, no new execution or merge authority"
+    },
+    {
+      "id": "P02",
+      "situation": "same source-bound handover with pinned frozen digest drift",
+      "expected": "TransactionError SOURCE_BOUND_RECONCILIATION_REQUIRED before manifest, events, snapshot, lease or context mutation"
+    },
+    {
+      "id": "P03",
+      "situation": "provider fails to return selected leaf candidate commit or base commit",
+      "expected": "HandoverContextError and zero new transaction/event/output"
+    },
+    {
+      "id": "P04",
+      "situation": "source provider observation changes between double reads",
+      "expected": "HandoverContextError SOURCE_PROVIDER_CHANGED_DURING_READ and zero transaction side effects"
+    },
+    {
+      "id": "P05",
+      "situation": "existing legacy PLAN_HANDOVER without source",
+      "expected": "Legacy success, no source digest claims; current C0 transaction tests remain applicable except stale signature expectations"
+    },
+    {
+      "id": "P06",
+      "situation": "authenticated CLI opt-in with no token, repository mismatch or invalid graph revision",
+      "expected": "Reject before any GitHub call or mutation"
+    },
+    {
+      "id": "P07",
+      "situation": "actual GitHub GET-only graph loading at pinned source commit and correct repository",
+      "expected": "Validate source blob is canonical file and graph repository equals GITHUB_REPOSITORY; transport cannot issue write"
+    },
+    {
+      "id": "P08",
+      "situation": "transaction interruption after one or two writes in source-bound mode",
+      "expected": "No falsely committed handover; recover_all yields rollback or explicit recovery debt"
+    },
+    {
+      "id": "P09",
+      "situation": "Source changes after initial context construction but prior to PLAN_HANDOVER transaction execution",
+      "expected": "Re-read released DELP graph and read-only provider against exact frozen context digests directly before execute; reject moved provider with no transaction/event/context/lease write"
+    },
+    {
+      "id": "P10",
+      "situation": "Native CLI reads an authenticated graph at an exact GitHub commit and path",
+      "expected": "Actual HANDOVER_PLANNED event records read-only repo/commit/path source location plus graph digest, enabling cold successor retrieval; absent in legacy mode; does not authenticate original Owner chat message"
+    }
+  ],
+  "source_paths": [
+    "skills/engineering-pr-delivery-v3.2/scripts/plan_handover.py",
+    "skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py"
+  ],
+  "constraints": {
+    "required_c4": "AMEND-V32-ES-RRECON-014",
+    "required_c6": "AMEND-V32-ES-RRECON-RUNTIME-015",
+    "no_v35_edit": true,
+    "failed_source_never_writes": true,
+    "no_reviewer_self_approval": true,
+    "no_merge": true,
+    "protected_scoreboard": "OFF",
+    "no_owner_prompt_forgery": true
+  },
+  "test_first": true
+}

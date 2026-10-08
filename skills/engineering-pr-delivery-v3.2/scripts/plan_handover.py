@@ -2,9 +2,15 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
+import base64
+import json
+import os
+from pathlib import Path, PurePosixPath
+import re
+import subprocess
+from urllib.parse import quote
 
-from handover_context import build_context
+from handover_context import build_context, build_delp_source_bound_successor, UNKNOWN_OWNER_SOURCE
 from intelligence_projection import build_improvement, build_task
 from lease_liveness import active_lease_renewal
 from programme_reconciliation import assess_boundary
@@ -12,6 +18,139 @@ from relay_can import evaluate as can_action
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 from relay_tx import _assert_event_ids_available, _event, _issue_scoped_id, _transition_event_ids
+
+
+
+def _assert_native_graph_current_release(repository: str, graph_path: str, pinned_raw: bytes) -> None:
+    """Bind native handover to current default-branch graph, not just a caller SHA.
+
+    The same canonical graph must feed decomposition/scoreboards and a CURRENT
+    successor. An immutable agent-selected commit is insufficient release proof.
+    This is provider-currentness only, not Owner approval or a merge grant.
+    """
+    try:
+        repo_response = subprocess.run(
+            ["gh", "api", "--method", "GET", "repos/" + repository],
+            capture_output=True, text=True, check=True, timeout=45,
+        )
+        repo_meta = json.loads(repo_response.stdout)
+        if (not isinstance(repo_meta, dict)
+                or str(repo_meta.get("full_name") or "").lower() != repository.lower()):
+            raise ValueError("repository identity mismatch")
+        branch = repo_meta.get("default_branch")
+        if not isinstance(branch, str) or not re.fullmatch(r"[A-Za-z0-9_./-]{1,200}", branch):
+            raise ValueError("missing safe default branch")
+        endpoint = ("repos/" + repository + "/contents/"
+                    + quote(graph_path, safe="/") + "?ref=" + quote(branch, safe=""))
+        released_response = subprocess.run(
+            ["gh", "api", "--method", "GET", endpoint],
+            capture_output=True, text=True, check=True, timeout=45,
+        )
+        item = json.loads(released_response.stdout)
+        if not isinstance(item, dict) or item.get("type") != "file" or item.get("encoding") != "base64":
+            raise ValueError("default branch graph not a canonical content file")
+        released_raw = base64.b64decode(item["content"], validate=False)
+    except (OSError, subprocess.SubprocessError, ValueError, KeyError, TypeError) as exc:
+        raise TransactionError("SOURCE_RELEASED_GRAPH_GET_FAILED") from exc
+    if released_raw != pinned_raw:
+        raise TransactionError("SOURCE_GRAPH_NOT_CURRENT_RELEASED")
+
+
+def _native_delp_source(
+    *, repository: str, graph_revision: str, graph_path: str,
+    leaf_ref: str, frozen_basis_path: Path | None = None,
+) -> dict:
+    """Authenticated GitHub GET-only source for CLI opt-in.
+
+    Never execute the fetched graph, accept ambient repository inference, or
+    export the writer methods from the general DELP transport.
+    """
+    if not os.environ.get("GH_TOKEN") and not os.environ.get("GITHUB_TOKEN"):
+        raise TransactionError("SOURCE_GITHUB_TOKEN_REQUIRED")
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
+        raise TransactionError("SOURCE_REPOSITORY_INVALID")
+    if repository.lower() != os.environ.get("GITHUB_REPOSITORY", "").lower():
+        raise TransactionError("SOURCE_REPOSITORY_NOT_AUTHENTICATED")
+    if not re.fullmatch(r"[0-9a-f]{40}", graph_revision):
+        raise TransactionError("SOURCE_GRAPH_REVISION_MUST_BE_EXACT_SHA")
+    path = PurePosixPath(graph_path)
+    if (path.is_absolute() or not graph_path.endswith(".json")
+            or any(part in ("", ".", "..") for part in graph_path.split("/"))
+            or len(graph_path) > 256):
+        raise TransactionError("SOURCE_GRAPH_PATH_NOT_REPOSITORY_RELATIVE")
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+#[1-9][0-9]*", leaf_ref):
+        raise TransactionError("SOURCE_LEAF_REF_INVALID")
+
+    endpoint = ("repos/" + repository + "/contents/" + quote(graph_path, safe="/")
+                + "?ref=" + graph_revision)
+    try:
+        response = subprocess.run(
+            ["gh", "api", "--method", "GET", endpoint],
+            capture_output=True, text=True, check=True, timeout=45,
+        )
+        item = json.loads(response.stdout)
+        if item.get("type") != "file" or item.get("encoding") != "base64":
+            raise ValueError("not a canonical GitHub content blob")
+        raw = base64.b64decode(item["content"], validate=False)
+        if len(raw) > 5_000_000:
+            raise ValueError("source graph exceeds bounded input")
+        graph = json.loads(raw)
+    except (OSError, subprocess.SubprocessError, ValueError, KeyError, TypeError) as exc:
+        raise TransactionError("SOURCE_GRAPH_AUTHENTICATED_GET_FAILED") from exc
+    if not isinstance(graph, dict) or (
+        str((graph.get("programme") or {}).get("repository") or "").lower()
+        != repository.lower()
+    ):
+        raise TransactionError("SOURCE_GRAPH_REPOSITORY_MISMATCH")
+
+    # Mandatory release custody: a pin can identify a candidate PR graph that is
+    # not yet the graph used by the live DELP scoreboard. Do not call that CURRENT.
+    def release_check() -> None:
+        _assert_native_graph_current_release(repository, graph_path, raw)
+
+    release_check()
+
+    import delp_projection_v32 as delp
+
+    class ReadOnlyGithub:
+        """Expose only the five GitHub GET methods required by the DELP reader."""
+        def __init__(self):
+            self.__transport = delp.GhTransport(repository)
+
+        def get_commit_sha(self, ref):
+            return self.__transport.get_commit_sha(ref)
+
+        def get_issue(self, number):
+            return self.__transport.get_issue(number)
+
+        def get_pull(self, number):
+            return self.__transport.get_pull(number)
+
+        def compare(self, base, head):
+            return self.__transport.compare(base, head)
+
+        def list_comments(self, number):
+            return self.__transport.list_comments(number)
+
+    frozen_basis = None
+    if frozen_basis_path is not None:
+        frozen_basis = load_yaml(frozen_basis_path)
+        if isinstance(frozen_basis, dict) and set(frozen_basis) == {"digests"}:
+            frozen_basis = frozen_basis["digests"]
+    return {
+        "graph": graph,
+        "leaf_ref": leaf_ref,
+        "provider": ReadOnlyGithub(),
+        "frozen_basis": frozen_basis,
+        "__native_release_check": release_check,
+        "__native_graph_source": {
+            "repository": repository,
+            "revision": graph_revision,
+            "path": graph_path,
+            "permalink": "https://github.com/" + repository
+                         + "/blob/" + graph_revision + "/" + graph_path,
+        },
+    }
 
 
 def _owner_intent_handover_options(owner_intent: dict | None) -> tuple[int | None, list[str], bool]:
@@ -73,6 +212,7 @@ def plan_handover(
     selected_programme_ref: str | None = None,
     successor_challenge_count: int | None = None,
     owner_intent: dict | None = None,
+    delp_source: dict | None = None,
     fail_after: int | None = None,
 ):
     allowed = can_action(root, "HANDOVER")
@@ -128,6 +268,24 @@ def plan_handover(
         successor_challenge_count,
     )
     improvement_view = build_improvement(root)
+    # Source locations are custody metadata for the EVENT; keep the existing
+    # C4 handover-context schema strictly unchanged and pass only its
+    # authoritative source input keys to the source-bound DELP builder.
+    native_graph_source = (
+        delp_source.get("__native_graph_source")
+        if isinstance(delp_source, dict) else None
+    )
+    native_release_check = (
+        delp_source.get("__native_release_check")
+        if isinstance(delp_source, dict) else None
+    )
+    if native_release_check is not None and not callable(native_release_check):
+        raise TransactionError("SOURCE_RELEASE_CHECK_INVALID")
+    context_source = (
+        {k: v for k, v in delp_source.items()
+         if k not in {"__native_graph_source", "__native_release_check"}}
+        if isinstance(delp_source, dict) else delp_source
+    )
     context, snapshot = build_context(
         root,
         base_ref=base_ref,
@@ -139,7 +297,12 @@ def plan_handover(
         improvement_view_override=improvement_view,
         successor_challenge_count=resolved_challenge_count,
         successor_boundary_constraints=owner_boundary_constraints,
+        delp_source=context_source,
     )
+    source_bound = context.get("source_bound_successor")
+    if delp_source is not None:
+        if not isinstance(source_bound, dict) or source_bound.get("currentness") != "CURRENT_READ_ONLY":
+            raise TransactionError("SOURCE_BOUND_RECONCILIATION_REQUIRED")
     task_meta = (context.get("accumulated_learning") or {}).get("task_snapshot") or {}
     improvement_meta = (context.get("accumulated_learning") or {}).get("improvement_view") or {}
     if canonical_digest(task_snapshot) != task_meta.get("digest"):
@@ -176,6 +339,15 @@ def plan_handover(
             "selected_programme_frontier": programme_assessment.get("selected_programme_frontier"),
             "programme_continuation": programme_assessment.get("continuation"),
             "next_programme_frontier": programme_assessment.get("next_frontier"),
+            **({
+                "source_bound_currentness": source_bound["currentness"],
+                "source_bound_input_digest": source_bound["digests"]["input"],
+                "source_bound_plan_digest": source_bound["digests"]["plan"],
+                "source_bound_graph_digest": source_bound["digests"]["graph"],
+                "source_bound_provider_digest": source_bound["digests"]["provider"],
+            } if source_bound is not None else {}),
+            **({"source_graph_pinned_location": native_graph_source}
+               if native_graph_source is not None else {}),
         },
     ))
 
@@ -188,6 +360,23 @@ def plan_handover(
     if renewal is not None:
         lease_path, renewed_lease = renewal
         replacements[lease_path] = yaml_bytes(renewed_lease)
+
+    # A provider can move after context was first constructed. Freeze the
+    # transaction against the *same* graph/plan/input/provider digests again
+    # immediately before entering the transactional staging/commit boundary.
+    # This is a read-only freshness fence, not an external GitHub CAS.
+    if source_bound is not None:
+        if native_release_check is not None:
+            native_release_check()
+        last_read = build_delp_source_bound_successor(
+            context_source["graph"],
+            leaf_ref=context_source["leaf_ref"],
+            provider=context_source["provider"],
+            frozen_basis=source_bound["digests"],
+            owner_source_status=context_source.get("owner_source_status", UNKNOWN_OWNER_SOURCE),
+        )
+        if last_read["currentness"] != "CURRENT_READ_ONLY":
+            raise TransactionError("SOURCE_BOUND_RECONCILIATION_REQUIRED")
 
     return execute(
         root,
@@ -236,7 +425,35 @@ def main() -> None:
         "--owner-intent",
         help="YAML file containing either OWNER_INTENT itself or a parse_owner_command result with an owner_intent field.",
     )
+    parser.add_argument(
+        "--source-repository",
+        help="GitHub owner/name for an explicitly opted-in, GET-only DELP source.",
+    )
+    parser.add_argument("--source-graph-revision",
+                        help="Immutable 40-hex GitHub commit holding the released graph.")
+    parser.add_argument("--source-graph-path",
+                        help="Repository-relative JSON graph path within that commit.")
+    parser.add_argument("--source-leaf-ref",
+                        help="Exact DELP leaf ref, e.g. Common#793.")
+    parser.add_argument("--source-frozen-basis",
+                        help="Optional YAML containing the previous graph/plan/input/provider digests.")
     args = parser.parse_args()
+    selectors = [args.source_repository, args.source_graph_revision,
+                 args.source_graph_path, args.source_leaf_ref]
+    if any(selectors) and not all(selectors):
+        parser.error("source-bound handover requires all four source selectors")
+    if args.source_frozen_basis and not all(selectors):
+        parser.error("--source-frozen-basis requires complete source selectors")
+    delp_source = (
+        _native_delp_source(
+            repository=args.source_repository,
+            graph_revision=args.source_graph_revision,
+            graph_path=args.source_graph_path,
+            leaf_ref=args.source_leaf_ref,
+            frozen_basis_path=Path(args.source_frozen_basis) if args.source_frozen_basis else None,
+        )
+        if all(selectors) else None
+    )
     result = plan_handover(
         Path(args.repo_root).resolve(),
         tx_id=args.tx_id,
@@ -250,6 +467,7 @@ def main() -> None:
         selected_programme_ref=args.selected_programme_ref,
         successor_challenge_count=args.successor_challenge_count,
         owner_intent=(load_yaml(Path(args.owner_intent)) if args.owner_intent else None),
+        delp_source=delp_source,
     )
     print(f"{result['id']}: {result['status']}")
 

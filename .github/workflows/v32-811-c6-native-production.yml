@@ -1,0 +1,59 @@
+name: v32-811-c6-native-production
+
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-pr-delivery-v3.2/scripts/plan_handover.py'
+      - 'skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py'
+      - '.github/v32-evidence-spine/811_c6_c3_native_transaction.py'
+      - '.github/workflows/v32-811-c6-native-production.yml'
+  push:
+    branches:
+      - 'v32/811-c6-native-production-handover'
+    paths:
+      - 'skills/engineering-pr-delivery-v3.2/scripts/plan_handover.py'
+      - 'skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py'
+      - '.github/v32-evidence-spine/811_c6_c3_native_transaction.py'
+      - '.github/workflows/v32-811-c6-native-production.yml'
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  real-production-handover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install existing V3.2 schemas
+        run: python -m pip install --disable-pip-version-check PyYAML jsonschema
+      - name: Verify golden-first source chronology
+        run: git merge-base --is-ancestor b9ede1f093581e9710dfc0021138e6883c89bd52 HEAD
+      - name: Authenticated GET-only production CLI handover and stale pin
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python .github/v32-evidence-spine/811_c6_c3_native_transaction.py 2>&1 | tee /tmp/v32-811-c6-c3-native.log
+          python - <<'PY'
+          from pathlib import Path
+          data=Path("/tmp/v32-811-c6-c3-native.log").read_text(encoding="utf-8")
+          required=[
+              "C6_C3_NATIVE_GITHUB_GET_CLI_REAL_PLAN_HANDOVER=PASS",
+              "C6_C3_NATIVE_SOURCE_GRAPH_PERMALINK_IN_EVENT=PASS",
+              "C6_C3_NATIVE_STALE_PIN_FAIL_CLOSED_ZERO_TX=PASS",
+              "C6_C3_OWNER_OR_MERGE_AUTHORITY=NOT_GRANTED",
+          ]
+          missing=[x for x in required if x not in data]
+          if missing:
+              raise SystemExit("NATIVE_PLAN_HANDOVER_MISSING_ASSERTIONS: " + repr(missing))
+          print("C6_C3_NATIVE_PRODUCT_TEST=PASS_NOT_INDEPENDENT_ACCEPTANCE")
+          PY

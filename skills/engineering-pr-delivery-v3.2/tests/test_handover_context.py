@@ -1252,3 +1252,190 @@ class HandoverContextTests(unittest.TestCase):
         with self.assertRaisesRegex(HandoverContextError, "SOURCE_CANDIDATE_NOT_BOUND"):
             build_delp_source_bound_successor(graph, leaf_ref="Common#733", provider=provider)
 
+
+    def test_c6_p01_real_transaction_source_bound_context_and_event(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            graph, provider = self._source_bound_fixture()
+            result = plan_handover(
+                root, tx_id="TX-C6-P01", event_id="EVT-C6-P01",
+                actor="owner", target_path=target_observation(root),
+                base_ref=base_ref, complex_mode=False, successor_challenge_count=3,
+                delp_source={"graph": graph, "leaf_ref": "Common#720", "provider": provider},
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
+            bound = context["source_bound_successor"]
+            self.assertEqual("CURRENT_READ_ONLY", bound["currentness"])
+            self.assertEqual("NEVER_FROM_RECONSTRUCTION", bound["execution_admission"])
+            self.assertEqual([], bound["authority_effects"])
+            self.assertEqual(bound["digests"]["input"],
+                             context["successor_entry"]["challenge_basis"]["source_input_digest"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            matches = [e for e in events if e["event_id"] == "EVT-C6-P01"]
+            self.assertEqual(1, len(matches))
+            self.assertEqual(bound["digests"]["input"], matches[0]["details"]["source_bound_input_digest"])
+
+    def test_c6_p02_stale_frozen_provider_denied_before_writes(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            graph, provider = self._source_bound_fixture()
+            before = build_delp_source_bound_successor(graph, leaf_ref="Common#720", provider=provider)
+            provider.sha = "c" * 40
+            events_before = (root / "relay/EVENTS.jsonl").read_bytes()
+            with self.assertRaisesRegex(TransactionError, "SOURCE_BOUND_RECONCILIATION_REQUIRED"):
+                plan_handover(
+                    root, tx_id="TX-C6-P02", event_id="EVT-C6-P02", actor="owner",
+                    target_path=target_observation(root), base_ref=base_ref, complex_mode=False,
+                    delp_source={"graph": graph, "leaf_ref": "Common#720",
+                                 "provider": provider, "frozen_basis": before["digests"]},
+                )
+            self.assertEqual(events_before, (root / "relay/EVENTS.jsonl").read_bytes())
+            self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+            self.assertFalse((root / "relay/TRANSACTIONS/TX-C6-P02").exists())
+
+    def test_c6_p03_p04_invalid_or_racing_provider_cannot_start_transaction(self):
+        for mode in ("missing_head", "moving_issue"):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as td:
+                root = Path(td)
+                _, base_ref = prepare_git(root)
+                graph, provider = self._source_bound_fixture()
+                if mode == "missing_head":
+                    provider.sha = None
+                    expected = "SOURCE_CANDIDATE_SHA_UNVERIFIED"
+                else:
+                    provider.move_during_read = True
+                    expected = "SOURCE_PROVIDER_CHANGED_DURING_READ"
+                before = (root / "relay/EVENTS.jsonl").read_bytes()
+                with self.assertRaisesRegex(HandoverContextError, expected):
+                    plan_handover(
+                        root, tx_id="TX-C6-P03", event_id="EVT-C6-P03", actor="owner",
+                        target_path=target_observation(root), base_ref=base_ref, complex_mode=False,
+                        delp_source={"graph": graph, "leaf_ref": "Common#720", "provider": provider},
+                    )
+                self.assertEqual(before, (root / "relay/EVENTS.jsonl").read_bytes())
+                self.assertFalse((root / "relay/TRANSACTIONS/TX-C6-P03").exists())
+
+    def test_c6_p08_opted_in_interruption_recovers_before_images(self):
+        from transactionlib import recover_all, incomplete_transactions
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            graph, provider = self._source_bound_fixture()
+            before = (root / "relay/EVENTS.jsonl").read_bytes()
+            with self.assertRaisesRegex(TransactionError, "injected transaction interruption"):
+                plan_handover(
+                    root, tx_id="TX-C6-P08", event_id="EVT-C6-P08", actor="owner",
+                    target_path=target_observation(root), base_ref=base_ref, complex_mode=False,
+                    delp_source={"graph": graph, "leaf_ref": "Common#720", "provider": provider},
+                    fail_after=1,
+                )
+            self.assertTrue(incomplete_transactions(root))
+            self.assertEqual(["ROLLED_BACK"], [v["status"] for v in recover_all(root)])
+            self.assertEqual(before, (root / "relay/EVENTS.jsonl").read_bytes())
+            self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+
+    def test_c6_p06_native_cli_rejects_unauthenticated_or_unpinned_source(self):
+        import os
+        from unittest.mock import patch
+        from plan_handover import _native_delp_source
+        opts = {
+            "repository": "reallaksh19/Common",
+            "graph_revision": "b4e61d8f61e9738833564795971692241c2e3df9",
+            "graph_path": ".github/v32-evidence-spine/718-proposal-v2.json",
+            "leaf_ref": "Common#793",
+        }
+        with patch.dict(os.environ, {"GH_TOKEN": "", "GITHUB_TOKEN": "",
+                                      "GITHUB_REPOSITORY": "reallaksh19/Common"}, clear=True):
+            with self.assertRaisesRegex(TransactionError, "SOURCE_GITHUB_TOKEN_REQUIRED"):
+                _native_delp_source(**opts)
+        with patch.dict(os.environ, {"GH_TOKEN": "FAKE_TEST_TOKEN",
+                                      "GITHUB_REPOSITORY": "another/repository"}, clear=True):
+            with self.assertRaisesRegex(TransactionError, "SOURCE_REPOSITORY_NOT_AUTHENTICATED"):
+                _native_delp_source(**opts)
+        with patch.dict(os.environ, {"GH_TOKEN": "FAKE_TEST_TOKEN",
+                                      "GITHUB_REPOSITORY": "reallaksh19/Common"}, clear=True):
+            with self.assertRaisesRegex(TransactionError, "SOURCE_GRAPH_REVISION_MUST_BE_EXACT_SHA"):
+                _native_delp_source(**{**opts, "graph_revision": "main"})
+            with self.assertRaisesRegex(TransactionError, "SOURCE_GRAPH_PATH_NOT_REPOSITORY_RELATIVE"):
+                _native_delp_source(**{**opts, "graph_path": "../bad.json"})
+
+    def test_c6_p09_provider_moves_after_context_before_actual_execute(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            graph, provider = self._source_bound_fixture()
+            getter = provider.get_issue
+            count = [0]
+            def move_at_commit_boundary(n):
+                count[0] += 1
+                issue = getter(n)
+                if count[0] > 4:
+                    issue["title"] = "Live issue changed after source context froze"
+                return issue
+            provider.get_issue = move_at_commit_boundary
+            event_before = (root / "relay/EVENTS.jsonl").read_bytes()
+            with self.assertRaisesRegex(TransactionError, "SOURCE_BOUND_RECONCILIATION_REQUIRED"):
+                plan_handover(
+                    root, tx_id="TX-C6-P09", event_id="EVT-C6-P09",
+                    actor="owner", target_path=target_observation(root),
+                    base_ref=base_ref, complex_mode=False,
+                    delp_source={"graph": graph, "leaf_ref": "Common#720", "provider": provider},
+                )
+            self.assertGreater(count[0], 4)
+            self.assertEqual(event_before, (root / "relay/EVENTS.jsonl").read_bytes())
+            self.assertFalse((root / "relay/TRANSACTIONS/TX-C6-P09").exists())
+            self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+
+    def test_c6_p11_released_graph_custody_cannot_be_self_claimed(self):
+        """P11: exact SHA + valid DELP graph is insufficient without live release custody."""
+        import base64
+        import os
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from plan_handover import _native_delp_source
+
+        graph, _provider = self._source_bound_fixture()
+        pinned = json.dumps(graph, sort_keys=True).encode("utf-8")
+        alternative = copy.deepcopy(graph)
+        # Same repository and proposal metadata, but different current released
+        # material binding.  This models #718 main reserve35 versus #794 reserve20.
+        alternative["nodes"][0]["reserve_weight"] = graph["nodes"][0]["reserve_weight"] + 1
+        released = [json.dumps(alternative, sort_keys=True).encode("utf-8")]
+        revision = "b4e61d8f61e9738833564795971692241c2e3df9"
+        path = ".github/v32-evidence-spine/718-proposal-v2.json"
+
+        def content(raw):
+            return {"type": "file", "encoding": "base64",
+                    "content": base64.b64encode(raw).decode("ascii")}
+
+        def fake_gh(args, **_kwargs):
+            endpoint = args[-1]
+            if endpoint == "repos/reallaksh19/Common":
+                value = {"full_name": "reallaksh19/Common", "default_branch": "main"}
+            elif endpoint.endswith("?ref=" + revision):
+                value = content(pinned)
+            elif endpoint.endswith("?ref=main"):
+                value = content(released[0])
+            else:
+                raise AssertionError("unexpected GitHub request: " + endpoint)
+            return SimpleNamespace(stdout=json.dumps(value))
+
+        opts = {"repository": "reallaksh19/Common",
+                "graph_revision": revision, "graph_path": path,
+                "leaf_ref": "Common#720"}
+        with patch.dict(os.environ, {"GH_TOKEN": "TEST_TOKEN",
+                                      "GITHUB_REPOSITORY": "reallaksh19/Common"}, clear=True):
+            with patch("plan_handover.subprocess.run", side_effect=fake_gh):
+                with self.assertRaisesRegex(TransactionError, "SOURCE_GRAPH_NOT_CURRENT_RELEASED"):
+                    _native_delp_source(**opts)
+                released[0] = pinned
+                source = _native_delp_source(**opts)
+                self.assertTrue(callable(source["__native_release_check"]))
+                # Default branch changes AFTER freezing context, BEFORE commit.
+                released[0] = json.dumps(alternative, sort_keys=True).encode("utf-8")
+                with self.assertRaisesRegex(TransactionError, "SOURCE_GRAPH_NOT_CURRENT_RELEASED"):
+                    source["__native_release_check"]()
