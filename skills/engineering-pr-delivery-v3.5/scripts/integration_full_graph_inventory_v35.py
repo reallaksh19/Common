@@ -74,14 +74,36 @@ def _p0_baseline(transport: Any) -> dict[str, Any]:
     identifier = evidence.get("id")
     if type(identifier) is not int or identifier <= 0:
         raise GraphInventoryError("P0 END lacks a native GitHub comment identity")
+    # Do not promote text posted by a contributor or on another issue to
+    # programme-owner provenance. GitHub returns all these fields on the
+    # native issue-comments collection; absence is UNKNOWN, not approval.
+    owner = transport.repository.split("/", 1)[0]
+    author = evidence.get("user")
+    author_login = author.get("login") if isinstance(author, Mapping) else None
+    issue_api_url = (
+        f"https://api.github.com/repos/{transport.repository}/issues/{P0_ISSUE}"
+    )
+    html_url = (
+        f"https://github.com/{transport.repository}/issues/{P0_ISSUE}"
+        f"#issuecomment-{identifier}"
+    )
+    if (evidence.get("author_association") != "OWNER" or
+            not isinstance(author_login, str) or
+            author_login.casefold() != owner.casefold() or
+            evidence.get("issue_url") != issue_api_url or
+            evidence.get("html_url") != html_url):
+        raise GraphInventoryError(
+            "P0 END provider author/issue/permalink origin not authenticated"
+        )
     state = str(issue.get("state") or "UNKNOWN").upper()
     title = str(issue.get("title") or "")
     return {
         "issue": P0_ISSUE,
         "state": state,
         "title_claims_complete_but_open": state == "OPEN" and "COMPLETE" in title.upper(),
-        "provider_end_receipt":
-            f"https://github.com/reallaksh19/Common/issues/601#issuecomment-{identifier}",
+        "provider_end_receipt": html_url,
+        "provider_end_author": author_login,
+        "provider_end_association": "OWNER",
         "end_sha256": hashlib.sha256(statement.encode("utf-8")).hexdigest(),
         "classification": "RECONCILIATION_ONLY_ZERO_IMPLEMENTATION_CREDIT",
         "programme_graph_weight": "NOT_AUTHORIZED_NOT_DERIVED",
