@@ -6662,5 +6662,13 @@ class HostedV35ColdAgent6Stress(_cold_replay.ColdAgent6StressTests):
     """Authority drift, source readback disagreement and false acceptance cannot pass."""
 
 
+# R7: read-only real provider graph/writer/workflow activation preflight.
+import test_integration_release_preflight_v35 as _release_preflight
+
+
+class HostedV35ReleasePreflight(_release_preflight.ReleasePreflightTests):
+    """No Owner graph/scoreboard grant, no false workflow enabled, no IC release."""
+
+
 if __name__ == "__main__":
     unittest.main()
