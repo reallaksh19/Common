@@ -7259,6 +7259,25 @@ class PinnedNativeCustodyProviderObservations(unittest.TestCase):
         self.assertEqual("SOURCE_NOT_PROVEN", out["status"])
         self.assertEqual("EP_LEAF_SCOPE_MISMATCH", out["reason"])
 
+    def test_retained_repository_438_state_and_lease_rejected_for_604(self):
+        import yaml
+        repo_root = MODULE_PATH.parents[3]
+        paths = [
+            "relay/STATE.yaml",
+            "relay/WORK/EP.438.7.yaml",
+            "relay/LEASES/LEASE.438.7.yaml",
+        ]
+        native = {}
+        for path in paths:
+            native[path] = yaml.safe_load(
+                (repo_root / path).read_text(encoding="utf-8"))
+        self.assertEqual("EP.438.7", native["relay/STATE.yaml"]["execution"]["ep"])
+        self.assertEqual(438, native["relay/WORK/EP.438.7.yaml"]["parent_issue"]["number"])
+        provider = self.Provider(native)
+        result = self.observe(provider=provider)
+        self.assertEqual("SOURCE_NOT_PROVEN", result["status"])
+        self.assertEqual("EP_LEAF_SCOPE_MISMATCH", result["reason"])
+
     def test_one_leaf_source_cannot_be_used_for_another(self):
         provider = self.Provider(self.files())
         out = self.observe(leaf="Common#605", provider=provider)
@@ -7288,7 +7307,6 @@ class PinnedNativeCustodyProviderObservations(unittest.TestCase):
                 self.assertEqual("SOURCE_NOT_PROVEN",
                                  self.observe(provider=provider, selector=selector)["status"])
         docs = self.files()
-        docs["relay/WORK/EP-P3-B8"].pop("parent_issue", None) if "relay/WORK/EP-P3-B8" in docs else None
         docs["relay/WORK/EP-P3-B8.yaml"].pop("parent_issue")
         self.assertEqual("EP_LEAF_SCOPE_MISMATCH",
                          self.observe(provider=self.Provider(docs))["reason"])
