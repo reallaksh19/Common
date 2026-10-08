@@ -1,0 +1,59 @@
+# TEMPLATE ONLY. Not a live workflow: .github/workflows/ is NOT changed by this PR.
+# Copy into default-branch .github/workflows ONLY after R2 source/graph approval,
+# scoped GitHub approval comment readback and Local/Owner programme release.
+# Run only trusted default-branch source. NEVER checkout untrusted PR head.
+name: V35 Smart Scoreboard
+on:
+  workflow_dispatch:
+  pull_request_target:
+    types: [opened, synchronize, ready_for_review, converted_to_draft, reopened, closed]
+  issue_comment:
+    types: [created, edited]
+  check_suite:
+    types: [completed]
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  checks: read
+concurrency:
+  group: v35-scoreboard-${{ github.repository }}
+  cancel-in-progress: false
+jobs:
+  source-governed-scoreboard:
+    name: V35 Smart Scoreboard
+    if: ${{ vars.V35_SCOREBOARD_ENABLED == 'true' && vars.V35_APPROVED_GRAPH_PATH != '' && vars.V35_APPROVED_GRAPH_DIGEST != '' && vars.V35_SCOREBOARD_APPROVAL_REF != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout trusted default branch, never PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install PyYAML
+      - name: Source-governed issue/PR scoreboard reconciliation
+        env:
+          GH_TOKEN: ${{ github.token }}
+          APPROVED_GRAPH: ${{ vars.V35_APPROVED_GRAPH_PATH }}
+          APPROVED_DIGEST: ${{ vars.V35_APPROVED_GRAPH_DIGEST }}
+          APPROVAL_REF: ${{ vars.V35_SCOREBOARD_APPROVAL_REF }}
+          RESP: ${{ vars.V35_SELECTED_RESPONSIBILITY }}
+          CANDIDATE_PR: ${{ vars.V35_SELECTED_PR }}
+          REPO: ${{ github.repository }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_PATH: ${{ github.event_path }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          test -f "$APPROVED_GRAPH"
+          test -n "$RESP"
+          test -n "$CANDIDATE_PR"
+          python skills/engineering-pr-delivery-v3.5/scripts/integration_scoreboard_publish_v35.py \
+            --graph "$APPROVED_GRAPH" --repository "$REPO" \
+            --responsibility "$RESP" --pr "$CANDIDATE_PR" \
+            --event-name "$EVENT_NAME" --event-payload "$EVENT_PATH" \
+            --event-actor "$ACTOR" \
+            --apply --expected-graph-digest "$APPROVED_DIGEST" \
+            --approval-ref "$APPROVAL_REF"
