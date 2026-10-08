@@ -492,5 +492,152 @@ class VerticalResponsibilityCycle(unittest.TestCase):
                     delp.sync_projection(store, live, lambda: [], lambda: {}, {}, **args)
                 self.assertEqual([], store.writes)
 
+    def _writing_provider(self):
+        """Mutable stateful GitHub fake: ACTUAL DELP comment, issue and PR writers."""
+        provider = self._provider()
+        get_issue, get_pull = provider.get_issue, provider.get_pull
+        provider.issues = {n: get_issue(n) for n in (718,733)}
+        provider.issues[733]["title"] = (
+            "🟡 [718›733] R-PROJECTION · C4 · OLD — Issue/PR Views")
+        provider.pull = get_pull(740)
+        provider.comments = {718:[],733:[]}
+        provider.writes = []
+        provider.get_issue = lambda n: copy.deepcopy(provider.issues[n])
+        def pull(number):
+            if number == 740:
+                return copy.deepcopy(provider.pull)
+            return get_pull(number)
+        provider.get_pull = pull
+        provider.list_comments = lambda n: copy.deepcopy(provider.comments.get(n,[]))
+        def post_comment(number, body):
+            row = {"id": 120000+sum(map(len, provider.comments.values())), "body":body}
+            provider.comments[number].append(row)
+            provider.writes.append(("DELP_STATUS_COMMENT",number))
+            return copy.deepcopy(row)
+        provider.post_comment = post_comment
+        def patch_comment(number, body):
+            for n, comments in provider.comments.items():
+                for x in comments:
+                    if x["id"] == number:
+                        x["body"] = body
+                        provider.writes.append(("DELP_STATUS_COMMENT",n))
+                        return copy.deepcopy(x)
+            raise AssertionError("managed comment not present")
+        provider.patch_comment = patch_comment
+        def patch_title(number, title):
+            provider.issues[number]["title"] = title
+            provider.writes.append(("DELP_ISSUE_TITLE",number))
+            return copy.deepcopy(provider.issues[number])
+        provider.patch_title = patch_title
+        def patch_issue_body(number, body):
+            provider.issues[number]["body"] = body
+            provider.writes.append(("ISSUE_BODY_ONLY",number))
+            return copy.deepcopy(provider.issues[number])
+        provider.patch_issue_body = patch_issue_body
+        def patch_pull_title_body(number, title, body):
+            assert number == 740
+            provider.pull["title"], provider.pull["body"] = title,body
+            provider.writes.append(("PR_TITLE_BODY_ONLY",number))
+            return copy.deepcopy(provider.pull)
+        provider.patch_pull_title_body = patch_pull_title_body
+        return provider
+
+    def test_37_actual_single_writer_end_to_end_hosted_fake(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        provider = self._writing_provider()
+        before = replay.live_readback(self.manifest,live,provider)
+        result = replay.guarded_publish(self.manifest,live,provider,
+            expected_head=before["candidate_sha"],
+            expected_input_digest=before["source_input_digest"],apply=True)
+        self.assertEqual("VERIFIED_ALL_SURFACES",result["status"])
+        self.assertEqual("MATCH",result["verified_readback"])
+        self.assertEqual(["Common#733","Common#718","Common#740"],result["applied_surfaces"])
+        self.assertEqual("WRITTEN",result["delp_issue_status"]["Common#733"]["status"])
+        self.assertEqual("WRITTEN",result["delp_issue_status"]["Common#718"]["status"])
+        self.assertEqual([("DELP_STATUS_COMMENT",733),("DELP_ISSUE_TITLE",733),
+            ("DELP_STATUS_COMMENT",718),("ISSUE_BODY_ONLY",733),
+            ("ISSUE_BODY_ONLY",718),("PR_TITLE_BODY_ONLY",740)], provider.writes)
+        for n in (718,733):
+            self.assertIn("Human Owner specification preserved",provider.issues[n]["body"])
+            self.assertIn("relay-v32:issue-read-view:start",provider.issues[n]["body"])
+            self.assertEqual(1,len(provider.comments[n]))
+        self.assertIn("Human PR rationale preserved",provider.pull["body"])
+        self.assertIn("HEAD:ccccccc",provider.pull["title"])
+        self.assertEqual([],result["authority_effects"])
+
+    def test_38_concurrent_human_edit_after_DELP_title_fails_without_overwrite(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        provider = self._writing_provider()
+        initial = replay.live_readback(self.manifest,live,provider)
+        prior_patch = provider.patch_title
+        def human_races_title(number,title):
+            row = prior_patch(number,title)
+            provider.issues[number]["body"] += "\nHUMAN EDIT AFTER TITLE"
+            return row
+        provider.patch_title = human_races_title
+        with self.assertRaises(replay.PublicationIncomplete) as error:
+            replay.guarded_publish(self.manifest,live,provider,
+                expected_head=initial["candidate_sha"],
+                expected_input_digest=initial["source_input_digest"],apply=True)
+        self.assertEqual("INCOMPLETE_SYNC",error.exception.report["status"])
+        self.assertIn("PROVIDER_MOVED_AFTER_DELP_BEFORE_BODY",str(error.exception))
+        self.assertIn("HUMAN EDIT AFTER TITLE",provider.issues[733]["body"])
+        self.assertNotIn("relay-v32:pr-read-view:start",provider.pull["body"])
+        self.assertFalse(any(x[0]=="PR_TITLE_BODY_ONLY" for x in provider.writes))
+
+    def test_39_changed_PR_head_midflight_is_partial_not_false_green(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        provider = self._writing_provider()
+        initial = replay.live_readback(self.manifest,live,provider)
+        prior_patch = provider.patch_issue_body
+        def moved_head(number,body):
+            row = prior_patch(number,body)
+            provider.pull["head"]["sha"] = "d"*40
+            return row
+        provider.patch_issue_body = moved_head
+        with self.assertRaises(replay.PublicationIncomplete) as error:
+            replay.guarded_publish(self.manifest,live,provider,
+                expected_head=initial["candidate_sha"],
+                expected_input_digest=initial["source_input_digest"],apply=True)
+        self.assertEqual("INCOMPLETE_SYNC",error.exception.report["status"])
+        self.assertIn("PROVIDER_MOVED_BEFORE_PR_WRITE",str(error.exception))
+        self.assertFalse(any(x[0]=="PR_TITLE_BODY_ONLY" for x in provider.writes))
+        self.assertEqual("d"*40,provider.pull["head"]["sha"])
+
+    def test_40_single_writer_second_run_idempotent_without_false_progress(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        provider = self._writing_provider()
+        first = replay.live_readback(self.manifest,live,provider)
+        replay.guarded_publish(self.manifest,live,provider,
+            expected_head=first["candidate_sha"],
+            expected_input_digest=first["source_input_digest"],apply=True)
+        original = list(provider.writes)
+        second = replay.live_readback(self.manifest,live,provider)
+        again = replay.guarded_publish(self.manifest,live,provider,
+            expected_head=second["candidate_sha"],
+            expected_input_digest=second["source_input_digest"],apply=True)
+        self.assertEqual("VERIFIED_ALL_SURFACES",again["status"])
+        self.assertEqual([],again["applied_surfaces"])
+        self.assertEqual(original,provider.writes)
+        self.assertEqual("UNCHANGED",again["delp_issue_status"]["Common#733"]["status"])
+        self.assertEqual(0,second["semantic_progress"]["P"])
+        self.assertEqual(0,second["semantic_progress"]["E"])
+
+    def test_41_tampered_PR_write_readback_never_claims_complete(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        provider = self._writing_provider()
+        initial = replay.live_readback(self.manifest,live,provider)
+        orig = provider.patch_pull_title_body
+        def corrupt(number,title,body):
+            return orig(number,title,body+"\nBROKEN")
+        provider.patch_pull_title_body = corrupt
+        with self.assertRaises(replay.PublicationIncomplete) as error:
+            replay.guarded_publish(self.manifest,live,provider,
+                expected_head=initial["candidate_sha"],
+                expected_input_digest=initial["source_input_digest"],apply=True)
+        self.assertIn("PROVIDER_FAILED_PR_READBACK",str(error.exception))
+        self.assertEqual("INCOMPLETE_SYNC",error.exception.report["status"])
+
+
 if __name__ == "__main__":
     unittest.main()
