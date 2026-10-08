@@ -75,18 +75,45 @@ function manifestCore(bytes,expected,repo){
     fail('UNTRUSTED','provider paths and child scope not bounded to R8');
   exact(m.owner_seed,['schema','parent_issue','owner_intents','claims',
     'responsibilities','sessions','task_evidence','research_findings','owner_decisions'],'synthetic R1 seed');
-  if(m.owner_seed.parent_issue!==repo+'#'+m.parent_issue||
-    m.owner_seed.schema!=='relay-provenance-v1'||
-    !Array.isArray(m.owner_seed.owner_intents)||
-    m.owner_seed.owner_intents.length!==1||
-    m.owner_seed.owner_intents[0]?.raw_text!==
-      'SYNTHETIC OWNER REQUEST: verify immutable GitHub content; not a real chat'||
-    m.owner_seed.owner_intents[0]?.original_source?.status!=='UNKNOWN'||
-    !Array.isArray(m.owner_seed.sessions)||m.owner_seed.sessions.length!==0||
-    !Array.isArray(m.owner_seed.task_evidence)||m.owner_seed.task_evidence.length!==0||
-    !Array.isArray(m.bindings)||m.bindings.length!==1||
-    m.bindings[0]?.event_id!=='EV-1'||m.bindings[0]?.intent_id!=='OI-1')
-    fail('UNTRUSTED','manifest is not the approved synthetic fixture shape');
+  // A recomputed SHA is not an authenticated Owner grant. Strictly pin
+  // nested source assertions so forged decisions or alternate origins cannot
+  // arrive through this public synthetic-only recovery channel.
+  const seed=m.owner_seed,intent=seed.owner_intents?.[0],
+    claim=seed.claims?.[0],work=seed.responsibilities?.[0];
+  if(seed.parent_issue!==repo+'#'+m.parent_issue||
+    seed.schema!=='relay-provenance-v1'||
+    !Array.isArray(seed.owner_intents)||seed.owner_intents.length!==1||
+    !Array.isArray(seed.claims)||seed.claims.length!==1||
+    !Array.isArray(seed.responsibilities)||seed.responsibilities.length!==1||
+    !Array.isArray(seed.sessions)||seed.sessions.length!==0||
+    !Array.isArray(seed.task_evidence)||seed.task_evidence.length!==0||
+    !Array.isArray(seed.research_findings)||seed.research_findings.length!==0||
+    !Array.isArray(seed.owner_decisions)||seed.owner_decisions.length!==0||
+    !Array.isArray(m.bindings)||m.bindings.length!==1)
+    fail('UNTRUSTED','synthetic graph cannot contain live decisions or source facts');
+  exact(intent,['id','raw_text','original_source','first_durable_mirror'],'synthetic OwnerIntent');
+  exact(intent.original_source,['kind','status','locator'],'synthetic origin');
+  exact(claim,['id','intent_ids','criterion'],'synthetic claim');
+  exact(work,['id','claim_ids','depends_on','scope','write_surface'],'synthetic work');
+  exact(m.bindings[0],['event_id','intent_id'],'synthetic binding');
+  if(intent.id!=='OI-1'||
+    intent.raw_text!=='SYNTHETIC OWNER REQUEST: verify immutable GitHub content; not a real chat'||
+    intent.original_source.kind!=='CHAT'||
+    intent.original_source.status!=='UNKNOWN'||
+    intent.original_source.locator!==null||
+    intent.first_durable_mirror!=='https://github.com/'+repo+'/issues/'+m.parent_issue||
+    claim.id!=='AC3'||claim.criterion!=='SYNTHETIC intent to module evidence trace'||
+    !Array.isArray(claim.intent_ids)||claim.intent_ids.length!==1||claim.intent_ids[0]!=='OI-1'||
+    work.id!=='R2-B2A'||work.scope!=='Synthetic native custody and trace'||
+    !Array.isArray(work.claim_ids)||work.claim_ids.length!==1||work.claim_ids[0]!=='AC3'||
+    !Array.isArray(work.depends_on)||work.depends_on.length!==0||
+    !Array.isArray(work.write_surface)||work.write_surface.length!==1||
+    work.write_surface[0]!=='skills/engineering-relay-v1/github-journal-lineage-v1.mjs'||
+    m.bindings[0].event_id!=='EV-1'||m.bindings[0].intent_id!=='OI-1'||
+    m.source_template.source_sha!=='28841b5cfed9e9b6057a1a6f09090adcc512e1b8'||
+    m.source_template.bundle_sha256!=='79c2bc0b84f23a862e3ce7cef300c1b2dd1c4b90d00a448a8f1a269d1ddb0e9d'||
+    m.source_template.tip_sha256!=='3077376e2d5fe849de1450d9f2cc8e6d350742dc0d98969a36e778000d052660')
+    fail('UNTRUSTED','manifest changed synthetic provenance or expected immutable bytes');
   return m;
 }
 async function boundedResponse(res,url){
@@ -133,10 +160,20 @@ function decodeContents(data,scope){
   return bytes;
 }
 /** Public validators for negative tests, no transport identity promotion. */
+function deepFreeze(root){
+  const seen=new Set(),stack=[root];
+  while(stack.length){
+    const v=stack.pop();if(!v||typeof v!=='object'||seen.has(v))continue;
+    seen.add(v);
+    for(const item of Object.values(v))if(item&&typeof item==='object')stack.push(item);
+    Object.freeze(v);
+  }
+  return root;
+}
 export function validatePinnedManifest(rawPin,bytes){
   const p=pin(rawPin);
   const m=manifestCore(bytes,p.manifest_sha256,p.repo);
-  return Object.freeze({pin:p,manifest:m,manifest_sha256:p.manifest_sha256});
+  return deepFreeze({pin:p,manifest:m,manifest_sha256:p.manifest_sha256});
 }
 function createSpec(p,m){
   return {
