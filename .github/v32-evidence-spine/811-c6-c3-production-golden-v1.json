@@ -44,6 +44,11 @@
       "id": "P08",
       "situation": "transaction interruption after one or two writes in source-bound mode",
       "expected": "No falsely committed handover; recover_all yields rollback or explicit recovery debt"
+    },
+    {
+      "id": "P09",
+      "situation": "Source changes after initial context construction but prior to PLAN_HANDOVER transaction execution",
+      "expected": "Re-read released DELP graph and read-only provider against exact frozen context digests directly before execute; reject moved provider with no transaction/event/context/lease write"
     }
   ],
   "source_paths": [
