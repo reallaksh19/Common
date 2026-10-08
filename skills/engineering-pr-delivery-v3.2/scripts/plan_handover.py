@@ -2,7 +2,13 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
+import base64
+import json
+import os
+from pathlib import Path, PurePosixPath
+import re
+import subprocess
+from urllib.parse import quote
 
 from handover_context import build_context
 from intelligence_projection import build_improvement, build_task
@@ -12,6 +18,89 @@ from relay_can import evaluate as can_action
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 from relay_tx import _assert_event_ids_available, _event, _issue_scoped_id, _transition_event_ids
+
+
+
+def _native_delp_source(
+    *, repository: str, graph_revision: str, graph_path: str,
+    leaf_ref: str, frozen_basis_path: Path | None = None,
+) -> dict:
+    """Authenticated GitHub GET-only source for CLI opt-in.
+
+    Never execute the fetched graph, accept ambient repository inference, or
+    export the writer methods from the general DELP transport.
+    """
+    if not os.environ.get("GH_TOKEN") and not os.environ.get("GITHUB_TOKEN"):
+        raise TransactionError("SOURCE_GITHUB_TOKEN_REQUIRED")
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
+        raise TransactionError("SOURCE_REPOSITORY_INVALID")
+    if repository.lower() != os.environ.get("GITHUB_REPOSITORY", "").lower():
+        raise TransactionError("SOURCE_REPOSITORY_NOT_AUTHENTICATED")
+    if not re.fullmatch(r"[0-9a-f]{40}", graph_revision):
+        raise TransactionError("SOURCE_GRAPH_REVISION_MUST_BE_EXACT_SHA")
+    path = PurePosixPath(graph_path)
+    if (path.is_absolute() or not graph_path.endswith(".json")
+            or any(part in ("", ".", "..") for part in graph_path.split("/"))
+            or len(graph_path) > 256):
+        raise TransactionError("SOURCE_GRAPH_PATH_NOT_REPOSITORY_RELATIVE")
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+#[1-9][0-9]*", leaf_ref):
+        raise TransactionError("SOURCE_LEAF_REF_INVALID")
+
+    endpoint = ("repos/" + repository + "/contents/" + quote(graph_path, safe="/")
+                + "?ref=" + graph_revision)
+    try:
+        response = subprocess.run(
+            ["gh", "api", "--method", "GET", endpoint],
+            capture_output=True, text=True, check=True, timeout=45,
+        )
+        item = json.loads(response.stdout)
+        if item.get("type") != "file" or item.get("encoding") != "base64":
+            raise ValueError("not a canonical GitHub content blob")
+        raw = base64.b64decode(item["content"], validate=False)
+        if len(raw) > 5_000_000:
+            raise ValueError("source graph exceeds bounded input")
+        graph = json.loads(raw)
+    except (OSError, subprocess.SubprocessError, ValueError, KeyError, TypeError) as exc:
+        raise TransactionError("SOURCE_GRAPH_AUTHENTICATED_GET_FAILED") from exc
+    if not isinstance(graph, dict) or (
+        str((graph.get("programme") or {}).get("repository") or "").lower()
+        != repository.lower()
+    ):
+        raise TransactionError("SOURCE_GRAPH_REPOSITORY_MISMATCH")
+
+    import delp_projection_v32 as delp
+
+    class ReadOnlyGithub:
+        """Expose only the five GitHub GET methods required by the DELP reader."""
+        def __init__(self):
+            self.__transport = delp.GhTransport(repository)
+
+        def get_commit_sha(self, ref):
+            return self.__transport.get_commit_sha(ref)
+
+        def get_issue(self, number):
+            return self.__transport.get_issue(number)
+
+        def get_pull(self, number):
+            return self.__transport.get_pull(number)
+
+        def compare(self, base, head):
+            return self.__transport.compare(base, head)
+
+        def list_comments(self, number):
+            return self.__transport.list_comments(number)
+
+    frozen_basis = None
+    if frozen_basis_path is not None:
+        frozen_basis = load_yaml(frozen_basis_path)
+        if isinstance(frozen_basis, dict) and set(frozen_basis) == {"digests"}:
+            frozen_basis = frozen_basis["digests"]
+    return {
+        "graph": graph,
+        "leaf_ref": leaf_ref,
+        "provider": ReadOnlyGithub(),
+        "frozen_basis": frozen_basis,
+    }
 
 
 def _owner_intent_handover_options(owner_intent: dict | None) -> tuple[int | None, list[str], bool]:
@@ -73,6 +162,7 @@ def plan_handover(
     selected_programme_ref: str | None = None,
     successor_challenge_count: int | None = None,
     owner_intent: dict | None = None,
+    delp_source: dict | None = None,
     fail_after: int | None = None,
 ):
     allowed = can_action(root, "HANDOVER")
@@ -139,7 +229,12 @@ def plan_handover(
         improvement_view_override=improvement_view,
         successor_challenge_count=resolved_challenge_count,
         successor_boundary_constraints=owner_boundary_constraints,
+        delp_source=delp_source,
     )
+    source_bound = context.get("source_bound_successor")
+    if delp_source is not None:
+        if not isinstance(source_bound, dict) or source_bound.get("currentness") != "CURRENT_READ_ONLY":
+            raise TransactionError("SOURCE_BOUND_RECONCILIATION_REQUIRED")
     task_meta = (context.get("accumulated_learning") or {}).get("task_snapshot") or {}
     improvement_meta = (context.get("accumulated_learning") or {}).get("improvement_view") or {}
     if canonical_digest(task_snapshot) != task_meta.get("digest"):
@@ -176,6 +271,13 @@ def plan_handover(
             "selected_programme_frontier": programme_assessment.get("selected_programme_frontier"),
             "programme_continuation": programme_assessment.get("continuation"),
             "next_programme_frontier": programme_assessment.get("next_frontier"),
+            **({
+                "source_bound_currentness": source_bound["currentness"],
+                "source_bound_input_digest": source_bound["digests"]["input"],
+                "source_bound_plan_digest": source_bound["digests"]["plan"],
+                "source_bound_graph_digest": source_bound["digests"]["graph"],
+                "source_bound_provider_digest": source_bound["digests"]["provider"],
+            } if source_bound is not None else {}),
         },
     ))
 
@@ -236,7 +338,35 @@ def main() -> None:
         "--owner-intent",
         help="YAML file containing either OWNER_INTENT itself or a parse_owner_command result with an owner_intent field.",
     )
+    parser.add_argument(
+        "--source-repository",
+        help="GitHub owner/name for an explicitly opted-in, GET-only DELP source.",
+    )
+    parser.add_argument("--source-graph-revision",
+                        help="Immutable 40-hex GitHub commit holding the released graph.")
+    parser.add_argument("--source-graph-path",
+                        help="Repository-relative JSON graph path within that commit.")
+    parser.add_argument("--source-leaf-ref",
+                        help="Exact DELP leaf ref, e.g. Common#793.")
+    parser.add_argument("--source-frozen-basis",
+                        help="Optional YAML containing the previous graph/plan/input/provider digests.")
     args = parser.parse_args()
+    selectors = [args.source_repository, args.source_graph_revision,
+                 args.source_graph_path, args.source_leaf_ref]
+    if any(selectors) and not all(selectors):
+        parser.error("source-bound handover requires all four source selectors")
+    if args.source_frozen_basis and not all(selectors):
+        parser.error("--source-frozen-basis requires complete source selectors")
+    delp_source = (
+        _native_delp_source(
+            repository=args.source_repository,
+            graph_revision=args.source_graph_revision,
+            graph_path=args.source_graph_path,
+            leaf_ref=args.source_leaf_ref,
+            frozen_basis_path=Path(args.source_frozen_basis) if args.source_frozen_basis else None,
+        )
+        if all(selectors) else None
+    )
     result = plan_handover(
         Path(args.repo_root).resolve(),
         tx_id=args.tx_id,
@@ -250,6 +380,7 @@ def main() -> None:
         selected_programme_ref=args.selected_programme_ref,
         successor_challenge_count=args.successor_challenge_count,
         owner_intent=(load_yaml(Path(args.owner_intent)) if args.owner_intent else None),
+        delp_source=delp_source,
     )
     print(f"{result['id']}: {result['status']}")
 
