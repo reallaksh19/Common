@@ -1,0 +1,258 @@
+{
+  "schema": "relay-v32-744-precommitted-event-oracles-v1",
+  "owner": "Common#718",
+  "child": "Common#744",
+  "responsibility": "Common#733",
+  "baseline_main": "fa832b7530fceb14605baf22058ad56d14e6cf01",
+  "scope": "TRUSTED_PROVIDER_HEAD_AND_OWNER_OPTIN_NO_IMPLICIT_LIVE_WRITE",
+  "cases": [
+    {
+      "id": "AUTH-01-VALID",
+      "event_name": "pull_request_target",
+      "event": {
+        "action": "synchronize",
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "pull_request": {
+          "number": 740,
+          "head": {
+            "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "repo": {
+              "full_name": "reallaksh19/Common"
+            }
+          },
+          "base": {
+            "ref": "main"
+          },
+          "state": "open",
+          "draft": true
+        }
+      },
+      "enabled": true,
+      "provider_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected": "ALLOW"
+    },
+    {
+      "id": "AUTH-02-WRONG-PR",
+      "event_name": "pull_request_target",
+      "event": {
+        "action": "synchronize",
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "pull_request": {
+          "number": 741,
+          "head": {
+            "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "repo": {
+              "full_name": "reallaksh19/Common"
+            }
+          },
+          "base": {
+            "ref": "main"
+          },
+          "state": "open",
+          "draft": true
+        }
+      },
+      "enabled": true,
+      "provider_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected": "DENY_UNBOUND_PR"
+    },
+    {
+      "id": "AUTH-03-FORK",
+      "event_name": "pull_request_target",
+      "event": {
+        "action": "synchronize",
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "pull_request": {
+          "number": 740,
+          "head": {
+            "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "repo": {
+              "full_name": "untrusted/fork"
+            }
+          },
+          "base": {
+            "ref": "main"
+          },
+          "state": "open",
+          "draft": true
+        }
+      },
+      "enabled": true,
+      "provider_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected": "DENY_FOREIGN_HEAD_REPOSITORY"
+    },
+    {
+      "id": "AUTH-04-BASE",
+      "event_name": "pull_request_target",
+      "event": {
+        "action": "synchronize",
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "pull_request": {
+          "number": 740,
+          "head": {
+            "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "repo": {
+              "full_name": "reallaksh19/Common"
+            }
+          },
+          "base": {
+            "ref": "dev"
+          },
+          "state": "open",
+          "draft": true
+        }
+      },
+      "enabled": true,
+      "provider_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected": "DENY_WRONG_BASE"
+    },
+    {
+      "id": "AUTH-05-STALE",
+      "event_name": "pull_request_target",
+      "event": {
+        "action": "synchronize",
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "pull_request": {
+          "number": 740,
+          "head": {
+            "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "repo": {
+              "full_name": "reallaksh19/Common"
+            }
+          },
+          "base": {
+            "ref": "main"
+          },
+          "state": "open",
+          "draft": true
+        }
+      },
+      "enabled": true,
+      "provider_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "expected": "DENY_STALE_EVENT_HEAD"
+    },
+    {
+      "id": "AUTH-06-DISABLED",
+      "event_name": "pull_request_target",
+      "event": {
+        "action": "synchronize",
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "pull_request": {
+          "number": 740,
+          "head": {
+            "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "repo": {
+              "full_name": "reallaksh19/Common"
+            }
+          },
+          "base": {
+            "ref": "main"
+          },
+          "state": "open",
+          "draft": true
+        }
+      },
+      "enabled": false,
+      "provider_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected": "DISABLED_BY_OWNER_FLAG"
+    },
+    {
+      "id": "AUTH-07-ACTION",
+      "event_name": "pull_request_target",
+      "event": {
+        "action": "closed",
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "pull_request": {
+          "number": 740,
+          "head": {
+            "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "repo": {
+              "full_name": "reallaksh19/Common"
+            }
+          },
+          "base": {
+            "ref": "main"
+          },
+          "state": "open",
+          "draft": true
+        }
+      },
+      "enabled": true,
+      "provider_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected": "DENY_EVENT_ACTION"
+    },
+    {
+      "id": "AUTH-08-WORKFLOW-UNTRUSTED",
+      "event_name": "pull_request",
+      "event": {
+        "action": "synchronize",
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "pull_request": {
+          "number": 740,
+          "head": {
+            "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "repo": {
+              "full_name": "reallaksh19/Common"
+            }
+          },
+          "base": {
+            "ref": "main"
+          },
+          "state": "open",
+          "draft": true
+        }
+      },
+      "enabled": true,
+      "provider_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected": "DENY_EVENT_NAME"
+    },
+    {
+      "id": "AUTH-09-DISPATCH",
+      "event_name": "workflow_dispatch",
+      "event": {
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "inputs": {
+          "pr_number": "740",
+          "expected_head": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "enabled": true,
+      "provider_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected": "ALLOW"
+    },
+    {
+      "id": "AUTH-10-DISPATCH-STALE",
+      "event_name": "workflow_dispatch",
+      "event": {
+        "repository": {
+          "full_name": "reallaksh19/Common"
+        },
+        "inputs": {
+          "pr_number": "740",
+          "expected_head": "cccccccccccccccccccccccccccccccccccccccc"
+        }
+      },
+      "enabled": true,
+      "provider_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expected": "DENY_STALE_EVENT_HEAD"
+    }
+  ]
+}
