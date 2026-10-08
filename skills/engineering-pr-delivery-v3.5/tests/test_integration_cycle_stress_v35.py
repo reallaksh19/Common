@@ -5,6 +5,7 @@ import copy
 import importlib.util
 import json
 import subprocess
+import tempfile
 import sys
 import unittest
 from pathlib import Path
@@ -102,6 +103,20 @@ class IntegrationCycleStressAcceptance(unittest.TestCase):
                 C.GoldenContractError
             ):
                 C.cycle(bad)
+
+    def test_standalone_cli_rejects_unsupported_complete_scoreboard(self):
+        data = self.data()
+        data["programme"]["integration_acceptance"]["qualified"] = 8
+        with tempfile.TemporaryDirectory() as tmp:
+            forged = Path(tmp) / "unsupported-ic.json"
+            forged.write_text(json.dumps(data), encoding="utf-8")
+            proc = subprocess.run(
+                [sys.executable, str(SCRIPT), "--stress-check", "--fixture", str(forged)],
+                capture_output=True, text=True, timeout=25, check=False,
+            )
+        self.assertNotEqual(0, proc.returncode)
+        self.assertIn("unsupported IC acceptance", proc.stderr)
+        self.assertNotIn('"result": "PASS"', proc.stdout)
 
     def test_module_self_runs_and_emits_the_exact_same_cycle(self):
         proc = subprocess.run(
