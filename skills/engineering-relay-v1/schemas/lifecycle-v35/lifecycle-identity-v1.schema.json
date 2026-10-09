@@ -1,0 +1,328 @@
+{
+  "$defs": {
+    "candidateSource": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "base_sha": {
+                "type": "null"
+              },
+              "head_sha": {
+                "type": "null"
+              },
+              "pr_number": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "state": {
+                "const": "REFERENCED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "base_sha": {
+                "$ref": "#/$defs/sha"
+              },
+              "head_sha": {
+                "$ref": "#/$defs/sha"
+              },
+              "pr_number": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "base_sha": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "head_sha": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pr_number": {
+          "oneOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "repository": {
+          "$ref": "#/$defs/repo"
+        },
+        "role": {
+          "const": "CODE_CANDIDATE_HEAD"
+        },
+        "state": {
+          "enum": [
+            "REFERENCED",
+            "UNKNOWN"
+          ]
+        }
+      },
+      "required": [
+        "role",
+        "state",
+        "repository",
+        "pr_number",
+        "head_sha",
+        "base_sha"
+      ],
+      "type": "object"
+    },
+    "graphSource": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "content_sha256": {
+                "type": "null"
+              },
+              "path": {
+                "type": "null"
+              },
+              "revision_sha": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "state": {
+                "const": "REFERENCED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "content_sha256": {
+                "$ref": "#/$defs/sha256"
+              },
+              "path": {
+                "$ref": "#/$defs/path"
+              },
+              "revision_sha": {
+                "$ref": "#/$defs/sha"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "content_sha256": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "path": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/path"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "repository": {
+          "$ref": "#/$defs/repo"
+        },
+        "revision_sha": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "role": {
+          "const": "PLAN_GRAPH_REVISION"
+        },
+        "state": {
+          "enum": [
+            "REFERENCED",
+            "UNKNOWN"
+          ]
+        }
+      },
+      "required": [
+        "role",
+        "state",
+        "repository",
+        "revision_sha",
+        "path",
+        "content_sha256"
+      ],
+      "type": "object"
+    },
+    "path": {
+      "maxLength": 512,
+      "minLength": 1,
+      "pattern": "^[^\\\\/][^\\\\]*$",
+      "type": "string"
+    },
+    "repo": {
+      "maxLength": 200,
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
+      "type": "string"
+    },
+    "sessionSource": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "commit_sha": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "state": {
+                "const": "REFERENCED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "commit_sha": {
+                "$ref": "#/$defs/sha"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "commit_sha": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "repository": {
+          "$ref": "#/$defs/repo"
+        },
+        "role": {
+          "const": "SESSION_SOURCE_COMMIT"
+        },
+        "state": {
+          "enum": [
+            "REFERENCED",
+            "UNKNOWN"
+          ]
+        }
+      },
+      "required": [
+        "role",
+        "state",
+        "repository",
+        "commit_sha"
+      ],
+      "type": "object"
+    },
+    "sha": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "$id": "relay-lifecycle-source-identity-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A source-reference envelope. It does not authenticate a provider, release a plan, accept evidence, or grant a writer lease.",
+  "properties": {
+    "candidate_source": {
+      "$ref": "#/$defs/candidateSource"
+    },
+    "graph_source": {
+      "$ref": "#/$defs/graphSource"
+    },
+    "owner_source_grade": {
+      "enum": [
+        "UNKNOWN",
+        "GITHUB_VERBATIM_MIRROR",
+        "SYNTHETIC_LAB_ONLY"
+      ]
+    },
+    "programme": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "repository": {
+          "$ref": "#/$defs/repo"
+        },
+        "root_issue": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "repository",
+        "root_issue"
+      ],
+      "type": "object"
+    },
+    "schema": {
+      "const": "relay-lifecycle-source-identity-v1"
+    },
+    "session_source": {
+      "$ref": "#/$defs/sessionSource"
+    }
+  },
+  "required": [
+    "schema",
+    "programme",
+    "owner_source_grade",
+    "graph_source",
+    "session_source",
+    "candidate_source"
+  ],
+  "title": "R14 WP1/U1 typed reference-only lifecycle identities",
+  "type": "object"
+}
