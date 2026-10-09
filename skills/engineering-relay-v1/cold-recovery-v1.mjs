@@ -224,6 +224,10 @@ export async function recoverFromPinnedGitHubManifest(rawPin,options={}){
     source_lineage_sha256:actual.github_source_lineage_sha256,
     provider_snapshot_sha256:actual.provider_snapshot_sha256,
     r4_projection_sha256:actual.r4_projection_sha256,
+    candidate_state_sha256:actual.candidate_state_sha256,
+    trust_preflight_sha256:actual.trust_preflight_sha256,
+    public_task_evidence_observation:actual.public_task_evidence_observation,
+    // Optional R10 read intentionally absent in the synthetic-only R8 CLI.
     full_chain_sha256:actual.full_chain_sha256,
     event_count:actual.event_count,session_count:actual.session_count,
     original_chat_source:'UNKNOWN',source_attribution:'SYNTHETIC_PRODUCER_ASSERTED',

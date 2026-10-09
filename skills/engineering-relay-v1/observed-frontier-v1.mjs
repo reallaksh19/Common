@@ -4,6 +4,7 @@
  */
 import {createHash} from 'node:crypto';
 import {canonicalJSON} from './provenance-v1.mjs';
+import {deriveCandidateState} from './candidate-verification-v1.mjs';
 
 export class ObservedFrontierError extends Error {
   constructor(code,reason){super(code+': '+reason);this.name='ObservedFrontierError';this.code=code;}
@@ -82,32 +83,30 @@ export function projectObservedFrontier(source,provider,publicReceipt=null){
     provider.consistency!=='PR_DOUBLE_READ_NON_ATOMIC')
     fail('INVALID','missing bounded structural graph or provider-current facts');
   const receipt=verifiedPublicReceipt(publicReceipt,provider);
-  const blockers=[];
-  blockers.push(receipt?'PUBLIC_TASK_EVIDENCE_NOT_ADJUDICATED':'PUBLIC_TASK_EVIDENCE_NOT_OBSERVED');
-  if(provider.pr_facts.some(p=>p.currentness!=='MATCH'))
-    blockers.push('PROVIDER_HEAD_STALE_OR_UNPINNED');
-  if(provider.pr_facts.some(p=>p.ci_workflows?.some(w=>w.state!=='PASS')))
-    blockers.push('SELECTED_CI_NOT_ALL_PASS');
+  const candidates=deriveCandidateState(provider);
+  // CI/head policy is owned ONLY by candidate-verification-v1, not repeated.
+  const blockers=[
+    ...candidates.blockers,
+    receipt?'PUBLIC_TASK_EVIDENCE_NOT_ADJUDICATED':'PUBLIC_TASK_EVIDENCE_NOT_OBSERVED'
+  ];
   if(source.original_chat_source==='UNKNOWN')
     blockers.push('ORIGINAL_OWNER_SOURCE_UNAUTHENTICATED');
   if(provider.human_review==='NOT_EVALUATED'||source.independently_accepted===false)
     blockers.push('INDEPENDENT_REVIEW_NOT_ACCEPTED');
   if(source.authorization_granted===false)
     blockers.push('PRIVACY_AND_PUBLICATION_AUTHORITY_NOT_GRANTED');
-  const next=blockers.includes('PROVIDER_HEAD_STALE_OR_UNPINNED')?
-    'REFRESH_PROVIDER_CURRENT_PR_AND_EVIDENCE':
-    blockers.includes('SELECTED_CI_NOT_ALL_PASS')?
-    'QUALIFY_SELECTED_CURRENT_HEAD_CI':
-    blockers.includes('ORIGINAL_OWNER_SOURCE_UNAUTHENTICATED')?
+  const next=candidates.next_candidate_verification??
+    (blockers.includes('ORIGINAL_OWNER_SOURCE_UNAUTHENTICATED')?
     'DEFINE_PRIVACY_SAFE_OWNER_SOURCE_CUSTODY':
     blockers.includes('INDEPENDENT_REVIEW_NOT_ACCEPTED')?
     'OBTAIN_DIFFERENT_PRINCIPAL_SOURCE_REVIEW':
-    'REQUIRE_EXPLICIT_OWNER_AUTHORIZATION';
+    'REQUIRE_EXPLICIT_OWNER_AUTHORIZATION');
   const core={
     schema:'relay-observed-frontier-v1',
     repository:provider.repository,parent_issue:provider.parent_issue.number,
     source_lineage_sha256:source.source_lineage_sha256,
     provider_snapshot_sha256:provider.snapshot_sha256,
+    candidate_state_sha256:candidates.candidate_state_sha256,
     source_history:'STRUCTURAL_SYNTHETIC_OR_PRODUCER_ASSERTED',
     claim_count:claims.length,responsibility_count:tasks.length,
     structural_evidence_count:evidence.length,owner_intent_count:intents.length,

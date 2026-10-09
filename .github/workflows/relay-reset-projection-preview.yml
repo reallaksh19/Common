@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'skills/engineering-relay-v1/projection-preview-v1.*'
+      - 'skills/engineering-relay-v1/candidate-verification-v1.*'
       - '.github/workflows/relay-reset-projection-preview.yml'
 permissions:
   contents: read

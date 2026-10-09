@@ -194,7 +194,7 @@ test('export refuses crash debris until manually reviewed',async()=>{
 test('source journal symlink cannot be used to smuggle a different root',async()=>{
  const f=await fixture(),other=await mkdtemp(join(tmpdir(),'relay-portable-link-'));
  const alias=join(other,'alias');
- await symlink(f.dir,alias,'dir');
+ await symlink(f.dir,alias,process.platform==='win32'?'junction':'dir');
  await refused(exported(alias,config(),policy(f.approved)),'INVALID');
 });
 test('canonical JSON and size limits are enforced before allocation/import',async()=>{

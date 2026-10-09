@@ -184,6 +184,9 @@ test('fresh Node process recovers synthetic source only from GitHub links and an
  assert.equal(proof.event_count,12);
  assert.equal(proof.session_count,2);
  assert.match(proof.full_chain_sha256,/^[a-f0-9]{64}$/);
+ assert.match(proof.candidate_state_sha256,/^[a-f0-9]{64}$/);
+ assert.match(proof.trust_preflight_sha256,/^[a-f0-9]{64}$/);
+ assert.equal(proof.public_task_evidence_observation,'NOT_OBSERVED');
  for(const status of ['owner_message_authenticated','independently_accepted',
   'authorization_granted','externally_anchored','live_writer_enabled'])
    assert.equal(proof[status],false);

@@ -1,0 +1,40 @@
+name: relay-reset-r12-contract
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/provider-facts-v1.*'
+      - 'skills/engineering-relay-v1/candidate-verification-v1.*'
+      - 'skills/engineering-relay-v1/schemas/candidate-verification-v1.schema.json'
+      - 'skills/engineering-relay-v1/observed-frontier-v1.*'
+      - 'skills/engineering-relay-v1/projection-preview-v1.*'
+      - 'skills/engineering-relay-v1/full-chain-rehearsal-v1.*'
+      - 'skills/engineering-relay-v1/cold-recovery-v1.*'
+      - 'skills/engineering-relay-v1/session-journal-v1.test.mjs'
+      - 'skills/engineering-relay-v1/session-bundle-v1.test.mjs'
+      - '.github/workflows/relay-reset-r12-contract.yml'
+permissions:
+  contents: read
+jobs:
+  candidate-schema-portability:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ['22','24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: One reducer across R3/R9/R4 and native Windows anti-link security
+        shell: bash
+        run: >-
+          node --test
+          skills/engineering-relay-v1/candidate-verification-v1.test.mjs
+          skills/engineering-relay-v1/observed-frontier-v1.test.mjs
+          skills/engineering-relay-v1/session-journal-v1.test.mjs
+          skills/engineering-relay-v1/session-bundle-v1.test.mjs
+          skills/engineering-relay-v1/journal-durability-platform-v1.test.mjs

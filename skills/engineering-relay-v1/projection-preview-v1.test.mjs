@@ -181,7 +181,7 @@ test('a completely fabricated untrusted R3 snapshot is not validated as external
   assert.equal(p.independently_accepted,false);
   assert.equal(p.live_writer_enabled,false);
 });
-test('even a forged self-consistent native-looking digest only labels CALLER-SELECTED CI, not all required checks',async()=>{
+test('forged rehashed native-looking source remains UNVERIFIED_TRANSPORT, never qualifies CI',async()=>{
   const fixture=JSON.parse(JSON.stringify(await facts()));
   fixture.source_state='PROVIDER_OBSERVED';
   fixture.provider_transport='NATIVE_GITHUB_GET';
@@ -189,7 +189,8 @@ test('even a forged self-consistent native-looking digest only labels CALLER-SEL
   fixture.snapshot_sha256=createHash('sha256').update(canonicalJSON(fixture)).digest('hex');
   const candidate=render(fixture,OPT);
   // This forged input is a falsifier, NOT provider authentication evidence.
-  assert.equal(candidate.pr_titles[0].state,'SELECTED_CI_PASS_ONLY');
+  assert.equal(candidate.pr_titles[0].state,'UNVERIFIED_TRANSPORT');
+  assert.match(candidate.pr_titles[0].title,/UNVERIFIED_TRANSPORT/);
   assert.equal(candidate.pr_titles[0].workflow_scope,'CALLER_SELECTED_NOT_REQUIRED_POLICY');
   assert.deepEqual(candidate.pr_titles[0].checked_workflow_paths,[WF]);
   assert.match(candidate.parent_issue.managed_block_preview,/NOT proven required policy/);

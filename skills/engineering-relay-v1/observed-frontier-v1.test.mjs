@@ -61,7 +61,9 @@ test('actual R3 provider plus R1 source produces one typed nonaccepted frontier 
  assert.equal(view.parent_issue.snapshot_sha256,facts.snapshot_sha256);
  assert.equal(view.successor_handover.snapshot_sha256,facts.snapshot_sha256);
  assert.equal(view.successor_handover.actual_next_authority,'NOT_GRANTED');
- assert.equal(view.successor_handover.next_verification_category,'DEFINE_PRIVACY_SAFE_OWNER_SOURCE_CUSTODY');
+ assert.equal(view.successor_handover.next_verification_category,'REACQUIRE_NATIVE_PROVIDER_FACTS_FOR_CI');
+  assert.ok(view.successor_handover.blockers.includes('SOURCE_ACQUISITION_UNATTESTED'));
+  assert.ok(view.successor_handover.blockers.includes('ORIGINAL_OWNER_SOURCE_UNAUTHENTICATED'));
  for(const forbidden of ['before R3-B integration','THEN_BIND_G2C','PRIVACY ACCEPTED'])
   assert.equal(JSON.stringify(view).includes(forbidden),false);
  assert.equal(view.authorization_granted,false);

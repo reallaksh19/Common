@@ -4,6 +4,7 @@
  */
 import {createHash} from 'node:crypto';
 import {canonicalJSON} from './provenance-v1.mjs';
+import {deriveCandidateState} from './candidate-verification-v1.mjs';
 
 export class PreviewError extends Error {
   constructor(code,why){super(code+': '+why);this.name='PreviewError';this.code=code;}
@@ -95,14 +96,14 @@ function checkSnapshot(input){
   }
   return freeze(s);
 }
-function verifiedFrontier(raw,provider){
+function verifiedFrontier(raw,provider,candidateState){
   if(raw===undefined||raw===null)return null;
   let f;
   try{f=JSON.parse(canonicalJSON(raw));}
   catch{fail('INVALID','frontier not canonical-safe');}
   exact(f,[
     'schema','repository','parent_issue','source_lineage_sha256',
-    'provider_snapshot_sha256','source_history','claim_count',
+    'provider_snapshot_sha256','candidate_state_sha256','source_history','claim_count',
     'responsibility_count','structural_evidence_count','owner_intent_count',
     'acceptance_denominator_state','accepted_claim_count',
     'accepted_evidence_count','next_verification_category','blockers',
@@ -117,6 +118,7 @@ function verifiedFrontier(raw,provider){
     f.repository!==provider.repository||
     f.parent_issue!==provider.parent_issue.number||
     f.provider_snapshot_sha256!==provider.snapshot_sha256||
+    f.candidate_state_sha256!==candidateState.candidate_state_sha256||
     !HASH.test(f.source_lineage_sha256)||
     f.acceptance_denominator_state!=='NOT_ADJUDICATED'||
     f.accepted_claim_count!==null||f.accepted_evidence_count!==null||
@@ -163,16 +165,12 @@ function freshness(snapshot,options){
   if(delta < -5000)fail('INVALID','evaluation precedes snapshot observation');
   return delta>options.max_age_seconds*1000?'STALE':'WITHIN_CONFIGURED_WINDOW';
 }
-function status(p,observedFresh,native){
-  // Passing GitHub CI is neither approval nor independent acceptance.
+function status(candidate,observedFresh,native){
+  // A single R12 reducer owns CI/head precedence; the R4 renderer only
+  // handles source transport/freshness presentation. Never infer acceptance.
   if(!native)return 'UNVERIFIED_TRANSPORT';
-  if(observedFresh==='STALE'||p.currentness!=='MATCH')return 'STALE_OR_UNPINNED';
-  const states=p.ci_workflows.map(w=>w.state);
-  if(states.includes('UNKNOWN'))return 'UNKNOWN';
-  if(states.includes('FAIL'))return 'CI_NON_SUCCESS';
-  if(states.includes('PENDING'))return 'PENDING';
-  // Scope lists selected workflow paths, not the repo's authoritative required checks.
-  return states.every(x=>x==='PASS')?'SELECTED_CI_PASS_ONLY':'UNKNOWN';
+  if(observedFresh==='STALE')return 'STALE_OR_UNPINNED';
+  return candidate.material_status;
 }
 function compactTitle(parts){
   const out=parts.join(' | ');
@@ -182,11 +180,14 @@ function compactTitle(parts){
 
 /** Pure/immutable: never fetch, write, or infer a human acceptance. */
 export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null,rawTrust=null){
+  // Derive R12 from the ORIGINAL R3 instance. checkSnapshot() canonically
+  // copies JSON and necessarily drops an ephemeral native-acquisition witness.
   const s=checkSnapshot(rawSnapshot);
+  const candidateState=deriveCandidateState(rawSnapshot);
   let o;
   try{o=JSON.parse(canonicalJSON(rawOptions));}catch{fail('INVALID','evaluation parameters invalid');}
-  const fresh=freshness(s,o),native=s.source_state==='PROVIDER_OBSERVED';
-  const frontier=verifiedFrontier(rawFrontier,s);
+  const fresh=freshness(s,o),native=candidateState.source_acquisition_attested;
+  const frontier=verifiedFrontier(rawFrontier,s,candidateState);
   // Only an exact content-free, no-grant R11 witness may be displayed.
   // Full-chain also recomputes R11 from original source/provider/frontier.
   let trust=null;
@@ -228,7 +229,9 @@ export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null,rawT
   const blockers=frontier?.blockers??['SOURCE_GRAPH_NOT_BOUND'];
   const source=s.snapshot_sha256;
   const prTitles=s.pr_facts.map(p=>{
-    const health=status(p,fresh,native);
+    const candidate=candidateState.pr_candidates.find(x=>x.number===p.number);
+    if(!candidate)fail('STATE_MISMATCH','provider PR lacks canonical candidate state');
+    const health=status(candidate,fresh,native);
     return {number:p.number,source_url:p.source_url,head_sha:p.head_sha,
       state:health,original_provider_state:p.state,
       workflow_scope:'CALLER_SELECTED_NOT_REQUIRED_POLICY',
@@ -259,6 +262,7 @@ export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null,rawT
       'Snapshot SHA256: '+source+'\n'+
       'Provider: '+s.source_state+'; '+s.consistency+'\n'+
       'Source-bound frontier SHA256: '+(frontier?.frontier_sha256??'NONE')+'\n'+
+      'Canonical candidate-state SHA256: '+candidateState.candidate_state_sha256+'\n'+
       'Next verification category (NOT AUTHORIZED): '+nextVerification+'\n'+
       'Blockers: '+blockers.join(',')+'\n'+
       'R11 separated source/consent/reviewer gates (NOT ACCEPTED): '+
@@ -293,6 +297,7 @@ export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null,rawT
     public_task_evidence_observation:frontier?.public_task_evidence_observation??'NOT_OBSERVED',
     trust_preflight_sha256:trust?.preflight_sha256??null,
     trust_preflight_axes:trust?.axes??null,
+    candidate_state_sha256:candidateState.candidate_state_sha256,
     frontier_sha256:frontier?.frontier_sha256??null,
     frontier_source_lineage_sha256:frontier?.source_lineage_sha256??null,
     actual_next_authority:'NOT_GRANTED',
@@ -311,6 +316,7 @@ export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null,rawT
     parent_issue:summary,child_issues:children,pr_titles:prTitles,
     successor_handover:handover,
     trust_preflight_sha256:trust?.preflight_sha256??null,
+    candidate_state_sha256:candidateState.candidate_state_sha256,
     frontier_sha256:frontier?.frontier_sha256??null,
     frontier_source_lineage_sha256:frontier?.source_lineage_sha256??null,
     next_verification_category:nextVerification,

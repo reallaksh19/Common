@@ -10,6 +10,7 @@ import {renderRelayPreviews} from './projection-preview-v1.mjs';
 import {projectObservedFrontier} from './observed-frontier-v1.mjs';
 import {observePublicTaskEvidence} from './github-task-evidence-receipt-v1.mjs';
 import {deriveTrustPreflight,verifyTrustPreflight} from './trust-preflight-v1.mjs';
+import {deriveCandidateState} from './candidate-verification-v1.mjs';
 
 export class FullChainError extends Error {
   constructor(code,why){super(code+': '+why);this.name='FullChainError';this.code=code;}
@@ -37,7 +38,7 @@ function boundedOpts(value,label,allowObservedAt=false){
     Object.keys(value).some(k=>!allowed.includes(k)))
     fail('INVALID',label+' must contain only bounded read-only inputs');
 }
-function dataOnlyView(source,provider,preview,digest){
+function dataOnlyView(source,provider,preview,digest,candidates){
   const custody=source.custody;
   const view={
     schema:'relay-full-chain-synthetic-rehearsal-v1',
@@ -57,6 +58,7 @@ function dataOnlyView(source,provider,preview,digest){
     structural_lineage_sha256:source.lineage.projection_sha256,
     github_source_lineage_sha256:source.source_lineage_sha256,
     frontier_sha256:preview.frontier_sha256,
+    candidate_state_sha256:preview.candidate_state_sha256,
     trust_preflight_sha256:preview.trust_preflight_sha256,
     source_consent_review_approval:'NOT_QUALIFIED',
     public_task_evidence_receipt_sha256:preview.public_task_evidence_receipt_sha256,
@@ -67,6 +69,7 @@ function dataOnlyView(source,provider,preview,digest){
     acceptance_denominator_state:'NOT_ADJUDICATED',
     provider_snapshot_sha256:provider.snapshot_sha256,
     r4_projection_sha256:preview.projection_sha256,
+    verification_candidates:candidates.pr_candidates,
     pr_heads:provider.pr_facts.map(x=>({
       number:x.number,head_sha:x.head_sha,currentness:x.currentness,
       ci:x.ci_workflows.map(w=>({path:w.path,state:w.state}))
@@ -158,10 +161,16 @@ export async function rehearseNativeFullChain(rawInput,options={}) {
   if(!HEX.test(source.source_lineage_sha256)||
     !HEX.test(provider.snapshot_sha256)||provider.consistency!=='PR_DOUBLE_READ_NON_ATOMIC')
     fail('INVALID_SOURCE_PROOF','missing digest or inconsistent R3 provider-current fence');
+  const candidates=deriveCandidateState(provider);
   const frontier=projectObservedFrontier(source,provider,publicReceipt);
+  if(frontier.candidate_state_sha256!==candidates.candidate_state_sha256)
+    fail('STATE_MISMATCH','R9 frontier not bound to canonical candidate state');
   const trust=deriveTrustPreflight(source,provider,frontier);
   const preview=renderRelayPreviews(provider,options.evaluation,frontier,trust);
   verifyTrustPreflight(trust,source,provider,frontier);
+  if(preview.candidate_state_sha256!==candidates.candidate_state_sha256||
+    preview.successor_handover.candidate_state_sha256!==candidates.candidate_state_sha256)
+    fail('STATE_MISMATCH','R4 handover not bound to R3/R9 candidate state');
   if(preview.trust_preflight_sha256!==trust.preflight_sha256||
     preview.successor_handover.trust_preflight_sha256!==trust.preflight_sha256)
     fail('RENDER_SOURCE_MISMATCH','R4 preview did not consume exact R11 trust boundary');
@@ -185,6 +194,7 @@ export async function rehearseNativeFullChain(rawInput,options={}) {
   const digest=sha({
     source_lineage_sha256:source.source_lineage_sha256,
     frontier_sha256:frontier.frontier_sha256,
+    candidate_state_sha256:candidates.candidate_state_sha256,
     trust_preflight_sha256:trust.preflight_sha256,
     public_task_evidence_receipt_sha256:publicReceipt?.receipt_sha256??null,
     source_commit_sha:source.custody.commit_sha,
@@ -193,5 +203,5 @@ export async function rehearseNativeFullChain(rawInput,options={}) {
     selected_current_pr:matching[0].number
   });
   // Never release G1 .document, raw .events, G2c .replay, or private body.
-  return dataOnlyView(source,provider,preview,digest);
+  return dataOnlyView(source,provider,preview,digest,candidates);
 }

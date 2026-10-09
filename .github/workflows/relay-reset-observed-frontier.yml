@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'skills/engineering-relay-v1/observed-frontier-v1.*'
+      - 'skills/engineering-relay-v1/candidate-verification-v1.*'
       - 'skills/engineering-relay-v1/trust-preflight-v1.*'
       - 'skills/engineering-relay-v1/github-task-evidence-receipt-v1.*'
       - 'skills/engineering-relay-v1/provider-facts-v1.*'
