@@ -128,7 +128,7 @@ def _prior_buddy_message(root: Path, issue: int, current_seq: int, stage: str) -
     return payload, receipt
 
 
-def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str) -> None:
+def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str, actor: str) -> None:
     """Require a current, ordered receipt chain; never certify a model's isolation."""
     prerequisites = {
         "DISPATCH_REQUEST": "STAGE1_INTAKE",
@@ -159,7 +159,11 @@ def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str) -> Non
         earlier = _prior_buddy_message(root, issue, seq, earlier_stage)
         if earlier is None or prior_seq <= int(earlier[1]["id"].split(".")[-1]):
             raise TransactionError("BUDDY_STALE_STAGE_CHAIN")
+    if stage == "STAGE1_PLAN" and prior[1].get("actor") != actor:
+        raise TransactionError("BUDDY_STAGE1_AUTHOR_CHANGED")
     if stage == "STAGE1_BASELINE":
+        if prior[1].get("actor") == actor:
+            raise TransactionError("BUDDY_OPERATOR_AND_RUNNER_NOT_SEPARATE")
         content = prior[0].decode("utf-8")
         if not content.startswith("# RUNNER_EXECUTION_OBSERVED\n"):
             raise TransactionError("BUDDY_DISPATCH_NOT_EXECUTED")
@@ -174,6 +178,7 @@ def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str) -> Non
 def _validate_buddy_markdown_transaction(
     root: Path,
     tx_id: str,
+    actor: str,
     replacements: dict[str, bytes],
 ) -> None:
     """Prevent direct execute() from bypassing the immutable message boundary."""
@@ -202,7 +207,7 @@ def _validate_buddy_markdown_transaction(
     expected = root.resolve() / relative
     if target != expected or target.exists() or expected.is_symlink():
         raise TransactionError("BUDDY_MESSAGE_IMMUTABLE_OR_SYMLINKED")
-    _require_buddy_sequence(root, int(match.group(1)), int(match.group(3)), match.group(4))
+    _require_buddy_sequence(root, int(match.group(1)), int(match.group(3)), match.group(4), actor)
 
 
 class TransactionError(RuntimeError):
@@ -460,7 +465,7 @@ def _prepare(
     except ValueError as exc:
         raise TransactionError(str(exc)) from exc
     if command == "PUBLISH_BUDDY_MARKDOWN":
-        _validate_buddy_markdown_transaction(root, tx_id, replacements)
+        _validate_buddy_markdown_transaction(root, tx_id, actor, replacements)
     prune_terminal_payloads(root)
     if incomplete_transactions(root):
         raise TransactionError("another incomplete V3 transaction exists; recover it before starting a new command")
