@@ -79,9 +79,14 @@ test('stale or unpinned PR head defeats selected green CI, no material acceptanc
 });
 test('changed provider digest, forged CI outcome and forged Owner decision fail before R4',async()=>{
  const provider=await facts(),s=deriveCandidateState(provider);
+ // Injected provider facts cannot be promoted to native-qualified CI; assert a
+ // real change, not false -> false (which correctly verifies unchanged).
+ assert.equal(s.pr_candidates[0].selected_ci_qualified,false);
+ assert.deepEqual(verifyCandidateState(s,provider),s);
  for(const bad of [
   {...s,accepted_claim_count:8},{...s,authorization_granted:true},
-  {...s,pr_candidates:[{...s.pr_candidates[0],selected_ci_qualified:false}]}
+  {...s,pr_candidates:[{...s.pr_candidates[0],selected_ci_qualified:true}]},
+  {...s,pr_candidates:[{...s.pr_candidates[0],selected_ci_state:'FAIL'}]}
  ]){
   assert.throws(()=>verifyCandidateState(bad,provider),
    e=>e instanceof CandidateStateError&&e.code==='STATE_MISMATCH');
