@@ -186,6 +186,8 @@ The copied `continuity_projection.py` baseline now defaults new snapshots to `pr
 
 **Relay-native Markdown message transport (Common #890):** [`relay/CONTINUITY/README.md`](../../relay/CONTINUITY/README.md) provides the minimal governed communication envelopes; Stage 1 is factual historical baseline FIRST, source-grounded provisional interpretation SECOND, and technical handover/Stage 2 only after an externally attested freeze. Refer to the [authority map](../../relay/CONTINUITY/AUTHORITY_MAP.md); these Markdown messages do not replace `relay/STATE.yaml`, transactions, DELP, Local execution/merge admission, or Owner approval.
 
+**Preparation-to-Runner dispatch (Common #890):** Historical packet/blob readback is an **input-integrity gate only**. See [the Relay dispatch runbook](../../relay/CONTINUITY/RUNNER_DISPATCH_RUNBOOK.md): if no actual independent model/session launcher with enforced historical-source access is available, create at most one authorized [dispatch-request Markdown record](../../relay/CONTINUITY/TEMPLATES/RUNNER_DISPATCH_REQUEST.md), return `DISPATCH_BLOCKED_NO_SESSION_CAPABILITY` with one external operator action, and stop the preparation subtask. Never recheck unchanged blobs on successive “continue/check” prompts, pretend a separate model has started, or self-approve Stage 1 isolation/freeze. A controlled technical handover and unplanned Two-/Three-Pass remain distinct flows.
+
 ## Embedded Coder contract
 
 The machine-readable active contract is:
