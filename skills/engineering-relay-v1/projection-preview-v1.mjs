@@ -182,8 +182,8 @@ function compactTitle(parts){
 export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null,rawTrust=null){
   // Derive R12 from the ORIGINAL R3 instance. checkSnapshot() canonically
   // copies JSON and necessarily drops an ephemeral native-acquisition witness.
-  const candidateState=deriveCandidateState(rawSnapshot);
   const s=checkSnapshot(rawSnapshot);
+  const candidateState=deriveCandidateState(rawSnapshot);
   let o;
   try{o=JSON.parse(canonicalJSON(rawOptions));}catch{fail('INVALID','evaluation parameters invalid');}
   const fresh=freshness(s,o),native=candidateState.source_acquisition_attested;
