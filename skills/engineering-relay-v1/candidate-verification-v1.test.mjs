@@ -42,7 +42,8 @@ test('one canonical R12 schema supports PENDING, PASS, FAIL and UNKNOWN without 
   const source=await facts(input),state=deriveCandidateState(source),candidate=state.pr_candidates[0];
   assert.equal(candidate.selected_ci_state,ci);
   assert.equal(candidate.material_status,material);
-  assert.equal(candidate.selected_ci_qualified,qualified);
+  // An injected mock can model PASS but cannot qualify native CI source.
+  assert.equal(candidate.selected_ci_qualified,false);
   assert.equal(state.accepted_claim_count,null);
   assert.equal(state.accepted_evidence_count,null);
   assert.equal(state.acceptance_denominator_state,'NOT_ADJUDICATED');
@@ -62,7 +63,7 @@ test('merged PR with completed PASS remains selected-CI-pass-only, never Owner-a
  assert.equal(unit.merged,true);
  assert.equal(unit.head_state,'CURRENT');
  assert.equal(unit.material_status,'SELECTED_CI_PASS_ONLY');
- assert.equal(unit.selected_ci_qualified,true);
+ assert.equal(unit.selected_ci_qualified,false);
  assert.equal(state.acceptance_contract,'PARENT_787_AC1_AC8_UNADJUDICATED');
  assert.equal(state.accepted_evidence_count,null);
 });
