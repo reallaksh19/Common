@@ -207,7 +207,11 @@ def build_responsibility_basis(
         _require(type(number) is int and number > 0, "PR_NUMBER_REQUIRED")
         lifecycle = draft_pr.get("lifecycle")
         _require(lifecycle in _LIFECYCLES, "PR_LIFECYCLE_INVALID")
-        bound = raw_node.get("primary_pr") == f"Common#{number}"
+        repository_short = graph["programme"]["repository"].rsplit("/", 1)[-1]
+        bound = raw_node.get("primary_pr") == f"{repository_short}#{number}"
+        observed_candidate = (observations or {}).get(selected_leaf, {}).get("candidate_sha")
+        _require(observed_candidate is None or observed_candidate == sha,
+                 "SOURCE_CANDIDATE_HEAD_MISMATCH")
         pr_details = {"number": number, "head_sha": sha,
                       "lifecycle": lifecycle, "binding": "BOUND" if bound else "UNBOUND_ADVISORY"}
     candidate = pr_details["head_sha"] if pr_details else None
@@ -246,12 +250,18 @@ def build_responsibility_basis(
     moved_axes = []
     if frozen_basis is not None:
         _require(isinstance(frozen_basis, Mapping), "FROZEN_BASIS_INVALID")
+        _require(set(frozen_basis) == set(digests), "FROZEN_SOURCE_BASIS_INCOMPLETE")
+        _require(all(isinstance(frozen_basis[k], str)
+                     and frozen_basis[k].startswith("sha256:")
+                     and len(frozen_basis[k]) == 71 for k in digests),
+                 "FROZEN_SOURCE_BASIS_INVALID")
         for k in ("graph", "plan", "input", "provider"):
-            if k in frozen_basis and frozen_basis[k] != digests.get(k):
+            if frozen_basis[k] != digests[k]:
                 moved_axes.append(k)
-        currentness = "RECONCILE_REQUIRED" if moved_axes else "CURRENT_READ_ONLY"
-    else:
-        currentness = "CURRENT_READ_ONLY"
+    # A pure formatter cannot authenticate GitHub, current default-branch
+    # graph custody, or provider double-read. Only the separately governed
+    # native C6 handover can return CURRENT_READ_ONLY after those checks.
+    currentness = "RECONCILE_REQUIRED" if moved_axes else "UNVERIFIED_LOCAL_INPUT"
 
     basis = {
         "schema": BASIS_SCHEMA,
@@ -313,7 +323,8 @@ def build_responsibility_basis(
         "handover": {
             "currentness": currentness,
             "moved_axes": moved_axes,
-            "frozen_basis": dict(frozen_basis) if frozen_basis else None,
+            "frozen_basis": dict(frozen_basis) if frozen_basis is not None else None,
+            "verification": "CALLER_INPUT_NOT_AUTHENTICATED_BY_PURE_VIEW",
         },
         "authority_effects": [],
     }
