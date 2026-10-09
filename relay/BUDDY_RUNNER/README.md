@@ -79,6 +79,8 @@ For every line in the original intake, the operator must ask **who knew it, when
 
 **Negative examples:** Inject “Agent A found algorithm P failing in module Q” → reject from B's intake. An original Owner report “buttons do not work” → keep as a WHAT need without suggesting a repair. A later PR URL or sealed expected output → quarantine. Unreceipted prior intake → dispatch rejected. Blocked dispatch followed by fake baseline → rejected. A good Stage 1 plan with no baseline → rejected.
 
+**Claimed-role continuity check:** The Relay transaction actor recorded for `STAGE1_BASELINE` must differ from the operator who recorded `DISPATCH_OBSERVATION`; the `STAGE1_PLAN` actor must match the baseline author. This prevents accidental self-relabeling or a different Runner silently inheriting the prior baseline. Actor strings are *claims*, not proof of distinct model sessions or identities; R4 still requires external provider observations and a genuinely isolated workspace.
+
 **Limits:** even a correctly ordered claim `RUNNER_EXECUTION_OBSERVED` can be fabricated. This message transport NEVER proves independent Runner tool isolation, B authorship, Stage 1 qualification, Stage 2 disclosure rights or new writer authority. These require independent external evidence/admission under later R4–R6. Do not count a structural transaction as a successful engineering reconstruction.
 
 ## Visibility boundaries — not provided by the file extension
