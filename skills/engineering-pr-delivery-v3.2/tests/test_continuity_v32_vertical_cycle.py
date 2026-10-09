@@ -794,6 +794,31 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             replay.live_readback(self.manifest, live, Trap(), selected_leaf="Common#99999")
 
 
+    def test_51_new_leaf_cannot_bypass_unreleased_writer_scope(self):
+        """Graph-selected READ does not grant #793 LIVE_STATUS/title write authority."""
+        import delp_projection_v32 as delp
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        observations = {
+            "Common#793": {"candidate_sha": "e" * 40, "pr_state": "OPEN"},
+        }
+        snap = replay.view.build_views(
+            live, self.manifest, selected_leaf="Common#793", phase="C4",
+            human_titles={"Common#718": "Evidence Spine", "Common#793": "Handover", "PR": "Source View"},
+            draft_pr={"number": 800, "head_sha": "e" * 40, "lifecycle": "OPEN"},
+            observations=observations, title_contract="C4-S6",
+        )
+        store = delp.InMemoryStore()
+        with self.assertRaisesRegex(delp.DelpError, "SOURCE_SMART_TITLE_SCOPE_MISMATCH"):
+            delp.sync_projection(
+                store, live, lambda: [], lambda: observations,
+                {"Common#718": "Evidence Spine", "Common#793": "Handover"},
+                title_overrides=snap["issue_titles"],
+                selected_refs=("Common#718", "Common#793"),
+                expected_input_digest=snap["delp_input_digest"],
+            )
+        self.assertEqual([], store.writes)
+
+
 if __name__ == "__main__":
     unittest.main()
 
