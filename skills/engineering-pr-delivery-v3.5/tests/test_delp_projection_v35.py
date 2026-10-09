@@ -6678,5 +6678,13 @@ class HostedV35FullProgrammeSourceInventory(_full_graph_inventory.FullGraphInven
     """Seven native children, partial graph rejected, no synthetic Owner authority."""
 
 
+# R7-U5: preserve Owner intent and unified current parent front page.
+import test_integration_parent_frontpage_v35 as _parent_frontpage
+
+
+class HostedV35ParentFrontPageIntegrity(_parent_frontpage.ParentFrontPageTests):
+    """Cold-entry currentness and lossless legacy archive proposal; no GitHub writes."""
+
+
 if __name__ == "__main__":
     unittest.main()

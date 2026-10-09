@@ -75,6 +75,38 @@ V3_5_PROTOCOL_REF: owner/repo@<40-sha>:skills/engineering-pr-delivery-v3.5
 
 It also records the Local acceptance epoch/profile references supplied by the Local control plane. Those references are observed/bound context only; V3.5 cannot adopt or mutate them.
 
+## R7 — cold-entry parent front-page source verification (read-only)
+
+V3.5's `scripts/integration_parent_frontpage_v35.py` is a **read-only
+navigation/source-integrity gate**, not a replacement for DELP authority.
+It protects the original Owner `MY INTENT` source in programme #600, the
+original integration contract in #717, and the R7 roadmap in #759 from
+accumulating stale agent-generated front matter.
+
+For a fresh native read from the repository (requires `gh` authentication):
+
+```bash
+python skills/engineering-pr-delivery-v3.5/scripts/integration_parent_frontpage_v35.py --repository reallaksh19/Common --issue 600
+python skills/engineering-pr-delivery-v3.5/scripts/integration_parent_frontpage_v35.py --repository reallaksh19/Common --issue 717
+python skills/engineering-pr-delivery-v3.5/scripts/integration_parent_frontpage_v35.py --repository reallaksh19/Common --issue 759
+```
+
+The tool checks one bounded current header and that governing source remains
+visible near the top. It double-reads native GitHub body/title for stable
+provider readback; this is **not** atomic GitHub CAS. The pure functions
+`archive_legacy_prefix` and `propose` return candidate text and an archive
+SHA256, but never write it: independently archive legacy agent-owned text on
+GitHub and verify the native archive first, preserve original human/Owner
+prose byte-for-byte, then re-read after any authorized issue edit.
+
+The actual root/IC/R7 archival receipts are on [#600](https://github.com/reallaksh19/Common/issues/600#issuecomment-6059402938),
+[#717](https://github.com/reallaksh19/Common/issues/717#issuecomment-6059420056) and
+[#759](https://github.com/reallaksh19/Common/issues/759#issuecomment-6059414322);
+the work is governed by [#782](https://github.com/reallaksh19/Common/issues/782).
+This only proves **issue navigation/source integrity**, never current P/E/D,
+Owner graph or writer approval, Local custody/merge, workflow activation or
+#717 IC1–IC8 acceptance.
+
 ## Lossless Owner intent envelope
 
 Direct Owner instructions are captured before workflow normalization. The canonical parser is `scripts/owner_commands.py`.
