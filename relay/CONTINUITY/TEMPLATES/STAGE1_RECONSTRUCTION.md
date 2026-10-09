@@ -1,6 +1,6 @@
 # STAGE1_RECONSTRUCTION_V1 — authored by independent Runner B (template)
 
-**Never fill this from Agent A's handover or current PR.** Stage 1 output MUST be the independent B session's observations, authored on the permitted historical source. If B has seen A current material or unrestricted GitHub feeds, mark `CONTAMINATED` and stop.
+**B-facing response format: a controller must deliver only the sanitized bytes, never a navigable Common repository link.** Never fill this from Agent A's handover or current PR. Stage 1 output MUST be the independent B session's observations, authored on the permitted historical source. If B has seen A current material or unrestricted GitHub feeds, mark `CONTAMINATED` and stop.
 
 | Field | Value |
 | --- | --- |
@@ -38,4 +38,4 @@
 
 ## Freeze boundary (never self-certify)
 
-**Runner output state:** `SUBMITTED_FOR_EXTERNAL_FREEZE`. A hash computed by B is only a proposed content identity; neither B nor A may mark the independent read allowlist, immutable Git readback or Owner approval verified. Controller must author separate [STAGE1_FREEZE](STAGE1_FREEZE.md) with provider evidence. Stage 2 and A technical handover are forbidden until then.
+**Runner output state:** `SUBMITTED_FOR_EXTERNAL_FREEZE`. A hash computed by B is only a proposed content identity; neither B nor A may mark the independent read allowlist, immutable Git readback or Owner approval verified. Controller must author a separate external freeze receipt with provider evidence. Do not browse for it during Stage 1. Stage 2 and A technical handover are forbidden until then.
