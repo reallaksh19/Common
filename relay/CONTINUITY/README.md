@@ -28,6 +28,14 @@ The *operator*, not Agent A, establishes a unique episode identifier pointing to
 
 The templates are **formats only**. They must not be handed to a clean Stage 1 B as a directory. A Stage 1 session receives exactly the filtered Step 0 input and the Stage 1 response instructions; no Stage 2 templates, current issue/branch/PR feed, task-specific answer keys or predecessor current state.
 
+## Dispatch between preparation and independent reconstruction
+
+**Required transition: preparation is not launch.** Once the original source packet/snapshot have been checked **once**, publish a single [RUNNER_DISPATCH_REQUEST_V1](TEMPLATES/RUNNER_DISPATCH_REQUEST.md) through an authorized Relay message, naming a real external launch operator, immutable input refs, actual isolation mechanism and expected independent B output. Consult the [dispatch/no-progress runbook](RUNNER_DISPATCH_RUNBOOK.md).
+
+If the preparing agent cannot create a fresh separately restricted B session, record `DISPATCH_BLOCKED_NO_SESSION_CAPABILITY` and stop the preparation subtask; escalate **one** exact operator action and immutable request ref. Do not recertify the same input files on every follow-up. Only a controller-observed distinct session and actual restricted tool/access denial permits `RUNNER_STARTED_ATTESTED`; B's independently authored output and controller freeze are **later separate gates**.
+
+[Core1B repeated-verification failure](EXAMPLES/CORE1B_20261009_DISPATCH_POSTMORTEM.md) is the regression: nine correctly copied source files and a stable packet do not launch Runner B. No new event exists when the same blob is checked again.
+
 ## Confidentiality and real blindness
 
 A committed Markdown path is not private from other users or tokens with read access to the repository. **GitHub does not provide path-level confidentiality to a reader with whole-repo rights.** The safe options are (1) external tool/ref/path enforcement plus auditable denial, or (2) do not publish the current A reality on *any* B-readable ref until its independent Stage 1 is sealed. Folder names, HEAD pins, an instruction "don't read" and content hashes are not equivalent to isolation.
