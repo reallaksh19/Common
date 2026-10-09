@@ -54,6 +54,33 @@ A `DISPATCH_OBSERVATION` written by Agent A alone does not attest external execu
 
 **No launcher is supplied by this R1 command.** The `buddy-message` CLI is a transport/recording operation. Until an authorized independent AI-runner runtime exists, the honest next action is to publish `BLOCKED_NO_RUNNER_CAPABILITY` with the exact blocker and a designated human/agent capable of resolving it—not more source SHA checks or fabricated execution.
 
+## R2/R3 — sanitize original intake, then reconstruct baseline BEFORE planning
+
+This is a Relay Markdown communication contract, **not** another copy/paste chat prompt, a separate schema, or an acceptance authority. Operators must provide B a separate restricted runtime with ORIGINAL evidence only. The native transaction now enforces this structural order with earlier committed, unchanged receipts for the same issue and lower transaction serial:
+
+1. **STAGE1_INTAKE:** original Owner words with provenance, approved task WHAT/WHY, original immutable source cutoff and file/fixture allowlist; distinguish real Agent A START from historical research cutoff. Unknown stays UNKNOWN. Operator must quarantine Agent A implementation/diagnosis and expected solutions.
+2. **DISPATCH_REQUEST:** name responsible operator, independent Runner execution target, frozen input refs and SHA, permitted and forbidden reads, expected output destination and negative probe. A request does **not** launch B.
+3. **DISPATCH_OBSERVATION:** either a blocker/failure, or heading `# RUNNER_EXECUTION_OBSERVED` with `Session ref: ...` and `Read-scope ref: ...`. These two fields are **claimed references**, not provider-authenticated runtime or tool-visibility proofs. Operator must independently inspect them.
+4. **STAGE1_BASELINE:** B independently establishes a real original input → producer function → consumer → output path, a positive example, an adversarial case, semantic invariants, failure vs legitimate absence, and explicit source unknowns. Merely listing paths or restating Owner text does NOT pass.
+5. **STAGE1_PLAN:** Only AFTER baseline publication, B proposes at least two different feasible mechanisms, concrete counterexamples, falsifiable test/golden acceptance, downstream impacts, high-ROI next bounded action and parked medium-ROI scope. The two messages are one Stage 1 research episode, NOT an extra Two/Three-Pass prompt.
+
+The transaction operation requires a **native committed Relay receipt** for each prerequisite. Copying a loose `.md` file into the directory is insufficient. A blocked dispatch cannot produce Stage 1 baseline. A Stage 1 plan cannot appear before baseline. Existing messages are immutable; corrections are new transactions, not retroactive edits.
+
+### Sanitization review — do not confuse original WHAT/WHY with Agent A HOW
+
+| Give B as original evidence | Keep operator-only until Stage 2 |
+| --- | --- |
+| Original Owner sentences, approved scope and acceptance outcomes with historical source | Agent A's selected design, current failure diagnosis, exact fix module or new priorities |
+| Original immutable source/consumer functions and authentic input fixtures | Current PR/CI, later source, current test results or expected golden answers |
+| Neutral unresolved user-visible requirements independently grounded in original material | Agent A's rejected experiments, found implementation defect, solution-shaped “known risks” |
+| Genuine unresolved historical gaps and UNKNOWN provenance | Unverified claim disguised as original task-start SHA or accepted user-observable result |
+
+For every line in the original intake, the operator must ask **who knew it, when, from which original source, and whether it suggests the previous agent's HOW**. If uncertain, quarantine rather than quietly injecting into B. This is a source/authority judgment; simplistic keyword filters or a Markdown parser cannot reliably determine semantic leakage.
+
+**Negative examples:** Inject “Agent A found algorithm P failing in module Q” → reject from B's intake. An original Owner report “buttons do not work” → keep as a WHAT need without suggesting a repair. A later PR URL or sealed expected output → quarantine. Unreceipted prior intake → dispatch rejected. Blocked dispatch followed by fake baseline → rejected. A good Stage 1 plan with no baseline → rejected.
+
+**Limits:** even a correctly ordered claim `RUNNER_EXECUTION_OBSERVED` can be fabricated. This message transport NEVER proves independent Runner tool isolation, B authorship, Stage 1 qualification, Stage 2 disclosure rights or new writer authority. These require independent external evidence/admission under later R4–R6. Do not count a structural transaction as a successful engineering reconstruction.
+
 ## Visibility boundaries — not provided by the file extension
 
 | Message purpose | Reader before Stage 1 freeze | Reader after independently verified Stage 1 freeze |
