@@ -4151,10 +4151,81 @@ class _InputCache:
         return self._projection
 
 
-def _source_view_title_contract(graph: Any) -> tuple[str, str] | None:
+
+RESPONSIBILITY_CORE_SCHEMA = "relay-v3.2-delp-responsibility-core-v1"
+
+
+def source_bound_responsibility_core(
+    graph: Mapping[str, Any], projection: Mapping[str, Any], leaf_ref: str,
+) -> dict[str, Any]:
+    """One DELP-owned, source-identical responsibility core for views and C6.
+
+    This pure read model authenticates neither a GitHub transport nor the
+    released default branch. Only native C6's separate source custody and
+    double-read provider fence may report CURRENT_READ_ONLY.
+    """
+    indexed = validate_graph(graph)
+    if projection.get("root") != indexed["root"] or projection.get("plan_digest") != indexed["digest"]:
+        raise DelpError("RESPONSIBILITY_CORE_PLAN_MISMATCH")
+    if not isinstance(projection.get("input_digest"), str) or not re.fullmatch(
+        r"sha256:[0-9a-f]{64}", projection["input_digest"]
+    ):
+        raise DelpError("RESPONSIBILITY_CORE_INPUT_DIGEST_REQUIRED")
+    if leaf_ref not in indexed["nodes"] or indexed["nodes"][leaf_ref]["kind"] != "LEAF":
+        raise DelpError("RESPONSIBILITY_CORE_LEAF_UNBOUND")
+    source = indexed["nodes"][leaf_ref]
+    observed = (projection.get("nodes") or {}).get(leaf_ref)
+    root = (projection.get("nodes") or {}).get(indexed["root"])
+    if not isinstance(observed, Mapping) or not isinstance(root, Mapping):
+        raise DelpError("RESPONSIBILITY_CORE_PROJECTION_MISSING")
+    candidate_pr = source.get("primary_pr")
+    if candidate_pr is not None and (
+        not isinstance(candidate_pr, str) or
+        not candidate_pr.startswith(str(indexed["programme"]["repository"]).rsplit("/", 1)[-1] + "#")
+    ):
+        raise DelpError("RESPONSIBILITY_CORE_MATERIAL_BOUNDARY")
+    source_claims = sorted(source.get("owns_claims") or [])
+    observed_material = observed.get("material") or {}
+    if not isinstance(observed_material, Mapping):
+        raise DelpError("RESPONSIBILITY_CORE_MATERIAL_INVALID")
+    candidate_sha = observed_material.get("candidate_sha")
+    base_sha = observed_material.get("base_sha")
+    for value in (candidate_sha, base_sha):
+        if value is not None and (not isinstance(value, str) or
+                                  not re.fullmatch(r"[0-9a-f]{40}", value)):
+            raise DelpError("RESPONSIBILITY_CORE_MATERIAL_SHA_INVALID")
+    core = {
+        "schema": RESPONSIBILITY_CORE_SCHEMA,
+        "authority": "DELP_SOURCE_DERIVED_NO_PROVIDER_AUTHENTICATION",
+        "repository": indexed["programme"]["repository"],
+        "root": indexed["root"],
+        "leaf": leaf_ref,
+        "responsibility": source.get("responsibility_id"),
+        "claim_ids": source_claims,
+        "primary_pr": candidate_pr,
+        "candidate_sha": candidate_sha,
+        "base_sha": base_sha,
+        "digests": {
+            "graph": canonical_digest(graph),
+            "plan": projection["plan_digest"],
+            "input": projection["input_digest"],
+        },
+        "progress": {
+            "root": {k: root["progress"][k] for k in ("D", "E")},
+            "leaf": {k: observed["progress"][k] for k in ("P", "E")},
+        },
+        "leaf_state": observed["state"],
+        "rejected_fact_count": len(projection.get("rejected_facts") or []),
+        "authority_effects": [],
+    }
+    core["basis_digest"] = canonical_digest(core)
+    return core
+
+
+def _source_view_title_contract(graph: Any, target_leaf: str | None = None) -> tuple[str, str] | None:
     """Derive owner-scoped title authority from the released graph, not issue IDs.
 
-    Only a graph with an explicitly bound R-PROJECTION responsibility and a
+    Only a graph with an explicitly bound responsibility and a
     released V2 decomposition requires cross-surface smart titles. This stays
     generic to other repositories, issue numbers and draft PR numbers.
     """
@@ -4165,6 +4236,22 @@ def _source_view_title_contract(graph: Any) -> tuple[str, str] | None:
     if str(proposal.get("version")) != "V2":
         return None
     bindings = proposal.get("bindings") or []
+    if target_leaf is not None:
+        target_nodes = [
+            n for n in graph.get("nodes") or []
+            if n.get("kind") == "LEAF" and n.get("ref") == target_leaf
+            and n.get("primary_pr") and
+            any(b.get("ref") == n.get("ref") and
+                b.get("responsibility_id") == n.get("responsibility_id") for b in bindings)
+        ]
+        if not target_nodes:
+            return None
+        root = programme.get("root")
+        leaf = target_nodes[0].get("ref")
+        if not isinstance(root, str) or not isinstance(leaf, str) or root == leaf:
+            raise DelpError("INVALID_SMART_TITLE_RESPONSIBILITY_BINDING")
+        return root, leaf
+
     leaves = [
         n for n in graph.get("nodes") or []
         if n.get("kind") == "LEAF" and n.get("responsibility_id") == "R-PROJECTION"

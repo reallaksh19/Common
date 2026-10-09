@@ -228,6 +228,7 @@ def build_delp_source_bound_successor(
         if leaf_material.get("primary_pr") and observed_leaf.get("pr_state") not in {"OPEN", "CLOSED", "MERGED"}:
             raise HandoverContextError("SOURCE_PR_STATE_UNVERIFIED")
         projection = delp.project(graph, facts, observed_after)
+        core = delp.source_bound_responsibility_core(graph, projection, leaf_ref)
         leaf = projection["nodes"][leaf_ref]
         admission = delp.admit(projection, leaf_ref, command="continue")
     except HandoverContextError:
@@ -236,11 +237,12 @@ def build_delp_source_bound_successor(
         raise HandoverContextError("SOURCE_READ_OR_DELP_INVALID") from exc
 
     digests = {
-        "graph": canonical_digest(graph),
-        "plan": projection["plan_digest"],
-        "input": projection["input_digest"],
+        **core["digests"],
+        # Stronger C6 provider custody also binds issue title/body readback.
         "provider": canonical_digest({"issues": issue_after, "material": observed_after}),
     }
+    if any(core["digests"][k] != digests[k] for k in ("graph", "plan", "input")):
+        raise HandoverContextError("SOURCE_CORE_AND_CUSTODY_DIGEST_MISMATCH")
     if frozen_basis is not None:
         if not isinstance(frozen_basis, dict) or set(frozen_basis) != set(digests):
             raise HandoverContextError("FROZEN_SOURCE_BASIS_INCOMPLETE")
@@ -253,6 +255,7 @@ def build_delp_source_bound_successor(
     return {
         "schema": SOURCE_BOUND_SCHEMA,
         "authority": SOURCE_BOUND_AUTHORITY,
+        "delp_responsibility_core": core,
         "provider_trust": "CALLER_SUPPLIED_READ_ONLY_TRANSPORT_NOT_SELF_AUTHENTICATING",
         "repository": repo,
         "root": parent_ref,
@@ -504,6 +507,9 @@ def _successor_entry(
         challenge_basis["source_currentness"] = source_bound["currentness"]
         challenge_basis["source_input_digest"] = source_bound["digests"]["input"]
         challenge_basis["source_plan_digest"] = source_bound["digests"]["plan"]
+        challenge_basis["source_responsibility_basis_digest"] = (
+            source_bound["delp_responsibility_core"]["basis_digest"]
+        )
         challenge_basis["source_leaf"] = source_bound["leaf"]
         challenge_basis["source_moved_axes"] = list(source_bound["moved_axes"])
     challenge_digest = (

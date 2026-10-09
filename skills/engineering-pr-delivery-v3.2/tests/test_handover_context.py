@@ -1109,6 +1109,79 @@ class HandoverContextTests(unittest.TestCase):
                 return []
         return graph, ReadOnlyProvider()
 
+    def test_delp_source_successor_carries_shared_view_responsibility_core(self):
+        """Same schema/core must be reproducible by views and C6 native source."""
+        import delp_projection_v32 as delp
+        graph, provider = self._source_bound_fixture()
+        successor = build_delp_source_bound_successor(
+            graph, leaf_ref="Common#720", provider=provider,
+        )
+        observations = delp.observe_github(provider, graph)
+        facts = delp.ledger_from_github(provider, graph)
+        projected = delp.project(graph, facts, observations)
+        core = delp.source_bound_responsibility_core(graph, projected, "Common#720")
+        self.assertEqual(core, successor["delp_responsibility_core"])
+        self.assertEqual("a" * 40, core["candidate_sha"])
+        self.assertEqual("b" * 40, core["base_sha"])
+        self.assertEqual(
+            {k: successor["digests"][k] for k in ("graph", "plan", "input")},
+            core["digests"],
+        )
+        self.assertEqual(successor["progress"], core["progress"]["leaf"])
+        self.assertEqual([], core["authority_effects"])
+
+    def test_delp_source_core_revision_and_input_are_integrity_bound(self):
+        import delp_projection_v32 as delp
+        import copy
+        graph, provider = self._source_bound_fixture()
+        projected = delp.project(graph, [], delp.observe_github(provider, graph))
+        core = delp.source_bound_responsibility_core(graph, projected, "Common#720")
+        changed = copy.deepcopy(graph)
+        changed["programme"]["id"] = "DIFFERENT_SAME_SHAPED_PROGRAMME"
+        with self.assertRaisesRegex(delp.DelpError, "RESPONSIBILITY_CORE_PLAN_MISMATCH"):
+            delp.source_bound_responsibility_core(changed, projected, "Common#720")
+        moved = copy.deepcopy(projected)
+        moved["input_digest"] = "sha256:" + "0" * 64
+        self.assertNotEqual(
+            core["basis_digest"],
+            delp.source_bound_responsibility_core(graph, moved, "Common#720")["basis_digest"],
+        )
+
+    def test_c6_shared_source_core_fresh_process_preserves_historical_identity(self):
+        """Fresh process reproduces a frozen core, but must not claim live currentness."""
+        import delp_projection_v32 as delp
+        import os
+        import subprocess
+        graph, provider = self._source_bound_fixture()
+        observed = build_delp_source_bound_successor(
+            graph, leaf_ref="Common#720", provider=provider,
+        )
+        observations = delp.observe_github(provider, graph)
+        with tempfile.TemporaryDirectory() as td:
+            source = Path(td)
+            (source / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
+            (source / "observations.json").write_text(json.dumps(observations), encoding="utf-8")
+            code = (
+                "import json,sys; from pathlib import Path; "
+                "import delp_projection_v32 as d; "
+                "p=Path(sys.argv[1]); "
+                "g=json.loads((p/'graph.json').read_text()); "
+                "o=json.loads((p/'observations.json').read_text()); "
+                "x=d.project(g,[],o); "
+                "print(d.source_bound_responsibility_core(g,x,'Common#720')['basis_digest'])"
+            )
+            env = {**os.environ, "PYTHONPATH": str(SCRIPTS)}
+            run = subprocess.run(
+                [sys.executable, "-c", code, str(source)],
+                env=env, capture_output=True, text=True, timeout=30,
+            )
+            self.assertEqual(0, run.returncode, run.stderr)
+            self.assertEqual(
+                observed["delp_responsibility_core"]["basis_digest"], run.stdout.strip(),
+            )
+            # Fresh offline replay provides custody only, not provider freshness.
+            self.assertNotIn("CURRENT_READ_ONLY", run.stdout)
+
     def test_delp_source_successor_is_real_read_model_not_authority(self):
         graph, provider = self._source_bound_fixture()
         result = build_delp_source_bound_successor(graph, leaf_ref="Common#720", provider=provider)
@@ -1277,6 +1350,22 @@ class HandoverContextTests(unittest.TestCase):
             matches = [e for e in events if e["event_id"] == "EVT-C6-P01"]
             self.assertEqual(1, len(matches))
             self.assertEqual(bound["digests"]["input"], matches[0]["details"]["source_bound_input_digest"])
+            self.assertEqual(
+                bound["delp_responsibility_core"]["basis_digest"],
+                matches[0]["details"]["source_delp_responsibility_basis_digest"],
+            )
+            self.assertEqual(
+                bound["delp_responsibility_core"]["basis_digest"],
+                context["successor_entry"]["challenge_basis"]["source_responsibility_basis_digest"],
+            )
+            old_archive = copy.deepcopy(context)
+            old_archive["source_bound_successor"].pop("delp_responsibility_core")
+            old_archive["successor_entry"]["challenge_basis"].pop("source_responsibility_basis_digest")
+            self.assertEqual([], validate_schema("handover-context", old_archive, "HISTORICAL_C6"))
+            self.assertEqual(
+                bound["delp_responsibility_core"]["digests"]["input"],
+                bound["digests"]["input"],
+            )
 
     def test_c6_p02_stale_frozen_provider_denied_before_writes(self):
         with tempfile.TemporaryDirectory() as td:

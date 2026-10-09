@@ -199,6 +199,7 @@ properties:
           source_currentness: {enum: [CURRENT_READ_ONLY, RECONCILE_REQUIRED]}
           source_input_digest: {type: string, minLength: 71}
           source_plan_digest: {type: string, minLength: 71}
+          source_responsibility_basis_digest: {type: string, minLength: 71, maxLength: 71}
           source_leaf: {type: string, minLength: 1}
           source_moved_axes: {type: array, items: {enum: [graph, plan, input, provider]}}
       successor_reconstruction_challenge:
@@ -346,10 +347,58 @@ properties:
   source_bound_successor:
     type: object
     additionalProperties: false
+    # Existing frozen C6 archives predate the added shared core. It is optional
+    # for historical schema validation; the current producer always emits it.
     required: [schema, authority, provider_trust, repository, root, leaf, responsibility, claim_ids, owner_source_status, currentness, moved_axes, digests, provider_observation, fact_count, rejected_fact_count, progress, source_action, source_action_detail, execution_admission, owner_merge_authority, authority_effects]
     properties:
       schema: {const: relay-v3.2-source-bound-successor-v1}
       authority: {const: DERIVED_RECONSTRUCTION_READ_ONLY}
+      delp_responsibility_core:
+        type: object
+        additionalProperties: false
+        required: [schema, authority, repository, root, leaf, responsibility, claim_ids, primary_pr, candidate_sha, base_sha, digests, progress, leaf_state, rejected_fact_count, authority_effects, basis_digest]
+        properties:
+          schema: {const: relay-v3.2-delp-responsibility-core-v1}
+          authority: {const: DELP_SOURCE_DERIVED_NO_PROVIDER_AUTHENTICATION}
+          repository: {type: string, minLength: 3}
+          root: {type: string, minLength: 3}
+          leaf: {type: string, minLength: 3}
+          responsibility: {type: [string, 'null']}
+          claim_ids: {type: array, uniqueItems: true, items: {type: string, minLength: 1}}
+          primary_pr: {type: [string, 'null']}
+          candidate_sha: {type: [string, 'null']}
+          base_sha: {type: [string, 'null']}
+          digests:
+            type: object
+            additionalProperties: false
+            required: [graph, plan, input]
+            properties:
+              graph: {type: string, minLength: 71, maxLength: 71}
+              plan: {type: string, minLength: 71, maxLength: 71}
+              input: {type: string, minLength: 71, maxLength: 71}
+          progress:
+            type: object
+            additionalProperties: false
+            required: [root, leaf]
+            properties:
+              root:
+                type: object
+                additionalProperties: false
+                required: [D, E]
+                properties:
+                  D: {type: integer, minimum: 0, maximum: 100}
+                  E: {type: integer, minimum: 0, maximum: 100}
+              leaf:
+                type: object
+                additionalProperties: false
+                required: [P, E]
+                properties:
+                  P: {type: integer, minimum: 0, maximum: 100}
+                  E: {type: integer, minimum: 0, maximum: 100}
+          leaf_state: {type: string, minLength: 1}
+          rejected_fact_count: {type: integer, minimum: 0}
+          authority_effects: {type: array, maxItems: 0}
+          basis_digest: {type: string, minLength: 71, maxLength: 71}
       provider_trust: {const: CALLER_SUPPLIED_READ_ONLY_TRANSPORT_NOT_SELF_AUTHENTICATING}
       repository: {type: string, minLength: 3}
       root: {type: string, minLength: 3}

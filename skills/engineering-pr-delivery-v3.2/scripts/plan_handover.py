@@ -345,6 +345,8 @@ def plan_handover(
                 "source_bound_plan_digest": source_bound["digests"]["plan"],
                 "source_bound_graph_digest": source_bound["digests"]["graph"],
                 "source_bound_provider_digest": source_bound["digests"]["provider"],
+                "source_delp_responsibility_basis_digest":
+                    source_bound["delp_responsibility_core"]["basis_digest"],
             } if source_bound is not None else {}),
             **({"source_graph_pinned_location": native_graph_source}
                if native_graph_source is not None else {}),
@@ -377,6 +379,9 @@ def plan_handover(
         )
         if last_read["currentness"] != "CURRENT_READ_ONLY":
             raise TransactionError("SOURCE_BOUND_RECONCILIATION_REQUIRED")
+        if (last_read["delp_responsibility_core"]["basis_digest"] !=
+                source_bound["delp_responsibility_core"]["basis_digest"]):
+            raise TransactionError("SOURCE_DELP_RESPONSIBILITY_BASIS_CHANGED")
 
     return execute(
         root,

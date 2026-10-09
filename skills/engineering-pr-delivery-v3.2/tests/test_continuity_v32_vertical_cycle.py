@@ -275,7 +275,11 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             "title": (
                 f"🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE{next(n['reserve_weight'] for n in released['nodes'] if n['kind'] == 'ROOT')} · FACTS UNREPORTED — V3.2 Evidence Spine"
                 if number == 718 else
-                child_title or "🟡 [718›733] R-PROJECTION · C4 · P0/E0 · PR#740 · UNMATERIALIZED — Issue/PR Views"
+                child_title or (
+                    "🟡 [718›733] R-PROJECTION · C4 · P0/E0 · PR#740 · UNMATERIALIZED — Issue/PR Views"
+                    if number == 733 else
+                    f"🟡 [718›{number}] LEAF · C4 · P0/E0 — Child Issue {number}"
+                )
             ),
             "body": "## Human Owner specification preserved\n"
         }
@@ -299,8 +303,12 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             if number in declared_prs:
                 # Additional, graph-declared leaf: legitimate source material,
                 # NOT completed work, qualification, or an Owner-approved review.
-                return {"number": number, "head": {"sha": "e" * 40},
-                        "state": "open", "draft": True, "merged": False}
+                return {
+                    "number": number, "head": {"sha": "e" * 40},
+                    "state": "open", "draft": True, "merged": False,
+                    "title": pr_title or f"🟡 PR#{number} — Graph Leaf PR",
+                    "body": "## Human PR rationale preserved\n",
+                }
             raise AssertionError(f"unapproved fake PR #{number}")
         p.get_pull = get_pull
         return p
@@ -747,6 +755,70 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "unapproved fake PR"):
             future.get_pull(previous)
 
+    def test_47_live_readback_leaf_793_graph_derived(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        provider = self._provider(graph=live)
+        # 793 has bound primary PR Common#800
+        report = replay.live_readback(self.manifest, live, provider, selected_leaf="Common#793")
+        self.assertEqual("Common#793", report["selected_leaf"])
+        self.assertEqual("BOUND", report["pr_binding"])
+        self.assertIn("Common#793", report["read_views"])
+        self.assertIn("Common#800", report["read_views"])
+        self.assertEqual([], report["authority_effects"])
+
+    def test_48_title_without_dash_delimiter_parses_safely(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        provider = self._provider(graph=live, child_title="Plain Human Title Without Dash")
+        report = replay.live_readback(self.manifest, live, provider)
+        self.assertEqual("DRIFT", report["read_views"]["Common#733"]["title"])
+        self.assertEqual("DRIFT_OR_UNPUBLISHED", report["reconciliation"])
+
+
+    def test_49_plain_owner_title_with_em_dash_keeps_entire_human_text(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        whole = "Scope A — Engineering constraints"
+        report = replay.live_readback(
+            self.manifest, live, self._provider(graph=live, child_title=whole)
+        )
+        self.assertTrue(
+            report["read_views"]["Common#733"]["expected"].endswith(" — " + whole),
+            report["read_views"]["Common#733"]["expected"],
+        )
+
+    def test_50_undeclared_leaf_fails_before_any_provider_access(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        class Trap:
+            def __getattr__(self, key):
+                raise AssertionError("PROVIDER_MUST_NOT_BE_CONTACTED:" + key)
+        with self.assertRaisesRegex(replay.ReplayError, "SELECTED_RESPONSIBILITY_NOT_BOUND"):
+            replay.live_readback(self.manifest, live, Trap(), selected_leaf="Common#99999")
+
+
+    def test_51_new_leaf_cannot_bypass_unreleased_writer_scope(self):
+        """Graph-selected READ does not grant #793 LIVE_STATUS/title write authority."""
+        import delp_projection_v32 as delp
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        observations = {
+            "Common#793": {"candidate_sha": "e" * 40, "pr_state": "OPEN"},
+        }
+        snap = replay.view.build_views(
+            live, self.manifest, selected_leaf="Common#793", phase="C4",
+            human_titles={"Common#718": "Evidence Spine", "Common#793": "Handover", "PR": "Source View"},
+            draft_pr={"number": 800, "head_sha": "e" * 40, "lifecycle": "OPEN"},
+            observations=observations, title_contract="C4-S6",
+        )
+        store = delp.InMemoryStore()
+        with self.assertRaisesRegex(delp.DelpError, "SOURCE_SMART_TITLE_POLICY_REQUIRED"):
+            delp.sync_projection(
+                store, live, lambda: [], lambda: observations,
+                {"Common#718": "Evidence Spine", "Common#793": "Handover"},
+                title_overrides=snap["issue_titles"],
+                selected_refs=("Common#718", "Common#793"),
+                expected_input_digest=snap["delp_input_digest"],
+            )
+        self.assertEqual([], store.writes)
+
 
 if __name__ == "__main__":
     unittest.main()
+
