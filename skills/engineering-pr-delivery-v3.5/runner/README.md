@@ -1,12 +1,14 @@
 # Runner preparation — V3.5 nested Coder Markdown entrypoint
 
-**Active scope:** A manual, thinking-first **preparation and advisory** layer within the [V3.5 skill](../SKILL.md). Owner instruction **"Prepare for runner"** prepares the historical source-only Stage 1 material immediately; an Agent A that has **actually loaded the skill** may recommend **"Time for Runner"** near ~70% *usable episode life consumed* when measured or clearly estimated, or earlier on concrete context-loss risk. Neither phrase launches a model or confers a writer lease.
+**Active scope:** A manual, thinking-first **preparation and advisory** layer within the [V3.5 skill](../SKILL.md). Owner instruction **"Prepare for runner"** prepares the historical source-only Stage 1 material immediately; an Agent A that has **actually loaded the skill** may recommend **"Time for Runner"** near `70% *usable episode life consumed* when measured or clearly estimated, or earlier on concrete context-loss risk. Neither phrase launches a model or confers a writer lease.
+
+**Repository-native communication:** [`relay/CONTINUITY/README.md`](../../../relay/CONTINUITY/README.md) defines the Markdown message sequence and [authority map](../../../relay/CONTINUITY/AUTHORITY_MAP.md). Stage 1 **must first demonstrate a historical system baseline**, before provisional options; all actual A technical handover facts are Stage 2 only.
 
 ## Read these in the appropriate role
 
 | When | Reader | Required document |
 |---|---|---|
-| Start of Agent A Coder session / normal checkpoint | Existing primary Coder A | [Manual command and ~70% advisory](PREPARE_FOR_RUNNER.md) |
+| Start of Agent A Coder session / normal checkpoint | Existing primary Coder A | [Manual command and `70% advisory](PREPARE_FOR_RUNNER.md) |
 | After Owner asks to prepare, before Runner launch | Operator and Agent A only | [Static historical intake and segregated Agent A reality packets](STATIC_PACKET_FORMATS.md) |
 | New externally isolated Runner B, *Stage 1 only* | Runner B | [Stage 1 independent WHAT/HOW investigation](STAGE1_INDEPENDENT_RECONSTRUCTION.md) **plus sanitized original packet only** |
 | **After** actual independent Stage 1 plan is frozen and disclosure authorized | Same Runner B | [Stage 2 source-based reconciliation](STAGE2_SOURCE_RECONCILIATION.md) and separately held Agent A reality |
@@ -17,7 +19,7 @@
 ## Owner command vs suggestion
 
 - **"Prepare for runner"** — direct Owner command; act immediately regardless of reported context consumption (including `UNKNOWN`); prepare Stage 1 original source/Owner WHAT/WHY and separately withheld Stage 2 Agent A HOW/current evidence; Agent A continues the same authorized responsibility.
-- **"Time for Runner"** — **Agent A's advisory**, not a command or automatic event; evaluate at semantic checkpoints, normally around ~70% context-life **consumed** from authentic provider used/usable budget, or a clearly labelled proxy/risk. Never translate DELP P/E, health components or completed tasks into token utilization. Say `UNKNOWN` when metrics lack a real denominator.
+- **"Time for Runner"** — **Agent A's advisory**, not a command or automatic event; evaluate at semantic checkpoints, normally around `70% context-life **consumed** from authentic provider used/usable budget, or a clearly labelled proxy/risk. Never translate DELP P/E, health components or completed tasks into token utilization. Say `UNKNOWN` when metrics lack a real denominator.
 - **Stage 2 and custody** — Stage 2 requires actual independent B plan freeze and independent disclosure authorization; no automatic switch. Only the Local/Owner control plane can grant a real new writer after revoking A and resolving in-flight operations.
 
 ## Integration/release state

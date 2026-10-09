@@ -184,6 +184,8 @@ The copied `continuity_projection.py` baseline now defaults new snapshots to `pr
 
 **Authority invariant:** This is **Markdown-only advisory and information preparation**. No platform telemetry API, automatic agent/session launch, writer promotion, credential revocation, model-context attestation, issue/PR publication, progress title editing, Local timing/watchdog truth, independent reviewer approval or merge authority is created by these instructions. V3.5/DELP projection rules and Local v1.1 role/Writer OFF/WP0 hold still govern. Until a separate controller proves exclusive new custody and current provider/head evidence, successor engineering writes are **HOLD**.
 
+**Relay-native Markdown message transport (Common #890):** [`relay/CONTINUITY/README.md`](../../relay/CONTINUITY/README.md) provides the minimal governed communication envelopes; Stage 1 is factual historical baseline FIRST, source-grounded provisional interpretation SECOND, and technical handover/Stage 2 only after an externally attested freeze. Refer to the [authority map](../../relay/CONTINUITY/AUTHORITY_MAP.md); these Markdown messages do not replace `relay/STATE.yaml`, transactions, DELP, Local execution/merge admission, or Owner approval.
+
 ## Embedded Coder contract
 
 The machine-readable active contract is:

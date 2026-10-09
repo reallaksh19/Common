@@ -44,19 +44,17 @@
 | Genuine negative fixtures | `[original file path + SHA256 + negative suitability VERIFIED/UNKNOWN]` | Ambiguity, no-match, stale and error cases |
 | Source-size / cost numbers | `[actually observed metric source or UNKNOWN]` | Distinguish measured from aspiration |
 
-### Bounded Agent A WHAT/WHY briefing (not an implementation disclosure)
+### Original requirements and source provenance — **not A's diagnosis**
 
-**Originally assigned problem:** `[symptom, acceptance, unchanged requirements]`
+**Original Owner WHAT/WHY:** [verbatim, authenticated / MIRROR / UNKNOWN; attribute interpretation separately]
 
-**Known open risks:** `[failure risks phrased as questions; NOT how A fixed them]`
+**Existing approved scope/invariants:** [historical Owner/plan refs only; no new authorization]
 
-**High-priority obligations:** `[outcomes whose completion is unknown]`
+**Permitted historical system facts:** [pinned original source, authentic fixtures, permitted static constraints]
 
-**Medium-priority parked:** `[ideas + why optional + return trigger]`
+**Withhold until after Part A / Stage 2:** Agent A's current findings, candidate HOW, ranked risks, High-ROI shortlist, rejected methods, Medium parked work, current source/PR/CI and transactional handover questions. Even a non-algorithmic A briefing can steer the Runner's early factual baseline. The Stage 1 agent must independently discover the source-to-consumer path and causal problem, not inherit A's proposed diagnosis.
 
-**Still UNKNOWN:** `[source/functions/consumer pairing, data equivalence, approval, negative oracles]`
-
-**No current-status claims:** The packet does not include contemporary HEAD, PR numbers, CI, Agent A diffs/tests, current plan or progress/title/scoreboard values.
+**Authoring surface:** [`relay/CONTINUITY/TEMPLATES/STAGE1_SOURCE_PACKET.md`](../../../relay/CONTINUITY/TEMPLATES/STAGE1_SOURCE_PACKET.md) under an externally filtered and separately enforced read scope. A Markdown filename or Git hash alone cannot enforce blindness.
 
 ### Stage 1 trigger provenance and tool admission (operator side only)
 
@@ -71,7 +69,7 @@ A reason code reflects **why preparation was requested**, not proof of exact con
 - [ ] Runner output is limited to an external controlled research artifact; engineering source/GitHub issue edits are unavailable.
 - [ ] If any item is unverified, no clean Stage 1 certification.
 
-**Runner task:** Supply the separate [Stage 1 thinking prompt](STAGE1_INDEPENDENT_RECONSTRUCTION.md), not a precomputed recommended architecture.
+**Runner task:** Supply the separate [Stage 1 thinking prompt](STAGE1_INDEPENDENT_RECONSTRUCTION.md) and original source only. It must produce historical system baseline **before** engineering options and never a current-head plan.
 
 ---
 

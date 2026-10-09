@@ -6,7 +6,7 @@
 
 **Do not mount or disclose this file to Stage 1 Runner B.** The Owner/controller supplies it *after* an independent Stage 1 artifact has been technically isolated, frozen, read back and authorized for disclosure. A file hash alone proves content identity, NOT tool isolation or a fresh context.
 
-**Role:** The **same** Runner B that wrote the independent Stage 1 plan. You are a critical investigator and possible future successor, not automatically the primary coder. Your job is to reconcile WHAT SHOULD EXIST against WHAT ACTUALLY EXISTS and determine the safest valuable next action.
+**Role:** The **same** Runner B that wrote the independent Stage 1 historical baseline plus provisional original-problem hypotheses. You are a critical investigator and possible future successor, not automatically the primary coder. Your job is to reconcile WHAT SHOULD EXIST against WHAT ACTUALLY EXISTS and determine the safest valuable next action.
 
 ## 0. Mandatory read admission — before viewing predecessor material
 
@@ -37,7 +37,7 @@ Your task is **not** to reword Agent A's handover. Investigate:
 
 ## 2. HOW to think — source-first reconciliation procedure
 
-**Step A — Reopen Stage 1 verbatim.** Verify the immutable Stage 1 file and digest; read your actual Q1/Q2/Q3, original alternatives, assumptions and ROI register. Do not rewrite the Stage 1 text to make your ideas appear accurate.
+**Step A — Reopen Stage 1 verbatim.** Verify the immutable Stage 1 file and digest; read your actual original questions (Q1/Q2/Q3 when the handover contract requires three), original alternatives, assumptions and ROI register. Do not rewrite the Stage 1 text to make your ideas appear accurate.
 
 **Step B — Read Agent A's *reality* without promoting its claims.** Ask for: original actual task start or UNKNOWN; exact HEAD/branch/PR; changed files/functions and consumers; initial plan/revisions/Owner decisions; tests at precise tested SHA with exits/goldens; known bugs/failed designs, parked Medium work; pending GitHub calls, lease and final proposal. Treat the packet as `AGENT_CLAIM` until independently checked. In a crash/no-handover case explicitly mark `HANDOVER_MODE=INTERRUPTED_NO_PACKET`.
 
@@ -96,9 +96,9 @@ Build this matrix for **each meaningful Owner outcome or Stage 1 hypothesis**, n
 
 These are thinking examples, **not** claims about a present application or a prescribed design choice.
 
-## 4. Answer the *original* three questions, explicitly
+## 4. Answer the actual *original frozen* questions (three when required)
 
-Copy the **exact Q1/Q2/Q3 wording from your frozen Stage 1 plan** into a comparison section, preserving the question and its prior tentative answer. Do not substitute easier questions. For each:
+Copy the **exact questions from your frozen Stage 1 reconstruction (Q1/Q2/Q3 when three were required)** into a comparison section, preserving the question and its prior tentative answer. Do not substitute easier questions. For each:
 
 - Cite current source/consumer/provider evidence at its actual SHA and observation time, or `UNKNOWN`.
 - Explain what Agent A got right or wrong; also what you got right or wrong.
@@ -147,4 +147,4 @@ Declare **each**, independently:
 | Exclusive successor custody | `PROVEN_BY_CONTROLLER` / `NOT_PROVEN` |
 | Next engineering execution | `AUTHORIZED_UNIT_WITH_SCOPE` / `PLAN_READY_BUT_READ_ONLY` / `HOLD` |
 
-The correct outcome can be a **complete, useful revised plan with source evidence and no execution authority**. Do not publish GitHub issues/PR comments, modify source, award P/E, merge, or announce a takeover without a separately authenticated execution grant. When authorized, reconcile the current source once more before the first write and preserve the SAME existing responsibility.
+The correct outcome can be a **complete, useful revised plan with source evidence and no execution authority**. Publish the proposed [STAGE2_RECONCILIATION](../../../relay/CONTINUITY/TEMPLATES/STAGE2_RECONCILIATION.md) only through authorized Relay Markdown exchange; keep the current technical handover unreadable before the verified Stage 1 freeze. Do not publish GitHub issues/PR comments, modify source, award P/E, merge, or announce a takeover without a separately authenticated execution grant. When authorized, reconcile the current source once more before the first write and preserve the SAME existing responsibility.
