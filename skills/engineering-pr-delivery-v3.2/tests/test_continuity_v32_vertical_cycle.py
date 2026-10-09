@@ -151,11 +151,20 @@ class VerticalResponsibilityCycle(unittest.TestCase):
     def test_17_frozen_c0_and_live_graph_are_distinct_but_same_release(self):
         live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
         frozen = self.graph
-        self.assertEqual(frozen["programme"]["decomposition_proposal"],
-                         live["programme"]["decomposition_proposal"])
-        self.assertEqual(frozen["programme"]["acceptance_claims"],
-                         live["programme"]["acceptance_claims"])
-        self.assertEqual(frozen["nodes"][0]["reserve_weight"], live["nodes"][0]["reserve_weight"])
+        old_plan = frozen["programme"]["decomposition_proposal"]
+        new_plan = live["programme"]["decomposition_proposal"]
+        # A claim-first released plan can materialize a new responsibility
+        # binding without changing the frozen original C0 release digest.
+        oracle = json.loads((ROOT / ".github/v32-evidence-spine/793-binding-oracles-v1.json").read_text())
+        self.assertEqual(old_plan["released_proposal_digest"], new_plan["released_proposal_digest"])
+        self.assertEqual(old_plan["responsibilities"], new_plan["responsibilities"])
+        self.assertEqual({x["responsibility_id"]: x["ref"] for x in new_plan["bindings"]},
+                         {x["responsibility_id"]: x["ref"] for x in oracle["expected_bindings"]})
+        self.assertTrue({x["responsibility_id"] for x in old_plan["bindings"]}
+                        < {x["responsibility_id"] for x in new_plan["bindings"]})
+        self.assertEqual(frozen["programme"]["acceptance_claims"], live["programme"]["acceptance_claims"])
+        self.assertEqual(oracle["old_reserve_weight"], frozen["nodes"][0]["reserve_weight"])
+        self.assertEqual(oracle["expected_reserve_weight"], live["nodes"][0]["reserve_weight"])
         old_child = next(n for n in frozen["nodes"] if n.get("responsibility_id") == "R-PROJECTION")
         new_child = next(n for n in live["nodes"] if n.get("responsibility_id") == "R-PROJECTION")
         self.assertNotIn("primary_pr", old_child)
