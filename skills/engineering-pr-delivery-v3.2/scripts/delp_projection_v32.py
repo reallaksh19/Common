@@ -4185,6 +4185,15 @@ def source_bound_responsibility_core(
     ):
         raise DelpError("RESPONSIBILITY_CORE_MATERIAL_BOUNDARY")
     source_claims = sorted(source.get("owns_claims") or [])
+    observed_material = observed.get("material") or {}
+    if not isinstance(observed_material, Mapping):
+        raise DelpError("RESPONSIBILITY_CORE_MATERIAL_INVALID")
+    candidate_sha = observed_material.get("candidate_sha")
+    base_sha = observed_material.get("base_sha")
+    for value in (candidate_sha, base_sha):
+        if value is not None and (not isinstance(value, str) or
+                                  not re.fullmatch(r"[0-9a-f]{40}", value)):
+            raise DelpError("RESPONSIBILITY_CORE_MATERIAL_SHA_INVALID")
     core = {
         "schema": RESPONSIBILITY_CORE_SCHEMA,
         "authority": "DELP_SOURCE_DERIVED_NO_PROVIDER_AUTHENTICATION",
@@ -4194,6 +4203,8 @@ def source_bound_responsibility_core(
         "responsibility": source.get("responsibility_id"),
         "claim_ids": source_claims,
         "primary_pr": candidate_pr,
+        "candidate_sha": candidate_sha,
+        "base_sha": base_sha,
         "digests": {
             "graph": canonical_digest(graph),
             "plan": projection["plan_digest"],
