@@ -112,6 +112,18 @@ PLAN_HANDOVER
 
 A handover workflow may reconcile live material and publish custody context, but it must not manufacture a new reasoning request merely because custody is changing. Replanning/assurance is separate and must be explicitly requested or independently required by the governing responsibility.
 
+## Planned Runner vs unplanned recovery — choose the right reasoning method
+
+**Canonical V3.2 explanation:** [continuity-method-routing-v32.md](operating-model/continuity-method-routing-v32.md). These are distinct reasoning/custody situations, not interchangeable prompts. This Markdown routing introduces no new DELP progress, command schema, event, execution gate, background context monitor, provider authority or mandatory prompt run.
+
+**Planned Agent A → Agent B:** When the Owner says **“Prepare for runner”**, Agent A prepares sanitized original-source/WHAT-WHY input immediately. It may **proactively suggest “Time for Runner”** at approximately 70% *source-graded usable episode life consumed* (60% preparation, 85% urgent), or earlier on genuine reliability/runway risk. A missing context denominator is UNKNOWN, never fabricated; P/E/D and V3.2 delivery-health are different concepts. A real **Buddy Runner Stage 1** reconstructs the KNOWN task independently from original pinned source and fixtures, while current Agent A HOW/PR/CI stays hidden. Agent A stays primary. A later **native technical HANDOVER transaction** freezes actual changed source/functions, downstream consumers, accepted evidence, pending work and custody. Only after B's plan is frozen may B reconcile it against A's detailed HOW/current source in **Buddy Stage 2**. Keep writer transfer separate and enforce existing authorization; no duplicate issue/EP.
+
+The V3.2-local human-readable templates are [Prepare](runner/PREPARE_FOR_RUNNER.md), [Stage 1](runner/STAGE1_RECONSTRUCT.md), [technical handover](runner/PLANNED_TECHNICAL_HANDOVER.md), [Stage 2](runner/STAGE2_RECONCILE.md) and [operator guidance](runner/OPERATOR_GUIDE.md). The prompts make the agent think from original functions, competing alternatives, counterexamples and authentic fixtures instead of copying A.
+
+**Unplanned Agent A termination:** Use the existing V3.2 abrupt-interruption **fast recovery and `TASK_EVIDENCE — RECOVERY`** first when the latest checkpoint and live HEAD suffice. For an explicitly selected independent recovery, a **separate external agent** prepares either **Two-Pass** (focused repository/task recovery: system-first with task hidden, then task/reconcile/plan) or **Three-Pass** (broader programme/app imagination and improvement, then reality/reconciliation/authorized move). Select the canonical standalone generator; do **not** embed its schema into V3.2, pretend that A created a technical handover after disappearing, or automatically generate such prompts from `PLAN_HANDOVER` or ordinary stream loss. Preserve each generator's native visibility and approval conditions.
+
+A **handover** is the custody/technical-reconstruction transaction; it does not, by itself, request Two-Pass, Three-Pass, replanning or an execution lease. A **Runner** is a planned parallel engineering-reconstruction method; starting it does not revoke Agent A. If planned Stage 1 isolation fails, a normal handover remains possible but independent Buddy success is not earned.
+
 ## Implementation plan → automatic GitHub start update
 
 When an agent begins material implementation of an already-published implementation plan, it MUST emit the V3.2 `implementation-start` semantic event.
