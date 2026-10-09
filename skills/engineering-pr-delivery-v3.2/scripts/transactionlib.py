@@ -103,10 +103,14 @@ def _prior_buddy_message(root: Path, issue: int, current_seq: int, stage: str) -
     candidates: list[tuple[int, bytes, dict[str, Any]]] = []
     for path in folder.glob(f"TX.{issue}.*-{stage}.md"):
         match = re.fullmatch(rf"TX\.{issue}\.([1-9][0-9]*)-{re.escape(stage)}\.md", path.name)
-        if not match or int(match.group(1)) >= current_seq or path.is_symlink():
+        if not match or int(match.group(1)) >= current_seq:
             continue
+        if path.is_symlink():
+            raise TransactionError("BUDDY_PRIOR_MESSAGE_SYMLINK_FORBIDDEN")
         seq = int(match.group(1))
         tx_path = root / f"relay/TRANSACTIONS/TX.{issue}.{seq}/manifest.yaml"
+        if tx_path.is_symlink():
+            raise TransactionError("BUDDY_PRIOR_RECEIPT_SYMLINK_FORBIDDEN")
         if not tx_path.is_file():
             raise TransactionError("BUDDY_PRIOR_MESSAGE_UNRECORDED")
         receipt = load_manifest(tx_path)
