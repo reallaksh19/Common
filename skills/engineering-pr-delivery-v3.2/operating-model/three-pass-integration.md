@@ -4,7 +4,7 @@
 
 For **planned** continuity while Agent A still works, use [Buddy Runner Stage 1](../runner/STAGE1_RECONSTRUCT.md) followed by a **technical handover transaction** and [Buddy Stage 2](../runner/STAGE2_RECONCILE.md). The normal `PLAN_HANDOVER` operation does not create a Three-Pass request.
 
-For **unplanned Agent A termination** when an independent *broader application/roadmap reassessment and improvement* is actually requested or justified, a **separate external prompt-design agent** may use the standalone [Three-Pass generator](../../../three-pass-prompt-generator/SKILL.md) and [its canonical schema](../../../three-pass-prompt-generator/schema.md). This is **not** the default for ordinary stream-loss recovery. Focused repo/task recovery uses the independently requested standalone [Two-Pass generator](../../../two-pass-prompt-generator/SKILL.md). See [method routing](continuity-method-routing-v32.md).
+For **unplanned Agent A termination** when an independent *broader application/roadmap reassessment and improvement* is actually requested or justified, a **separate external prompt-design agent** may use the standalone [Three-Pass generator](../../three-pass-prompt-generator/SKILL.md) and [its canonical schema](../../three-pass-prompt-generator/schema.md). This is **not** the default for ordinary stream-loss recovery. Focused repo/task recovery uses the independently requested standalone [Two-Pass generator](../../two-pass-prompt-generator/SKILL.md). See [method routing](continuity-method-routing-v32.md).
 
 ## Three conceptual passes, exactly five prompts
 
