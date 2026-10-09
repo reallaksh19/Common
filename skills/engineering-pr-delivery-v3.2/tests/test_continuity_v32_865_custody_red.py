@@ -137,9 +137,11 @@ class ColdCoreLinkRed(unittest.TestCase):
         events[self.chosen]["details"]["source_delp_responsibility_basis_digest"] = (
             "sha256:" + "0" * 64)
         result = self.invoke_cold(ctx, events)
-        self.assertNotEqual(
-            0, result.returncode,
-            "D06_EVENT_ONLY_CORE_DIGEST_MUTATION_ACCEPTED_BY_COLD")
+        self.assertNotEqual(0, result.returncode, result.stdout)
+        self.assertIn(
+            "COLD_EVENT_CORE_BASIS_MISMATCH", result.stderr,
+            "D06_EVENT_ONLY_CORE_REJECTION_MISSING: " + result.stderr[-900:],
+        )
 
     def test_d06_red_challenge_core_digest_must_fail_closed(self):
         ctx, events = self.bundle()
@@ -148,9 +150,11 @@ class ColdCoreLinkRed(unittest.TestCase):
         # Rebind the context hash so the legacy check cannot mask the gap.
         events[self.chosen]["basis"][2] = canonical_digest(ctx)
         result = self.invoke_cold(ctx, events)
-        self.assertNotEqual(
-            0, result.returncode,
-            "D06_CHALLENGE_CORE_DIGEST_MUTATION_ACCEPTED_BY_COLD")
+        self.assertNotEqual(0, result.returncode, result.stdout)
+        self.assertIn(
+            "COLD_CHALLENGE_CORE_BASIS_MISMATCH", result.stderr,
+            "D06_CHALLENGE_CORE_REJECTION_MISSING: " + result.stderr[-900:],
+        )
 
     def test_d06_red_tampered_nested_core_digest_must_fail_closed(self):
         ctx, events = self.bundle()
@@ -160,9 +164,11 @@ class ColdCoreLinkRed(unittest.TestCase):
         # preserve the legacy event-to-context hash link after modification.
         events[self.chosen]["basis"][2] = canonical_digest(ctx)
         result = self.invoke_cold(ctx, events)
-        self.assertNotEqual(
-            0, result.returncode,
-            "D06_FORGED_NESTED_CORE_WITH_REBOUND_CONTEXT_HASH_ACCEPTED")
+        self.assertNotEqual(0, result.returncode, result.stdout)
+        self.assertIn(
+            "COLD_SOURCE_CORE_SELF_DIGEST_MISMATCH", result.stderr,
+            "D06_NESTED_CORE_SEMANTIC_REJECTION_MISSING: " + result.stderr[-900:],
+        )
 
 
 if __name__ == "__main__":
