@@ -353,7 +353,7 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
         self.assertEqual("WAITING_DEPENDENCY", basis["projection"]["leaf_state"])
         self.assertEqual(0, basis["projection"]["leaf_progress"]["P"])
         self.assertEqual(0, basis["projection"]["leaf_progress"]["E"])
-        self.assertEqual("CURRENT_READ_ONLY", basis["handover"]["currentness"])
+        self.assertEqual("UNVERIFIED_LOCAL_INPUT", basis["handover"]["currentness"])
         self.assertEqual([], basis["authority_effects"])
 
     def test_29_switch_selected_leaf_733_to_793_same_schema_without_code_changes(self):
