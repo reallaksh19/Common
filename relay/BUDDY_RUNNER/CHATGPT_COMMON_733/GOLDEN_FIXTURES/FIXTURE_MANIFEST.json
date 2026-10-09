@@ -1,0 +1,47 @@
+{
+  "schema": "buddy-runner-golden-fixture-manifest-v1",
+  "case_id": "BR-COMMON-733-TWO-STAGE-20261009",
+  "purpose": "research fixtures; Stage 2 disclosure withheld until independent Stage 1 plan sealed",
+  "repo": "reallaksh19/Common",
+  "canonical_owner_issue": "Common#718",
+  "active_responsibility": "Common#733",
+  "governing_version": "Engineering Relay V3.2",
+  "frozen_stage1_source_commit": "80a9c03d8f33ace129d21cb868c93e9359a8868a",
+  "frozen_graph_path": ".github/v32-evidence-spine/718-proposal-v2.json",
+  "historical_stage1_prompt_source_commit": "0b1c9d2b032aa82e5c98d38cd67af33b59642427",
+  "stage1_existing_reconstruction": {
+    "path": "relay/BUDDY_RUNNER/CHATGPT_COMMON_733/INDEPENDENT_RECONSTRUCTION_V1.md",
+    "commit": "0b1c9d2b032aa82e5c98d38cd67af33b59642427",
+    "verified_sha256": "fca6cc5994d79716f1f05304611f1f520f18a7ca47b60803c943fbda88ae59c4"
+  },
+  "stage1_prompt_byte_identical_to_original": true,
+  "stage1_external_input_access_manifest_seal": "PENDING_NOT_OBSERVED",
+  "source_agent1_70_percent_telemetry": "SIMULATED_NOT_AUTHENTICATED",
+  "source_agent1_original_session_start": "UNKNOWN",
+  "agent1_stage2_disclosure": "NOT_YET_SUPPLIED",
+  "independent_live_takeover": "NOT_RUN",
+  "stage2_visibility_policy": "EVALUATOR_ONLY_UNTIL_OPERATOR_ADMITS_STAGE2_AND_SEALS_STAGE1",
+  "stage1_visibility_policy": "PINNED_FROZEN_SOURCE_AND_SANITIZED_STAGE1_INPUT_ONLY",
+  "files": [
+    {
+      "path": "relay/BUDDY_RUNNER/CHATGPT_COMMON_733/GOLDEN_FIXTURES/STAGE1_RUNNER_PROMPT_V1.md",
+      "sha256": "1608ee0ec7bbf1572ed114c341201aa60ff80f26fa7ac0cd7312559aa9276caa",
+      "git_blob_sha": "42c3dc4d119ac2e16d94f97b65e5f79ed13f1c47",
+      "utf8_bytes": 11425
+    },
+    {
+      "path": "relay/BUDDY_RUNNER/CHATGPT_COMMON_733/GOLDEN_FIXTURES/STAGE2_RUNNER_PROMPT_V1.md",
+      "sha256": "3f6f6b98ada4790c27b473ee59488371cdf8819e3bacc8079a616268e314e8fa",
+      "git_blob_sha": "530a65bcf5dd27afefdfaee3792f962448ce6b92",
+      "utf8_bytes": 14883
+    },
+    {
+      "path": "relay/BUDDY_RUNNER/CHATGPT_COMMON_733/GOLDEN_FIXTURES/PROMPT_DESIGN_METHOD_AND_ROBUSTNESS.md",
+      "sha256": "efe582973be6e5d28f10dc068add01cdc96b0cc7896e5bc78d4b0db458921362",
+      "git_blob_sha": "c779267d4fc8633fa92a57ddaed17d2d1d16fd4f",
+      "utf8_bytes": 23401
+    }
+  ],
+  "golden_fixture_vs_real_run": "PR files are test inputs, not execution/qualification evidence",
+  "safety_note": "Separate files on a GitHub PR do not enforce blind Stage1 isolation. A trusted technical controller must prevent Stage1 Runner access to Stage2 and current data."
+}
