@@ -209,7 +209,7 @@ test('actual native current parent/child/PR-head/Actions observation',
   assert.equal(result.pr_facts[0].number,n);
   assert.equal(result.pr_facts[0].head_sha,sha);
   assert.equal(result.pr_facts[0].currentness,'MATCH');
-  assert.equal(result.pr_facts[0].draft,true);
+  assert.equal(typeof result.pr_facts[0].draft,'boolean'); // native observed draft/ready, not assumed
   assert.equal(result.pr_facts[0].merged,false);
   assert.equal(result.authorization_granted,false);
   assert.equal(result.independently_accepted,false);
