@@ -96,13 +96,18 @@ export function deriveCandidateState(source){
  const prs=p.pr_facts.map(pr=>perPR(pr,nativeAcquisition));
  if(new Set(prs.map(x=>x.number)).size!==prs.length)refuse('INVALID','duplicate PR');
  const blockers=[];
+ // Untrusted/replayed PASS is still not a qualified native acquisition.
+ // One canonical R12 contract owns this fact for every downstream consumer.
+ if(!nativeAcquisition)blockers.push('SOURCE_ACQUISITION_UNATTESTED');
  if(prs.some(x=>x.head_state!=='CURRENT'))blockers.push('PROVIDER_HEAD_STALE_OR_UNPINNED');
  if(prs.some(x=>x.selected_ci_state!=='PASS'))
    blockers.push('SELECTED_CI_NOT_ALL_PASS');
  const next=blockers.includes('PROVIDER_HEAD_STALE_OR_UNPINNED')?
     'REFRESH_PROVIDER_CURRENT_PR_AND_EVIDENCE':
     blockers.includes('SELECTED_CI_NOT_ALL_PASS')?
-    'QUALIFY_SELECTED_CURRENT_HEAD_CI':null;
+    'QUALIFY_SELECTED_CURRENT_HEAD_CI':
+    blockers.includes('SOURCE_ACQUISITION_UNATTESTED')?
+    'REACQUIRE_NATIVE_PROVIDER_FACTS_FOR_CI':null;
  const core={
    schema:'relay-candidate-verification-v1',
    repository:p.repository,parent_issue:p.parent_issue.number,
