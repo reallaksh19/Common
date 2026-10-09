@@ -238,7 +238,7 @@ export async function reconcileGitHubFacts(rawScope,options={}){
     consistency:'PR_DOUBLE_READ_NON_ATOMIC',
     evidence_acceptance:'NOT_EVALUATED',human_review:'NOT_EVALUATED',
     owner_intent:'NOT_AUTHENTICATED',independent_journal_tip:'NOT_ANCHORED',
-    actual_next:'REQUIRE_INDEPENDENT_SOURCE_REVIEWS_THEN_BIND_G2C',
+    actual_next:'UNDETERMINED_PROVIDER_ONLY_REQUIRES_LINEAGE_AND_ACCEPTED_EVIDENCE',
     // Critical: even a matching PR + success CI is NEVER accepted TASK_EVIDENCE.
     authorization_granted:false,independently_accepted:false,live_writer_enabled:false
   };
