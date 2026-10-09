@@ -88,7 +88,7 @@ test('non-200, redirect, malformed JSON, long HTTP response never produces accep
 test('large comment and changed comment ID never pass the scope',async()=>{
  const long={...payload(),body:'a'.repeat(65537)};
  await rejected(observe(scope(),{fetchImpl:fake(long).fetchImpl}),'REFUTED');
- await rejected(observe(scope(COMMENT+1),{fetchImpl:fake().fetchImpl}),'REFUTED');
+ await rejected(observe(scope(COMMENT+1),{fetchImpl:async url=>({status:200,url,redirected:false,headers:{get:()=>null},text:async()=>JSON.stringify(payload())})}),'REFUTED');
 });
 test('fetch failures produce a redacted UNKNOWN without printing token',async()=>{
  let thrown;
