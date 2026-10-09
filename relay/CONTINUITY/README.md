@@ -36,6 +36,10 @@ If the preparing agent cannot create a fresh separately restricted B session, re
 
 [Core1B repeated-verification failure](EXAMPLES/CORE1B_20261009_DISPATCH_POSTMORTEM.md) is the dispatch regression: nine correctly copied source files and a stable packet do not launch Runner B. [Reviewer-only cross-domain prompt review](REVIEWER_ONLY/CROSS_DOMAIN_PROMPT_CONTRACT_REVIEW_V1.md) probes the same reasoning contract on R-PROJECTION and LFJ; do **not** put the reviewer note in a Stage 1 input envelope. No new event exists when an unchanged blob is checked again.
 
+## Release preflight and actual access evidence
+
+The [operator Stage 1 release contract](OPERATOR_STAGE1_RELEASE_CONTRACT.md) and [controller-only preflight receipt](TEMPLATES/STAGE1_RELEASE_PREFLIGHT.md) make the B read boundary measurable: fresh session, actual input bytes, allowed historical source read, denied current A/PR/issues/Stage 2, and denied alternate raw-URL/connector/shared-memory routes. Keep these controller instructions **out of B's Stage 1 input envelope**. A single unresolved or untested negative probe means NOT_BLIND rather than clean. A historical source packet's Git hash is input integrity only.
+
 ## Confidentiality and real blindness
 
 A committed Markdown path is not private from other users or tokens with read access to the repository. **GitHub does not provide path-level confidentiality to a reader with whole-repo rights.** The safe options are (1) external tool/ref/path enforcement plus auditable denial, or (2) do not publish the current A reality on *any* B-readable ref until its independent Stage 1 is sealed. Folder names, HEAD pins, an instruction "don't read" and content hashes are not equivalent to isolation.
