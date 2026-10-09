@@ -17,6 +17,8 @@ from v3lib import load_yaml, repo_path, require_identifier, validate_schema
 
 
 COMMAND_TARGET_PATTERNS = {
+    # Issue-scoped immutable Markdown messages; not lease/scoreboard/plan authority.
+    "PUBLISH_BUDDY_MARKDOWN": ["relay/BUDDY_RUNNER/ISSUE-*/messages/*.md"],
     "ACTIVATE_LEASE": [
         "relay/EVENTS.jsonl",
         "relay/STATE.yaml",
