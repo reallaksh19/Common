@@ -1,7 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import {reconcileGitHubFacts} from './provider-facts-v1.mjs';
 import {deriveCandidateState,verifyCandidateState,CandidateStateError} from './candidate-verification-v1.mjs';
+import {renderRelayPreviews} from './projection-preview-v1.mjs';
+import {canonicalJSON} from './provenance-v1.mjs';
 
 const repo='reallaksh19/Common',HEAD='a'.repeat(40),OTHER='b'.repeat(40);
 const wf='.github/workflows/relay-reset-full-chain-rehearsal.yml';
@@ -101,4 +104,23 @@ test('repeated observation with same source is stable and content addressed',asy
  const a=deriveCandidateState(provider),b=deriveCandidateState(provider);
  assert.equal(a.candidate_state_sha256,b.candidate_state_sha256);
  assert.match(a.candidate_state_sha256,/^[a-f0-9]{64}$/);
+});
+
+test('RED: rehashed injected CI cannot impersonate an in-process native GitHub acquisition',async()=>{
+ const injected=await facts(),forged=JSON.parse(canonicalJSON(injected));
+ assert.equal(injected.source_state,'INJECTED_UNVERIFIED');
+ assert.equal(deriveCandidateState(injected).pr_candidates[0].selected_ci_qualified,false);
+ // A hostile serialization boundary replaces *both* trust labels and recomputes
+ // the entire snapshot digest; no underlying GitHub request was performed.
+ forged.source_state='PROVIDER_OBSERVED';
+ forged.provider_transport='NATIVE_GITHUB_GET';
+ delete forged.snapshot_sha256;
+ forged.snapshot_sha256=createHash('sha256').update(canonicalJSON(forged)).digest('hex');
+ const candidate=deriveCandidateState(forged);
+ assert.equal(candidate.source_acquisition_attested,false,
+   'serialized source labels and SHA256 do not attest real native R3 acquisition');
+ assert.equal(candidate.pr_candidates[0].selected_ci_qualified,false);
+ const rendered=renderRelayPreviews(forged,{evaluated_at:when,max_age_seconds:3600});
+ assert.equal(rendered.pr_titles[0].state,'UNVERIFIED_TRANSPORT',
+   'R4 must not display native selected-CI qualification from rehashed mock JSON');
 });
