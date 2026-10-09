@@ -157,7 +157,7 @@ For this LFJ case a fixture-preparer later published historical-source package `
 | `Common/relay/AGENT_A_LFJ_20261009/STAGE1_RUNNER_B_PROMPT.md` @ `5067aa1b408973102dccb20e684d9de5689af23a` (blob `7504bff62d0e6a495299019e88ee47541443acdb`) | Exact byte-preserved Stage 1 golden |
 | `3D_Converters` #1152 (sanitized Owner intent) | Stage 1 original Owner context only |
 | `3D_Converters@1205639a43e9ce1589360479d2558678aebcfab7` | Stage 1 immutable baseline module/fixture source |
-| `Common@13989969f6b7e432c4f7c1ddfe975449dba53593` | V3.2 recorder, health, DEPL/claim-first decomposition and handover boundaries |
+| `Common@13989969f6b7e432c4f7c1ddfe975449dba53593` | V3.2 recorder, health, DELP/claim-first decomposition and handover boundaries |
 | `3D_Converters` #1147, #1104 and Stage 2 packet | Stage 2 only: Agent A's research, current application boundaries, product debt and exact source/CI validation obligations |
 | Real research PRs #1148–#1151 and Actions #37915926502 / #37916468898 | Historical verification examples and stale-evidence negatives; Stage 2 must re-observe |
 | [Observed contamination fixture](OBSERVED_NEGATIVE_STAGE1_CONTAMINATION.md) | Negative evaluator case, never fed to Runner in Stage 1 |
