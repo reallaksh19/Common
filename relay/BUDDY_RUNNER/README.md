@@ -26,7 +26,7 @@ python skills/engineering-pr-delivery-v3.2/scripts/relay_tx.py . buddy-message \
 **Output:** `relay/BUDDY_RUNNER/ISSUE-889/messages/TX.889.1-STAGE1_INTAKE.md` with the native transaction `relay/TRANSACTIONS/TX.889.1/manifest.yaml` containing the message SHA-256, original actor claim and atomic/recoverable operation record. The command rereads the resulting Markdown bytes and prints its digest. The caller must commit/publish both through the existing authorized Git provider route, then independently read back the exact ref. Local `COMMITTED` is not remote receipt.
 
 - Explicit `TX.<issue>.<serial>` prevents accidentally inheriting the old `relay/STATE.yaml` currently associated with #438.
-- Only validated stages are allowed: `READINESS`, `STAGE1_INTAKE`, `DISPATCH_REQUEST`, `DISPATCH_OBSERVATION`, `STAGE1_BASELINE`, `STAGE1_PLAN`, `TECHNICAL_HANDOVER`, `STAGE2_RECONCILIATION`, `CONTINUATION_EVIDENCE`.
+- **This R1 transport permits only preparation/Stage 1**: `READINESS`, `STAGE1_INTAKE`, `DISPATCH_REQUEST`, `DISPATCH_OBSERVATION`, `STAGE1_BASELINE`, `STAGE1_PLAN`. It refuses `TECHNICAL_HANDOVER`, `STAGE2_RECONCILIATION` and `CONTINUATION_EVIDENCE` until the native custody/disclosure/continuation gates have been implemented and independently qualified. Use the existing V3.2 native handover transaction for actual technical custody.
 - A transaction never overwrites an existing message; corrections require a **new** transaction with a new receipt and an explicit reference to the earlier record.
 - `relay/STATE.yaml`, `relay/EVENTS.jsonl`, `relay/LEASES/`, `relay/ROADMAP/`, `relay/GENERATED/`, accepted evidence and P/E/D are **not modified**.
 - If a transaction is interrupted, use the existing `relay_tx.py . recover` command and inspect the resulting actual receipt. Do not blindly retry the same TX ID or duplicate the message.
@@ -60,8 +60,8 @@ A `DISPATCH_OBSERVATION` written by Agent A alone does not attest external execu
 | --- | --- | --- |
 | Original source / WHAT-WHY `STAGE1_INTAKE` | Trusted operator + correctly restricted fresh Runner B | A / B / operator |
 | Runner's original `STAGE1_BASELINE` and `STAGE1_PLAN` | B can author; independent operator may inspect and freeze | B / operator / authorized A if permitted |
-| Agent A's `TECHNICAL_HANDOVER` | Agent A + operator **only** | B on separately admitted Stage 2 |
-| `STAGE2_RECONCILIATION` | **Not available to Stage 1** | B after Stage 2 release |
+| Agent A's native technical handover (`PLAN_HANDOVER`/`HANDOVER_CONTEXT`) | Agent A + operator **only** | B on separately admitted Stage 2; **not** published through this R1 message channel |
+| Stage 2 reconciliation (future controlled operation) | **Not available to Stage 1** | B after independently verified release; not a currently permitted R1 stage |
 
 **Do not equate message publication with tool admission.** A model with unrestricted GitHub reads may see every message here, including Stage 2. The external Relay operator must actually enforce a fresh Runner session, an allowlist of immutable original-source reads, and an independent freeze and disclosure procedure. Until this exists, Stage 1 blindness is `NOT_VERIFIED`. For this first coding slice, the transaction type only transports/records Markdown; stage-read isolation and writer transfer remain open in #889 R2–R6.
 
