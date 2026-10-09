@@ -127,12 +127,18 @@ class TrustedEventScoreboardTests(unittest.TestCase):
 
     def test_09_valid_event_uses_actual_DELP_live_readback_in_dry_run(self):
         case=self.oracle["cases"][0]
+        declared_prs = {
+            int(node["primary_pr"].rsplit("#", 1)[1])
+            for node in self.graph["nodes"]
+            if node["kind"] == "LEAF" and node.get("primary_pr")
+        }
+        reserve = next(n["reserve_weight"] for n in self.graph["nodes"] if n["kind"] == "ROOT")
         class Provider:
             def __init__(self): self.calls=[]
             def get_commit_sha(self,ref): return "e"*40
             def get_issue(self,n):
                 return {"number":n,"title":(
-                    "🟡 [718] NEXT #733/C4 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine"
+                    f"🟡 [718] NEXT #733/C4 · RESERVE{reserve} · FACTS UNREPORTED — V3.2 Evidence Spine"
                     if n==718 else
                     "🟡 [718›733] R-PROJECTION · C4 · PR#740 · UNMATERIALIZED — Issue/PR Views"),
                     "body":"## Human Owner specification preserved\n"}
@@ -149,6 +155,9 @@ class TrustedEventScoreboardTests(unittest.TestCase):
                          else "7ef9fbdd0c6f0f941fd573c1663c7a142fc41414")
                     return {"number":n,"head":{"sha":sha},"state":"closed",
                             "draft":False,"merged":True}
+                if n in declared_prs:
+                    return {"number":n,"head":{"sha":"e"*40},
+                            "state":"open","draft":True,"merged":False}
                 raise AssertionError("unrecognized PR")
             def list_comments(self,n):return []
             def __getattr__(self,name):
