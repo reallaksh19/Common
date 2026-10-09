@@ -3,6 +3,9 @@ on:
   pull_request:
     paths:
       - 'skills/engineering-relay-v1/cold-recovery-v1.*'
+      - 'skills/engineering-relay-v1/full-chain-rehearsal-v1.*'
+      - 'skills/engineering-relay-v1/github-task-evidence-receipt-v1.*'
+      - 'skills/engineering-relay-v1/observed-frontier-v1.*'
       - 'skills/engineering-relay-v1/fixtures/cold-synthetic-recovery-manifest-v1.json'
       - '.github/workflows/relay-reset-cold-process.yml'
 permissions:
