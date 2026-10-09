@@ -356,7 +356,7 @@ properties:
       delp_responsibility_core:
         type: object
         additionalProperties: false
-        required: [schema, authority, repository, root, leaf, responsibility, claim_ids, primary_pr, digests, progress, leaf_state, rejected_fact_count, authority_effects, basis_digest]
+        required: [schema, authority, repository, root, leaf, responsibility, claim_ids, primary_pr, candidate_sha, base_sha, digests, progress, leaf_state, rejected_fact_count, authority_effects, basis_digest]
         properties:
           schema: {const: relay-v3.2-delp-responsibility-core-v1}
           authority: {const: DELP_SOURCE_DERIVED_NO_PROVIDER_AUTHENTICATION}
@@ -366,6 +366,8 @@ properties:
           responsibility: {type: [string, 'null']}
           claim_ids: {type: array, uniqueItems: true, items: {type: string, minLength: 1}}
           primary_pr: {type: [string, 'null']}
+          candidate_sha: {type: [string, 'null']}
+          base_sha: {type: [string, 'null']}
           digests:
             type: object
             additionalProperties: false
