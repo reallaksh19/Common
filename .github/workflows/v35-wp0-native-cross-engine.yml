@@ -1,0 +1,57 @@
+name: v35-wp0-native-cross-engine
+on:
+  push:
+    branches:
+      - test/v35-wp0-native-falsifiers-20261009
+  pull_request:
+    paths:
+      - skills/engineering-pr-delivery-v3.5/tests/test_wp0_native_cross_engine_v35.py
+      - .github/workflows/v35-wp0-native-cross-engine.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  python-native:
+    name: python-native-${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Pinned run source
+        run: |
+          git rev-parse HEAD
+          git status --porcelain
+      - name: Test dependencies
+        run: python -m pip install PyYAML jsonschema
+      - name: WP0 native C6 positive regressions
+        run: |
+          python -m unittest discover -s skills/engineering-pr-delivery-v3.2/tests -p 'test_handover_context.py' -v
+          python -m unittest discover -s skills/engineering-pr-delivery-v3.2/tests -p 'test_handover_ledger_projection.py' -v
+      - name: WP0 actual DELP-continuity evidence and Node import cutset
+        run: python -m unittest discover -s skills/engineering-pr-delivery-v3.5/tests -p 'test_wp0_native_cross_engine_v35.py' -v
+  node-native:
+    name: node-native-${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Pinned run source
+        run: git rev-parse HEAD
+      - name: N2 real RELAY full-chain tests
+        run: node --test skills/engineering-relay-v1/full-chain-rehearsal-v1.test.mjs
