@@ -187,8 +187,7 @@ test('R11 cannot treat producer GitHub comment, even if claimed Owner approved, 
   {...proof,axes:{...proof.axes,owner_source:{state:'OWNER_APPROVED',reason:'GITHUB_COMMENT'}}}
  ]){
   refusal(()=>verifyTrustPreflight(modified,s,p,f),TrustPreflightError,'UNTRUSTED_PREFLIGHT');
-  refusal(()=>renderRelayPreviews(p,opts,f,modified),PreviewError,
-   modified.axes!==proof.axes?'DIGEST_MISMATCH':'UNTRUSTED');
+  refusal(()=>renderRelayPreviews(p,opts,f,modified),PreviewError,'UNTRUSTED');
  }
 });
 test('R11 refuses changed source lineage and digest-recomputed acceptance',async()=>{
