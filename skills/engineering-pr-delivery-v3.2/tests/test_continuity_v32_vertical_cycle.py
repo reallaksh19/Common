@@ -808,7 +808,7 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             observations=observations, title_contract="C4-S6",
         )
         store = delp.InMemoryStore()
-        with self.assertRaisesRegex(delp.DelpError, "SOURCE_SMART_TITLE_SCOPE_MISMATCH"):
+        with self.assertRaisesRegex(delp.DelpError, "SOURCE_SMART_TITLE_POLICY_REQUIRED"):
             delp.sync_projection(
                 store, live, lambda: [], lambda: observations,
                 {"Common#718": "Evidence Spine", "Common#793": "Handover"},
