@@ -26,7 +26,7 @@ python skills/engineering-pr-delivery-v3.2/scripts/relay_tx.py . buddy-message \
 **Output:** `relay/BUDDY_RUNNER/ISSUE-889/messages/TX.889.1-STAGE1_INTAKE.md` with the native transaction `relay/TRANSACTIONS/TX.889.1/manifest.yaml` containing the message SHA-256, original actor claim and atomic/recoverable operation record. The command rereads the resulting Markdown bytes and prints its digest. The caller must commit/publish both through the existing authorized Git provider route, then independently read back the exact ref. Local `COMMITTED` is not remote receipt.
 
 - Explicit `TX.<issue>.<serial>` prevents accidentally inheriting the old `relay/STATE.yaml` currently associated with #438.
-- **This R1 transport permits only preparation/Stage 1**: `READINESS`, `STAGE1_INTAKE`, `DISPATCH_REQUEST`, `DISPATCH_OBSERVATION`, `STAGE1_BASELINE`, `STAGE1_PLAN`. It refuses `TECHNICAL_HANDOVER`, `STAGE2_RECONCILIATION` and `CONTINUATION_EVIDENCE` until the native custody/disclosure/continuation gates have been implemented and independently qualified. Use the existing V3.2 native handover transaction for actual technical custody.
+- **This R1 transport permits only preparation/Stage 1**: `READINESS`, `STAGE1_INTAKE`, `DISPATCH_REQUEST`, `DISPATCH_OBSERVATION`, `STAGE1_BASELINE`, `STAGE1_PLAN`, `STAGE1_FREEZE_CANDIDATE`. It refuses `TECHNICAL_HANDOVER`, `STAGE2_RECONCILIATION` and `CONTINUATION_EVIDENCE` until the native custody/disclosure/continuation gates have been implemented and independently qualified. Use the existing V3.2 native handover transaction for actual technical custody.
 - A transaction never overwrites an existing message; corrections require a **new** transaction with a new receipt and an explicit reference to the earlier record.
 - `relay/STATE.yaml`, `relay/EVENTS.jsonl`, `relay/LEASES/`, `relay/ROADMAP/`, `relay/GENERATED/`, accepted evidence and P/E/D are **not modified**.
 - If a transaction is interrupted, use the existing `relay_tx.py . recover` command and inspect the resulting actual receipt. Do not blindly retry the same TX ID or duplicate the message.
@@ -82,6 +82,36 @@ For every line in the original intake, the operator must ask **who knew it, when
 **Claimed-role continuity check:** The Relay transaction actor recorded for `STAGE1_BASELINE` must differ from the operator who recorded `DISPATCH_OBSERVATION`; the `STAGE1_PLAN` actor must match the baseline author. This prevents accidental self-relabeling or a different Runner silently inheriting the prior baseline. Actor strings are *claims*, not proof of distinct model sessions or identities; R4 still requires external provider observations and a genuinely isolated workspace.
 
 **Limits:** even a correctly ordered claim `RUNNER_EXECUTION_OBSERVED` can be fabricated. This message transport NEVER proves independent Runner tool isolation, B authorship, Stage 1 qualification, Stage 2 disclosure rights or new writer authority. These require independent external evidence/admission under later R4–R6. Do not count a structural transaction as a successful engineering reconstruction.
+
+## R4 partial — exact-content freeze CANDIDATE, not a verified independent seal
+
+After the **actual, separately executed** Runner supplies both STAGE1_BASELINE and STAGE1_PLAN, a distinct observer may use the existing buddy-message operation with stage `STAGE1_FREEZE_CANDIDATE`. This is the **only** freeze-related publication allowed in R4. It is a content-addressed *proposal for external review*, not the independently authenticated final Stage 1 freeze or a permission to read Stage 2.
+
+Example human-readable Markdown payload (all receipt identifiers and digests must be read from actual committed Relay messages; values here are PLACEHOLDERS, not evidence):
+
+~~~markdown
+# STAGE1_FREEZE_CANDIDATE
+Isolation verdict: NOT_ATTESTED
+Intake tx: TX.<issue>.<intake-serial>
+Intake digest: sha256:<actual-input-digest>
+Baseline tx: TX.<issue>.<baseline-serial>
+Baseline digest: sha256:<actual-baseline-digest>
+Plan tx: TX.<issue>.<plan-serial>
+Plan digest: sha256:<actual-plan-digest>
+
+External verifier: UNKNOWN
+Reason: Exact message bytes frozen for review, technical isolation not yet independently established.
+~~~
+
+The native Relay transaction engine checks the **current unbroken chain** `STAGE1_INTAKE → DISPATCH_REQUEST → DISPATCH_OBSERVATION → STAGE1_BASELINE → STAGE1_PLAN`. For a freeze candidate it also requires:
+
+- The actual newest committed intake/baseline/plan **transaction IDs and payload SHA-256 values** to match the message.
+- The plan and baseline to have the same **claimed** Runner author, with a distinct **claimed** freeze operator.
+- No newer intake or dispatch that would invalidate the observed Runner/source basis.
+- An explicit `Isolation verdict: NOT_ATTESTED`. Neither the operator nor the transport may transform a self-reported `Session ref` into independently verified tool isolation.
+- Existing immutable committed receipts. Changed bytes, superseded inputs and wrong digest references **fail closed** before any candidate is published.
+
+A candidate **is not a final seal**, is not an accepted `TASK_EVIDENCE` record, and cannot authorize Stage 2 or writer transfer. R4 remains open until an external authority actually authenticates model/session identity, read allowlist, tool denials, output provenance and the frozen basis. Later Stage 2 code must enforce that external admission; it must not interpret the existence of this file as `READY`.
 
 ## Visibility boundaries — not provided by the file extension
 
