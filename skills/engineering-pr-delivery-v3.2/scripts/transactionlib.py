@@ -144,6 +144,10 @@ def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str) -> Non
         raise TransactionError(f"BUDDY_STAGE_ORDER_MISSING_{needed}")
 
     prior_seq = int(prior[1]["id"].split(".")[-1])
+    if stage != "DISPATCH_REQUEST":
+        intake = _prior_buddy_message(root, issue, seq, "STAGE1_INTAKE")
+        if intake is None or prior_seq <= int(intake[1]["id"].split(".")[-1]):
+            raise TransactionError("BUDDY_STALE_STAGE_CHAIN")
     # A subsequent intake/dispatch/observation supersedes earlier trial steps.
     # A plan for a new intake must not inherit an old Runner's baseline.
     earlier_stage = {
