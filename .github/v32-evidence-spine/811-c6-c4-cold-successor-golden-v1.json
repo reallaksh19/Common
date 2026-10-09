@@ -1,0 +1,53 @@
+{
+  "schema": "common-v32-c6-c4-cold-successor-golden-v1",
+  "parent_issue": "Common#718",
+  "child_issue": "Common#811",
+  "exact_producer_commit": "8104c57a265b84f28b5b5fc1899d4d9d8d45817f",
+  "original_owner_chat_permalink": "UNKNOWN",
+  "handoff_medium": "two durable files HANDOVER_CONTEXT.yaml + EVENTS.jsonl; no producer process variables",
+  "cases": [
+    {
+      "id": "COLD-01",
+      "expected": "Generate real native PLAN_HANDOVER in process A; transfer exactly two durable handover files to isolated directory; independent Python process B derives repository, immutable graph revision, graph path, leaf and digest solely from files and authenticates GitHub GET; full read-only DELP currentness equals frozen basis; NO state writes"
+    },
+    {
+      "id": "COLD-02",
+      "expected": "An offline-only structural check validates event context digest and cannot announce CURRENT, execute tasks or mint Owner source authority"
+    },
+    {
+      "id": "COLD-03",
+      "expected": "Any edit to the frozen handover context after event publication is rejected before provider access by comparing actual canonical context digest with recorded HANDOVER_PLANNED basis"
+    },
+    {
+      "id": "COLD-04",
+      "expected": "Edited event source_input_digest or pinned location with a changed URL must be rejected before provider access"
+    },
+    {
+      "id": "COLD-05",
+      "expected": "GitHub source retrieval requires read-only token and authenticated repository scope; missing token, changed location graph path or missing revision never infer CURRENT"
+    },
+    {
+      "id": "COLD-06",
+      "expected": "A real GitHub source/PR/issue/provider change since snapshot yields RECONCILE_REQUIRED or error; no acceptance; use a negative frozen digest case without mutating live provider"
+    },
+    {
+      "id": "COLD-07",
+      "expected": "Cold verifier reports the missing original Owner chat permalink as UNKNOWN, requires separately submitted independent source review; no task execution, title publishing or PR merge"
+    },
+    {
+      "id": "COLD-08",
+      "expected": "A frozen source graph that still matches its old immutable commit but differs from the programme currently released default-branch graph MUST be rejected, even if provider PR head and four handover digests are unchanged. Source read must enforce the same graph release identity as native PLAN_HANDOVER, then recheck before declaring CURRENT. No admission or write."
+    }
+  ],
+  "prohibited": [
+    "NO_SOURCE_AUTHENTICATION_BY_ISSUE_TITLE",
+    "NO_REVIEWER_SELF_APPROVAL",
+    "NO_TRUSTED_LIVE_WRITER",
+    "NO_V32_FROZEN_CODE_CHANGE",
+    "NO_V35_CODE_CHANGE",
+    "NO_OWNER_CHAT_PERMALINK_FABRICATION",
+    "NO_ACCEPTED_CHECKPOINT_FACTS_BY_TEST"
+  ],
+  "completion_scope": "SEPARATE_PROCESS_SOURCE_REPLAY_ONLY_NOT_INDEPENDENT_NEW_AGENT_ACCEPTANCE",
+  "fixture_precommit": true
+}
