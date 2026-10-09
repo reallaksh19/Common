@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/reallaksh19/Common/blob/main/skills/engineering-relay-v1/schemas/candidate-verification-v1.schema.json",
+  "title": "RELAY R12 candidate verification — provider selected CI/head facts, not acceptance",
+  "description": "Pure content-addressed R3 observation only. DELP handles declared-unit progress; Owner and independent review are separate. No positive authorization from this schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "repository",
+    "parent_issue",
+    "provider_snapshot_sha256",
+    "source_observation",
+    "consistency",
+    "pr_candidates",
+    "blockers",
+    "next_candidate_verification",
+    "workflow_policy",
+    "acceptance_contract",
+    "accepted_claim_count",
+    "accepted_evidence_count",
+    "acceptance_denominator_state",
+    "authorization_granted",
+    "independently_accepted",
+    "live_writer_enabled",
+    "proposal_only",
+    "candidate_state_sha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "relay-candidate-verification-v1"
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9-]+/[A-Za-z0-9_.-]+$"
+    },
+    "parent_issue": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "provider_snapshot_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "source_observation": {
+      "enum": [
+        "PROVIDER_OBSERVED",
+        "INJECTED_UNVERIFIED"
+      ]
+    },
+    "consistency": {
+      "const": "PR_DOUBLE_READ_NON_ATOMIC"
+    },
+    "pr_candidates": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/pr"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 2,
+      "items": {
+        "enum": [
+          "PROVIDER_HEAD_STALE_OR_UNPINNED",
+          "SELECTED_CI_NOT_ALL_PASS"
+        ]
+      }
+    },
+    "next_candidate_verification": {
+      "enum": [
+        "REFRESH_PROVIDER_CURRENT_PR_AND_EVIDENCE",
+        "QUALIFY_SELECTED_CURRENT_HEAD_CI",
+        null
+      ]
+    },
+    "workflow_policy": {
+      "const": "CALLER_SELECTED_NOT_REQUIRED_POLICY"
+    },
+    "acceptance_contract": {
+      "const": "PARENT_787_AC1_AC8_UNADJUDICATED"
+    },
+    "accepted_claim_count": {
+      "type": "null"
+    },
+    "accepted_evidence_count": {
+      "type": "null"
+    },
+    "acceptance_denominator_state": {
+      "const": "NOT_ADJUDICATED"
+    },
+    "authorization_granted": {
+      "const": false
+    },
+    "independently_accepted": {
+      "const": false
+    },
+    "live_writer_enabled": {
+      "const": false
+    },
+    "proposal_only": {
+      "const": true
+    },
+    "candidate_state_sha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "sha40": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "state",
+        "run_id"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^\\.github/workflows/"
+        },
+        "state": {
+          "enum": [
+            "PASS",
+            "PENDING",
+            "FAIL",
+            "UNKNOWN"
+          ]
+        },
+        "run_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      }
+    },
+    "pr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "number",
+        "head_sha",
+        "expected_head_sha",
+        "merged",
+        "head_state",
+        "selected_ci_state",
+        "selected_workflows",
+        "selected_ci_qualified",
+        "material_status"
+      ],
+      "properties": {
+        "number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "head_sha": {
+          "$ref": "#/$defs/sha40"
+        },
+        "expected_head_sha": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha40"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "merged": {
+          "type": "boolean"
+        },
+        "head_state": {
+          "enum": [
+            "CURRENT",
+            "STALE",
+            "UNPINNED"
+          ]
+        },
+        "selected_ci_state": {
+          "enum": [
+            "PASS",
+            "PENDING",
+            "FAIL",
+            "UNKNOWN"
+          ]
+        },
+        "selected_workflows": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/workflow"
+          }
+        },
+        "selected_ci_qualified": {
+          "type": "boolean"
+        },
+        "material_status": {
+          "enum": [
+            "STALE_OR_UNPINNED",
+            "UNKNOWN",
+            "CI_NON_SUCCESS",
+            "PENDING",
+            "SELECTED_CI_PASS_ONLY"
+          ]
+        }
+      }
+    }
+  }
+}
