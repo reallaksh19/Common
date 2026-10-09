@@ -95,6 +95,49 @@ function checkSnapshot(input){
   }
   return freeze(s);
 }
+function verifiedFrontier(raw,provider){
+  if(raw===undefined||raw===null)return null;
+  let f;
+  try{f=JSON.parse(canonicalJSON(raw));}
+  catch{fail('INVALID','frontier not canonical-safe');}
+  exact(f,[
+    'schema','repository','parent_issue','source_lineage_sha256',
+    'provider_snapshot_sha256','source_history','claim_count',
+    'responsibility_count','structural_evidence_count','owner_intent_count',
+    'acceptance_denominator_state','accepted_claim_count',
+    'accepted_evidence_count','next_verification_category','blockers',
+    'original_owner_chat','independent_review','provider_consistency',
+    'producer_assertions_not_authority','owner_message_authenticated',
+    'independently_accepted','authorization_granted','live_writer_enabled',
+    'proposal_only','frontier_sha256'],'observed frontier');
+  if(!HASH.test(f.frontier_sha256)||
+    f.schema!=='relay-observed-frontier-v1'||
+    f.repository!==provider.repository||
+    f.parent_issue!==provider.parent_issue.number||
+    f.provider_snapshot_sha256!==provider.snapshot_sha256||
+    !HASH.test(f.source_lineage_sha256)||
+    f.acceptance_denominator_state!=='NOT_ADJUDICATED'||
+    f.accepted_claim_count!==null||f.accepted_evidence_count!==null||
+    f.original_owner_chat!=='UNKNOWN'||f.independent_review!=='NOT_ACCEPTED'||
+    f.provider_consistency!==provider.consistency||
+    f.producer_assertions_not_authority!==true||
+    f.owner_message_authenticated!==false||
+    f.independently_accepted!==false||
+    f.authorization_granted!==false||f.live_writer_enabled!==false||
+    f.proposal_only!==true||
+    !Array.isArray(f.blockers)||f.blockers.length<1||f.blockers.length>8||
+    new Set(f.blockers).size!==f.blockers.length||
+    f.blockers.some(x=>typeof x!=='string'||!/^[A-Z0-9_]{3,100}$/.test(x))||
+    typeof f.next_verification_category!=='string'||
+    !/^[A-Z0-9_]{3,100}$/.test(f.next_verification_category)||
+    ['claim_count','responsibility_count','structural_evidence_count','owner_intent_count']
+      .some(key=>!Number.isSafeInteger(f[key])||f[key]<0||f[key]>10000))
+    fail('UNTRUSTED','frontier source/parent/authority inconsistent with provider');
+  const declared=f.frontier_sha256;delete f.frontier_sha256;
+  if(sha(f)!==declared)fail('DIGEST_MISMATCH','frontier changed after deriving source facts');
+  f.frontier_sha256=declared;
+  return freeze(f);
+}
 function freshness(snapshot,options){
   exact(options,['evaluated_at','max_age_seconds'],'evaluation');
   if(!utc(options.evaluated_at)||!Number.isInteger(options.max_age_seconds)||
@@ -122,11 +165,14 @@ function compactTitle(parts){
 }
 
 /** Pure/immutable: never fetch, write, or infer a human acceptance. */
-export function renderRelayPreviews(rawSnapshot,rawOptions){
+export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null){
   const s=checkSnapshot(rawSnapshot);
   let o;
   try{o=JSON.parse(canonicalJSON(rawOptions));}catch{fail('INVALID','evaluation parameters invalid');}
   const fresh=freshness(s,o),native=s.source_state==='PROVIDER_OBSERVED';
+  const frontier=verifiedFrontier(rawFrontier,s);
+  const nextVerification=frontier?.next_verification_category??'SOURCE_GRAPH_UNAVAILABLE_NO_AUTHORIZED_NEXT';
+  const blockers=frontier?.blockers??['SOURCE_GRAPH_NOT_BOUND'];
   const source=s.snapshot_sha256;
   const prTitles=s.pr_facts.map(p=>{
     const health=status(p,fresh,native);
@@ -159,6 +205,10 @@ export function renderRelayPreviews(rawSnapshot,rawOptions){
       'R3 observed: '+s.observed_at+'\n'+
       'Snapshot SHA256: '+source+'\n'+
       'Provider: '+s.source_state+'; '+s.consistency+'\n'+
+      'Source-bound frontier SHA256: '+(frontier?.frontier_sha256??'NONE')+'\n'+
+      'Next verification category (NOT AUTHORIZED): '+nextVerification+'\n'+
+      'Blockers: '+blockers.join(',')+'\n'+
+
       'Reviewer status: NOT_EVALUATED; Owner authority: NOT_AUTHENTICATED\n'+
       'CI paths are CALLER_SELECTED, NOT proven required policy checks\n'+
       prTitles.map(p=>'PR #'+p.number+' '+p.head_sha.slice(0,8)+' '+p.state).join('\n')+
@@ -174,10 +224,16 @@ export function renderRelayPreviews(rawSnapshot,rawOptions){
       'Fetch canonical parent and original Owner instructions; source chat permalink UNKNOWN',
       'Do not treat issue/PR titles, selected hosted green CI or this preview as accepted TaskEvidence',
       'CI workflow paths are caller-selected, NOT independently verified required checks',
-      'Qualify independent source reviewers and merge/restack dependencies before R3-B integration',
+      'Verify derived blockers against current Owner consent and different-principal review; no task is authorized by this preview',
+      'Read the source-bound verification category: '+nextVerification,
       'Preserve human privacy/retention/Owner grant HOLD; do not activate R5 writer',
       'Read a new provider-current snapshot; this is bounded and non-atomic'
     ],
+    frontier_sha256:frontier?.frontier_sha256??null,
+    frontier_source_lineage_sha256:frontier?.source_lineage_sha256??null,
+    actual_next_authority:'NOT_GRANTED',
+    next_verification_category:nextVerification,
+    blockers,
     source_status:s.source_state,consistency:s.consistency,
     freshness:fresh,observed_at:s.observed_at,evaluated_at:o.evaluated_at,
     owner_message_authenticated:false,independently_accepted:false,
@@ -190,6 +246,10 @@ export function renderRelayPreviews(rawSnapshot,rawOptions){
     observed_at:s.observed_at,evaluated_at:o.evaluated_at,
     parent_issue:summary,child_issues:children,pr_titles:prTitles,
     successor_handover:handover,
+    frontier_sha256:frontier?.frontier_sha256??null,
+    frontier_source_lineage_sha256:frontier?.source_lineage_sha256??null,
+    next_verification_category:nextVerification,
+    blockers,
     proposal_only:true,
     owner_message_authenticated:false,authorization_granted:false,
     independently_accepted:false,live_writer_enabled:false
