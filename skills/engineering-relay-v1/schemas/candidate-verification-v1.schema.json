@@ -66,9 +66,10 @@
     "blockers": {
       "type": "array",
       "uniqueItems": true,
-      "maxItems": 2,
+      "maxItems": 3,
       "items": {
         "enum": [
+          "SOURCE_ACQUISITION_UNATTESTED",
           "PROVIDER_HEAD_STALE_OR_UNPINNED",
           "SELECTED_CI_NOT_ALL_PASS"
         ]
@@ -78,6 +79,7 @@
       "enum": [
         "REFRESH_PROVIDER_CURRENT_PR_AND_EVIDENCE",
         "QUALIFY_SELECTED_CURRENT_HEAD_CI",
+        "REACQUIRE_NATIVE_PROVIDER_FACTS_FOR_CI",
         null
       ]
     },
