@@ -177,6 +177,7 @@ def build_responsibility_basis(
     """Single canonical source-bound responsibility basis derived from real graph and DELP."""
     _require(bool(_PHASE.fullmatch(phase)), "UNRELEASED_PHASE")
     projection = delp.project(graph, ledger or [], observations or {})
+    core = delp.source_bound_responsibility_core(graph, projection, selected_leaf)
     nodes = projection["nodes"]
     root_ref = projection["root"]
     _require(selected_leaf in nodes and nodes[selected_leaf]["kind"] == "LEAF", "SELECTED_CHILD_NOT_LEAF")
@@ -242,9 +243,9 @@ def build_responsibility_basis(
     single_owner_status = owner_statuses[0] if len(owner_statuses) == 1 else "MIXED"
 
     digests = {
-        "graph": delp.canonical_digest(graph) if hasattr(delp, "canonical_digest") else digest(graph),
-        "plan": projection["plan_digest"],
-        "input": projection["input_digest"],
+        **core["digests"],
+        # This is an untrusted/local observation digest, NOT native C6's
+        # authenticated issue/body + material provider readback digest.
         "provider": digest({"observations": observations or {}, "selected_leaf": (observations or {}).get(selected_leaf)}),
     }
     moved_axes = []
@@ -265,6 +266,7 @@ def build_responsibility_basis(
 
     basis = {
         "schema": BASIS_SCHEMA,
+        "delp_responsibility_core": core,
         "authority": BASIS_AUTHORITY,
         "provenance": {
             "owner_trace": proof,
@@ -291,13 +293,13 @@ def build_responsibility_basis(
             "id": identity,
             "leaf": selected_leaf,
             "work_class": raw_node.get("work_class", "PRODUCT"),
-            "claim_ids": sorted(raw_node.get("owns_claims") or []),
+            "claim_ids": core["claim_ids"],
             "semantic_units": raw_node.get("units") or [],
             "depends_on": raw_node.get("depends_on") or [],
             "weight": raw_node.get("weight"),
         },
         "material": {
-            "primary_pr": raw_node.get("primary_pr"),
+            "primary_pr": core["primary_pr"],
             "observed_pr": pr_details,
             "candidate_sha": candidate,
             "base_sha": (observations or {}).get(selected_leaf, {}).get("base_sha"),
@@ -317,9 +319,9 @@ def build_responsibility_basis(
             "observed_candidate_sha": (qualification or {}).get("observed_candidate_sha"),
         },
         "projection": {
-            "leaf_state": child["state"],
-            "leaf_progress": {"P": child["progress"]["P"], "E": child["progress"]["E"]},
-            "root_progress": {"D": root["progress"]["D"], "E": root["progress"]["E"]},
+            "leaf_state": core["leaf_state"],
+            "leaf_progress": core["progress"]["leaf"],
+            "root_progress": core["progress"]["root"],
             "actual_next": actual_next,
         },
         "provider": {
