@@ -208,7 +208,7 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             phase="C4", human_titles={"Common#718": "V3.2 Evidence Spine",
             "Common#733": "Issue/PR Views"}, title_contract="C4-S6")
         self.assertEqual(
-            "🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine",
+            f"🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE{next(n['reserve_weight'] for n in live['nodes'] if n['kind'] == 'ROOT')} · FACTS UNREPORTED — V3.2 Evidence Spine",
             result["issue_titles"]["Common#718"])
         self.assertEqual(
             "🟡 [718›733] R-PROJECTION · C4 · P0/E0 · PR#740 · UNMATERIALIZED — Issue/PR Views",
@@ -264,7 +264,7 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         p.get_issue = lambda number: {
             "number": number,
             "title": (
-                "🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine"
+                f"🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE{next(n['reserve_weight'] for n in released['nodes'] if n['kind'] == 'ROOT')} · FACTS UNREPORTED — V3.2 Evidence Spine"
                 if number == 718 else
                 child_title or "🟡 [718›733] R-PROJECTION · C4 · P0/E0 · PR#740 · UNMATERIALIZED — Issue/PR Views"
             ),
@@ -695,6 +695,17 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         self.assertEqual("DRIFT_OR_UNPUBLISHED",report["reconciliation"])
         self.assertEqual([],report["authority_effects"])
 
+
+    def test_46_live_fixture_title_tracks_released_reserve_without_rewriting_golden(self):
+        current = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        alternate = copy.deepcopy(current)
+        root = next(n for n in alternate["nodes"] if n["kind"] == "ROOT")
+        root["reserve_weight"] = 7
+        observed = self._provider(graph=alternate).get_issue(718)["title"]
+        self.assertIn("RESERVE7", observed)
+        self.assertNotIn("RESERVE7", self._provider(graph=current).get_issue(718)["title"])
+        frozen = replay.replay(self.manifest, self.graph)
+        self.assertIn("RESERVE35", frozen["parent_actual_title"])
 
     def test_45_future_released_leaf_is_provider_bound_without_test_allowlist_edit(self):
         """The fake observes governed material, but refuses undeclared PR identities."""
