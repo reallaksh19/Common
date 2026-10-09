@@ -291,7 +291,7 @@ def build_responsibility_basis(
             "id": identity,
             "leaf": selected_leaf,
             "work_class": raw_node.get("work_class", "PRODUCT"),
-            "claim_ids": sorted(raw_node.get("owns_claims") or []),
+            "claim_ids": canonical_basis["responsibility"]["claim_ids"],
             "semantic_units": raw_node.get("units") or [],
             "depends_on": raw_node.get("depends_on") or [],
             "weight": raw_node.get("weight"),
@@ -421,10 +421,7 @@ def build_views(
     basis = {
         "graph": canonical_basis["plan"]["plan_digest"],
         "delp_input": canonical_basis["evidence"]["delp_input_digest"],
-        "owner_intent_requirements": digest({
-            "owner_intents": owner["owner_intents"], "requirements": owner["requirements"],
-            "released_proposal_digest": owner["released_proposal_digest"],
-        }),
+        "owner_intent_requirements": canonical_basis["programme"]["owner_intent_digest"],
         "selected_leaf": selected_leaf, "phase": phase,
         "title_contract": title_contract,
         "draft_pr": pr_details, "qualifier": dict(qualification or {}),
