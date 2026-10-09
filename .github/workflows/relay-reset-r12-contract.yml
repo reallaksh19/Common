@@ -2,6 +2,7 @@ name: relay-reset-r12-contract
 on:
   pull_request:
     paths:
+      - 'skills/engineering-relay-v1/provider-facts-v1.*'
       - 'skills/engineering-relay-v1/candidate-verification-v1.*'
       - 'skills/engineering-relay-v1/schemas/candidate-verification-v1.schema.json'
       - 'skills/engineering-relay-v1/observed-frontier-v1.*'
