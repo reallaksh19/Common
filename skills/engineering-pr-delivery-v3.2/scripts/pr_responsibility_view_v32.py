@@ -266,6 +266,11 @@ def build_responsibility_basis(
     basis = {
         "schema": BASIS_SCHEMA,
         "authority": BASIS_AUTHORITY,
+        "provenance": {
+            "owner_trace": proof,
+            "OR_ids": sorted({r["id"] for r in proof["selected_OR"]}),
+            "golden_fixture_ids": sorted({f for r in proof["selected_OR"] for f in r["fixture_ids"]}),
+        },
         "programme": {
             "repository": graph["programme"]["repository"],
             "root": root_ref,
@@ -354,60 +359,32 @@ def build_views(
     _require(bool(_PHASE.fullmatch(phase)), "UNRELEASED_PHASE")
     _require(title_contract in {"C0", "C4-S6"}, "UNRELEASED_TITLE_CONTRACT")
     _require(isinstance(human_titles, Mapping), "HUMAN_TITLES_MISSING")
-    projection = delp.project(graph, ledger or [], observations or {})
-    nodes = projection["nodes"]
-    root_ref = projection["root"]
-    _require(selected_leaf in nodes and nodes[selected_leaf]["kind"] == "LEAF", "SELECTED_CHILD_NOT_LEAF")
-    raw_node = next((n for n in graph["nodes"] if n["ref"] == selected_leaf), None)
-    _require(raw_node is not None and bool(raw_node.get("responsibility_id")), "RESPONSIBILITY_ID_MISSING")
-    identity = raw_node["responsibility_id"]
-    claim_ids = set(row["id"] for row in graph["programme"]["acceptance_claims"])
-    _require(set(raw_node.get("owns_claims") or []).issubset(claim_ids), "UNKNOWN_SELECTED_CLAIM")
-    release = graph["programme"].get("decomposition_proposal") or {}
-    _require(owner.get("released_proposal_digest") == release.get("released_proposal_digest"),
-             "OWNER_TO_RELEASE_DIGEST_MISMATCH")
-    proof = owner_trace(
-        {**owner, "selected_claims": sorted(raw_node.get("owns_claims") or [])},
-        required_claims=claim_ids, responsibility_id=identity,
+    # One source projection and one canonical basis drive every read view.
+    # Do not recompute DELP or independently reconstruct evidence/material.
+    canonical_basis = build_responsibility_basis(
+        graph, owner, selected_leaf=selected_leaf, phase=phase,
+        ledger=ledger, observations=observations, draft_pr=draft_pr,
+        qualification=qualification, human_titles=human_titles,
+        title_contract=title_contract,
     )
-    proposed = {r["id"]: r for r in release.get("responsibilities") or []}
-    _require(identity in proposed and set(proposed[identity]["owns_claims"]) == set(raw_node.get("owns_claims") or []),
-             "SELECTED_CLAIM_CONTRACT_DRIFT")
-    _require(any(b.get("responsibility_id") == identity and b.get("ref") == selected_leaf
-                 for b in release.get("bindings") or []), "RESPONSIBILITY_NOT_PROVIDER_BOUND")
-    pr_details = None
-    if draft_pr is not None:
-        _require(isinstance(draft_pr, Mapping), "INVALID_PR_OBSERVATION")
-        sha = draft_pr.get("head_sha")
-        _require(isinstance(sha, str) and bool(_SHA.fullmatch(sha)), "PR_EXACT_HEAD_REQUIRED")
-        number = draft_pr.get("number")
-        _require(type(number) is int and number > 0, "PR_NUMBER_REQUIRED")
-        lifecycle = draft_pr.get("lifecycle")
-        _require(lifecycle in _LIFECYCLES, "PR_LIFECYCLE_INVALID")
-        # Not every draft is in the released execution graph yet. This is a
-        # distinct provider-delivery view, NEVER an accepted fact.
-        bound = raw_node.get("primary_pr") == f"Common#{number}"
-        pr_details = {"number": number, "head_sha": sha,
-                      "lifecycle": lifecycle, "binding": "BOUND" if bound else "UNBOUND_ADVISORY"}
-    candidate = pr_details["head_sha"] if pr_details else None
-    q = _independent_qualification(qualification, candidate, selected_leaf,
-                                   graph["programme"]["repository"])
-    _require(not pr_details or not pr_details["binding"] == "UNBOUND_ADVISORY" or q["state"] != "PROVEN",
-             "UNBOUND_PR_CANNOT_ACQUIRE_QUALIFICATION")
-    # A user-supplied verdict's authority *string* is not provider proof.
-    _require(q["state"] != "PROVEN", "PROVEN_REQUIRES_REAL_ASSESSOR_EXECUTION")
-    reserve = next(n.get("reserve_weight", 0) for n in graph["nodes"] if n["ref"] == root_ref)
-    root = nodes[root_ref]
-    child = nodes[selected_leaf]
+    root_ref = canonical_basis["programme"]["root"]
+    identity = canonical_basis["responsibility"]["id"]
+    pr_details = canonical_basis["material"]["observed_pr"]
+    q = {
+        "state": canonical_basis["qualification"]["state"],
+        "basis": canonical_basis["qualification"]["basis"],
+    }
+    proof = canonical_basis["provenance"]["owner_trace"]
+    reserve = canonical_basis["plan"]["reserve_weight"]
+    raw_node = {"primary_pr": canonical_basis["material"]["primary_pr"]}
+    root = {"progress": canonical_basis["projection"]["root_progress"]}
+    child = {
+        "progress": canonical_basis["projection"]["leaf_progress"],
+        "state": canonical_basis["projection"]["leaf_state"],
+    }
     number = _number(selected_leaf)
     parent_number = _number(root_ref)
-    historical_unreported = [
-        n["ref"] for n in graph["nodes"]
-        if n["kind"] == "LEAF" and n.get("primary_pr") and
-        (observations or {}).get(n["ref"], {}).get("pr_state") == "MERGED" and
-        nodes[n["ref"]]["progress"]["P"] == 0 and nodes[n["ref"]]["progress"]["E"] == 0 and
-        nodes[n["ref"]]["state"] in {"UNMATERIALIZED", "EVIDENCE_GAP"}
-    ]
+    historical_unreported = canonical_basis["evidence"]["historical_unreported"]
     facts_label = "FACTS UNREPORTED" if historical_unreported else "FACTS RECONCILED"
     # DELP's actual root roll-up has D/E, NOT P. Leaf execution has P/E.
     # Frozen C0 oracle/title output must remain byte-identical. In C4-S6
@@ -438,15 +415,12 @@ def build_views(
         pr_prefix = (f"🟡 [{parent_number}›{number}] {pr_details['lifecycle']} · VIEW-PR · "
                      f"HEAD:{pr_details['head_sha'][:7]} · Q:{q['state']}")
         pr_title = _suffix_title(pr_prefix, human_titles["PR"])
-    or_ids = sorted({r["id"] for r in proof["selected_OR"]})
-    fixture_ids = sorted({s for r in proof["selected_OR"] for s in r["fixture_ids"]})
-    actual_next = (
-        "MATERIALIZE_FACTS_OR_CONTRACT" if child["state"] == "UNMATERIALIZED" else
-        "RELEASE_AND_BIND_PRODUCT_PR" if not raw_node.get("primary_pr") else
-        "RECONCILE_CURRENT_FACTS_AND_QUALIFICATION"
-    )
+    or_ids = canonical_basis["provenance"]["OR_ids"]
+    fixture_ids = canonical_basis["provenance"]["golden_fixture_ids"]
+    actual_next = canonical_basis["projection"]["actual_next"]
     basis = {
-        "graph": projection["plan_digest"], "delp_input": projection["input_digest"],
+        "graph": canonical_basis["plan"]["plan_digest"],
+        "delp_input": canonical_basis["evidence"]["delp_input_digest"],
         "owner_intent_requirements": digest({
             "owner_intents": owner["owner_intents"], "requirements": owner["requirements"],
             "released_proposal_digest": owner["released_proposal_digest"],
@@ -459,7 +433,8 @@ def build_views(
     }
     snapshot = {
         "schema": SCHEMA, "authority": AUTHORITY, "input_digest": digest(basis),
-        "delp_input_digest": projection["input_digest"], "plan_digest": projection["plan_digest"],
+        "delp_input_digest": canonical_basis["evidence"]["delp_input_digest"],
+        "plan_digest": canonical_basis["plan"]["plan_digest"],
         "root": root_ref, "leaf": selected_leaf, "responsibility": identity,
         "claim_ids": sorted(raw_node.get("owns_claims") or []),
         "owner_trace": proof, "OR_ids": or_ids, "golden_fixture_ids": fixture_ids,
@@ -477,12 +452,7 @@ def build_views(
         ref: render_issue_block(snapshot, ref) for ref in (root_ref, selected_leaf)
     }
     snapshot["pr_managed_block"] = render_pr_block(snapshot) if pr_details else None
-    snapshot["responsibility_basis"] = build_responsibility_basis(
-        graph, owner, selected_leaf=selected_leaf, phase=phase,
-        ledger=ledger, observations=observations, draft_pr=draft_pr,
-        qualification=qualification, human_titles=human_titles,
-        title_contract=title_contract,
-    )
+    snapshot["responsibility_basis"] = canonical_basis
     return snapshot
 
 
