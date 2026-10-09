@@ -366,3 +366,33 @@ amendments:
     allowed_paths:
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_865_evidence_identity_red.py
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_865_custody_red.py
+  - id: AMEND-V32-865-WP1-RECEIPT-017
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner continued the exact proposed next step on 2026-10-09:
+      'proceed next', directly after the assistant defined the next gate as
+      'authorize and qualify the exact three WP1 paths' and after the Owner
+      separately instructed 'proceed next, merge if mergable'. This is a
+      CONTEXTUAL Owner approval limited to SourceReceiptV2's three named new
+      files (new parser, new strict schema, new native tests); original private
+      ChatGPT source permalink remains UNKNOWN, not fabricated. Does not
+      authorize legacy delp_projection_v32.py modifications, WP2, C6, V3.5,
+      live #786 publishing, Owner fact forgery, a new #718 graph release, or
+      skipping exact-head source tests. This is NOT an independent reviewer
+      approval; record actual review status separately. Product edits require
+      this exact approved amendment to be on their PR BASE, never HEAD.
+    summary: >-
+      WP1 SourceReceiptV2 only. Produce a canonical read-only GitHub
+      source receipt with stable repository/issue/comment identity,
+      source body digest, per-comment fact-block ordinal, actual provider
+      author association and release-pinned trust policy and decision;
+      preserve historical V1 input_digest; do NOT edit or wrap the
+      existing DELP projection in WP1. DELP integration is a separately
+      authorized WP2 source change after strict SourceReceiptV2 acceptance.
+      Run real positive/adversarial discoverable receipt-specific tests before any
+      cross-consumer WP2 migration. No product qualification, COLD native
+      rewrite, V3.5 parity override or GitHub live writer grant.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/scripts/source_receipt_v32.py
+      - skills/engineering-pr-delivery-v3.2/schemas/source-receipt-v2.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_872_source_receipt.py
