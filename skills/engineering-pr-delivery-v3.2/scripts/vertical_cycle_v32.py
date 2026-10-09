@@ -168,9 +168,11 @@ def live_readback(
     child = selected_leaf
     root_number = int(root.rsplit("#", 1)[-1])
     child_number = int(child.rsplit("#", 1)[-1])
-    child_node = next((n for n in graph["nodes"] if n["ref"] == child), None)
-    pr_ref = child_node.get("primary_pr") if child_node else "Common#740"
-    _require(isinstance(pr_ref, str) and "#" in pr_ref, "PRIMARY_PR_UNRESOLVED")
+    child_node = next((n for n in graph["nodes"] if n["ref"] == child and n["kind"] == "LEAF"), None)
+    _require(child_node is not None, "SELECTED_RESPONSIBILITY_NOT_BOUND")
+    pr_ref = child_node.get("primary_pr")
+    _require(isinstance(pr_ref, str) and pr_ref.startswith(repository.rsplit("/", 1)[-1] + "#"),
+             "PRIMARY_PR_UNRESOLVED")
     pr_number = int(pr_ref.rsplit("#", 1)[-1])
 
     root_issue = transport.get_issue(root_number)
@@ -196,12 +198,29 @@ def live_readback(
         original = observed.get("title")
         _require(isinstance(original, str) and bool(original.strip()),
                  "HUMAN_TITLE_BASE_UNRESOLVED:" + ref)
-        if " — " in original:
-            human_base = original.rsplit(" — ", 1)[1].strip()
-        else:
-            _, human_base = delp.split_title(original)
-            if not human_base.strip():
+        # Do not strip a natural em dash in an Owner-authored title.
+        # Recognize only this view's generated prefix for this exact
+        # responsibility, or DELP's separately versioned generated grammar.
+        delp_info, delp_base = delp.split_title(original)
+        if delp_info is not None:
+            human_base = delp_base
+        elif " — " in original:
+            prefix, suffix = original.rsplit(" — ", 1)
+            owner_prefix = f"🟡 [{root_number}] NEXT #{child_number}/"
+            child_prefix = f"🟡 [{root_number}›{child_number}] "
+            if (ref == root and prefix.startswith(owner_prefix)
+                    and " · RESERVE" in prefix and " · FACTS " in prefix):
+                human_base = suffix.strip()
+            elif (ref == child and prefix.startswith(child_prefix)
+                  and " · PR#" in prefix and " · P" in prefix):
+                human_base = suffix.strip()
+            elif (ref == "PR" and prefix.startswith(child_prefix)
+                  and " · VIEW-PR · HEAD:" in prefix and " · Q:" in prefix):
+                human_base = suffix.strip()
+            else:
                 human_base = original.strip()
+        else:
+            human_base = original.strip()
         _require(bool(human_base), "HUMAN_TITLE_BASE_UNRESOLVED:" + ref)
         titles[ref] = human_base
     expected = view.build_views(
@@ -363,8 +382,12 @@ def guarded_publish(
              "QUALIFICATION_NOT_PROVEN_BY_THIS_WRITER")
     root = graph["programme"]["root"]
     child = selected_leaf
-    child_node = next((n for n in graph["nodes"] if n["ref"] == child), None)
-    pr_ref = child_node.get("primary_pr") if child_node else "Common#740"
+    child_node = next((n for n in graph["nodes"] if n["ref"] == child and n["kind"] == "LEAF"), None)
+    _require(child_node is not None, "SELECTED_RESPONSIBILITY_NOT_BOUND")
+    pr_ref = child_node.get("primary_pr")
+    _require(isinstance(pr_ref, str)
+             and pr_ref.startswith(graph["programme"]["repository"].rsplit("/", 1)[-1] + "#"),
+             "PRIMARY_PR_UNRESOLVED")
     refs = (root, child, pr_ref)
     planned = {}
     for ref in refs:
