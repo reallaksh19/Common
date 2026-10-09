@@ -5,6 +5,7 @@
  */
 import {createHash} from 'node:crypto';
 import {canonicalJSON} from './provenance-v1.mjs';
+import {hasNativeProviderAcquisition} from './provider-facts-v1.mjs';
 
 export class CandidateStateError extends Error{
  constructor(code,reason){super(code+': '+reason);this.name='CandidateStateError';this.code=code;}
@@ -76,10 +77,15 @@ function perPR(pr,nativeObserved){
  * In particular, no real-time result changes the Owner/reviewer/consent axes.
  */
 export function deriveCandidateState(source){
+ // Only R3 can attest its exact in-process native source instance. JSON labels,
+ // recomputed hashes and cross-process copies have no such capability.
+ const nativeAcquisition=hasNativeProviderAcquisition(source);
  const p=copied(source);expectedDigest(p);
  if(p.schema!=='relay-provider-facts-v1'||!H64.test(p.snapshot_sha256)||
    typeof p.repository!=='string'||!Number.isSafeInteger(p.parent_issue?.number)||
    !['PROVIDER_OBSERVED','INJECTED_UNVERIFIED'].includes(p.source_state)||
+   (p.source_state==='PROVIDER_OBSERVED')!==(p.provider_transport==='NATIVE_GITHUB_GET')||
+   (nativeAcquisition&&p.source_state!=='PROVIDER_OBSERVED')||
    p.consistency!=='PR_DOUBLE_READ_NON_ATOMIC'||
    p.owner_intent!=='NOT_AUTHENTICATED'||
    p.evidence_acceptance!=='NOT_EVALUATED'||p.human_review!=='NOT_EVALUATED'||
@@ -87,7 +93,7 @@ export function deriveCandidateState(source){
    p.live_writer_enabled!==false||
    !Array.isArray(p.pr_facts)||p.pr_facts.length<1||p.pr_facts.length>4)
    refuse('UNTRUSTED','provider cannot grant human, CI or publication authority');
- const prs=p.pr_facts.map(pr=>perPR(pr,p.source_state==='PROVIDER_OBSERVED'));
+ const prs=p.pr_facts.map(pr=>perPR(pr,nativeAcquisition));
  if(new Set(prs.map(x=>x.number)).size!==prs.length)refuse('INVALID','duplicate PR');
  const blockers=[];
  if(prs.some(x=>x.head_state!=='CURRENT'))blockers.push('PROVIDER_HEAD_STALE_OR_UNPINNED');
@@ -101,7 +107,8 @@ export function deriveCandidateState(source){
    schema:'relay-candidate-verification-v1',
    repository:p.repository,parent_issue:p.parent_issue.number,
    provider_snapshot_sha256:p.snapshot_sha256,
-   source_observation:p.source_state,consistency:'PR_DOUBLE_READ_NON_ATOMIC',
+   source_observation:p.source_state,source_acquisition_attested:nativeAcquisition,
+   consistency:'PR_DOUBLE_READ_NON_ATOMIC',
    pr_candidates:prs,blockers,next_candidate_verification:next,
    workflow_policy:'CALLER_SELECTED_NOT_REQUIRED_POLICY',
    acceptance_contract:'PARENT_787_AC1_AC8_UNADJUDICATED',
