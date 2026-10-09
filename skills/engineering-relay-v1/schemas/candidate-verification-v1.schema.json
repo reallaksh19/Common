@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/reallaksh19/Common/blob/main/skills/engineering-relay-v1/schemas/candidate-verification-v1.schema.json",
   "title": "RELAY R12 candidate verification — provider selected CI/head facts, not acceptance",
-  "description": "Pure content-addressed R3 observation only. DELP handles declared-unit progress; Owner and independent review are separate. No positive authorization from this schema.",
+  "description": "Pure content-addressed R3 candidate observation; source_acquisition_attested is an in-process origin witness, not a serialized claim or cryptographic identity. DELP separately owns P/E; Owner/reviewer/consent/writer authorization remains unavailable.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -11,6 +11,7 @@
     "parent_issue",
     "provider_snapshot_sha256",
     "source_observation",
+    "source_acquisition_attested",
     "consistency",
     "pr_candidates",
     "blockers",
@@ -46,6 +47,10 @@
         "PROVIDER_OBSERVED",
         "INJECTED_UNVERIFIED"
       ]
+    },
+    "source_acquisition_attested": {
+      "type": "boolean",
+      "description": "True only when the exact current in-process source object was returned by R3 native GitHub GET; JSON replay or recomputed source labels cannot confer this capability. It is not cryptographic Owner authority."
     },
     "consistency": {
       "const": "PR_DOUBLE_READ_NON_ATOMIC"
