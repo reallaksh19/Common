@@ -40,5 +40,6 @@ test('platform sync contract never pretends Windows directory power-loss durabil
   'FILE_SYNCED_DIRECTORY_PERSISTENCE_UNCONFIRMED':'FILE_AND_DIRECTORY_SYNCED';
  assert.equal(state.durability_state,expected);
  assert.equal(state.tip.seq,1);
+ assert.deepEqual(state.uncommitted_temp_files,[]);
  assert.equal(state.independently_accepted,false);
 });
