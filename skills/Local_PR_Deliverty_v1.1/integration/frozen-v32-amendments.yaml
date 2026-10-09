@@ -355,7 +355,7 @@ amendments:
       reviewed and merged on its own base before a new test PR uses the
       two paths. Never treat approval in a candidate product HEAD as a grant.
     summary: >-
-      Test-only V3.2 WP0-A precommit adversarial oracles for source
+      Test-only V3.2 WP0-A precommit adversarial oracles, named to match the existing test_continuity_v32*.py CI discovery, for source
       trust-decision/input-digest collision (D-01), caller-forged
       DELP responsibility core (D-03), and actual native V1/V2 COLD
       context/event/challenge consistency (D-06) with positive controls.
@@ -364,5 +364,5 @@ amendments:
       A product/test PR must BASE on the later approved and merged grant,
       not include its own self-authorization.
     allowed_paths:
-      - skills/engineering-pr-delivery-v3.2/tests/test_v32_evidence_identity_red.py
-      - skills/engineering-pr-delivery-v3.2/tests/test_v32_custody_red.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_865_evidence_identity_red.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_865_custody_red.py
