@@ -34,7 +34,7 @@ The templates are **formats only**. They must not be handed to a clean Stage 1 B
 
 If the preparing agent cannot create a fresh separately restricted B session, record `DISPATCH_BLOCKED_NO_SESSION_CAPABILITY` and stop the preparation subtask; escalate **one** exact operator action and immutable request ref. Do not recertify the same input files on every follow-up. Only a controller-observed distinct session and actual restricted tool/access denial permits `RUNNER_STARTED_ATTESTED`; B's independently authored output and controller freeze are **later separate gates**.
 
-[Core1B repeated-verification failure](EXAMPLES/CORE1B_20261009_DISPATCH_POSTMORTEM.md) is the regression: nine correctly copied source files and a stable packet do not launch Runner B. No new event exists when the same blob is checked again.
+[Core1B repeated-verification failure](EXAMPLES/CORE1B_20261009_DISPATCH_POSTMORTEM.md) is the dispatch regression: nine correctly copied source files and a stable packet do not launch Runner B. [Reviewer-only cross-domain prompt review](REVIEWER_ONLY/CROSS_DOMAIN_PROMPT_CONTRACT_REVIEW_V1.md) probes the same reasoning contract on R-PROJECTION and LFJ; do **not** put the reviewer note in a Stage 1 input envelope. No new event exists when an unchanged blob is checked again.
 
 ## Confidentiality and real blindness
 
