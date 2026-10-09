@@ -20,6 +20,8 @@
 
 After the packet exists, the preparing Agent A must follow the [Relay dispatch and no-progress runbook](../../../relay/CONTINUITY/RUNNER_DISPATCH_RUNBOOK.md), writing a single [dispatch request](../../../relay/CONTINUITY/TEMPLATES/RUNNER_DISPATCH_REQUEST.md) for an external *real* fresh-session controller. **Source integrity ≠ Runner launch ≠ independent output ≠ freeze.** If no agent/session factory and technical read restrictions are available, report a single `DISPATCH_BLOCKED_NO_SESSION_CAPABILITY` with the exact external action; do not loop on hash readbacks. See the [Core1B failure case](../../../relay/CONTINUITY/EXAMPLES/CORE1B_20261009_DISPATCH_POSTMORTEM.md).
 
+**External release boundary:** the [controller-only Stage 1 admission contract](../../../relay/CONTINUITY/OPERATOR_STAGE1_RELEASE_CONTRACT.md) and [read-denial receipt](../../../relay/CONTINUITY/TEMPLATES/STAGE1_RELEASE_PREFLIGHT.md) must be completed from a real new B session/tool identity. Do not place those links, the operator checklists or the broader README in B's Stage 1 input.
+
 ## Owner command vs suggestion
 
 - **"Prepare for runner"** — direct Owner command; act immediately regardless of reported context consumption (including `UNKNOWN`); prepare Stage 1 original source/Owner WHAT/WHY and separately withheld Stage 2 Agent A HOW/current evidence; Agent A continues the same authorized responsibility.
