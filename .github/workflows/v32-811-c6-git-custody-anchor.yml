@@ -1,0 +1,95 @@
+name: v32-811-c6-git-custody-anchor
+
+on:
+  push:
+    branches: ['v32/811-c6-c6-git-custody-anchor']
+    paths:
+      - '.github/v32-evidence-spine/811-c6-c6-*'
+      - '.github/v32-evidence-spine/811_c6_c6_*'
+      - '.github/v32-evidence-spine/test_811_c6_c6_*'
+      - '.github/workflows/v32-811-c6-git-custody-anchor.yml'
+  pull_request:
+    paths:
+      - '.github/v32-evidence-spine/811-c6-c6-*'
+      - '.github/v32-evidence-spine/811_c6_c6_*'
+      - '.github/v32-evidence-spine/test_811_c6_c6_*'
+      - '.github/workflows/v32-811-c6-git-custody-anchor.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  immutable-commit-archive-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pre-existing V3.2 schema reader
+        run: python -m pip install --disable-pip-version-check PyYAML jsonschema
+      - name: Precommitted verified manifest MUST precede test code
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor de3cac5d2c19b4301500fede250f4c56c226fda1 HEAD
+          git cat-file -e de3cac5d2c19b4301500fede250f4c56c226fda1^{commit}
+          echo 'C6_C6_GIT_VERIFIED_ARCHIVE_GOLDEN_FIRST=PASS'
+      - name: Fetch EXISTING real GitHub Actions artifact and confirm its own API digest
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+          sys.path.insert(0, '.github/v32-evidence-spine')
+          from importlib import util
+          spec=util.spec_from_file_location('c5provider', '.github/v32-evidence-spine/811_c6_c5_provider_anchor.py')
+          assert spec and spec.loader
+          x=util.module_from_spec(spec)
+          spec.loader.exec_module(x)
+          from importlib import util as iu
+          spec2=iu.spec_from_file_location('c6git', '.github/v32-evidence-spine/811_c6_c6_verify_git_anchor.py')
+          assert spec2 and spec2.loader
+          c6=iu.module_from_spec(spec2)
+          spec2.loader.exec_module(c6)
+          import os
+          a=c6.committed_anchor()
+          provider=a['source']
+          repo=x.gh_json('/repos/reallaksh19/Common', os.environ['GH_TOKEN'])
+          run=x.gh_json('/repos/reallaksh19/Common/actions/runs/'+str(provider['workflow_run_id']), os.environ['GH_TOKEN'])
+          artifact=x.gh_json('/repos/reallaksh19/Common/actions/artifacts/'+str(provider['artifact_id']), os.environ['GH_TOKEN'])
+          server=x.validate_metadata(artifact,run,repo,provider['workflow_run_id'],
+                                     provider['workflow_head_sha'],provider['artifact_id'])
+          assert server == provider['artifact_zip_sha256'], 'ANCHOR_DIFFERS_FROM_PROVIDER_DIGEST'
+          assert artifact['size_in_bytes']==provider['artifact_zip_bytes'], 'ANCHOR_DIFFERS_FROM_PROVIDER_SIZE'
+          archive=x.get_archive(provider['artifact_id'], os.environ['GH_TOKEN'])
+          assert c6.sha256(archive)==server, 'PROVIDER_ARCHIVE_DOWNLOAD_DIGEST_MISMATCH'
+          Path('/tmp/v32-c6-c6-retained.zip').write_bytes(archive)
+          print('C6_C6_GITHUB_PROVIDER_HASH_MATCHES_FROZEN_GIT_COMMIT=PASS')
+          PY
+      - name: Cold OFFLINE verifier runs without GitHub token or Actions API
+        run: |
+          set -euo pipefail
+          env -u GH_TOKEN -u GITHUB_TOKEN python .github/v32-evidence-spine/811_c6_c6_verify_git_anchor.py \
+            --archive /tmp/v32-c6-c6-retained.zip | tee /tmp/v32-c6-c6-offline.log
+          grep -q 'C6_C6_OFFLINE_RETAINED_ARCHIVE=VERIFIED_TWO_FILES' /tmp/v32-c6-c6-offline.log
+      - name: Ten REAL adversarial tests, including squash-merge survival and coherent forgery
+        run: |
+          set -euo pipefail
+          env -u GH_TOKEN -u GITHUB_TOKEN python .github/v32-evidence-spine/test_811_c6_c6_git_anchor.py \
+            --archive /tmp/v32-c6-c6-retained.zip -v 2>&1 | tee /tmp/v32-c6-c6-test.log
+          grep -q 'Ran 10 tests' /tmp/v32-c6-c6-test.log
+          grep -q 'OK' /tmp/v32-c6-c6-test.log
+          echo 'C6_C6_GIT_ANCHOR_10_REAL_NEGATIVE_ORACLES=PASS'
+      - name: State deliberately limited custody conclusion
+        run: |
+          echo 'C6_C6_HASH_ONLY_COMMIT_ANCHOR=PASS_NOT_OWNER_SIGNED'
+          echo 'C6_C6_SEPARATELY_RETAINED_ARCHIVE_REQUIRED_AFTER_ARTIFACT_EXPIRY'
+          echo 'C6_C6_SOURCE_OWNER_MESSAGE=UNKNOWN'
+          echo 'C6_C6_GIT_BRANCH_UNMERGED_REVIEW_REQUIRED'
