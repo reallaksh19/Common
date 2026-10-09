@@ -43,6 +43,7 @@ class IdentityContractV1Tests(unittest.TestCase):
         got = validate_identity(sample())
         self.assertEqual("CALLER_REFERENCED_UNATTESTED", got["identity_grade"])
         self.assertTrue(got["identity_sha256"].startswith("sha256:"))
+        self.assertEqual("sha256:3fc1962e7d8da436be7301f154a4b9614b5d5b0f5a5fc3b894e574fae6d5f828", got["identity_sha256"])
         self.assertEqual("NOT_GRANTED", got["writer_authorization"])
         self.assertEqual("NOT_EVALUATED", got["evidence_acceptance"])
 
