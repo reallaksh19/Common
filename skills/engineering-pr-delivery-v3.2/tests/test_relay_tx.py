@@ -1246,6 +1246,21 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
                                        markdown=b"# Must not inherit old dispatch\n")
             self.assertFalse((root / "relay/BUDDY_RUNNER/ISSUE-889/messages/TX.889.6-STAGE1_PLAN.md").exists())
 
+    def test_new_symlinked_intake_cannot_be_ignored_for_old_receipt(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.1",
+                                   stage="STAGE1_INTAKE", actor="operator",
+                                   markdown=b"# Old original intake\n")
+            folder = root / "relay/BUDDY_RUNNER/ISSUE-889/messages"
+            alias = folder / "TX.889.2-STAGE1_INTAKE.md"
+            alias.symlink_to(folder / "TX.889.1-STAGE1_INTAKE.md")
+            with self.assertRaisesRegex(TransactionError, "MESSAGE_SYMLINK_FORBIDDEN"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.3",
+                                       stage="DISPATCH_REQUEST", actor="operator",
+                                       markdown=b"# Dispatch must not reuse old intake\n")
+            self.assertFalse((root / "relay/TRANSACTIONS/TX.889.3").exists())
+
     def test_tampered_committed_intake_blocks_dispatch(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
