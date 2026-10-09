@@ -104,6 +104,12 @@ test('full real G2c→R3→R4 path, one GitHub content read, R2-A cold replay, P
  assert.equal(r.pr_heads[0].currentness,'MATCH');
  assert.match(r.full_chain_sha256,/^[a-f0-9]{64}$/);
  assert.match(r.frontier_sha256,/^[a-f0-9]{64}$/);
+ assert.match(r.trust_preflight_sha256,/^[a-f0-9]{64}$/);
+ assert.equal(r.proposed_handover.trust_preflight_sha256,r.trust_preflight_sha256);
+ assert.equal(r.proposed_handover.trust_preflight_axes.owner_source.state,'NOT_QUALIFIED');
+ assert.equal(r.proposed_handover.trust_preflight_axes.privacy_and_retention.state,'NOT_QUALIFIED');
+ assert.equal(r.proposed_handover.trust_preflight_axes.independent_reviewer.state,'NOT_QUALIFIED');
+ assert.equal(r.source_consent_review_approval,'NOT_QUALIFIED');
  assert.equal(r.acceptance_denominator_state,'NOT_ADJUDICATED');
  assert.equal(r.next_verification_category,'DEFINE_PRIVACY_SAFE_OWNER_SOURCE_CUSTODY');
  assert.ok(r.blockers.includes('ORIGINAL_OWNER_SOURCE_UNAUTHENTICATED'));
@@ -200,6 +206,11 @@ test('true native exact-head GitHub synthetic journal + real parent/PR/CI + R4 p
  assert.equal(out.pr_heads[0].head_sha,head);
  assert.equal(out.pr_heads[0].currentness,'MATCH');
  assert.equal(out.real_r2b1_replayed,true);
+ assert.match(out.trust_preflight_sha256,/^[a-f0-9]{64}$/);
+ assert.equal(out.proposed_handover.trust_preflight_sha256,out.trust_preflight_sha256);
+ assert.equal(out.proposed_handover.trust_preflight_axes.privacy_and_retention.state,'NOT_QUALIFIED');
+ assert.equal(out.proposed_handover.trust_preflight_axes.independent_reviewer.state,'NOT_QUALIFIED');
+ assert.equal(out.source_consent_review_approval,'NOT_QUALIFIED');
  assert.match(out.public_task_evidence_receipt_sha256,/^[a-f0-9]{64}$/);
  assert.equal(out.public_task_evidence_observation,'PRODUCER_ASSERTED_COMMENT_OBSERVED_NOT_ACCEPTED');
  assert.equal(out.proposed_handover.public_task_evidence_receipt_sha256,out.public_task_evidence_receipt_sha256);
@@ -217,7 +228,8 @@ test('true native exact-head GitHub synthetic journal + real parent/PR/CI + R4 p
   provider_snapshot_sha256:out.provider_snapshot_sha256,
   r4_projection_sha256:out.r4_projection_sha256,joined_sha256:out.full_chain_sha256,
   events:out.event_count,pr_head:out.pr_heads[0].head_sha,
-  ci_state:out.pr_heads[0].ci[0].state,public_receipt_sha256:out.public_task_evidence_receipt_sha256,
+  ci_state:out.pr_heads[0].ci[0].state,trust_preflight_sha256:out.trust_preflight_sha256,
+  public_receipt_sha256:out.public_task_evidence_receipt_sha256,
   comment_id:6072336145,task_issue:852,public_acceptance:false,writer:false,accepted:false
  }));
 });

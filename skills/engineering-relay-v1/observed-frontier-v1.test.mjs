@@ -5,6 +5,7 @@ import {canonicalJSON} from './provenance-v1.mjs';
 import {reconcileGitHubFacts} from './provider-facts-v1.mjs';
 import {projectObservedFrontier,ObservedFrontierError} from './observed-frontier-v1.mjs';
 import {renderRelayPreviews,PreviewError} from './projection-preview-v1.mjs';
+import {deriveTrustPreflight,verifyTrustPreflight,TrustPreflightError} from './trust-preflight-v1.mjs';
 import {observePublicTaskEvidence} from './github-task-evidence-receipt-v1.mjs';
 
 const REPO='reallaksh19/Common',SHA='a'.repeat(40),BASE='b'.repeat(40);
@@ -153,4 +154,60 @@ test('actual public comment receipt joins R1+R3 and R4 without accepting produce
  const noReceipt=projectObservedFrontier(lineage(fact),fact);
  assert.ok(noReceipt.blockers.includes('PUBLIC_TASK_EVIDENCE_NOT_OBSERVED'));
  assert.equal(noReceipt.public_task_evidence_receipt_sha256,null);
+});
+
+
+test('R11 distinct Owner source, privacy, reviewer, material evidence and writer gates propagate through R4',async()=>{
+ const p=await provider(),s=lineage(p),f=projectObservedFrontier(s,p);
+ const trust=deriveTrustPreflight(s,p,f),v=renderRelayPreviews(p,opts,f,trust);
+ assert.match(trust.preflight_sha256,/^[a-f0-9]{64}$/);
+ assert.equal(v.trust_preflight_sha256,trust.preflight_sha256);
+ assert.equal(v.successor_handover.trust_preflight_sha256,trust.preflight_sha256);
+ assert.equal(v.successor_handover.trust_preflight_axes.owner_source.state,'NOT_QUALIFIED');
+ assert.equal(v.successor_handover.trust_preflight_axes.privacy_and_retention.state,'NOT_QUALIFIED');
+ assert.equal(v.successor_handover.trust_preflight_axes.independent_reviewer.state,'NOT_QUALIFIED');
+ assert.equal(v.successor_handover.trust_preflight_axes.engineering_evidence.state,'NOT_QUALIFIED');
+ assert.equal(v.successor_handover.trust_preflight_axes.github_writer.state,'NOT_QUALIFIED');
+ assert.equal(trust.accepted_claim_count,null);
+ assert.equal(trust.private_chat_export_allowed,false);
+ assert.equal(trust.private_chat_retention_allowed,false);
+ assert.equal(trust.next_authorized_action,'NONE_FROM_THIS_PREFLIGHT');
+ assert.equal(trust.publication_writer_enabled,false);
+ assert.equal(v.live_writer_enabled,false);
+ assert.equal(Object.isFrozen(trust.axes.privacy_and_retention),true);
+ assert.deepEqual(verifyTrustPreflight(trust,s,p,f),trust);
+});
+test('R11 cannot treat producer GitHub comment, even if claimed Owner approved, as privacy consent',async()=>{
+ const p=await provider(),s=lineage(p),f=projectObservedFrontier(s,p),proof=deriveTrustPreflight(s,p,f);
+ for(const modified of [
+  {...proof,private_chat_export_allowed:true},
+  {...proof,independent_review_accepted:true},
+  {...proof,accepted_claim_count:8},
+  {...proof,authorization_granted:true},
+  {...proof,axes:{...proof.axes,owner_source:{state:'OWNER_APPROVED',reason:'GITHUB_COMMENT'}}}
+ ]){
+  refusal(()=>verifyTrustPreflight(modified,s,p,f),TrustPreflightError,'UNTRUSTED_PREFLIGHT');
+  refusal(()=>renderRelayPreviews(p,opts,f,modified),PreviewError,'UNTRUSTED');
+ }
+});
+test('R11 refuses changed source lineage and digest-recomputed acceptance',async()=>{
+ const p=await provider(),s=lineage(p),f=projectObservedFrontier(s,p),proof=deriveTrustPreflight(s,p,f);
+ const edited={...f,accepted_evidence_count:1};
+ refusal(()=>deriveTrustPreflight(s,p,edited),TrustPreflightError,'UNTRUSTED_SOURCE');
+ const altered={...f,next_verification_category:'AC8_APPROVED'};
+ refusal(()=>deriveTrustPreflight(s,p,altered),TrustPreflightError,'DIGEST_MISMATCH');
+ const swapped={...s,source_lineage_sha256:'b'.repeat(64)};
+ refusal(()=>deriveTrustPreflight(swapped,p,f),TrustPreflightError,'UNTRUSTED_SOURCE');
+ const spoof={...p,independently_accepted:true};
+ refusal(()=>deriveTrustPreflight(s,spoof,f),TrustPreflightError,'UNTRUSTED_SOURCE');
+ assert.equal(proof.acceptance_denominator_state,'NOT_ADJUDICATED');
+});
+test('R11 without GitHub TaskEvidence stays explicitly NOT_OBSERVED, never 0 accepted',async()=>{
+ const p=await provider(),s=lineage(p),f=projectObservedFrontier(s,p);
+ const trust=deriveTrustPreflight(s,p,f);
+ assert.equal(trust.comment_custody,'NOT_OBSERVED');
+ assert.equal(trust.public_task_evidence_receipt_sha256,null);
+ assert.equal(trust.accepted_evidence_count,null);
+ assert.equal(trust.accepted_claim_count,null);
+ assert.equal(trust.original_owner_authenticated,false);
 });
