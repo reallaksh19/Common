@@ -16,6 +16,10 @@
 
 **Never give the entire `runner/` folder to a fresh Stage 1 model.** This directory includes Stage 2 instructions, operator judgments and examples that would contaminate independence. Prepare a physically restricted workspace containing **only** the Stage 1 instruction, sanitized historical data and explicitly allowlisted historical source files. Without externally enforced access restrictions, label the trial **BLINDNESS_NOT_VERIFIED**, not a clean Runner.
 
+## Dispatch is a separate operational handoff
+
+After the packet exists, the preparing Agent A must follow the [Relay dispatch and no-progress runbook](../../../relay/CONTINUITY/RUNNER_DISPATCH_RUNBOOK.md), writing a single [dispatch request](../../../relay/CONTINUITY/TEMPLATES/RUNNER_DISPATCH_REQUEST.md) for an external *real* fresh-session controller. **Source integrity ≠ Runner launch ≠ independent output ≠ freeze.** If no agent/session factory and technical read restrictions are available, report a single `DISPATCH_BLOCKED_NO_SESSION_CAPABILITY` with the exact external action; do not loop on hash readbacks. See the [Core1B failure case](../../../relay/CONTINUITY/EXAMPLES/CORE1B_20261009_DISPATCH_POSTMORTEM.md).
+
 ## Owner command vs suggestion
 
 - **"Prepare for runner"** — direct Owner command; act immediately regardless of reported context consumption (including `UNKNOWN`); prepare Stage 1 original source/Owner WHAT/WHY and separately withheld Stage 2 Agent A HOW/current evidence; Agent A continues the same authorized responsibility.
