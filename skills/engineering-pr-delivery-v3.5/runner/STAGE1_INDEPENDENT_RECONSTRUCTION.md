@@ -1,6 +1,6 @@
 # GOLDEN STAGE 1 — Independent engineering reconstruction
 
-> **V3.5 integration boundary:** This is Markdown guidance for nested Coder research/continuity under [SKILL.md](../SKILL.md). It does not start a fresh model, expose unavailable provider session telemetry, authorize a GitHub writer, bypass Local PR Delivery v1.1, modify DELP, or approve programme #787/#864. Clean Stage 1 isolation and Stage 2 disclosure require independently enforced access and provenance.
+> **V3.5 integration boundary:** This is Stage 1-only text curated from the V3.5 Runner contract. Its delivery to B MUST NOT expose a navigable link into the broader V3.5 skill or Common/relay repository. It does not start a fresh model, expose unavailable provider session telemetry, authorize a GitHub writer, bypass Local PR Delivery v1.1, modify DELP, or approve programme #787/#864. Clean Stage 1 isolation and Stage 2 disclosure require independently enforced access and provenance.
 
 ## Runner B thinking contract · Stage 1 ONLY · reusable Markdown template v2
 
@@ -8,7 +8,7 @@
 
 **Runner role:** You are Agent B, the prospective successor. Agent A continues coding and retains its existing task, source writer and responsibility. You are **not** a concurrent implementer, reviewer, new Owner or automatically promoted engineer. Your task is to discover *independently* what a correct engineering outcome requires and first document how the historical system actually behaves and only then develop provisional, falsifiable original-problem hypotheses, without seeing Agent A's solution.
 
-**Trigger provenance:** Agent A may proactively suggest **"Time for Runner"** near approximately 70% estimated usable episode life **consumed**, or the Owner may explicitly say **"Prepare for runner"** regardless of session usage. Read the operator's reason and evidence grade in the historical intake. An advisory trigger is **not** task completion, DELP progress, automatic Stage 1 release or a writer lease. When telemetry is unavailable, consumption is `UNKNOWN` even when the Owner explicitly asked to prepare. The Agent A entrypoint is [the separate Prepare for runner contract](PREPARE_FOR_RUNNER.md); it is **not** additional Stage 1 content.
+**Trigger provenance:** Agent A may proactively suggest **"Time for Runner"** near approximately 70% estimated usable episode life **consumed**, or the Owner may explicitly say **"Prepare for runner"** regardless of session usage. Read the operator's reason and evidence grade in the historical intake. An advisory trigger is **not** task completion, DELP progress, automatic Stage 1 release or a writer lease. When telemetry is unavailable, consumption is `UNKNOWN` even when the Owner explicitly asked to prepare. Agent A's separate preparation command is **not** additional Stage 1 content; do not request its document or current session status.
 
 ## 0. What you may know — sealed intake
 
@@ -21,7 +21,7 @@
 | Frozen research baseline | `[OPERATOR: exact repo/commit, immutable paths, hash manifest]` |
 | Original source and genuine fixtures | `[OPERATOR: allowlisted paths + SHA256 / UNKNOWN pairing]` |
 | Approved roadmap/categories and dependencies | `[OPERATOR: historically frozen requirements only]` |
-| Agent A's non-solution WHAT/WHY briefing | `[OPERATOR: bounded problem/risks/pending/parked; grade as CLAIM if reconstructed]` |
+| Agent A's interpretation, current diagnosis, risk ranking and parked work | **WITHHELD**, even when framed as a non-solution WHAT/WHY briefing; only original Owner-authenticated constraints may enter the factual baseline |
 | What is withheld | All Agent A algorithms, code changes, plans, recent issues/comments, live branches/PRs/tests, CI, conclusions, private chats and Stage 2 packet |
 | Your authority | Read approved historical inputs; produce a draft plan **only**. No application/GitHub mutations, PR publication, roadmap edit or new execution lease |
 
@@ -55,14 +55,14 @@ Once Part A is complete, use only original authenticated Owner WHAT/WHY and appr
 
 **Stage 1 limits:** Do not publish a copy-ready current-head `IMPLEMENTATION_PLAN`, `PLAN_UPDATE`, child issue, source diff, merge or P/E. A detailed actionable plan belongs in Stage 2 **after** four-perspective source reconciliation and Owner approval. Preserve actual domain-derived questions; produce exactly three only when the governing successor/handover contract specifically requires that count.
 
-**Communication:** Write the Part A and Part B record under the externally approved `relay/CONTINUITY` message procedure described in [the communication README](../../../relay/CONTINUITY/README.md) and [STAGE1_RECONSTRUCTION](../../../relay/CONTINUITY/TEMPLATES/STAGE1_RECONSTRUCTION.md). A committed Markdown file alone is not proof of a clean independent session. Freezing and disclosure remain external.
+**Communication:** Submit Part A and Part B using only the Stage 1 output format supplied **inside your restricted input envelope**. Do not browse the parent Relay repository, its index, any operator decision or Stage 2 format. The controller is responsible for committing the submitted unchanged response and external freeze; a Markdown file alone does not prove source blindness.
 
 ## 3. Deliverable: independent historical baseline THEN provisional interpretation
 
-Create a substantive **Markdown message** following [`relay/CONTINUITY/TEMPLATES/STAGE1_RECONSTRUCTION.md`](../../../relay/CONTINUITY/TEMPLATES/STAGE1_RECONSTRUCTION.md). Its source observations **must precede** its provisional engineering alternatives. Include: immutable historical source/ref/role and provenance; real producer/consumer and witness plus variation or NOT_RUN; semantic invariants/unknowns; separate original Owner-problem analysis with alternatives or NO_CHANGE and source-specific falsifiers; original questions; evidence gaps to investigate against current HEAD **later**; and honest contamination/read-boundary status.
+Create a substantive **Markdown message** using the Stage 1 reconstruction format supplied within your restricted input envelope; if the format is absent, mark `FORMAT_NOT_PROVIDED` rather than searching the unrestricted Relay repository. Its source observations **must precede** its provisional engineering alternatives. Include: immutable historical source/ref/role and provenance; real producer/consumer and witness plus variation or NOT_RUN; semantic invariants/unknowns; separate original Owner-problem analysis with alternatives or NO_CHANGE and source-specific falsifiers; original questions; evidence gaps to investigate against current HEAD **later**; and honest contamination/read-boundary status.
 
 Do not convert the output into a copy-ready implementation issue, completed task evidence, fabricated owner approval or independent reviewer verdict. If live A source or current GitHub PR status has already been visible, record `STAGE1_CONTAMINATED` and request a clean Runner session.
 
 ## 4. Stop at externally attested freeze
 
-Return factual conclusions, provisional opportunities, actual open questions, source confidence, and `STAGE2_ACCESS=DENIED_PENDING_EXTERNAL_FREEZE`. A separate trusted controller must attest that your session could **not** access forbidden A material and read back the unaltered Markdown at an exact SHA. After this gate, the *same* Runner B may receive a separately released [technical handover](../../../relay/CONTINUITY/TEMPLATES/TECHNICAL_HANDOVER.md) and [Stage 2 guidance](STAGE2_SOURCE_RECONCILIATION.md); they are **not Stage 1 inputs**. No new execution authority is implied.
+Return factual conclusions, provisional opportunities, actual open questions, source confidence, and `STAGE2_ACCESS=DENIED_PENDING_EXTERNAL_FREEZE`. A separate trusted controller must attest that your session could **not** access forbidden A material and read back the unaltered Markdown at an exact SHA. After the separately attested freeze, the *same* Runner B may later receive an authorized technical handover and Stage 2 instructions. Those materials are **not Stage 1 inputs** and you must not search for them or try to obtain them now. No new execution authority is implied.
