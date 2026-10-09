@@ -181,12 +181,41 @@ function compactTitle(parts){
 }
 
 /** Pure/immutable: never fetch, write, or infer a human acceptance. */
-export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null){
+export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null,rawTrust=null){
   const s=checkSnapshot(rawSnapshot);
   let o;
   try{o=JSON.parse(canonicalJSON(rawOptions));}catch{fail('INVALID','evaluation parameters invalid');}
   const fresh=freshness(s,o),native=s.source_state==='PROVIDER_OBSERVED';
   const frontier=verifiedFrontier(rawFrontier,s);
+  // Only an exact content-free, no-grant R11 witness may be displayed.
+  // Full-chain also recomputes R11 from original source/provider/frontier.
+  let trust=null;
+  if(rawTrust!==null&&rawTrust!==undefined){
+    try{trust=JSON.parse(canonicalJSON(rawTrust));}
+    catch{fail('INVALID','trust preflight cannot be canonicalized');}
+    if(trust.schema!=='relay-trust-preflight-v1'||
+      !HASH.test(trust.preflight_sha256??'')||
+      !frontier||trust.frontier_sha256!==frontier.frontier_sha256||
+      trust.provider_snapshot_sha256!==s.snapshot_sha256||
+      trust.source_lineage_sha256!==frontier.source_lineage_sha256||
+      trust.public_task_evidence_receipt_sha256!==frontier.public_task_evidence_receipt_sha256||
+      trust.next_authorized_action!=='NONE_FROM_THIS_PREFLIGHT'||
+      trust.acceptance_denominator_state!=='NOT_ADJUDICATED'||
+      trust.accepted_claim_count!==null||trust.accepted_evidence_count!==null||
+      trust.private_chat_export_allowed!==false||
+      trust.private_chat_retention_allowed!==false||
+      trust.independent_review_accepted!==false||
+      trust.material_evidence_accepted!==false||
+      trust.publication_writer_enabled!==false||
+      trust.original_owner_authenticated!==false||
+      trust.authorization_granted!==false||
+      trust.proposal_only!==true)
+      fail('UNTRUSTED','preflight cannot grant owner/CI/review/write permissions');
+    const copy={...trust};delete copy.preflight_sha256;
+    if(sha(copy)!==trust.preflight_sha256)
+      fail('DIGEST_MISMATCH','trust preflight mutated');
+    trust=freeze(trust);
+  }
   const nextVerification=frontier?.next_verification_category??'SOURCE_GRAPH_UNAVAILABLE_NO_AUTHORIZED_NEXT';
   const blockers=frontier?.blockers??['SOURCE_GRAPH_NOT_BOUND'];
   const source=s.snapshot_sha256;
@@ -224,6 +253,8 @@ export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null){
       'Source-bound frontier SHA256: '+(frontier?.frontier_sha256??'NONE')+'\n'+
       'Next verification category (NOT AUTHORIZED): '+nextVerification+'\n'+
       'Blockers: '+blockers.join(',')+'\n'+
+      'R11 separated source/consent/reviewer gates (NOT ACCEPTED): '+
+        (trust?.preflight_sha256??'NONE')+'\n'+
       'Observed public TaskEvidence receipt (NOT ACCEPTED): '+
         (frontier?.public_task_evidence_receipt_sha256??'NONE')+'\n'+
 
@@ -252,6 +283,8 @@ export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null){
     public_task_evidence_receipt_sha256:frontier?.public_task_evidence_receipt_sha256??null,
     public_task_evidence_source_url:frontier?.public_task_evidence_source_url??null,
     public_task_evidence_observation:frontier?.public_task_evidence_observation??'NOT_OBSERVED',
+    trust_preflight_sha256:trust?.preflight_sha256??null,
+    trust_preflight_axes:trust?.axes??null,
     frontier_sha256:frontier?.frontier_sha256??null,
     frontier_source_lineage_sha256:frontier?.source_lineage_sha256??null,
     actual_next_authority:'NOT_GRANTED',
@@ -269,6 +302,7 @@ export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null){
     observed_at:s.observed_at,evaluated_at:o.evaluated_at,
     parent_issue:summary,child_issues:children,pr_titles:prTitles,
     successor_handover:handover,
+    trust_preflight_sha256:trust?.preflight_sha256??null,
     frontier_sha256:frontier?.frontier_sha256??null,
     frontier_source_lineage_sha256:frontier?.source_lineage_sha256??null,
     next_verification_category:nextVerification,
