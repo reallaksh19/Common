@@ -181,7 +181,7 @@ test('unexpected non-journal entry refuses replay',async()=>{
 });
 test('symlink root is rejected',async()=>{
  const dir=await create(),parent=await mkdtemp(join(tmpdir(),'relay-link-')),alias=join(parent,'link');
- await symlink(dir,alias,'dir');
+ await symlink(dir,alias,process.platform==='win32'?'junction':'dir');
  await rejected(readJournal(alias),'INVALID');
 });
 
