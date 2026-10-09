@@ -1145,6 +1145,41 @@ class HandoverContextTests(unittest.TestCase):
             delp.source_bound_responsibility_core(graph, moved, "Common#720")["basis_digest"],
         )
 
+    def test_c6_shared_source_core_fresh_process_preserves_historical_identity(self):
+        """Fresh process reproduces a frozen core, but must not claim live currentness."""
+        import delp_projection_v32 as delp
+        import os
+        import subprocess
+        graph, provider = self._source_bound_fixture()
+        observed = build_delp_source_bound_successor(
+            graph, leaf_ref="Common#720", provider=provider,
+        )
+        observations = delp.observe_github(provider, graph)
+        with tempfile.TemporaryDirectory() as td:
+            source = Path(td)
+            (source / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
+            (source / "observations.json").write_text(json.dumps(observations), encoding="utf-8")
+            code = (
+                "import json,sys; from pathlib import Path; "
+                "import delp_projection_v32 as d; "
+                "p=Path(sys.argv[1]); "
+                "g=json.loads((p/'graph.json').read_text()); "
+                "o=json.loads((p/'observations.json').read_text()); "
+                "x=d.project(g,[],o); "
+                "print(d.source_bound_responsibility_core(g,x,'Common#720')['basis_digest'])"
+            )
+            env = {**os.environ, "PYTHONPATH": str(SCRIPTS)}
+            run = subprocess.run(
+                [sys.executable, "-c", code, str(source)],
+                env=env, capture_output=True, text=True, timeout=30,
+            )
+            self.assertEqual(0, run.returncode, run.stderr)
+            self.assertEqual(
+                observed["delp_responsibility_core"]["basis_digest"], run.stdout.strip(),
+            )
+            # Fresh offline replay provides custody only, not provider freshness.
+            self.assertNotIn("CURRENT_READ_ONLY", run.stdout)
+
     def test_delp_source_successor_is_real_read_model_not_authority(self):
         graph, provider = self._source_bound_fixture()
         result = build_delp_source_bound_successor(graph, leaf_ref="Common#720", provider=provider)
