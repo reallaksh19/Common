@@ -367,21 +367,20 @@ amendments:
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_865_evidence_identity_red.py
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_865_custody_red.py
   - id: AMEND-V32-865-WP1-RECEIPT-017
-    owner_authorized: false
+    owner_authorized: true
     owner_basis: >-
-      DISABLED PROPOSAL ONLY for Owner source-level authorization decision; the direct
-      Owner continuation "proceed next" permits publishing this bounded
-      candidate proposal and exact RED evidence, but is not treated as
-      an explicit grant of new frozen source/schema paths, human review,
-      claim-first released responsibility, test acceptance, or merge.
-      Owner original private-chat permalink is UNKNOWN. The Owner's later
-      "proceed next, merge if mergable" instruction permitted merging the
-      separately eligible test-only #867; it is NOT an affirmative authorization
-      to turn this source-scope proposal on. This row stays
-      DISABLED until separately approved and independently reviewed;
-      it may be enabled only on a standalone governance PR that lands
-      BEFORE an implementation PR bases on it. Never authorize paths
-      from the proposed product PR HEAD.
+      Direct Owner continued the exact proposed next step on 2026-10-09:
+      'proceed next', directly after the assistant defined the next gate as
+      'authorize and qualify the exact three WP1 paths' and after the Owner
+      separately instructed 'proceed next, merge if mergable'. This is a
+      CONTEXTUAL Owner approval limited to SourceReceiptV2's three named new
+      files (new parser, new strict schema, new native tests); original private
+      ChatGPT source permalink remains UNKNOWN, not fabricated. Does not
+      authorize legacy delp_projection_v32.py modifications, WP2, C6, V3.5,
+      live #786 publishing, Owner fact forgery, a new #718 graph release, or
+      skipping exact-head source tests. This is NOT an independent reviewer
+      approval; record actual review status separately. Product edits require
+      this exact approved amendment to be on their PR BASE, never HEAD.
     summary: >-
       WP1 SourceReceiptV2 only. Produce a canonical read-only GitHub
       source receipt with stable repository/issue/comment identity,
