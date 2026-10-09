@@ -21,7 +21,7 @@
 | Current gate and unblock action | `DISPATCH_PENDING_EXTERNAL_OPERATOR` / `DISPATCH_BLOCKED_NO_SESSION_CAPABILITY` / `DISPATCH_BLOCKED_ISOLATION`; name **one** external action |
 | Owner-facing status pointer | [single concise response or GitHub issue link] |
 
-**Operator instruction:** Start a fresh Runner B in an actually isolated read environment, using only the specified historical packet and source. Produce a session/access-control receipt and separately submit B's original Stage 1 Markdown answer. If the described controls are unavailable, report `UNABLE_TO_ATTEST_CLEAN_STAGE1`, do not invent independence.
+**Operator instruction:** First apply the [controller-only Stage 1 release contract](../OPERATOR_STAGE1_RELEASE_CONTRACT.md) and record an actual [release preflight receipt](STAGE1_RELEASE_PREFLIGHT.md), including observed denied reads from B's effective tool identity. Never send either operator-only document to B. Start a fresh Runner B in an actually isolated read environment, using only the specified historical packet and source. Produce a session/access-control receipt and separately submit B's original Stage 1 Markdown answer. If the described controls are unavailable, report `UNABLE_TO_ATTEST_CLEAN_STAGE1`, do not invent independence.
 
 **Idempotency:** For unchanged episode/packet/tree, publish only one active dispatch request. Amend/version it **only** for a real new fact (new Owner decision, real operator assignment, changed material, actual session receipt). Do not repeatedly recertify source integrity. See [dispatch runbook](../RUNNER_DISPATCH_RUNBOOK.md).
 
