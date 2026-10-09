@@ -1081,6 +1081,47 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
             self.assertEqual("NOT_ATTESTED_BY_MESSAGE_TRANSPORT", plan["admission"])
             self.assertFalse((root / "relay/STATE.yaml").exists())
 
+    def test_new_intake_supersedes_old_dispatch_and_baseline(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.1",
+                                   stage="STAGE1_INTAKE", actor="operator",
+                                   markdown=b"# Original intent cutoff 1\n")
+            publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.2",
+                                   stage="DISPATCH_REQUEST", actor="operator",
+                                   markdown=b"# Request source-only session\n")
+            publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.3",
+                                   stage="DISPATCH_OBSERVATION", actor="operator",
+                                   markdown=b"# RUNNER_EXECUTION_OBSERVED\n\nSession ref: run-one\nRead-scope ref: scope-one\n")
+            publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.4",
+                                   stage="STAGE1_BASELINE", actor="runner-b",
+                                   markdown=b"# Original cutoff 1 baseline\n")
+            publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.5",
+                                   stage="STAGE1_INTAKE", actor="operator",
+                                   markdown=b"# Revised original cutoff 2\n")
+            with self.assertRaisesRegex(TransactionError, "STALE_STAGE_CHAIN"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.6",
+                                       stage="STAGE1_PLAN", actor="runner-b",
+                                       markdown=b"# Must not inherit old baseline\n")
+            with self.assertRaisesRegex(TransactionError, "STALE_STAGE_CHAIN"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.6",
+                                       stage="STAGE1_BASELINE", actor="runner-b",
+                                       markdown=b"# Must not inherit old dispatch\n")
+            self.assertFalse((root / "relay/BUDDY_RUNNER/ISSUE-889/messages/TX.889.6-STAGE1_PLAN.md").exists())
+
+    def test_tampered_committed_intake_blocks_dispatch(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            intake = publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.1",
+                                             stage="STAGE1_INTAKE", actor="operator",
+                                             markdown=b"# Original Owner/WHAT/WHY\n")
+            (root / intake["message_path"]).write_bytes(b"# Changed source/candidate HEAD\n")
+            with self.assertRaisesRegex(TransactionError, "RECEIPT_MISMATCH"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.2",
+                                       stage="DISPATCH_REQUEST", actor="operator",
+                                       markdown=b"# Refuse changed intake\n")
+            self.assertFalse((root / "relay/BUDDY_RUNNER/ISSUE-889/messages/TX.889.2-DISPATCH_REQUEST.md").exists())
+
     def test_blocked_dispatch_cannot_become_stage1_baseline(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
