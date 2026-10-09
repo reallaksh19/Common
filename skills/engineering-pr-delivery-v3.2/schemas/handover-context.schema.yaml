@@ -199,6 +199,7 @@ properties:
           source_currentness: {enum: [CURRENT_READ_ONLY, RECONCILE_REQUIRED]}
           source_input_digest: {type: string, minLength: 71}
           source_plan_digest: {type: string, minLength: 71}
+          source_responsibility_basis_digest: {type: string, minLength: 71, maxLength: 71}
           source_leaf: {type: string, minLength: 1}
           source_moved_axes: {type: array, items: {enum: [graph, plan, input, provider]}}
       successor_reconstruction_challenge:
