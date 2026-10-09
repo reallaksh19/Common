@@ -1110,6 +1110,92 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
             self.assertEqual("COMMITTED", good["status"])
             self.assertEqual("NOT_ATTESTED_BY_MESSAGE_TRANSPORT", good["admission"])
 
+    def _good_stage1(self, root):
+        """All source/author claims are intentionally synthetic; this is NOT isolation proof."""
+        rows = (
+            (1, "STAGE1_INTAKE", "operator", b"# Historical Owner WHAT/WHY\n"),
+            (2, "DISPATCH_REQUEST", "operator", b"# Restrict Runner B to original source\n"),
+            (3, "DISPATCH_OBSERVATION", "operator",
+             b"# RUNNER_EXECUTION_OBSERVED\n\nSession ref: claimed-b-session\nRead-scope ref: claimed-original-only\n"),
+            (4, "STAGE1_BASELINE", "runner-b", b"# Source producer and consumer witness\n"),
+            (5, "STAGE1_PLAN", "runner-b", b"# Two alternate HOWs and falsifiers\n"),
+        )
+        results = {}
+        for seq, stage, actor, content in rows:
+            results[stage] = publish_buddy_markdown(
+                root, issue_number=889, tx_id=f"TX.889.{seq}",
+                stage=stage, actor=actor, markdown=content,
+            )
+        return results
+
+    def test_freeze_candidate_binds_three_actual_receipts_but_does_not_attest(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            records = self._good_stage1(root)
+            body = (
+                "# STAGE1_FREEZE_CANDIDATE\n"
+                "Isolation verdict: NOT_ATTESTED\n"
+                + "".join(
+                    f"{name} tx: TX.889.{seq}\n"
+                    f"{name} digest: {records[stage]['message_sha256']}\n"
+                    for name, seq, stage in (
+                        ("Intake", 1, "STAGE1_INTAKE"),
+                        ("Baseline", 4, "STAGE1_BASELINE"),
+                        ("Plan", 5, "STAGE1_PLAN"),
+                    )
+                )
+            ).encode("utf-8")
+            with self.assertRaisesRegex(TransactionError, "FREEZE_OPERATOR_NOT_SEPARATE"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.6",
+                                       stage="STAGE1_FREEZE_CANDIDATE", actor="runner-b",
+                                       markdown=body)
+            with self.assertRaisesRegex(TransactionError, "FREEZE_STAG" ):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.6",
+                                       stage="STAGE1_FREEZE_CANDIDATE", actor="operator",
+                                       markdown=body.replace(records["STAGE1_PLAN"]["message_sha256"].encode("utf-8"),
+                                                             b"sha256:" + b"0" * 64))
+            receipt = publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.6",
+                                             stage="STAGE1_FREEZE_CANDIDATE", actor="operator",
+                                             markdown=body)
+            self.assertEqual("COMMITTED", receipt["status"])
+            self.assertEqual("NOT_ATTESTED_BY_MESSAGE_TRANSPORT", receipt["admission"])
+            self.assertFalse((root / "relay/STATE.yaml").exists())
+            with self.assertRaisesRegex(TransactionError, "STAGE_INVALID"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.7",
+                                       stage="STAGE2_RECONCILIATION", actor="runner-b",
+                                       markdown=b"# Must not open Stage2\n")
+
+    def test_freeze_candidate_rejects_changed_plan_and_later_dispatch(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            records = self._good_stage1(root)
+            content = (
+                "# STAGE1_FREEZE_CANDIDATE\n"
+                "Isolation verdict: NOT_ATTESTED\n"
+                + "".join(
+                    f"{label} tx: TX.889.{seq}\n{label} digest: {records[stage]['message_sha256']}\n"
+                    for label, seq, stage in (
+                        ("Intake", 1, "STAGE1_INTAKE"), ("Baseline", 4, "STAGE1_BASELINE"),
+                        ("Plan", 5, "STAGE1_PLAN"),
+                    )
+                )
+            ).encode("utf-8")
+            plan = root / records["STAGE1_PLAN"]["message_path"]
+            original = plan.read_bytes()
+            plan.write_bytes(b"# Altered plan after commit\n")
+            with self.assertRaisesRegex(TransactionError, "RECEIPT_MISMATCH"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.6",
+                                       stage="STAGE1_FREEZE_CANDIDATE", actor="operator",
+                                       markdown=content)
+            plan.write_bytes(original)
+            publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.6",
+                                   stage="DISPATCH_REQUEST", actor="operator",
+                                   markdown=b"# A different attempted Runner launch\n")
+            with self.assertRaisesRegex(TransactionError, "STALE_STAGE_CHAIN"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.7",
+                                       stage="STAGE1_FREEZE_CANDIDATE", actor="operator",
+                                       markdown=content)
+
     def test_new_intake_supersedes_old_dispatch_and_baseline(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
