@@ -1313,6 +1313,14 @@ class HandoverContextTests(unittest.TestCase):
             matches = [e for e in events if e["event_id"] == "EVT-C6-P01"]
             self.assertEqual(1, len(matches))
             self.assertEqual(bound["digests"]["input"], matches[0]["details"]["source_bound_input_digest"])
+            self.assertEqual(
+                bound["delp_responsibility_core"]["basis_digest"],
+                matches[0]["details"]["source_delp_responsibility_basis_digest"],
+            )
+            self.assertEqual(
+                bound["delp_responsibility_core"]["digests"]["input"],
+                bound["digests"]["input"],
+            )
 
     def test_c6_p02_stale_frozen_provider_denied_before_writes(self):
         with tempfile.TemporaryDirectory() as td:
