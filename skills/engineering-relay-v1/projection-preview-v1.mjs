@@ -96,7 +96,7 @@ function checkSnapshot(input){
   }
   return freeze(s);
 }
-function verifiedFrontier(raw,provider){
+function verifiedFrontier(raw,provider,candidateState){
   if(raw===undefined||raw===null)return null;
   let f;
   try{f=JSON.parse(canonicalJSON(raw));}
@@ -118,7 +118,7 @@ function verifiedFrontier(raw,provider){
     f.repository!==provider.repository||
     f.parent_issue!==provider.parent_issue.number||
     f.provider_snapshot_sha256!==provider.snapshot_sha256||
-    f.candidate_state_sha256!==deriveCandidateState(provider).candidate_state_sha256||
+    f.candidate_state_sha256!==candidateState.candidate_state_sha256||
     !HASH.test(f.source_lineage_sha256)||
     f.acceptance_denominator_state!=='NOT_ADJUDICATED'||
     f.accepted_claim_count!==null||f.accepted_evidence_count!==null||
@@ -180,12 +180,14 @@ function compactTitle(parts){
 
 /** Pure/immutable: never fetch, write, or infer a human acceptance. */
 export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null,rawTrust=null){
+  // Derive R12 from the ORIGINAL R3 instance. checkSnapshot() canonically
+  // copies JSON and necessarily drops an ephemeral native-acquisition witness.
+  const candidateState=deriveCandidateState(rawSnapshot);
   const s=checkSnapshot(rawSnapshot);
   let o;
   try{o=JSON.parse(canonicalJSON(rawOptions));}catch{fail('INVALID','evaluation parameters invalid');}
-  const fresh=freshness(s,o),native=s.source_state==='PROVIDER_OBSERVED';
-  const candidateState=deriveCandidateState(s);
-  const frontier=verifiedFrontier(rawFrontier,s);
+  const fresh=freshness(s,o),native=candidateState.source_acquisition_attested;
+  const frontier=verifiedFrontier(rawFrontier,s,candidateState);
   // Only an exact content-free, no-grant R11 witness may be displayed.
   // Full-chain also recomputes R11 from original source/provider/frontier.
   let trust=null;
