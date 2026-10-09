@@ -1356,6 +1356,10 @@ class HandoverContextTests(unittest.TestCase):
                 bound["delp_responsibility_core"]["basis_digest"],
                 context["successor_entry"]["challenge_basis"]["source_responsibility_basis_digest"],
             )
+            old_archive = copy.deepcopy(context)
+            old_archive["source_bound_successor"].pop("delp_responsibility_core")
+            old_archive["successor_entry"]["challenge_basis"].pop("source_responsibility_basis_digest")
+            self.assertEqual([], validate_schema("handover-context", old_archive, "HISTORICAL_C6"))
             self.assertEqual(
                 bound["delp_responsibility_core"]["digests"]["input"],
                 bound["digests"]["input"],
