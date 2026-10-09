@@ -774,6 +774,26 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         self.assertEqual("DRIFT_OR_UNPUBLISHED", report["reconciliation"])
 
 
+    def test_49_plain_owner_title_with_em_dash_keeps_entire_human_text(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        whole = "Scope A — Engineering constraints"
+        report = replay.live_readback(
+            self.manifest, live, self._provider(graph=live, child_title=whole)
+        )
+        self.assertTrue(
+            report["read_views"]["Common#733"]["expected"].endswith(" — " + whole),
+            report["read_views"]["Common#733"]["expected"],
+        )
+
+    def test_50_undeclared_leaf_fails_before_any_provider_access(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        class Trap:
+            def __getattr__(self, key):
+                raise AssertionError("PROVIDER_MUST_NOT_BE_CONTACTED:" + key)
+        with self.assertRaisesRegex(replay.ReplayError, "SELECTED_RESPONSIBILITY_NOT_BOUND"):
+            replay.live_readback(self.manifest, live, Trap(), selected_leaf="Common#99999")
+
+
 if __name__ == "__main__":
     unittest.main()
 
