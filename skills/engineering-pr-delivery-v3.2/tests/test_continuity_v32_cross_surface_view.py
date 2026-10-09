@@ -451,6 +451,25 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
             )
 
 
+    def test_37_single_canonical_projection_drives_view_and_basis(self):
+        from unittest.mock import patch
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        original = view.delp.project
+        calls = []
+        def checked_project(*args, **kwargs):
+            calls.append(1)
+            return original(*args, **kwargs)
+        with patch.object(view.delp, "project", side_effect=checked_project):
+            snap = view.build_views(
+                live, self.owner, selected_leaf="Common#733", phase="C4",
+                human_titles=self.titles,
+                draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"},
+            )
+        self.assertEqual(1, len(calls), "separate view and basis projection is patchwork")
+        self.assertEqual(snap["leaf_semantic"], snap["responsibility_basis"]["projection"]["leaf_progress"])
+        self.assertEqual(snap["parent_semantic"], snap["responsibility_basis"]["projection"]["root_progress"])
+
+
 if __name__ == "__main__":
     unittest.main()
 
