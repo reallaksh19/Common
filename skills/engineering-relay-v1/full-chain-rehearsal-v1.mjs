@@ -38,7 +38,7 @@ function boundedOpts(value,label,allowObservedAt=false){
     Object.keys(value).some(k=>!allowed.includes(k)))
     fail('INVALID',label+' must contain only bounded read-only inputs');
 }
-function dataOnlyView(source,provider,preview,digest){
+function dataOnlyView(source,provider,preview,digest,candidates){
   const custody=source.custody;
   const view={
     schema:'relay-full-chain-synthetic-rehearsal-v1',
@@ -69,6 +69,7 @@ function dataOnlyView(source,provider,preview,digest){
     acceptance_denominator_state:'NOT_ADJUDICATED',
     provider_snapshot_sha256:provider.snapshot_sha256,
     r4_projection_sha256:preview.projection_sha256,
+    verification_candidates:candidates.pr_candidates,
     pr_heads:provider.pr_facts.map(x=>({
       number:x.number,head_sha:x.head_sha,currentness:x.currentness,
       ci:x.ci_workflows.map(w=>({path:w.path,state:w.state}))
@@ -202,5 +203,5 @@ export async function rehearseNativeFullChain(rawInput,options={}) {
     selected_current_pr:matching[0].number
   });
   // Never release G1 .document, raw .events, G2c .replay, or private body.
-  return dataOnlyView(source,provider,preview,digest);
+  return dataOnlyView(source,provider,preview,digest,candidates);
 }
