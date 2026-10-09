@@ -339,7 +339,7 @@ amendments:
     allowed_paths:
       - skills/engineering-pr-delivery-v3.2/scripts/plan_handover.py
       - skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py
-- id: AMEND-V32-865-WP0-RED-016
+  - id: AMEND-V32-865-WP0-RED-016
     owner_authorized: false
     owner_basis: >-
       PROPOSAL ONLY — pending independent Owner review and explicit
