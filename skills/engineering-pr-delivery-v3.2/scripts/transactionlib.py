@@ -97,6 +97,60 @@ BUDDY_MESSAGE_STAGES = frozenset({
 })
 
 
+def _prior_buddy_message(root: Path, issue: int, current_seq: int, stage: str) -> tuple[bytes, dict[str, Any]] | None:
+    """Read only earlier COMMITTED native Relay message receipts, not loose files."""
+    folder = root / f"relay/BUDDY_RUNNER/ISSUE-{issue}/messages"
+    candidates: list[tuple[int, bytes, dict[str, Any]]] = []
+    for path in folder.glob(f"TX.{issue}.*-{stage}.md"):
+        match = re.fullmatch(rf"TX\.{issue}\.([1-9][0-9]*)-{re.escape(stage)}\.md", path.name)
+        if not match or int(match.group(1)) >= current_seq or path.is_symlink():
+            continue
+        seq = int(match.group(1))
+        tx_path = root / f"relay/TRANSACTIONS/TX.{issue}.{seq}/manifest.yaml"
+        if not tx_path.is_file():
+            raise TransactionError("BUDDY_PRIOR_MESSAGE_UNRECORDED")
+        receipt = load_manifest(tx_path)
+        payload = path.read_bytes()
+        operations = receipt.get("operations") or []
+        if (
+            receipt.get("status") != "COMMITTED"
+            or receipt.get("command") != "PUBLISH_BUDDY_MARKDOWN"
+            or len(operations) != 1
+            or operations[0].get("path") != path.relative_to(root).as_posix()
+            or operations[0].get("after_digest") != _digest_bytes(payload)
+        ):
+            raise TransactionError("BUDDY_PRIOR_MESSAGE_RECEIPT_MISMATCH")
+        candidates.append((seq, payload, receipt))
+    if not candidates:
+        return None
+    _, payload, receipt = max(candidates, key=lambda item: item[0])
+    return payload, receipt
+
+
+def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str) -> None:
+    """Structural order only; NOT an AI-session or read-isolation attestation."""
+    prerequisites = {
+        "DISPATCH_REQUEST": "STAGE1_INTAKE",
+        "DISPATCH_OBSERVATION": "DISPATCH_REQUEST",
+        "STAGE1_BASELINE": "DISPATCH_OBSERVATION",
+        "STAGE1_PLAN": "STAGE1_BASELINE",
+    }
+    needed = prerequisites.get(stage)
+    if needed is None:
+        return
+    prior = _prior_buddy_message(root, issue, seq, needed)
+    if prior is None:
+        raise TransactionError(f"BUDDY_STAGE_ORDER_MISSING_{needed}")
+    if stage == "STAGE1_BASELINE":
+        content = prior[0].decode("utf-8")
+        if not content.startswith("# RUNNER_EXECUTION_OBSERVED\n"):
+            raise TransactionError("BUDDY_DISPATCH_NOT_EXECUTED")
+        if not re.search(r"(?m)^Session ref: \S+", content) or not re.search(
+            r"(?m)^Read-scope ref: \S+", content
+        ):
+            raise TransactionError("BUDDY_DISPATCH_REFERENCES_MISSING")
+        # The text is a claimed observation, never provider-authenticated by Relay.
+
 def _validate_buddy_markdown_transaction(
     root: Path,
     tx_id: str,
@@ -128,6 +182,7 @@ def _validate_buddy_markdown_transaction(
     expected = root.resolve() / relative
     if target != expected or target.exists() or expected.is_symlink():
         raise TransactionError("BUDDY_MESSAGE_IMMUTABLE_OR_SYMLINKED")
+    _require_buddy_sequence(root, int(match.group(1)), int(match.group(3)), match.group(4))
 
 
 class TransactionError(RuntimeError):
