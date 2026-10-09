@@ -275,7 +275,11 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             "title": (
                 f"🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE{next(n['reserve_weight'] for n in released['nodes'] if n['kind'] == 'ROOT')} · FACTS UNREPORTED — V3.2 Evidence Spine"
                 if number == 718 else
-                child_title or "🟡 [718›733] R-PROJECTION · C4 · P0/E0 · PR#740 · UNMATERIALIZED — Issue/PR Views"
+                child_title or (
+                    "🟡 [718›733] R-PROJECTION · C4 · P0/E0 · PR#740 · UNMATERIALIZED — Issue/PR Views"
+                    if number == 733 else
+                    f"🟡 [718›{number}] LEAF · C4 · P0/E0 — Child Issue {number}"
+                )
             ),
             "body": "## Human Owner specification preserved\n"
         }
@@ -299,8 +303,12 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             if number in declared_prs:
                 # Additional, graph-declared leaf: legitimate source material,
                 # NOT completed work, qualification, or an Owner-approved review.
-                return {"number": number, "head": {"sha": "e" * 40},
-                        "state": "open", "draft": True, "merged": False}
+                return {
+                    "number": number, "head": {"sha": "e" * 40},
+                    "state": "open", "draft": True, "merged": False,
+                    "title": pr_title or f"🟡 PR#{number} — Graph Leaf PR",
+                    "body": "## Human PR rationale preserved\n",
+                }
             raise AssertionError(f"unapproved fake PR #{number}")
         p.get_pull = get_pull
         return p
@@ -747,6 +755,25 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "unapproved fake PR"):
             future.get_pull(previous)
 
+    def test_47_live_readback_leaf_793_graph_derived(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        provider = self._provider(graph=live)
+        # 793 has bound primary PR Common#800
+        report = replay.live_readback(self.manifest, live, provider, selected_leaf="Common#793")
+        self.assertEqual("Common#793", report["selected_leaf"])
+        self.assertEqual("BOUND", report["pr_binding"])
+        self.assertIn("Common#793", report["read_views"])
+        self.assertIn("Common#800", report["read_views"])
+        self.assertEqual([], report["authority_effects"])
+
+    def test_48_title_without_dash_delimiter_parses_safely(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        provider = self._provider(graph=live, child_title="Plain Human Title Without Dash")
+        report = replay.live_readback(self.manifest, live, provider)
+        self.assertEqual("DRIFT", report["read_views"]["Common#733"]["title"])
+        self.assertEqual("DRIFT_OR_UNPUBLISHED", report["reconciliation"])
+
 
 if __name__ == "__main__":
     unittest.main()
+

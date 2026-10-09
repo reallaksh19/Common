@@ -4151,10 +4151,10 @@ class _InputCache:
         return self._projection
 
 
-def _source_view_title_contract(graph: Any) -> tuple[str, str] | None:
+def _source_view_title_contract(graph: Any, target_leaf: str | None = None) -> tuple[str, str] | None:
     """Derive owner-scoped title authority from the released graph, not issue IDs.
 
-    Only a graph with an explicitly bound R-PROJECTION responsibility and a
+    Only a graph with an explicitly bound responsibility and a
     released V2 decomposition requires cross-surface smart titles. This stays
     generic to other repositories, issue numbers and draft PR numbers.
     """
@@ -4165,6 +4165,22 @@ def _source_view_title_contract(graph: Any) -> tuple[str, str] | None:
     if str(proposal.get("version")) != "V2":
         return None
     bindings = proposal.get("bindings") or []
+    if target_leaf is not None:
+        target_nodes = [
+            n for n in graph.get("nodes") or []
+            if n.get("kind") == "LEAF" and n.get("ref") == target_leaf
+            and n.get("primary_pr") and
+            any(b.get("ref") == n.get("ref") and
+                b.get("responsibility_id") == n.get("responsibility_id") for b in bindings)
+        ]
+        if not target_nodes:
+            return None
+        root = programme.get("root")
+        leaf = target_nodes[0].get("ref")
+        if not isinstance(root, str) or not isinstance(leaf, str) or root == leaf:
+            raise DelpError("INVALID_SMART_TITLE_RESPONSIBILITY_BINDING")
+        return root, leaf
+
     leaves = [
         n for n in graph.get("nodes") or []
         if n.get("kind") == "LEAF" and n.get("responsibility_id") == "R-PROJECTION"

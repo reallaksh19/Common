@@ -332,6 +332,94 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
         with self.assertRaisesRegex(view.ViewError,"UNRELEASED_TITLE_CONTRACT"):
             self.views(title_contract="UNAUTHORIZED")
 
+    def test_28_canonical_responsibility_basis_builder(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        basis = view.build_responsibility_basis(
+            live, self.owner, selected_leaf="Common#733", phase="C4",
+            human_titles=self.titles, draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"},
+        )
+        self.assertEqual("relay-v3.2-responsibility-basis-v1", basis["schema"])
+        self.assertEqual("DERIVED_RESPONSIBILITY_BASIS_ONLY", basis["authority"])
+        self.assertEqual("Common#718", basis["programme"]["root"])
+        self.assertEqual("reallaksh19/Common", basis["programme"]["repository"])
+        self.assertEqual("R-PROJECTION", basis["responsibility"]["id"])
+        self.assertEqual(["ESC-3"], basis["responsibility"]["claim_ids"])
+        self.assertEqual("Common#740", basis["material"]["primary_pr"])
+        self.assertEqual("BOUND", basis["material"]["binding"])
+        self.assertEqual(HEAD_A, basis["material"]["candidate_sha"])
+        self.assertIn("plan_digest", basis["plan"])
+        self.assertIn("graph_digest", basis["plan"])
+        self.assertEqual("UNPROVEN", basis["qualification"]["state"])
+        self.assertEqual("WAITING_DEPENDENCY", basis["projection"]["leaf_state"])
+        self.assertEqual(0, basis["projection"]["leaf_progress"]["P"])
+        self.assertEqual(0, basis["projection"]["leaf_progress"]["E"])
+        self.assertEqual("CURRENT_READ_ONLY", basis["handover"]["currentness"])
+        self.assertEqual([], basis["authority_effects"])
+
+    def test_29_switch_selected_leaf_733_to_793_same_schema_without_code_changes(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        humans = {"Common#718": "Evidence Spine", "Common#793": "Handover", "PR": "C6 PR"}
+        basis = view.build_responsibility_basis(
+            live, self.owner, selected_leaf="Common#793", phase="C4",
+            human_titles=humans, draft_pr={"number": 800, "head_sha": "e" * 40, "lifecycle": "OPEN"},
+        )
+        self.assertEqual("relay-v3.2-responsibility-basis-v1", basis["schema"])
+        self.assertEqual("R-RECONSTRUCTION", basis["responsibility"]["id"])
+        self.assertEqual(["ESC-4"], basis["responsibility"]["claim_ids"])
+        self.assertEqual("Common#800", basis["material"]["primary_pr"])
+        self.assertEqual("BOUND", basis["material"]["binding"])
+        self.assertEqual("e" * 40, basis["material"]["candidate_sha"])
+        self.assertEqual(0, basis["projection"]["leaf_progress"]["P"])
+        self.assertEqual([], basis["authority_effects"])
+
+    def test_30_stale_graph_digest_in_frozen_handover_rejected_as_current(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        stale_frozen = {
+            "graph": "sha256:" + "0" * 64,
+            "plan": "sha256:" + "0" * 64,
+            "input": "sha256:" + "0" * 64,
+            "provider": "sha256:" + "0" * 64,
+        }
+        basis = view.build_responsibility_basis(
+            live, self.owner, selected_leaf="Common#733", phase="C4",
+            human_titles=self.titles, frozen_basis=stale_frozen,
+        )
+        self.assertEqual("RECONCILE_REQUIRED", basis["handover"]["currentness"])
+        self.assertIn("graph", basis["handover"]["moved_axes"])
+        self.assertIn("plan", basis["handover"]["moved_axes"])
+
+    def test_31_candidate_head_move_invalidates_qualification_and_marks_reconcile(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        qa = {"schema": "relay-v3.2-qualification-observation-v1",
+              "repository": "reallaksh19/Common",
+              "responsibility": "Common#733",
+              "expected_candidate_sha": HEAD_A,
+              "authority": "DERIVED_OBSERVATION_ONLY",
+              "observed_candidate_sha": HEAD_A, "overall": "PROVEN"}
+        basis = view.build_responsibility_basis(
+            live, self.owner, selected_leaf="Common#733", phase="C4",
+            human_titles=self.titles,
+            draft_pr={"number": 740, "head_sha": HEAD_B, "lifecycle": "DRAFT"},
+            qualification=qa,
+        )
+        self.assertEqual("UNPROVEN", basis["qualification"]["state"])
+        self.assertEqual("STALE_OR_UNBOUND_QUALIFICATION", basis["qualification"]["basis"])
+
+    def test_32_title_without_dash_delimiter_parses_safely(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        simple_titles = {"Common#718": "Evidence Spine", "Common#733": "Issue Views"}
+        snap = view.build_views(live, self.owner, selected_leaf="Common#733", phase="C4",
+                                human_titles=simple_titles)
+        self.assertIn("Evidence Spine", snap["issue_titles"]["Common#718"])
+        self.assertIn("Issue Views", snap["issue_titles"]["Common#733"])
+
+    def test_33_unknown_owner_source_retained_no_invented_authority(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        basis = view.build_responsibility_basis(live, self.owner, selected_leaf="Common#733", phase="C4")
+        self.assertEqual("UNRESOLVED_CHAT_MESSAGE_LINK", basis["programme"]["owner_source_status"])
+        self.assertEqual([], basis["authority_effects"])
+
 
 if __name__ == "__main__":
     unittest.main()
+

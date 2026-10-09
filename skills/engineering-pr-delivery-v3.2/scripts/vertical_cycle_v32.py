@@ -146,7 +146,14 @@ def replay(manifest: dict, graph: dict) -> dict[str, Any]:
     }
 
 
-def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]:
+def live_readback(
+    manifest: dict,
+    graph: dict,
+    transport: Any,
+    *,
+    selected_leaf: str = "Common#733",
+    phase: str = "C4",
+) -> dict[str, Any]:
     """Compare live GitHub readback to *independently generated* source views.
 
     No provider write methods are called. The caller authenticates its adapter;
@@ -157,13 +164,21 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
 
     repository = graph["programme"]["repository"]
     delp.require_repository_match(graph, repository, live=False)
-    root, child = "Common#718", "Common#733"
-    root_issue = transport.get_issue(718)
-    child_issue = transport.get_issue(733)
-    start_pull = transport.get_pull(740)
+    root = graph["programme"]["root"]
+    child = selected_leaf
+    root_number = int(root.rsplit("#", 1)[-1])
+    child_number = int(child.rsplit("#", 1)[-1])
+    child_node = next((n for n in graph["nodes"] if n["ref"] == child), None)
+    pr_ref = child_node.get("primary_pr") if child_node else "Common#740"
+    _require(isinstance(pr_ref, str) and "#" in pr_ref, "PRIMARY_PR_UNRESOLVED")
+    pr_number = int(pr_ref.rsplit("#", 1)[-1])
+
+    root_issue = transport.get_issue(root_number)
+    child_issue = transport.get_issue(child_number)
+    start_pull = transport.get_pull(pr_number)
     _require(all(isinstance(x, dict) for x in (root_issue, child_issue, start_pull)),
              "PROVIDER_READ_UNAVAILABLE")
-    _require(start_pull.get("number") == 740, "PR_PROVIDER_IDENTITY_CHANGED")
+    _require(start_pull.get("number") == pr_number, "PR_PROVIDER_IDENTITY_CHANGED")
     head = ((start_pull.get("head") or {}).get("sha"))
     _require(isinstance(head, str) and len(head) == 40 and
              all(x in "0123456789abcdefABCDEF" for x in head),
@@ -179,18 +194,25 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
     titles = {}
     for ref, observed in ((root, root_issue), (child, child_issue), ("PR", start_pull)):
         original = observed.get("title")
-        _require(isinstance(original, str) and " — " in original,
+        _require(isinstance(original, str) and bool(original.strip()),
                  "HUMAN_TITLE_BASE_UNRESOLVED:" + ref)
-        titles[ref] = original.rsplit(" — ", 1)[1]
+        if " — " in original:
+            human_base = original.rsplit(" — ", 1)[1].strip()
+        else:
+            _, human_base = delp.split_title(original)
+            if not human_base.strip():
+                human_base = original.strip()
+        _require(bool(human_base), "HUMAN_TITLE_BASE_UNRESOLVED:" + ref)
+        titles[ref] = human_base
     expected = view.build_views(
         graph, manifest, observations=observations, ledger=ledger,
-        selected_leaf=child, phase="C4", human_titles=titles,
-        draft_pr={"number": 740, "head_sha": head, "lifecycle": lifecycle},
+        selected_leaf=child, phase=phase, human_titles=titles,
+        draft_pr={"number": pr_number, "head_sha": head, "lifecycle": lifecycle},
         qualification=None, title_contract="C4-S6",
     )
     # Double-read the *actual* live candidate. A concurrent force push must
     # fail closed rather than rendering a stale head as current.
-    final_pull = transport.get_pull(740)
+    final_pull = transport.get_pull(pr_number)
     _require(isinstance(final_pull, dict) and
              (final_pull.get("head") or {}).get("sha") == head and
              bool(final_pull.get("draft")) == bool(start_pull.get("draft")),
@@ -200,8 +222,8 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
     # observation guard, NOT proof of atomic GitHub REST publication.
     _require(all(final_pull.get(k) == start_pull.get(k) for k in ("title", "body", "state")),
              "PROVIDER_PR_METADATA_MOVED_DURING_RECONCILIATION")
-    final_root = transport.get_issue(718)
-    final_child = transport.get_issue(733)
+    final_root = transport.get_issue(root_number)
+    final_child = transport.get_issue(child_number)
     _require(isinstance(final_root, dict) and isinstance(final_child, dict) and
              all(final_root.get(k) == root_issue.get(k) for k in ("title", "body")) and
              all(final_child.get(k) == child_issue.get(k) for k in ("title", "body")),
@@ -219,7 +241,7 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
             "body_digest": view.digest(managed),
         }
     pr_body = start_pull.get("body") or ""
-    state["Common#740"] = {
+    state[pr_ref] = {
         "observed": start_pull["title"],
         "expected": expected["draft_pr_title"],
         "title": "MATCH" if start_pull["title"] == expected["draft_pr_title"] else "DRIFT",
@@ -230,6 +252,7 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
     return {
         "schema": "relay-v32-718-live-provider-readback-v1",
         "authority": AUTHORITY,
+        "selected_leaf": child,
         "candidate_sha": head,
         "source_input_digest": expected["input_digest"],
         "delp_input_digest": expected["delp_input_digest"],
@@ -242,7 +265,7 @@ def live_readback(manifest: dict, graph: dict, transport: Any) -> dict[str, Any]
         "expected_managed_blocks": {
             root: expected["issue_read_views"][root],
             child: expected["issue_read_views"][child],
-            "Common#740": expected["pr_managed_block"],
+            pr_ref: expected["pr_managed_block"],
         },
         "reconciliation": (
             "MATCH" if all(s["title"] == "MATCH" and
@@ -263,16 +286,25 @@ class PublicationIncomplete(ReplayError):
         super().__init__(code)
 
 
-def _provider_surface(transport: Any, ref: str) -> dict[str, Any]:
+def _provider_surface(transport: Any, ref: str, *, pr_ref: str = "Common#740") -> dict[str, Any]:
     number = int(ref.split("#")[-1])
-    raw = transport.get_pull(number) if ref == "Common#740" else transport.get_issue(number)
+    raw = transport.get_pull(number) if ref == pr_ref else transport.get_issue(number)
     _require(isinstance(raw, dict) and isinstance(raw.get("title"), str) and
              isinstance(raw.get("body"), str), "PROVIDER_SURFACE_UNAVAILABLE:" + ref)
     _require(raw.get("number") == number, "PROVIDER_SURFACE_IDENTITY_MISMATCH:" + ref)
     return raw
 
 
-def _apply_github_patch(transport: Any, ref: str, title: str, body: str) -> Any:
+def _apply_github_patch(
+    transport: Any,
+    ref: str,
+    title: str,
+    body: str,
+    *,
+    pr_ref: str = "Common#740",
+    selected_root: str = "Common#718",
+    selected_leaf: str = "Common#733",
+) -> Any:
     """Field-separated GitHub transport: DELP owns issue titles, not this patch.
 
     The issue PATCH edits BODY ONLY, preserving the DELP-owned smart issue
@@ -281,11 +313,11 @@ def _apply_github_patch(transport: Any, ref: str, title: str, body: str) -> Any:
     _require(getattr(transport, "repository", None) == "reallaksh19/Common",
              "MUTATION_REPOSITORY_NOT_ALLOWED")
     number = int(ref.split("#")[-1])
-    if ref == "Common#740":
+    if ref == pr_ref:
         _require(callable(getattr(transport, "patch_pull_title_body", None)),
                  "PR_PATCH_ADAPTER_UNAVAILABLE")
         return transport.patch_pull_title_body(number, title, body)
-    _require(ref in ("Common#718", "Common#733"),
+    _require(ref in (selected_root, selected_leaf),
              "ISSUE_PATCH_OUTSIDE_SELECTED_RESPONSIBILITY")
     _require(callable(getattr(transport, "patch_issue_body", None)),
              "ISSUE_BODY_PATCH_ADAPTER_UNAVAILABLE")
@@ -300,6 +332,8 @@ def guarded_publish(
     expected_head: str,
     expected_input_digest: str,
     apply: bool = False,
+    selected_leaf: str = "Common#733",
+    phase: str = "C4",
 ) -> dict[str, Any]:
     """Single DELP issue-title/status owner + disjoint body/PR write adapters.
 
@@ -312,7 +346,7 @@ def guarded_publish(
 
     _require(getattr(transport, "repository", None) == "reallaksh19/Common",
              "MUTATION_REPOSITORY_NOT_ALLOWED")
-    _require(delp._source_view_title_contract(graph),
+    _require(delp._source_view_title_contract(graph, target_leaf=selected_leaf),
              "SINGLE_ISSUE_PUBLISHER_CONTRACT_NOT_RELEASED")
     _require(isinstance(expected_head, str) and len(expected_head) == 40 and
              all(c in "0123456789abcdefABCDEF" for c in expected_head),
@@ -320,17 +354,21 @@ def guarded_publish(
     _require(isinstance(expected_input_digest, str) and
              expected_input_digest.startswith("sha256:") and len(expected_input_digest) == 71,
              "PINNED_SOURCE_DIGEST_REQUIRED")
-    before = live_readback(manifest, graph, transport)
+    before = live_readback(manifest, graph, transport, selected_leaf=selected_leaf, phase=phase)
     _require(before["candidate_sha"] == expected_head, "PINNED_HEAD_MOVED")
     _require(before["source_input_digest"] == expected_input_digest,
              "PINNED_INPUT_DIGEST_MOVED")
     _require(before["pr_binding"] == "BOUND", "PR_NOT_BOUND_TO_RELEASED_GRAPH")
     _require(before["qualifier"]["state"] != "PROVEN",
              "QUALIFICATION_NOT_PROVEN_BY_THIS_WRITER")
-    refs = ("Common#718", "Common#733", "Common#740")
+    root = graph["programme"]["root"]
+    child = selected_leaf
+    child_node = next((n for n in graph["nodes"] if n["ref"] == child), None)
+    pr_ref = child_node.get("primary_pr") if child_node else "Common#740"
+    refs = (root, child, pr_ref)
     planned = {}
     for ref in refs:
-        surface = _provider_surface(transport, ref)
+        surface = _provider_surface(transport, ref, pr_ref=pr_ref)
         observed = before["read_views"][ref]
         _require(surface["title"] == observed["observed"] and
                  view.digest(surface["body"]) == observed["body_digest"],
@@ -338,7 +376,7 @@ def guarded_publish(
         replacement = before["expected_managed_blocks"][ref]
         proposed = view.reconcile_managed_block(
             surface["body"], replacement, observed_digest=observed["body_digest"],
-            pr=ref == "Common#740",
+            pr=ref == pr_ref,
         )
         planned[ref] = {
             "previous_title": surface["title"], "expected_title": observed["expected"],
@@ -366,13 +404,13 @@ def guarded_publish(
         return report
 
     try:
-        fresh = live_readback(manifest, graph, transport)
+        fresh = live_readback(manifest, graph, transport, selected_leaf=selected_leaf, phase=phase)
         if fresh["candidate_sha"] != expected_head or fresh["source_input_digest"] != expected_input_digest:
             raise ReplayError("PROVIDER_MOVED_BEFORE_FIRST_WRITE")
         # Validate all three original observations before DELP performs any
         # non-atomic managed-comment/title writes.
         for ref in refs:
-            surface = _provider_surface(transport, ref)
+            surface = _provider_surface(transport, ref, pr_ref=pr_ref)
             if surface["title"] != planned[ref]["previous_title"] or \
                     view.digest(surface["body"]) != planned[ref]["previous_body_digest"]:
                 raise ReplayError("PROVIDER_MOVED_BEFORE_FIRST_WRITE:" + ref)
@@ -381,24 +419,25 @@ def guarded_publish(
             delp.GitHubStore(transport), graph,
             lambda: delp.ledger_from_github(transport, graph),
             lambda: delp.observe_github(transport, graph),
-            {ref: planned[ref]["previous_title"] for ref in ("Common#718", "Common#733")},
+            {ref: planned[ref]["previous_title"] for ref in (root, child)},
             title_overrides={ref: planned[ref]["expected_title"]
-                             for ref in ("Common#718", "Common#733")},
-            selected_refs=("Common#718", "Common#733"),
+                             for ref in (root, child)},
+            selected_refs=(root, child),
             expected_input_digest=before["delp_input_digest"],
         )
         report["delp_issue_status"] = issue_results
         # DELP is the ONLY issue-title + LIVE_STATUS writer. We exclusively
         # patch issue read-view BODY after confirming its DELP title has landed.
-        for ref in ("Common#733", "Common#718"):
-            current = _provider_surface(transport, ref)
+        for ref in (child, root):
+            current = _provider_surface(transport, ref, pr_ref=pr_ref)
             if current["title"] != planned[ref]["expected_title"] or \
                     view.digest(current["body"]) != planned[ref]["previous_body_digest"]:
                 raise ReplayError("PROVIDER_MOVED_AFTER_DELP_BEFORE_BODY:" + ref)
             if planned[ref]["body_write_required"]:
                 _apply_github_patch(transport, ref, planned[ref]["expected_title"],
-                                    planned[ref]["expected_body"])
-            checked = _provider_surface(transport, ref)
+                                    planned[ref]["expected_body"], pr_ref=pr_ref,
+                                    selected_root=root, selected_leaf=child)
+            checked = _provider_surface(transport, ref, pr_ref=pr_ref)
             if checked["title"] != planned[ref]["expected_title"] or \
                     view.digest(checked["body"]) != planned[ref]["expected_body_digest"]:
                 raise ReplayError("PROVIDER_FAILED_ISSUE_READBACK:" + ref)
@@ -406,30 +445,31 @@ def guarded_publish(
                 report["applied_surfaces"].append(ref)
 
         # Re-observe exact head and whole input before any PR metadata write.
-        mid = live_readback(manifest, graph, transport)
+        mid = live_readback(manifest, graph, transport, selected_leaf=selected_leaf, phase=phase)
         if mid["candidate_sha"] != expected_head or mid["source_input_digest"] != expected_input_digest:
             raise ReplayError("PROVIDER_MOVED_BEFORE_PR_WRITE")
-        pr = planned["Common#740"]
-        current = _provider_surface(transport, "Common#740")
+        pr = planned[pr_ref]
+        current = _provider_surface(transport, pr_ref, pr_ref=pr_ref)
         if current["title"] != pr["previous_title"] or \
                 view.digest(current["body"]) != pr["previous_body_digest"]:
             raise ReplayError("PROVIDER_PR_MOVED_BEFORE_WRITE")
         if pr["write_required"]:
-            _apply_github_patch(transport, "Common#740", pr["expected_title"], pr["expected_body"])
-        checked = _provider_surface(transport, "Common#740")
+            _apply_github_patch(transport, pr_ref, pr["expected_title"], pr["expected_body"],
+                                pr_ref=pr_ref, selected_root=root, selected_leaf=child)
+        checked = _provider_surface(transport, pr_ref, pr_ref=pr_ref)
         if checked["title"] != pr["expected_title"] or \
                 view.digest(checked["body"]) != pr["expected_body_digest"]:
             raise ReplayError("PROVIDER_FAILED_PR_READBACK")
         if pr["write_required"]:
-            report["applied_surfaces"].append("Common#740")
+            report["applied_surfaces"].append(pr_ref)
 
-        after = live_readback(manifest, graph, transport)
+        after = live_readback(manifest, graph, transport, selected_leaf=selected_leaf, phase=phase)
         if after["candidate_sha"] != expected_head or \
                 after["source_input_digest"] != expected_input_digest or \
                 after["reconciliation"] != "MATCH":
             raise ReplayError("POST_PUBLISH_PARITY_OR_INPUT_CHANGED")
         store = delp.GitHubStore(transport)
-        for ref in ("Common#718", "Common#733"):
+        for ref in (root, child):
             status = store.read(ref)
             if status["input_digest"] != before["delp_input_digest"] or not status["version"]:
                 raise ReplayError("DELP_LIVE_STATUS_NOT_VERIFIED:" + ref)
