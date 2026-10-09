@@ -14,16 +14,6 @@ skills/two-pass-prompt-generator/validate.py
 
 At explicit reasoning-request generation time the helper must resolve and validate the current standalone protocol contract.
 
-## Recovery classification — not the planned Buddy workflow
-
-The canonical V3.2 [routing table](continuity-method-routing-v32.md) distinguishes:
-
-- **PLANNED:** Agent A is still active. A proactively prepares a **Buddy Runner** around a source-graded ~70% episode-life threshold, followed by a **native technical handover** and Buddy Stage 2 source reconciliation. The task is **known** during Buddy Stage 1, but Agent A's actual HOW/current work is hidden. See [Runner instructions](../runner/PREPARE_FOR_RUNNER.md). `PLAN_HANDOVER` remains a custody transaction and does not initiate Two-Pass.
-- **UNPLANNED, FOCUSED:** Agent A is unavailable. When independent full reconstruction is warranted, an **external agent** generates **Two-Pass** prompts from the standalone schema. Pass 1 is a **live system baseline with task/issue hidden**, Pass 2 reveals the task, current evidence and available historical handover material and drafts a plan. It must not invent a final Agent A disclosure.
-- **UNPLANNED, BROADER:** A separately requested broader reimagination of the application/roadmap is a standalone **Three-Pass** generator request, not a Two-Pass handover variation. See [Three-Pass integration](three-pass-integration.md).
-
-V3.2 fast recovery from an observed checkpoint remains the first ordinary interruption response when sufficient; no standalone prompt generator is a mandatory prerequisite. A recovery session without native `HANDOVER_CONTEXT` may inspect live provider/current source and label predecessor continuity UNKNOWN; it must **not** manufacture a predecessor-signed handover solely to satisfy a generator input. This does not weaken the canonical Two-Pass schema's Pass-1 prohibition on actual assigned-task disclosure.
-
 ## Custody flow
 
 ```text
