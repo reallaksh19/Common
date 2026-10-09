@@ -76,21 +76,21 @@ After the Owner actually commands preparation, provide this checklist:
 - [ ] Original Owner intent and approved scope identified with source grade.
 - [ ] True Agent A start vs historical protocol/source baseline distinguished.
 - [ ] Original source/fixture allowlist and authentic positive/negative pairing reviewed; missing inputs UNKNOWN.
-- [ ] High-ROI outcomes and Medium-ROI parked ideas described **without implementation HOW**.
+- [ ] Original approved Owner requirements and historical scope included in Stage 1 **without Agent A's diagnostic priorities**; A's High/Medium judgments kept in separately withheld Stage 2 reality.
 - [ ] Stage 1 packet drafted and kept free of current A PR/code/evidence.
 - [ ] Stage 2 reality draft prepared **separately and not exposed**.
 - [ ] Real Stage 1 technical read isolation verified by external operator (else NOT_VERIFIED).
 - [ ] Fresh Runner B actually started (else NOT_STARTED).
-- [ ] Runner B independent Stage 1 plan authored/frozen/read back (else NOT_FROZEN).
+- [ ] Runner B independent **historical baseline and provisional interpretation** authored/frozen/read back (else NOT_FROZEN).
 - [ ] Old A writer remains active; B has no production write permission.
 
 Finish with **`PREPARED_INPUT_ONLY` / `STAGE1_ISOLATION_PENDING` / `STAGE1_READY_FOR_EXTERNAL_OPERATOR`**, selecting only the evidenced state. Never return "Runner B is ready to code" from packet drafting.
 
 ## D. How this ties to the two golden prompts
 
-`Prepare for runner` does **not** make Agent A author Runner B's answer. It prepares the input envelope and asks a separately isolated B to undertake the substantive investigation defined in [Stage 1](STAGE1_INDEPENDENT_RECONSTRUCTION.md): original code/consumer discovery, competing approaches, counterexamples, positive/negative tests, High-ROI and parked Medium decisions, three domain-specific questions, immutable independent plan.
+`Prepare for runner` does **not** make Agent A author Runner B's answer. It prepares the input envelope and asks a separately isolated B to undertake the substantive investigation defined in [Stage 1](STAGE1_INDEPENDENT_RECONSTRUCTION.md): historical source/consumer witness and changed-boundary case **before** proposing options; provisional, source-falsifiable High/Medium insights and original domain-specific questions only where actually required. It makes no current-head executable plan.
 
-Only after that plan is externally frozen, a trusted operator may give B the privately held Agent A reality packet and [Stage 2 thinking instructions](STAGE2_SOURCE_RECONCILIATION.md). B then compares **Owner intent, frozen B beliefs, A claims and live source**—and may find either agent wrong. A separate controller handles possible future execution authority; the instruction cannot revoke live GitHub credentials.
+Only after that full Stage 1 reconstruction is externally frozen, a trusted operator may give B the privately held Agent A reality packet and [Stage 2 thinking instructions](STAGE2_SOURCE_RECONCILIATION.md). B then compares **Owner intent, frozen B beliefs, A claims and live source**—and may find either agent wrong. A separate controller handles possible future execution authority; the instruction cannot revoke live GitHub credentials.
 
 ## E. Installation truth
 
