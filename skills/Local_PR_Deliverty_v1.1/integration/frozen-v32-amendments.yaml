@@ -340,16 +340,20 @@ amendments:
       - skills/engineering-pr-delivery-v3.2/scripts/plan_handover.py
       - skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py
   - id: AMEND-V32-865-WP0-RED-016
-    owner_authorized: false
+    owner_authorized: true
     owner_basis: >-
-      PROPOSAL ONLY — pending independent Owner review and explicit
-      exact-file authorization under Common #865 WP0-A and Common #718.
-      The Owner's generic 'proceed next' instruction permits read-only
-      source inspection and preparation of this governance proposal;
-      it is NOT treated as a signed/verified original-chat source or
-      authorization to mutate frozen V3.2 source/test paths. This draft
-      amendment is deliberately DISABLED until an explicit Owner grant
-      is recorded and the separately reviewed governance PR is merged.
+      Direct Owner continuation on 2026-10-09: 'ok next', immediately
+      after the agent reported six governance checks, identified Common
+      #865 WP0-A as the next bounded engineering gate, and explicitly
+      named the two precise precommitted RED test paths in draft PR #867.
+      This is CONTEXTUAL Owner permission for those two test-only
+      frozen V3.2 paths; it is NOT an independently authenticated original
+      ChatGPT permalink (SOURCE_REF: UNKNOWN), release of a new
+      #718 execution-graph responsibility, acceptance of any test or
+      product implementation, authority to merge PR #867, or permission
+      to activate the #786 live scoreboard. Governance must be separately
+      reviewed and merged on its own base before a new test PR uses the
+      two paths. Never treat approval in a candidate product HEAD as a grant.
     summary: >-
       Test-only V3.2 WP0-A precommit adversarial oracles for source
       trust-decision/input-digest collision (D-01), caller-forged
