@@ -209,7 +209,15 @@ export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null,rawT
       trust.publication_writer_enabled!==false||
       trust.original_owner_authenticated!==false||
       trust.authorization_granted!==false||
-      trust.proposal_only!==true)
+      trust.proposal_only!==true||
+      !trust.axes||typeof trust.axes!=='object'||
+      Object.keys(trust.axes).sort().join('|')!==
+       ['owner_source','privacy_and_retention','independent_reviewer',
+        'engineering_evidence','github_writer'].sort().join('|')||
+      Object.values(trust.axes).some(axis=>axis?.state!=='NOT_QUALIFIED'||
+        typeof axis.reason!=='string'||!/^[A-Z0-9_]{3,100}$/.test(axis.reason))||
+      !Array.isArray(trust.positive_authorization_sources)||
+      trust.positive_authorization_sources.length!==0)
       fail('UNTRUSTED','preflight cannot grant owner/CI/review/write permissions');
     const copy={...trust};delete copy.preflight_sha256;
     if(sha(copy)!==trust.preflight_sha256)
