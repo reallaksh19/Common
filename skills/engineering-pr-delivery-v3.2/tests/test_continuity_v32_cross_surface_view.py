@@ -470,6 +470,29 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
         self.assertEqual(snap["parent_semantic"], snap["responsibility_basis"]["projection"]["root_progress"])
 
 
+    def test_38_view_source_core_reconstructs_same_delp_projection(self):
+        """Actual managed view and independent C6 share the exact DELP source core."""
+        import delp_projection_v32 as delp
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        observations = {"Common#733": {"candidate_sha": HEAD_A, "pr_state": "OPEN"}}
+        snap = view.build_views(
+            live, self.owner, selected_leaf="Common#733", phase="C4",
+            human_titles=self.titles,
+            draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "OPEN"},
+            observations=observations, title_contract="C4-S6",
+        )
+        expected = delp.source_bound_responsibility_core(
+            live, delp.project(live, [], observations), "Common#733",
+        )
+        core = snap["responsibility_basis"]["delp_responsibility_core"]
+        self.assertEqual(expected, core)
+        self.assertEqual(snap["claim_ids"], core["claim_ids"])
+        self.assertEqual(snap["leaf_semantic"]["P"], core["progress"]["leaf"]["P"])
+        self.assertEqual(snap["plan_digest"], core["digests"]["plan"])
+        self.assertEqual(snap["delp_input_digest"], core["digests"]["input"])
+        self.assertEqual("UNVERIFIED_LOCAL_INPUT", snap["responsibility_basis"]["handover"]["currentness"])
+
+
 if __name__ == "__main__":
     unittest.main()
 
