@@ -1121,6 +1121,8 @@ class HandoverContextTests(unittest.TestCase):
         projected = delp.project(graph, facts, observations)
         core = delp.source_bound_responsibility_core(graph, projected, "Common#720")
         self.assertEqual(core, successor["delp_responsibility_core"])
+        self.assertEqual("a" * 40, core["candidate_sha"])
+        self.assertEqual("b" * 40, core["base_sha"])
         self.assertEqual(
             {k: successor["digests"][k] for k in ("graph", "plan", "input")},
             core["digests"],
