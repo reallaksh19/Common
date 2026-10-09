@@ -339,3 +339,26 @@ amendments:
     allowed_paths:
       - skills/engineering-pr-delivery-v3.2/scripts/plan_handover.py
       - skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py
+- id: AMEND-V32-865-WP0-RED-016
+    owner_authorized: false
+    owner_basis: >-
+      PROPOSAL ONLY — pending independent Owner review and explicit
+      exact-file authorization under Common #865 WP0-A and Common #718.
+      The Owner's generic 'proceed next' instruction permits read-only
+      source inspection and preparation of this governance proposal;
+      it is NOT treated as a signed/verified original-chat source or
+      authorization to mutate frozen V3.2 source/test paths. This draft
+      amendment is deliberately DISABLED until an explicit Owner grant
+      is recorded and the separately reviewed governance PR is merged.
+    summary: >-
+      Test-only V3.2 WP0-A precommit adversarial oracles for source
+      trust-decision/input-digest collision (D-01), caller-forged
+      DELP responsibility core (D-03), and actual native V1/V2 COLD
+      context/event/challenge consistency (D-06) with positive controls.
+      Does not grant any runtime implementation, main/protocol edits,
+      Owner/reviewer or merge authority, live GitHub writes, or V3.5 scope.
+      A product/test PR must BASE on the later approved and merged grant,
+      not include its own self-authorization.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/tests/test_v32_evidence_identity_red.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_v32_custody_red.py
