@@ -1109,6 +1109,42 @@ class HandoverContextTests(unittest.TestCase):
                 return []
         return graph, ReadOnlyProvider()
 
+    def test_delp_source_successor_carries_shared_view_responsibility_core(self):
+        """Same schema/core must be reproducible by views and C6 native source."""
+        import delp_projection_v32 as delp
+        graph, provider = self._source_bound_fixture()
+        successor = build_delp_source_bound_successor(
+            graph, leaf_ref="Common#720", provider=provider,
+        )
+        observations = delp.observe_github(provider, graph)
+        facts = delp.ledger_from_github(provider, graph)
+        projected = delp.project(graph, facts, observations)
+        core = delp.source_bound_responsibility_core(graph, projected, "Common#720")
+        self.assertEqual(core, successor["delp_responsibility_core"])
+        self.assertEqual(
+            {k: successor["digests"][k] for k in ("graph", "plan", "input")},
+            core["digests"],
+        )
+        self.assertEqual(successor["progress"], core["progress"]["leaf"])
+        self.assertEqual([], core["authority_effects"])
+
+    def test_delp_source_core_revision_and_input_are_integrity_bound(self):
+        import delp_projection_v32 as delp
+        import copy
+        graph, provider = self._source_bound_fixture()
+        projected = delp.project(graph, [], delp.observe_github(provider, graph))
+        core = delp.source_bound_responsibility_core(graph, projected, "Common#720")
+        changed = copy.deepcopy(graph)
+        changed["programme"]["id"] = "DIFFERENT_SAME_SHAPED_PROGRAMME"
+        with self.assertRaisesRegex(delp.DelpError, "RESPONSIBILITY_CORE_PLAN_MISMATCH"):
+            delp.source_bound_responsibility_core(changed, projected, "Common#720")
+        moved = copy.deepcopy(projected)
+        moved["input_digest"] = "sha256:" + "0" * 64
+        self.assertNotEqual(
+            core["basis_digest"],
+            delp.source_bound_responsibility_core(graph, moved, "Common#720")["basis_digest"],
+        )
+
     def test_delp_source_successor_is_real_read_model_not_authority(self):
         graph, provider = self._source_bound_fixture()
         result = build_delp_source_bound_successor(graph, leaf_ref="Common#720", provider=provider)
