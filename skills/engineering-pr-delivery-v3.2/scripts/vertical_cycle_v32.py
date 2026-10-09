@@ -212,7 +212,10 @@ def live_readback(
                     and " · RESERVE" in prefix and " · FACTS " in prefix):
                 human_base = suffix.strip()
             elif (ref == child and prefix.startswith(child_prefix)
-                  and " · PR#" in prefix and " · P" in prefix):
+                  and ((" · PR#" in prefix and " · P" in prefix)
+                       or prefix.endswith(f"{phase} · OLD"))):
+                # C4 retained regression's explicit historical OLD marker is
+                # a known managed prefix; human-authored natural dashes are not.
                 human_base = suffix.strip()
             elif (ref == "PR" and prefix.startswith(child_prefix)
                   and " · VIEW-PR · HEAD:" in prefix and " · Q:" in prefix):
