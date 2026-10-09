@@ -113,7 +113,8 @@ def _prior_buddy_message(root: Path, issue: int, current_seq: int, stage: str) -
         payload = path.read_bytes()
         operations = receipt.get("operations") or []
         if (
-            receipt.get("status") != "COMMITTED"
+            receipt.get("id") != f"TX.{issue}.{seq}"
+            or receipt.get("status") != "COMMITTED"
             or receipt.get("command") != "PUBLISH_BUDDY_MARKDOWN"
             or len(operations) != 1
             or operations[0].get("path") != path.relative_to(root).as_posix()
@@ -128,7 +129,7 @@ def _prior_buddy_message(root: Path, issue: int, current_seq: int, stage: str) -
 
 
 def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str) -> None:
-    """Structural order only; NOT an AI-session or read-isolation attestation."""
+    """Require a current, ordered receipt chain; never certify a model's isolation."""
     prerequisites = {
         "DISPATCH_REQUEST": "STAGE1_INTAKE",
         "DISPATCH_OBSERVATION": "DISPATCH_REQUEST",
@@ -141,6 +142,19 @@ def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str) -> Non
     prior = _prior_buddy_message(root, issue, seq, needed)
     if prior is None:
         raise TransactionError(f"BUDDY_STAGE_ORDER_MISSING_{needed}")
+
+    prior_seq = int(prior[1]["id"].split(".")[-1])
+    # A subsequent intake/dispatch/observation supersedes earlier trial steps.
+    # A plan for a new intake must not inherit an old Runner's baseline.
+    earlier_stage = {
+        "DISPATCH_OBSERVATION": "STAGE1_INTAKE",
+        "STAGE1_BASELINE": "DISPATCH_REQUEST",
+        "STAGE1_PLAN": "DISPATCH_OBSERVATION",
+    }.get(stage)
+    if earlier_stage is not None:
+        earlier = _prior_buddy_message(root, issue, seq, earlier_stage)
+        if earlier is None or prior_seq <= int(earlier[1]["id"].split(".")[-1]):
+            raise TransactionError("BUDDY_STALE_STAGE_CHAIN")
     if stage == "STAGE1_BASELINE":
         content = prior[0].decode("utf-8")
         if not content.startswith("# RUNNER_EXECUTION_OBSERVED\n"):
@@ -149,7 +163,9 @@ def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str) -> Non
             r"(?m)^Read-scope ref: \S+", content
         ):
             raise TransactionError("BUDDY_DISPATCH_REFERENCES_MISSING")
-        # The text is a claimed observation, never provider-authenticated by Relay.
+        # These are claimed observations, not independently provider-attested.
+
+
 
 def _validate_buddy_markdown_transaction(
     root: Path,
