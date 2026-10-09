@@ -1,0 +1,30 @@
+name: relay-reset-observed-frontier
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/observed-frontier-v1.*'
+      - 'skills/engineering-relay-v1/provider-facts-v1.*'
+      - 'skills/engineering-relay-v1/projection-preview-v1.*'
+      - 'skills/engineering-relay-v1/full-chain-rehearsal-v1.*'
+      - '.github/workflows/relay-reset-observed-frontier.yml'
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  actions: read
+jobs:
+  observed-frontier:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['22','24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Pure source→provider typed frontier and adversarial/obsolete-next checks
+        run: node --test skills/engineering-relay-v1/observed-frontier-v1.test.mjs

@@ -103,6 +103,10 @@ test('full real G2c→R3→R4 path, one GitHub content read, R2-A cold replay, P
  assert.equal(r.pr_heads[0].head_sha,HEAD);
  assert.equal(r.pr_heads[0].currentness,'MATCH');
  assert.match(r.full_chain_sha256,/^[a-f0-9]{64}$/);
+ assert.match(r.frontier_sha256,/^[a-f0-9]{64}$/);
+ assert.equal(r.acceptance_denominator_state,'NOT_ADJUDICATED');
+ assert.equal(r.next_verification_category,'DEFINE_PRIVACY_SAFE_OWNER_SOURCE_CUSTODY');
+ assert.ok(r.blockers.includes('ORIGINAL_OWNER_SOURCE_UNAUTHENTICATED'));
  assert.match(r.r4_projection_sha256,/^[a-f0-9]{64}$/);
  assert.equal(r.proposal_only,true);
  assert.equal(r.owner_message_authenticated,false);
