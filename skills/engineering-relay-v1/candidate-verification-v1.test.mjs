@@ -106,7 +106,7 @@ test('repeated observation with same source is stable and content addressed',asy
  assert.match(a.candidate_state_sha256,/^[a-f0-9]{64}$/);
 });
 
-test('RED: rehashed injected CI cannot impersonate an in-process native GitHub acquisition',async()=>{
+test('rehashed injected CI cannot impersonate an in-process native GitHub acquisition',async()=>{
  const injected=await facts(),forged=JSON.parse(canonicalJSON(injected));
  assert.equal(injected.source_state,'INJECTED_UNVERIFIED');
  assert.equal(deriveCandidateState(injected).pr_candidates[0].selected_ci_qualified,false);
@@ -120,6 +120,9 @@ test('RED: rehashed injected CI cannot impersonate an in-process native GitHub a
  assert.equal(candidate.source_acquisition_attested,false,
    'serialized source labels and SHA256 do not attest real native R3 acquisition');
  assert.equal(candidate.pr_candidates[0].selected_ci_qualified,false);
+ // Replaying ordinary JSON cannot carry the original acquisition capability.
+ const replay=JSON.parse(canonicalJSON(injected));
+ assert.equal(deriveCandidateState(replay).source_acquisition_attested,false);
  const rendered=renderRelayPreviews(forged,{evaluated_at:when,max_age_seconds:3600});
  assert.equal(rendered.pr_titles[0].state,'UNVERIFIED_TRANSPORT',
    'R4 must not display native selected-CI qualification from rehashed mock JSON');
