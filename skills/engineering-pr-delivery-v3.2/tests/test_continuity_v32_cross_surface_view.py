@@ -420,6 +420,37 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
         self.assertEqual([], basis["authority_effects"])
 
 
+    def test_34_partial_frozen_source_basis_does_not_claim_current(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        with self.assertRaisesRegex(view.ViewError, "FROZEN_SOURCE_BASIS_INCOMPLETE"):
+            view.build_responsibility_basis(
+                live, self.owner, selected_leaf="Common#733",
+                frozen_basis={},
+            )
+
+    def test_35_missing_provider_never_verifies_currentness(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        basis = view.build_responsibility_basis(
+            live, self.owner, selected_leaf="Common#733",
+            draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "DRAFT"},
+            observations=None,
+        )
+        self.assertNotEqual("CURRENT_READ_ONLY", basis["handover"]["currentness"])
+        self.assertEqual("UNVERIFIED_LOCAL_INPUT", basis["handover"]["currentness"])
+
+    def test_36_conflicting_observed_and_declared_candidate_heads_rejected(self):
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        observations = {
+            "Common#733": {"candidate_sha": HEAD_B, "base_sha": "a" * 40, "pr_state": "OPEN"}
+        }
+        with self.assertRaisesRegex(view.ViewError, "SOURCE_CANDIDATE_HEAD_MISMATCH"):
+            view.build_responsibility_basis(
+                live, self.owner, selected_leaf="Common#733",
+                draft_pr={"number": 740, "head_sha": HEAD_A, "lifecycle": "OPEN"},
+                observations=observations,
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
 
