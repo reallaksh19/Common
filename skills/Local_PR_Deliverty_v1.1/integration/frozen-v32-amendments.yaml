@@ -339,3 +339,30 @@ amendments:
     allowed_paths:
       - skills/engineering-pr-delivery-v3.2/scripts/plan_handover.py
       - skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py
+  - id: AMEND-V32-865-WP0-RED-016
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner continuation on 2026-10-09: 'ok next', immediately
+      after the agent reported six governance checks, identified Common
+      #865 WP0-A as the next bounded engineering gate, and explicitly
+      named the two precise precommitted RED test paths in draft PR #867.
+      This is CONTEXTUAL Owner permission for those two test-only
+      frozen V3.2 paths; it is NOT an independently authenticated original
+      ChatGPT permalink (SOURCE_REF: UNKNOWN), release of a new
+      #718 execution-graph responsibility, acceptance of any test or
+      product implementation, authority to merge PR #867, or permission
+      to activate the #786 live scoreboard. Governance must be separately
+      reviewed and merged on its own base before a new test PR uses the
+      two paths. Never treat approval in a candidate product HEAD as a grant.
+    summary: >-
+      Test-only V3.2 WP0-A precommit adversarial oracles, named to match the existing test_continuity_v32*.py CI discovery, for source
+      trust-decision/input-digest collision (D-01), caller-forged
+      DELP responsibility core (D-03), and actual native V1/V2 COLD
+      context/event/challenge consistency (D-06) with positive controls.
+      Does not grant any runtime implementation, main/protocol edits,
+      Owner/reviewer or merge authority, live GitHub writes, or V3.5 scope.
+      A product/test PR must BASE on the later approved and merged grant,
+      not include its own self-authorization.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_865_evidence_identity_red.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_865_custody_red.py
