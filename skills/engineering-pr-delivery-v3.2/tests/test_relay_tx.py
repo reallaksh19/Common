@@ -24,6 +24,7 @@ from relay_tx import (
     close_task,
     export_local_execution,
     publish_handover,
+    publish_buddy_markdown,
     release_lease,
     renew_lease,
     reconcile_roadmap,
@@ -39,7 +40,7 @@ from test_handover_context import (
 )
 from test_relay_can import prepare_git
 from test_v3_foundation import base_objects, dump
-from transactionlib import TransactionError, execute, yaml_bytes
+from transactionlib import TransactionError, execute, recover_all, yaml_bytes
 from v3lib import load_events, load_yaml
 from validate_foundation import validate, validate_authority
 
@@ -970,6 +971,79 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 )
             errors = validate_authority(root)
             self.assertTrue(any("requires recovery" in item for item in errors), errors)
+
+
+class BuddyMarkdownRelayTests(unittest.TestCase):
+    """Issue-scoped Markdown must be transactional, immutable and non-authoritative."""
+
+    def test_commit_readback_and_root_state_is_untouched(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            content = b"# Original source observation\n\nUNKNOWN implementation; original inputs only.\n"
+            result = publish_buddy_markdown(
+                root,
+                issue_number=889,
+                tx_id="TX.889.1",
+                stage="STAGE1_BASELINE",
+                actor="runner-b",
+                markdown=content,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            self.assertEqual(
+                "relay/BUDDY_RUNNER/ISSUE-889/messages/TX.889.1-STAGE1_BASELINE.md",
+                result["message_path"],
+            )
+            self.assertEqual("NOT_ATTESTED_BY_MESSAGE_TRANSPORT", result["admission"])
+            self.assertEqual(content, (root / result["message_path"]).read_bytes())
+            receipt = load_yaml(root / "relay/TRANSACTIONS/TX.889.1/manifest.yaml")
+            self.assertEqual("PUBLISH_BUDDY_MARKDOWN", receipt["command"])
+            self.assertEqual(result["message_sha256"], receipt["operations"][0]["after_digest"])
+            self.assertFalse((root / "relay/STATE.yaml").exists())
+            self.assertFalse((root / "relay/LEASES").exists())
+            self.assertFalse((root / "relay/EVENTS.jsonl").exists())
+
+    def test_same_transaction_cannot_overwrite_frozen_stage1(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            kw = dict(issue_number=889, tx_id="TX.889.1", stage="STAGE1_PLAN",
+                      actor="runner-b")
+            publish_buddy_markdown(root, markdown=b"# Frozen plan\n\nFirst ideas.\n", **kw)
+            with self.assertRaisesRegex(TransactionError, "IMMUTABLE"):
+                publish_buddy_markdown(root, markdown=b"# Changed plan\n\nRetrofit.\n", **kw)
+            self.assertIn("First ideas", (root / "relay/BUDDY_RUNNER/ISSUE-889/messages/TX.889.1-STAGE1_PLAN.md").read_text())
+
+    def test_reject_wrong_issue_stage_and_non_markdown(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            with self.assertRaisesRegex(TransactionError, "MATCH_ISSUE"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.438.1",
+                                       stage="STAGE1_INTAKE", actor="a", markdown=b"# a\n")
+            with self.assertRaisesRegex(TransactionError, "STAGE_INVALID"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.2",
+                                       stage="WRITER_PROMOTION", actor="a", markdown=b"# a\n")
+            with self.assertRaisesRegex(TransactionError, "HEADING_REQUIRED"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.2",
+                                       stage="STAGE1_INTAKE", actor="a", markdown=b"not markdown")
+            self.assertFalse((root / "relay/TRANSACTIONS").exists())
+
+    def test_interrupted_transaction_is_recoverable_without_duplicate_content(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            with self.assertRaisesRegex(TransactionError, "injected transaction interruption"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.4",
+                                       stage="READINESS", actor="agent-a",
+                                       markdown=b"# Prepared\n\nUNKNOWN context life.\n",
+                                       fail_after=1)
+            recovered = recover_all(root)
+            self.assertEqual("COMMITTED", recovered[0]["status"])
+            self.assertEqual(
+                b"# Prepared\n\nUNKNOWN context life.\n",
+                (root / "relay/BUDDY_RUNNER/ISSUE-889/messages/TX.889.4-READINESS.md").read_bytes(),
+            )
+            with self.assertRaisesRegex(TransactionError, "IMMUTABLE"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.4",
+                                       stage="READINESS", actor="agent-a",
+                                       markdown=b"# Duplicate\n")
 
 
 if __name__ == "__main__":
