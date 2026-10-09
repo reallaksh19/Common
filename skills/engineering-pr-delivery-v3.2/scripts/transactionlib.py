@@ -93,7 +93,7 @@ COMMAND_TARGET_PATTERNS = {
 # One canonical stage allowlist for all native Relay Buddy Markdown writers.
 BUDDY_MESSAGE_STAGES = frozenset({
     "READINESS", "STAGE1_INTAKE", "DISPATCH_REQUEST", "DISPATCH_OBSERVATION",
-    "STAGE1_BASELINE", "STAGE1_PLAN",
+    "STAGE1_BASELINE", "STAGE1_PLAN", "STAGE1_FREEZE_CANDIDATE",
 })
 
 
@@ -135,6 +135,7 @@ def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str, actor:
         "DISPATCH_OBSERVATION": "DISPATCH_REQUEST",
         "STAGE1_BASELINE": "DISPATCH_OBSERVATION",
         "STAGE1_PLAN": "STAGE1_BASELINE",
+        "STAGE1_FREEZE_CANDIDATE": "STAGE1_PLAN",
     }
     needed = prerequisites.get(stage)
     if needed is None:
@@ -154,6 +155,7 @@ def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str, actor:
         "DISPATCH_OBSERVATION": "STAGE1_INTAKE",
         "STAGE1_BASELINE": "DISPATCH_REQUEST",
         "STAGE1_PLAN": "DISPATCH_OBSERVATION",
+        "STAGE1_FREEZE_CANDIDATE": "STAGE1_BASELINE",
     }.get(stage)
     if earlier_stage is not None:
         earlier = _prior_buddy_message(root, issue, seq, earlier_stage)
@@ -173,6 +175,28 @@ def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str, actor:
             raise TransactionError("BUDDY_DISPATCH_REFERENCES_MISSING")
         # These are claimed observations, not independently provider-attested.
 
+
+
+def _validate_freeze_candidate(root: Path, issue: int, serial: int, content: str) -> None:
+    """Verify exact local Relay input/baseline/plan receipts, not cognitive isolation."""
+    if not content.startswith("# STAGE1_FREEZE_CANDIDATE\n"):
+        raise TransactionError("BUDDY_FREEZE_HEADING_REQUIRED")
+    if "Isolation verdict: NOT_ATTESTED" not in content:
+        raise TransactionError("BUDDY_FREEZE_CANNOT_SELF_CERTIFY_ISOLATION")
+    phases = (
+        ("STAGE1_INTAKE", "Intake"),
+        ("STAGE1_BASELINE", "Baseline"),
+        ("STAGE1_PLAN", "Plan"),
+    )
+    for stage, label in phases:
+        prior = _prior_buddy_message(root, issue, serial, stage)
+        if prior is None:
+            raise TransactionError(f"BUDDY_FREEZE_MISSING_{stage}")
+        receipt = prior[1]
+        tx_id = receipt["id"]
+        digest = _digest_bytes(prior[0])
+        if f"{label} tx: {tx_id}\n" not in content or f"{label} digest: {digest}\n" not in content:
+            raise TransactionError(f"BUDDY_FREEZE_{stage}_REF_MISMATCH")
 
 
 def _validate_buddy_markdown_transaction(
@@ -208,6 +232,8 @@ def _validate_buddy_markdown_transaction(
     if target != expected or target.exists() or expected.is_symlink():
         raise TransactionError("BUDDY_MESSAGE_IMMUTABLE_OR_SYMLINKED")
     _require_buddy_sequence(root, int(match.group(1)), int(match.group(3)), match.group(4), actor)
+    if match.group(4) == "STAGE1_FREEZE_CANDIDATE":
+        _validate_freeze_candidate(root, int(match.group(1)), int(match.group(3)), content)
 
 
 class TransactionError(RuntimeError):
