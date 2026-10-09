@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {reconcileGitHubFacts as read,ProviderFactsError} from './provider-facts-v1.mjs';
+import {reconcileGitHubFacts as read,ProviderFactsError,hasNativeProviderAcquisition} from './provider-facts-v1.mjs';
 const REPO='reallaksh19/Common',SHA='a'.repeat(40),BASE='b'.repeat(40);
 const WF='.github/workflows/relay-reset-provider-facts.yml',NOW='2026-10-08T18:30:00.000Z';
 const scope=(n=830)=>({repository:REPO,parent_issue:787,child_issues:[833],
@@ -67,6 +67,8 @@ test('one bounded native-source scope produces issue/PR/current-head CI facts',a
   assert.equal(r.read_count,5);
   assert.equal(r.consistency,'PR_DOUBLE_READ_NON_ATOMIC');
   assert.equal(r.source_state,'INJECTED_UNVERIFIED');
+  assert.equal(hasNativeProviderAcquisition(r),false);
+  assert.equal(hasNativeProviderAcquisition(JSON.parse(JSON.stringify(r))),false);
   assert.equal(r.relationship_assertion,'CALLER_SCOPED_UNVERIFIED');
   assert.equal(r.evidence_acceptance,'NOT_EVALUATED');
   assert.equal(r.human_review,'NOT_EVALUATED');
@@ -204,6 +206,9 @@ test('actual native current parent/child/PR-head/Actions observation',
   const s=scope(n);s.pull_requests[0].expected_head_sha=sha;
   const result=await read(s,{readToken:process.env.RELAY_R3_TOKEN||undefined});
   assert.equal(result.source_state,'PROVIDER_OBSERVED');
+  // Native origin is an in-process R3 capability, never a replayed JSON label.
+  assert.equal(hasNativeProviderAcquisition(result),true);
+  assert.equal(hasNativeProviderAcquisition(JSON.parse(JSON.stringify(result))),false);
   assert.equal(result.parent_issue.number,787);
   assert.equal(result.child_issues[0].number,833);
   assert.equal(result.pr_facts[0].number,n);
