@@ -151,11 +151,20 @@ class VerticalResponsibilityCycle(unittest.TestCase):
     def test_17_frozen_c0_and_live_graph_are_distinct_but_same_release(self):
         live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
         frozen = self.graph
-        self.assertEqual(frozen["programme"]["decomposition_proposal"],
-                         live["programme"]["decomposition_proposal"])
-        self.assertEqual(frozen["programme"]["acceptance_claims"],
-                         live["programme"]["acceptance_claims"])
-        self.assertEqual(frozen["nodes"][0]["reserve_weight"], live["nodes"][0]["reserve_weight"])
+        old_plan = frozen["programme"]["decomposition_proposal"]
+        new_plan = live["programme"]["decomposition_proposal"]
+        # A claim-first released plan can materialize a new responsibility
+        # binding without changing the frozen original C0 release digest.
+        oracle = json.loads((ROOT / ".github/v32-evidence-spine/793-binding-oracles-v1.json").read_text())
+        self.assertEqual(old_plan["released_proposal_digest"], new_plan["released_proposal_digest"])
+        self.assertEqual(old_plan["responsibilities"], new_plan["responsibilities"])
+        self.assertEqual({x["responsibility_id"]: x["ref"] for x in new_plan["bindings"]},
+                         {x["responsibility_id"]: x["ref"] for x in oracle["expected_bindings"]})
+        self.assertTrue({x["responsibility_id"] for x in old_plan["bindings"]}
+                        < {x["responsibility_id"] for x in new_plan["bindings"]})
+        self.assertEqual(frozen["programme"]["acceptance_claims"], live["programme"]["acceptance_claims"])
+        self.assertEqual(oracle["old_reserve_weight"], frozen["nodes"][0]["reserve_weight"])
+        self.assertEqual(oracle["expected_reserve_weight"], live["nodes"][0]["reserve_weight"])
         old_child = next(n for n in frozen["nodes"] if n.get("responsibility_id") == "R-PROJECTION")
         new_child = next(n for n in live["nodes"] if n.get("responsibility_id") == "R-PROJECTION")
         self.assertNotIn("primary_pr", old_child)
@@ -208,7 +217,7 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             phase="C4", human_titles={"Common#718": "V3.2 Evidence Spine",
             "Common#733": "Issue/PR Views"}, title_contract="C4-S6")
         self.assertEqual(
-            "🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine",
+            f"🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE{next(n['reserve_weight'] for n in live['nodes'] if n['kind'] == 'ROOT')} · FACTS UNREPORTED — V3.2 Evidence Spine",
             result["issue_titles"]["Common#718"])
         self.assertEqual(
             "🟡 [718›733] R-PROJECTION · C4 · P0/E0 · PR#740 · UNMATERIALIZED — Issue/PR Views",
@@ -239,8 +248,21 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             result["parent_actual_title"])
 
 
-    def _provider(self, *, child_title=None, pr_title=None, moved=False):
-        """Deterministic GitHub GET-only fake, with exact PR identity/readback."""
+    def _provider(self, *, child_title=None, pr_title=None, moved=False, graph=None):
+        """Graph-declared GitHub GET fake; independent C0/C4 selected PR oracles stay frozen.
+
+        A new released leaf may introduce a new primary_pr; the fake must not
+        reject a valid DELP observation merely because this test's old hardcoded
+        allowlist predates the released graph. Undeclared PRs still fail closed.
+        """
+        released = graph if graph is not None else json.loads(
+            (ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text()
+        )
+        declared_prs = {
+            int(node["primary_pr"].rsplit("#", 1)[1])
+            for node in released["nodes"]
+            if node["kind"] == "LEAF" and node.get("primary_pr")
+        }
         class Provider:
             pass
         p = Provider()
@@ -251,7 +273,7 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         p.get_issue = lambda number: {
             "number": number,
             "title": (
-                "🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE35 · FACTS UNREPORTED — V3.2 Evidence Spine"
+                f"🟡 [718] NEXT #733/C4 · D0/E0 · RESERVE{next(n['reserve_weight'] for n in released['nodes'] if n['kind'] == 'ROOT')} · FACTS UNREPORTED — V3.2 Evidence Spine"
                 if number == 718 else
                 child_title or "🟡 [718›733] R-PROJECTION · C4 · P0/E0 · PR#740 · UNMATERIALIZED — Issue/PR Views"
             ),
@@ -274,6 +296,11 @@ class VerticalResponsibilityCycle(unittest.TestCase):
                        "7ef9fbdd0c6f0f941fd573c1663c7a142fc41414")
                 return {"number": number, "head": {"sha": sha},
                         "state": "closed", "draft": False, "merged": True}
+            if number in declared_prs:
+                # Additional, graph-declared leaf: legitimate source material,
+                # NOT completed work, qualification, or an Owner-approved review.
+                return {"number": number, "head": {"sha": "e" * 40},
+                        "state": "open", "draft": True, "merged": False}
             raise AssertionError(f"unapproved fake PR #{number}")
         p.get_pull = get_pull
         return p
@@ -676,6 +703,49 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         self.assertIn("P0/E0",report["read_views"]["Common#733"]["expected"])
         self.assertEqual("DRIFT_OR_UNPUBLISHED",report["reconciliation"])
         self.assertEqual([],report["authority_effects"])
+
+
+    def test_46_live_fixture_title_tracks_released_reserve_without_rewriting_golden(self):
+        current = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        alternate = copy.deepcopy(current)
+        root = next(n for n in alternate["nodes"] if n["kind"] == "ROOT")
+        root["reserve_weight"] = 7
+        observed = self._provider(graph=alternate).get_issue(718)["title"]
+        self.assertIn("RESERVE7", observed)
+        self.assertNotIn("RESERVE7", self._provider(graph=current).get_issue(718)["title"])
+        frozen = replay.replay(self.manifest, self.graph)
+        self.assertIn("RESERVE35", frozen["parent_actual_title"])
+
+    def test_45_future_released_leaf_is_provider_bound_without_test_allowlist_edit(self):
+        """The fake observes governed material, but refuses undeclared PR identities."""
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        declared = {
+            int(n["primary_pr"].rsplit("#", 1)[1])
+            for n in live["nodes"]
+            if n["kind"] == "LEAF" and n.get("primary_pr")
+        }
+        provider = self._provider(graph=live)
+        self.assertTrue(declared)
+        for number in declared:
+            self.assertEqual(number, provider.get_pull(number)["number"])
+        import delp_projection_v32 as delp
+        observed = delp.observe_github(provider, live)
+        new_leaf = next(n["ref"] for n in live["nodes"]
+                        if n.get("responsibility_id") == "R-RECONSTRUCTION")
+        self.assertEqual("e" * 40, observed[new_leaf]["candidate_sha"])
+        with self.assertRaisesRegex(AssertionError, "unapproved fake PR"):
+            provider.get_pull(98764)
+
+        # Challenge graph-selected binding rather than specifically whitelisting
+        # newly released C4 PR #800 in the provider fixture.
+        modified = copy.deepcopy(live)
+        leaf = next(n for n in modified["nodes"] if n.get("responsibility_id") == "R-RECONSTRUCTION")
+        previous = int(leaf["primary_pr"].rsplit("#", 1)[1])
+        leaf["primary_pr"] = "Common#98765"
+        future = self._provider(graph=modified)
+        self.assertEqual(98765, future.get_pull(98765)["number"])
+        with self.assertRaisesRegex(AssertionError, "unapproved fake PR"):
+            future.get_pull(previous)
 
 
 if __name__ == "__main__":

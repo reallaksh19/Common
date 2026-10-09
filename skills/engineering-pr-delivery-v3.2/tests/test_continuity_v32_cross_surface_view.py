@@ -252,6 +252,16 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
         self.assertEqual("MISSING", view.inspect_managed_block("human only", original, pr=True))
 
 
+    def _released_parent_title(self, frozen_title):
+        """Only C1's independently precommitted reserve transition may change C0 title."""
+        oracle = json.loads((ROOT / ".github/v32-evidence-spine/793-binding-oracles-v1.json").read_text())
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        historical = f"RESERVE{oracle['old_reserve_weight']}"
+        self.assertEqual(1, frozen_title.count(historical))
+        self.assertEqual(oracle["expected_reserve_weight"],
+                         next(n["reserve_weight"] for n in live["nodes"] if n["kind"] == "ROOT"))
+        return frozen_title.replace(historical, f"RESERVE{oracle['expected_reserve_weight']}", 1)
+
     def _v2(self, ledger=None, sha="d511fc0210ee823272f41c43621bc90bc290e739"):
         live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
         obs = {**self.observed,"Common#733":{"candidate_sha":sha,"pr_state":"MERGED"}}
@@ -273,7 +283,8 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
         oracle=json.loads((ROOT / ".github/v32-evidence-spine/753-progress-title-oracles-v1.json").read_text())
         got=self._v2()
         self.assertEqual("C4-S6",got["title_contract"])
-        self.assertEqual(oracle["zero"]["parent"],got["issue_titles"]["Common#718"])
+        self.assertEqual(self._released_parent_title(oracle["zero"]["parent"]),
+                         got["issue_titles"]["Common#718"])
         self.assertEqual(oracle["zero"]["child"],got["issue_titles"]["Common#733"])
         self.assertEqual(0,got["parent_semantic"]["D"])
         self.assertEqual(0,got["leaf_semantic"]["P"])
@@ -309,7 +320,8 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
         self.assertEqual(1,len(delp.project(live,[fake],obs)["rejected_facts"]))
         got=self._v2(ledger=[fake])
         oracle=json.loads((ROOT / ".github/v32-evidence-spine/753-progress-title-oracles-v1.json").read_text())
-        self.assertEqual(oracle["zero"]["parent"],got["issue_titles"]["Common#718"])
+        self.assertEqual(self._released_parent_title(oracle["zero"]["parent"]),
+                         got["issue_titles"]["Common#718"])
         self.assertEqual(oracle["zero"]["child"],got["issue_titles"]["Common#733"])
 
     def test_27_C0_oracle_remains_byte_identical(self):
