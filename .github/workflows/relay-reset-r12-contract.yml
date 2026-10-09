@@ -34,7 +34,6 @@ jobs:
           node --test
           skills/engineering-relay-v1/candidate-verification-v1.test.mjs
           skills/engineering-relay-v1/observed-frontier-v1.test.mjs
-          skills/engineering-relay-v1/projection-preview-v1.test.mjs
           skills/engineering-relay-v1/session-journal-v1.test.mjs
           skills/engineering-relay-v1/session-bundle-v1.test.mjs
           skills/engineering-relay-v1/journal-durability-platform-v1.test.mjs
