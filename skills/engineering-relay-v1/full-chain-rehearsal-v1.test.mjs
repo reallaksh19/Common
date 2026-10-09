@@ -218,7 +218,21 @@ test('true native exact-head GitHub synthetic journal + real parent/PR/CI + R4 p
  assert.ok(out.proposed_handover.evidence_refs.includes('https://github.com/'+REPO+'/issues/852#issuecomment-6072336145'));
  assert.ok(!JSON.stringify(out).includes('R9 TASK_EVIDENCE END'));
  assert.equal(out.event_count,12);
- assert.equal(out.pr_heads[0].ci[0].state,'PENDING');
+ // The CI lifecycle is not permanently PENDING: source truth can move to
+ // PASS, FAIL or UNKNOWN by the time a cold reviewer replays a merged PR.
+ const candidate=out.verification_candidates.find(x=>x.number===prNumber);
+ assert.ok(candidate,'selected PR must appear in canonical R12 candidate state');
+ assert.equal(candidate.head_sha,head);
+ assert.equal(candidate.head_state,'CURRENT');
+ assert.equal(candidate.selected_workflows[0].state,out.pr_heads[0].ci[0].state);
+ assert.ok(['PASS','PENDING','FAIL','UNKNOWN'].includes(candidate.selected_ci_state));
+ assert.equal(candidate.selected_ci_qualified,candidate.selected_ci_state==='PASS');
+ if(candidate.selected_ci_state!=='PASS')
+  assert.ok(out.blockers.includes('SELECTED_CI_NOT_ALL_PASS'));
+ assert.match(out.candidate_state_sha256,/^[a-f0-9]{64}$/);
+ assert.equal(out.proposed_handover.candidate_state_sha256,out.candidate_state_sha256);
+ assert.equal(out.authorization_granted,false);
+ assert.equal(out.independently_accepted,false);
  assert.equal(out.authorization_granted,false);
  assert.equal(out.independently_accepted,false);
  assert.equal(out.live_writer_enabled,false);
