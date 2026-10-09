@@ -6,6 +6,7 @@ on:
   pull_request:
     paths:
       - skills/engineering-pr-delivery-v3.5/tests/test_wp0_native_cross_engine_v35.py
+      - skills/engineering-relay-v1/wp0-trust-invariants-v1.test.mjs
       - .github/workflows/v35-wp0-native-cross-engine.yml
   workflow_dispatch:
 permissions:
@@ -54,4 +55,6 @@ jobs:
       - name: Pinned run source
         run: git rev-parse HEAD
       - name: N2 real RELAY full-chain tests
-        run: node --test skills/engineering-relay-v1/full-chain-rehearsal-v1.test.mjs
+        run: |
+          node --test skills/engineering-relay-v1/full-chain-rehearsal-v1.test.mjs
+          node --test skills/engineering-relay-v1/wp0-trust-invariants-v1.test.mjs
