@@ -64,6 +64,9 @@ class DerivedCoreRed(unittest.TestCase):
         row = entry(facts(units=[unit("U01")]), 43,
                     "Common#592#issuecomment-43")
         source = graph()
+        # The generic DELP legacy test fixture omits programme.repository;
+        # the real core has always required an explicit repository identity.
+        source["programme"]["repository"] = "reallaksh19/Common"
         projected = delp.project(source, [row], OBS_A)
         first = delp.source_bound_responsibility_core(
             source, projected, "Common#592")
@@ -74,6 +77,7 @@ class DerivedCoreRed(unittest.TestCase):
 
     def test_d03_red_correct_schema_forged_leaf_progress_is_not_derived(self):
         source = graph()
+        source["programme"]["repository"] = "reallaksh19/Common"
         row = entry(facts(units=[unit("U01")]), 43,
                     "Common#592#issuecomment-43")
         projection = delp.project(source, [row], OBS_A)
