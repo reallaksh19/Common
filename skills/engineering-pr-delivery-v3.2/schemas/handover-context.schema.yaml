@@ -368,7 +368,33 @@ properties:
             additionalProperties: false
             required: [graph, plan, input]
             properties:
-              graph: {type: string, pattern: '^sha256:[0-9a-f]{64}
+              graph: {type: string, minLength: 71, maxLength: 71}
+              plan: {type: string, minLength: 71, maxLength: 71}
+              input: {type: string, minLength: 71, maxLength: 71}
+          progress:
+            type: object
+            additionalProperties: false
+            required: [root, leaf]
+            properties:
+              root:
+                type: object
+                additionalProperties: false
+                required: [D, E]
+                properties:
+                  D: {type: integer, minimum: 0, maximum: 100}
+                  E: {type: integer, minimum: 0, maximum: 100}
+              leaf:
+                type: object
+                additionalProperties: false
+                required: [P, E]
+                properties:
+                  P: {type: integer, minimum: 0, maximum: 100}
+                  E: {type: integer, minimum: 0, maximum: 100}
+          leaf_state: {type: string, minLength: 1}
+          rejected_fact_count: {type: integer, minimum: 0}
+          authority_effects: {type: array, maxItems: 0}
+          basis_digest: {type: string, minLength: 71, maxLength: 71}
+      provider_trust: {const: CALLER_SUPPLIED_READ_ONLY_TRANSPORT_NOT_SELF_AUTHENTICATING}
       repository: {type: string, minLength: 3}
       root: {type: string, minLength: 3}
       leaf: {type: string, minLength: 3}
