@@ -239,8 +239,21 @@ class VerticalResponsibilityCycle(unittest.TestCase):
             result["parent_actual_title"])
 
 
-    def _provider(self, *, child_title=None, pr_title=None, moved=False):
-        """Deterministic GitHub GET-only fake, with exact PR identity/readback."""
+    def _provider(self, *, child_title=None, pr_title=None, moved=False, graph=None):
+        """Graph-declared GitHub GET fake; independent C0/C4 selected PR oracles stay frozen.
+
+        A new released leaf may introduce a new primary_pr; the fake must not
+        reject a valid DELP observation merely because this test's old hardcoded
+        allowlist predates the released graph. Undeclared PRs still fail closed.
+        """
+        released = graph if graph is not None else json.loads(
+            (ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text()
+        )
+        declared_prs = {
+            int(node["primary_pr"].rsplit("#", 1)[1])
+            for node in released["nodes"]
+            if node["kind"] == "LEAF" and node.get("primary_pr")
+        }
         class Provider:
             pass
         p = Provider()
@@ -274,6 +287,11 @@ class VerticalResponsibilityCycle(unittest.TestCase):
                        "7ef9fbdd0c6f0f941fd573c1663c7a142fc41414")
                 return {"number": number, "head": {"sha": sha},
                         "state": "closed", "draft": False, "merged": True}
+            if number in declared_prs:
+                # Additional, graph-declared leaf: legitimate source material,
+                # NOT completed work, qualification, or an Owner-approved review.
+                return {"number": number, "head": {"sha": "e" * 40},
+                        "state": "open", "draft": True, "merged": False}
             raise AssertionError(f"unapproved fake PR #{number}")
         p.get_pull = get_pull
         return p
@@ -676,6 +694,34 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         self.assertIn("P0/E0",report["read_views"]["Common#733"]["expected"])
         self.assertEqual("DRIFT_OR_UNPUBLISHED",report["reconciliation"])
         self.assertEqual([],report["authority_effects"])
+
+
+    def test_45_future_released_leaf_is_provider_bound_without_test_allowlist_edit(self):
+        """The fake observes governed material, but refuses undeclared PR identities."""
+        live = json.loads((ROOT / ".github/v32-evidence-spine/718-proposal-v2.json").read_text())
+        declared = {
+            int(n["primary_pr"].rsplit("#", 1)[1])
+            for n in live["nodes"]
+            if n["kind"] == "LEAF" and n.get("primary_pr")
+        }
+        provider = self._provider(graph=live)
+        self.assertTrue(declared)
+        for number in declared:
+            self.assertEqual(number, provider.get_pull(number)["number"])
+        with self.assertRaisesRegex(AssertionError, "unapproved fake PR"):
+            provider.get_pull(98764)
+
+        # Challenge graph-selected binding rather than specifically whitelisting
+        # newly released C4 PR #800 in the provider fixture.
+        modified = copy.deepcopy(live)
+        leaf = next(n for n in modified["nodes"] if n.get("responsibility_id") == "R-RECONSTRUCTION")
+        previous = int(leaf["primary_pr"].rsplit("#", 1)[1])
+        leaf["primary_pr"] = "Common#98765"
+        future = self._provider(graph=modified)
+        self.assertEqual(98765, future.get_pull(98765)["number"])
+        with self.assertRaisesRegex(AssertionError, "unapproved fake PR"):
+            future.get_pull(previous)
+        self.assertEqual([], replay.live_readback.__dict__.get("authority_effects", []))
 
 
 if __name__ == "__main__":
