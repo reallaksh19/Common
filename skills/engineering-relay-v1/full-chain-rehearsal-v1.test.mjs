@@ -111,7 +111,8 @@ test('full real G2c→R3→R4 path, one GitHub content read, R2-A cold replay, P
  assert.equal(r.proposed_handover.trust_preflight_axes.independent_reviewer.state,'NOT_QUALIFIED');
  assert.equal(r.source_consent_review_approval,'NOT_QUALIFIED');
  assert.equal(r.acceptance_denominator_state,'NOT_ADJUDICATED');
- assert.equal(r.next_verification_category,'DEFINE_PRIVACY_SAFE_OWNER_SOURCE_CUSTODY');
+ assert.equal(r.next_verification_category,'REACQUIRE_NATIVE_PROVIDER_FACTS_FOR_CI');
+  assert.ok(r.blockers.includes('SOURCE_ACQUISITION_UNATTESTED'));
  assert.ok(r.blockers.includes('ORIGINAL_OWNER_SOURCE_UNAUTHENTICATED'));
  assert.match(r.r4_projection_sha256,/^[a-f0-9]{64}$/);
  assert.equal(r.proposal_only,true);
