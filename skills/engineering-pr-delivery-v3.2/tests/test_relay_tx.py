@@ -1025,6 +1025,11 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
             with self.assertRaisesRegex(TransactionError, "HEADING_REQUIRED"):
                 publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.2",
                                        stage="STAGE1_INTAKE", actor="a", markdown=b"not markdown")
+            for prohibited_stage in ("TECHNICAL_HANDOVER", "STAGE2_RECONCILIATION",
+                                     "CONTINUATION_EVIDENCE"):
+                with self.assertRaisesRegex(TransactionError, "STAGE_INVALID"):
+                    publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.2",
+                                           stage=prohibited_stage, actor="a", markdown=b"# No admission\n")
             self.assertFalse((root / "relay/TRANSACTIONS").exists())
 
     def test_direct_transaction_cannot_bypass_issue_or_immutability(self):
