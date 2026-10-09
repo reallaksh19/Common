@@ -374,7 +374,10 @@ amendments:
       candidate proposal and exact RED evidence, but is not treated as
       an explicit grant of new frozen source/schema paths, human review,
       claim-first released responsibility, test acceptance, or merge.
-      Owner original private-chat permalink is UNKNOWN. This row stays
+      Owner original private-chat permalink is UNKNOWN. The Owner's later
+      "proceed next, merge if mergable" instruction permitted merging the
+      separately eligible test-only #867; it is NOT an affirmative authorization
+      to turn this source-scope proposal on. This row stays
       DISABLED until separately approved and independently reviewed;
       it may be enabled only on a standalone governance PR that lands
       BEFORE an implementation PR bases on it. Never authorize paths
