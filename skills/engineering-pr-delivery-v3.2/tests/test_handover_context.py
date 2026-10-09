@@ -1353,6 +1353,10 @@ class HandoverContextTests(unittest.TestCase):
                 matches[0]["details"]["source_delp_responsibility_basis_digest"],
             )
             self.assertEqual(
+                bound["delp_responsibility_core"]["basis_digest"],
+                context["successor_entry"]["challenge_basis"]["source_responsibility_basis_digest"],
+            )
+            self.assertEqual(
                 bound["delp_responsibility_core"]["digests"]["input"],
                 bound["digests"]["input"],
             )
