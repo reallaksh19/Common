@@ -194,7 +194,7 @@ async function appendWithBarrier(folder,input,expected,barrier){
   const sha256=hash(canonicalJSON(body));
   const target=join(root,filename(seq)),temp=join(root,'.pending-'+randomUUID());
   const bytes=canonicalJSON({...body,sha256})+'\n';
-  let staged=false;
+  let staged=false,durability;
   try{
     const out=await fs.open(temp,'wx',0o600);
     staged=true;
@@ -205,7 +205,6 @@ async function appendWithBarrier(folder,input,expected,barrier){
     }
     // A directory-sync error occurs AFTER the target link becomes visible:
     // throwing never means the append rolled back. Verify what was committed.
-    let durability;
     try{durability=await barrier(root);}
     catch{
       let committed=false;
@@ -216,11 +215,13 @@ async function appendWithBarrier(folder,input,expected,barrier){
       reject(committed?'POST_COMMIT_DURABILITY_UNKNOWN':'POST_LINK_RECOVERY_REQUIRED',
         'post-link durability unconfirmed; re-read journal tip before retry');
     }
-    const replay=await readJournal(root);
-    if(replay.tip.seq!==seq||replay.tip.sha256!==sha256)
-      reject('CORRUPT','append readback mismatch');
-    return Object.freeze({...replay,durability_state:durability});
   }finally{if(staged)await fs.unlink(temp).catch(()=>{});}
+  // Stage file removed before readback; successful callers never see phantom
+  // pending debris in their returned immutable snapshot.
+  const replay=await readJournal(root);
+  if(replay.tip.seq!==seq||replay.tip.sha256!==sha256)
+    reject('CORRUPT','append readback mismatch');
+  return Object.freeze({...replay,durability_state:durability});
 }
 export async function appendJournal(folder,input,expected){
   return appendWithBarrier(folder,input,expected,syncCommitDirectory);
