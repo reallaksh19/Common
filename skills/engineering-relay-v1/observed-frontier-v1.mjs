@@ -50,14 +50,40 @@ function sourceGraph(source,provider){
  * no selected hosted CI can grant acceptance. Actual next is a bounded
  * derived *verification category*, never an agent execution directive.
  */
-export function projectObservedFrontier(source,provider){
+function verifiedPublicReceipt(receipt,provider){
+ if(receipt===undefined||receipt===null)return null;
+ if(receipt.schema!=='relay-public-task-evidence-receipt-v1'||
+   receipt.repository!==provider.repository||
+   receipt.parent_issue!==provider.parent_issue.number||
+   !provider.child_issues.some(c=>c.number===receipt.task_issue)||
+   !H64.test(receipt.body_sha256)||!H64.test(receipt.receipt_sha256)||
+   receipt.provider_read_count!==2||
+   receipt.consistency!=='COMMENT_DOUBLE_READ_NON_ATOMIC'||
+   receipt.observation!=='PRODUCER_ASSERTED_PUBLIC_COMMENT_NOT_ACCEPTED'||
+   !['INJECTED_UNVERIFIED','NATIVE_GITHUB_COMMENT_GET'].includes(receipt.provider_source)||
+   (provider.source_state==='PROVIDER_OBSERVED')!==
+      (receipt.provider_source==='NATIVE_GITHUB_COMMENT_GET')||
+   receipt.task_evidence_accepted!==false||
+   receipt.author_is_owner_authenticated!==false||
+   receipt.independent_reviewer_accepted!==false||
+   receipt.authorization_granted!==false||
+   receipt.live_writer_enabled!==false)
+   fail('UNTRUSTED_PUBLIC_RECEIPT','comment custody is not bound to provider task/authority');
+ const copy=JSON.parse(canonicalJSON(receipt)),declared=copy.receipt_sha256;
+ delete copy.receipt_sha256;
+ if(digest(copy)!==declared)fail('PUBLIC_RECEIPT_DIGEST_MISMATCH','comment witness mutated');
+ return receipt;
+}
+export function projectObservedFrontier(source,provider,publicReceipt=null){
   const d=sourceGraph(source,provider);
   const intents=idArray(d.owner_intents),claims=idArray(d.claims),
     tasks=idArray(d.responsibilities),evidence=idArray(d.task_evidence);
   if(intents.length<1||!Array.isArray(provider.pr_facts)||provider.pr_facts.length<1||
     provider.consistency!=='PR_DOUBLE_READ_NON_ATOMIC')
     fail('INVALID','missing bounded structural graph or provider-current facts');
+  const receipt=verifiedPublicReceipt(publicReceipt,provider);
   const blockers=[];
+  blockers.push(receipt?'PUBLIC_TASK_EVIDENCE_NOT_ADJUDICATED':'PUBLIC_TASK_EVIDENCE_NOT_OBSERVED');
   if(provider.pr_facts.some(p=>p.currentness!=='MATCH'))
     blockers.push('PROVIDER_HEAD_STALE_OR_UNPINNED');
   if(provider.pr_facts.some(p=>p.ci_workflows?.some(w=>w.state!=='PASS')))
@@ -87,6 +113,12 @@ export function projectObservedFrontier(source,provider){
     structural_evidence_count:evidence.length,owner_intent_count:intents.length,
     acceptance_denominator_state:'NOT_ADJUDICATED',
     accepted_claim_count:null,accepted_evidence_count:null,
+    public_task_evidence_receipt_sha256:receipt?.receipt_sha256??null,
+    public_task_evidence_source_url:receipt?.source_url??null,
+    public_task_evidence_comment_id:receipt?.comment_id??null,
+    public_task_evidence_observation:receipt?
+      'PRODUCER_ASSERTED_COMMENT_OBSERVED_NOT_ACCEPTED':'NOT_OBSERVED',
+
     next_verification_category:next,blockers,
     original_owner_chat:'UNKNOWN',independent_review:'NOT_ACCEPTED',
     provider_consistency:provider.consistency,

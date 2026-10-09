@@ -188,9 +188,11 @@ test('true native exact-head GitHub synthetic journal + real parent/PR/CI + R4 p
  assert.match(head,/^[a-f0-9]{40}$/);assert.ok(prNumber>0);
  const token=process.env.RELAY_FULL_CHAIN_READ_TOKEN;
  const inputSpec=input(head,prNumber);
+ inputSpec.provider_scope.child_issues=[852];
  const out=await run(inputSpec,{
   sourceRead:{readToken:token},
   providerRead:{readToken:token},
+  publicEvidenceRead:{scope:{repository:REPO,parent_issue:787,task_issue:852,comment_id:6072336145},readToken:token},
   evaluation:{evaluated_at:new Date(Date.now()+15000).toISOString(),max_age_seconds:600}
  });
  assert.equal(out.status,'NATIVE_GITHUB_SYNTHETIC_REHEARSAL_UNANCHORED');
@@ -198,6 +200,12 @@ test('true native exact-head GitHub synthetic journal + real parent/PR/CI + R4 p
  assert.equal(out.pr_heads[0].head_sha,head);
  assert.equal(out.pr_heads[0].currentness,'MATCH');
  assert.equal(out.real_r2b1_replayed,true);
+ assert.match(out.public_task_evidence_receipt_sha256,/^[a-f0-9]{64}$/);
+ assert.equal(out.public_task_evidence_observation,'PRODUCER_ASSERTED_COMMENT_OBSERVED_NOT_ACCEPTED');
+ assert.equal(out.proposed_handover.public_task_evidence_receipt_sha256,out.public_task_evidence_receipt_sha256);
+ assert.equal(out.acceptance_denominator_state,'NOT_ADJUDICATED');
+ assert.ok(out.proposed_handover.evidence_refs.includes('https://github.com/'+REPO+'/issues/852#issuecomment-6072336145'));
+ assert.ok(!JSON.stringify(out).includes('R9 TASK_EVIDENCE END'));
  assert.equal(out.event_count,12);
  assert.equal(out.pr_heads[0].ci[0].state,'PENDING');
  assert.equal(out.authorization_granted,false);
@@ -209,6 +217,7 @@ test('true native exact-head GitHub synthetic journal + real parent/PR/CI + R4 p
   provider_snapshot_sha256:out.provider_snapshot_sha256,
   r4_projection_sha256:out.r4_projection_sha256,joined_sha256:out.full_chain_sha256,
   events:out.event_count,pr_head:out.pr_heads[0].head_sha,
-  ci_state:out.pr_heads[0].ci[0].state,writer:false,accepted:false
+  ci_state:out.pr_heads[0].ci[0].state,public_receipt_sha256:out.public_task_evidence_receipt_sha256,
+  comment_id:6072336145,task_issue:852,public_acceptance:false,writer:false,accepted:false
  }));
 });

@@ -109,7 +109,9 @@ function verifiedFrontier(raw,provider){
     'original_owner_chat','independent_review','provider_consistency',
     'producer_assertions_not_authority','owner_message_authenticated',
     'independently_accepted','authorization_granted','live_writer_enabled',
-    'proposal_only','frontier_sha256'],'observed frontier');
+    'proposal_only','frontier_sha256','public_task_evidence_receipt_sha256',
+    'public_task_evidence_source_url','public_task_evidence_comment_id',
+    'public_task_evidence_observation'],'observed frontier');
   if(!HASH.test(f.frontier_sha256)||
     f.schema!=='relay-observed-frontier-v1'||
     f.repository!==provider.repository||
@@ -119,6 +121,20 @@ function verifiedFrontier(raw,provider){
     f.acceptance_denominator_state!=='NOT_ADJUDICATED'||
     f.accepted_claim_count!==null||f.accepted_evidence_count!==null||
     f.original_owner_chat!=='UNKNOWN'||f.independent_review!=='NOT_ACCEPTED'||
+    (f.public_task_evidence_receipt_sha256===null)!==
+      (f.public_task_evidence_source_url===null)||
+    (f.public_task_evidence_receipt_sha256===null)!==
+      (f.public_task_evidence_comment_id===null)||
+    (f.public_task_evidence_receipt_sha256===null)!==
+      (f.public_task_evidence_observation==='NOT_OBSERVED')||
+    !(f.public_task_evidence_receipt_sha256===null||
+      HASH.test(f.public_task_evidence_receipt_sha256))||
+    !(f.public_task_evidence_comment_id===null||
+      (Number.isSafeInteger(f.public_task_evidence_comment_id)&&f.public_task_evidence_comment_id>0))||
+    !(f.public_task_evidence_source_url===null||
+      (typeof f.public_task_evidence_source_url==='string'&&
+        f.public_task_evidence_source_url.startsWith(
+          'https://github.com/'+provider.repository+'/issues/')))||
     f.provider_consistency!==provider.consistency||
     f.producer_assertions_not_authority!==true||
     f.owner_message_authenticated!==false||
@@ -208,6 +224,9 @@ export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null){
       'Source-bound frontier SHA256: '+(frontier?.frontier_sha256??'NONE')+'\n'+
       'Next verification category (NOT AUTHORIZED): '+nextVerification+'\n'+
       'Blockers: '+blockers.join(',')+'\n'+
+      'Observed public TaskEvidence receipt (NOT ACCEPTED): '+
+        (frontier?.public_task_evidence_receipt_sha256??'NONE')+'\n'+
+
 
       'Reviewer status: NOT_EVALUATED; Owner authority: NOT_AUTHENTICATED\n'+
       'CI paths are CALLER_SELECTED, NOT proven required policy checks\n'+
@@ -218,7 +237,8 @@ export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null){
     title:'RELAY successor fact-only preview — NOT AN OWNER-AUTHORIZED HANDOVER',
     parent_url:parent.source_url,
     evidence_refs:[parent.source_url,...children.map(x=>x.source_url),
-      ...prTitles.map(x=>x.source_url)],
+      ...prTitles.map(x=>x.source_url),
+      ...(frontier?.public_task_evidence_source_url?[frontier.public_task_evidence_source_url]:[])],
     pr_heads:prTitles.map(p=>({number:p.number,head_sha:p.head_sha,state:p.state})),
     instructions:[
       'Fetch canonical parent and original Owner instructions; source chat permalink UNKNOWN',
@@ -229,6 +249,9 @@ export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null){
       'Preserve human privacy/retention/Owner grant HOLD; do not activate R5 writer',
       'Read a new provider-current snapshot; this is bounded and non-atomic'
     ],
+    public_task_evidence_receipt_sha256:frontier?.public_task_evidence_receipt_sha256??null,
+    public_task_evidence_source_url:frontier?.public_task_evidence_source_url??null,
+    public_task_evidence_observation:frontier?.public_task_evidence_observation??'NOT_OBSERVED',
     frontier_sha256:frontier?.frontier_sha256??null,
     frontier_source_lineage_sha256:frontier?.source_lineage_sha256??null,
     actual_next_authority:'NOT_GRANTED',
@@ -250,6 +273,8 @@ export function renderRelayPreviews(rawSnapshot,rawOptions,rawFrontier=null){
     frontier_source_lineage_sha256:frontier?.source_lineage_sha256??null,
     next_verification_category:nextVerification,
     blockers,
+    public_task_evidence_receipt_sha256:frontier?.public_task_evidence_receipt_sha256??null,
+    public_task_evidence_observation:frontier?.public_task_evidence_observation??'NOT_OBSERVED',
     proposal_only:true,
     owner_message_authenticated:false,authorization_granted:false,
     independently_accepted:false,live_writer_enabled:false

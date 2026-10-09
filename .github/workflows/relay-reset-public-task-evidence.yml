@@ -1,20 +1,19 @@
-name: relay-reset-observed-frontier
+name: relay-reset-public-task-evidence
 on:
   pull_request:
     paths:
-      - 'skills/engineering-relay-v1/observed-frontier-v1.*'
       - 'skills/engineering-relay-v1/github-task-evidence-receipt-v1.*'
-      - 'skills/engineering-relay-v1/provider-facts-v1.*'
-      - 'skills/engineering-relay-v1/projection-preview-v1.*'
       - 'skills/engineering-relay-v1/full-chain-rehearsal-v1.*'
-      - '.github/workflows/relay-reset-observed-frontier.yml'
+      - 'skills/engineering-relay-v1/observed-frontier-v1.*'
+      - 'skills/engineering-relay-v1/projection-preview-v1.*'
+      - '.github/workflows/relay-reset-public-task-evidence.yml'
 permissions:
   contents: read
   issues: read
   pull-requests: read
   actions: read
 jobs:
-  observed-frontier:
+  public-comment-native:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -27,5 +26,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - name: Pure source→provider typed frontier and adversarial/obsolete-next checks
+      - name: Real two-GET comment source and 8 negative provider oracles
+        env:
+          RELAY_PUBLIC_CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RELAY_PUBLIC_CI_READ_TOKEN: ${{ github.token }}
+        run: node --test skills/engineering-relay-v1/github-task-evidence-receipt-v1.test.mjs
+      - name: R1-R3-R4 comment binding (no authority)
         run: node --test skills/engineering-relay-v1/observed-frontier-v1.test.mjs
