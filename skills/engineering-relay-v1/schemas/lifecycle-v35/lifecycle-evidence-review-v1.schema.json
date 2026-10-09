@@ -1,0 +1,333 @@
+{
+  "$defs": {
+    "digest": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "facts": {
+      "additionalProperties": false,
+      "properties": {
+        "material": {
+          "additionalProperties": false,
+          "properties": {
+            "base_sha": {
+              "$ref": "#/$defs/sha"
+            },
+            "candidate_sha": {
+              "$ref": "#/$defs/sha"
+            },
+            "pr": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "pr",
+            "candidate_sha",
+            "base_sha"
+          ],
+          "type": "object"
+        },
+        "responsibility": {
+          "additionalProperties": false,
+          "properties": {
+            "issue": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "issue"
+          ],
+          "type": "object"
+        },
+        "schema": {
+          "const": "relay-v3.2-delp-checkpoint-facts"
+        },
+        "units": {
+          "items": {
+            "$ref": "#/$defs/unit"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "schema",
+        "responsibility",
+        "material",
+        "units"
+      ],
+      "type": "object"
+    },
+    "id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,71}$",
+      "type": "string"
+    },
+    "issue": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "producer": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_label": {
+          "maxLength": 120,
+          "minLength": 1,
+          "pattern": "^[^\\r\\n]+$",
+          "type": "string"
+        },
+        "session_id": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "required": [
+        "session_id",
+        "actor_label"
+      ],
+      "type": "object"
+    },
+    "refs": {
+      "items": {
+        "maxLength": 400,
+        "minLength": 1,
+        "pattern": "^[^\\r\\n]+$",
+        "type": "string"
+      },
+      "maxItems": 20,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "responsibility": {
+      "additionalProperties": false,
+      "properties": {
+        "contract_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "issue_number": {
+          "$ref": "#/$defs/issue"
+        },
+        "spec_generation": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "issue_number",
+        "spec_generation",
+        "contract_digest"
+      ],
+      "type": "object"
+    },
+    "reviewer": {
+      "additionalProperties": false,
+      "properties": {
+        "actor_label": {
+          "maxLength": 120,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "candidate_sha": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_id": {
+          "maxLength": 72,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_digest": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_url": {
+          "maxLength": 400,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "enum": [
+            "NOT_SUBMITTED",
+            "CLAIMED_ACCEPTED",
+            "CLAIMED_REJECTED"
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "actor_label",
+        "session_id",
+        "candidate_sha",
+        "source_url",
+        "source_digest"
+      ],
+      "type": "object"
+    },
+    "sha": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "test": {
+      "additionalProperties": false,
+      "properties": {
+        "fixture_sha256": {
+          "$ref": "#/$defs/digest"
+        },
+        "golden_sha256": {
+          "$ref": "#/$defs/digest"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "result": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "NOT_RUN",
+            "UNKNOWN"
+          ]
+        },
+        "run_url": {
+          "maxLength": 400,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tested_head_sha": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "result",
+        "tested_head_sha",
+        "fixture_sha256",
+        "golden_sha256",
+        "run_url"
+      ],
+      "type": "object"
+    },
+    "unit": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_sha": {
+          "$ref": "#/$defs/sha"
+        },
+        "contract_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "evidence_refs": {
+          "$ref": "#/$defs/refs"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "result": {
+          "enum": [
+            "NOT_RUN",
+            "PENDING",
+            "PARTIAL",
+            "FAILED",
+            "VERIFIED"
+          ]
+        },
+        "state": {
+          "enum": [
+            "NOT_STARTED",
+            "IN_PROGRESS",
+            "COMPLETE"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "state",
+        "result",
+        "candidate_sha",
+        "contract_digest",
+        "evidence_refs"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "relay-lifecycle-evidence-review-v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Structural claim envelope only. No issuer, CI or reviewer attestations and no evidence acceptance, progress, write permission or reviewer-grant authority.",
+  "properties": {
+    "checkpoint_facts": {
+      "$ref": "#/$defs/facts"
+    },
+    "mode": {
+      "const": "RESEARCH_ONLY"
+    },
+    "owner_session": {
+      "type": "object"
+    },
+    "producer": {
+      "$ref": "#/$defs/producer"
+    },
+    "responsibility": {
+      "$ref": "#/$defs/responsibility"
+    },
+    "reviewer_claim": {
+      "$ref": "#/$defs/reviewer"
+    },
+    "schema": {
+      "const": "relay-lifecycle-evidence-review-v1"
+    },
+    "test_observations": {
+      "items": {
+        "$ref": "#/$defs/test"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema",
+    "mode",
+    "owner_session",
+    "responsibility",
+    "producer",
+    "checkpoint_facts",
+    "test_observations",
+    "reviewer_claim"
+  ],
+  "title": "V3.5 R14 U3 untrusted evidence and independent-review claims - no DELP progress",
+  "type": "object"
+}
