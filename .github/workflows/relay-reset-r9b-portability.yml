@@ -1,0 +1,30 @@
+name: relay-reset-r9b-portability
+on:
+  pull_request:
+    paths:
+      - 'skills/engineering-relay-v1/session-journal-v1.*'
+      - 'skills/engineering-relay-v1/journal-durability-platform-v1.test.mjs'
+      - 'skills/engineering-relay-v1/cold-recovery-v1.test.mjs'
+      - '.github/workflows/relay-reset-r9b-portability.yml'
+permissions:
+  contents: read
+jobs:
+  journal-portability:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ['22','24']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Real disk post-link fault and platform-specific durability proof
+        run: node --test skills/engineering-relay-v1/journal-durability-platform-v1.test.mjs
+      - name: Full journal regression Linux
+        if: runner.os == 'Linux'
+        run: node --test skills/engineering-relay-v1/session-journal-v1.test.mjs
