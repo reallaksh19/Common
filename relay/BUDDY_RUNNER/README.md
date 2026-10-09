@@ -94,6 +94,10 @@ Example human-readable Markdown payload (all receipt identifiers and digests mus
 Isolation verdict: NOT_ATTESTED
 Intake tx: TX.<issue>.<intake-serial>
 Intake digest: sha256:<actual-input-digest>
+Dispatch request tx: TX.<issue>.<request-serial>
+Dispatch request digest: sha256:<actual-dispatch-request-digest>
+Dispatch observation tx: TX.<issue>.<observation-serial>
+Dispatch observation digest: sha256:<actual-dispatch-observation-digest>
 Baseline tx: TX.<issue>.<baseline-serial>
 Baseline digest: sha256:<actual-baseline-digest>
 Plan tx: TX.<issue>.<plan-serial>
@@ -105,11 +109,11 @@ Reason: Exact message bytes frozen for review, technical isolation not yet indep
 
 The native Relay transaction engine checks the **current unbroken chain** `STAGE1_INTAKE → DISPATCH_REQUEST → DISPATCH_OBSERVATION → STAGE1_BASELINE → STAGE1_PLAN`. For a freeze candidate it also requires:
 
-- The actual newest committed intake/baseline/plan **transaction IDs and payload SHA-256 values** to match the message.
+- The actual newest committed **intake, dispatch request, dispatch observation, baseline, and plan** transaction IDs and payload SHA-256 values to match the message. Every line must occur exactly once; repeated/conflicting labels are rejected.
 - The plan and baseline to have the same **claimed** Runner author, with a distinct **claimed** freeze operator.
 - No newer intake or dispatch that would invalidate the observed Runner/source basis.
 - An explicit `Isolation verdict: NOT_ATTESTED`. Neither the operator nor the transport may transform a self-reported `Session ref` into independently verified tool isolation.
-- Existing immutable committed receipts. Changed bytes, superseded inputs and wrong digest references **fail closed** before any candidate is published.
+- Existing immutable committed receipts. Changed bytes, superseded inputs, symlinked historical evidence and wrong digest references **fail closed** before any candidate is published.
 
 A candidate **is not a final seal**, is not an accepted `TASK_EVIDENCE` record, and cannot authorize Stage 2 or writer transfer. R4 remains open until an external authority actually authenticates model/session identity, read allowlist, tool denials, output provenance and the frozen basis. Later Stage 2 code must enforce that external admission; it must not interpret the existence of this file as `READY`.
 
