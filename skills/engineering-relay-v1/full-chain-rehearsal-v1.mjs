@@ -8,6 +8,7 @@ import {projectCommittedGithubLineage} from './github-journal-lineage-v1.mjs';
 import {reconcileGitHubFacts} from './provider-facts-v1.mjs';
 import {renderRelayPreviews} from './projection-preview-v1.mjs';
 import {projectObservedFrontier} from './observed-frontier-v1.mjs';
+import {observePublicTaskEvidence} from './github-task-evidence-receipt-v1.mjs';
 
 export class FullChainError extends Error {
   constructor(code,why){super(code+': '+why);this.name='FullChainError';this.code=code;}
@@ -55,6 +56,9 @@ function dataOnlyView(source,provider,preview,digest){
     structural_lineage_sha256:source.lineage.projection_sha256,
     github_source_lineage_sha256:source.source_lineage_sha256,
     frontier_sha256:preview.frontier_sha256,
+    public_task_evidence_receipt_sha256:preview.public_task_evidence_receipt_sha256,
+    public_task_evidence_observation:preview.public_task_evidence_observation,
+
     next_verification_category:preview.next_verification_category,
     blockers:preview.blockers,
     acceptance_denominator_state:'NOT_ADJUDICATED',
@@ -93,9 +97,18 @@ export async function rehearseNativeFullChain(rawInput,options={}) {
     Object.keys(input).sort().join()!==['bindings','owner_seed','provider_scope','source_spec'].sort().join())
     fail('INVALID','full-chain specification requires exact four fields');
   if(!options||typeof options!=='object'||Array.isArray(options)||
-    Object.keys(options).some(k=>!['sourceRead','providerRead','evaluation'].includes(k)))
+    Object.keys(options).some(k=>!['sourceRead','providerRead','evaluation','publicEvidenceRead'].includes(k)))
     fail('INVALID','unexpected options');
   const sourceRead=options.sourceRead??{},providerRead=options.providerRead??{};
+  const publicRead=options.publicEvidenceRead??null;
+  if(publicRead!==null){
+    if(typeof publicRead!=='object'||Array.isArray(publicRead)||
+      Object.keys(publicRead).some(k=>!['scope','readToken','fetchImpl'].includes(k))||
+      !Object.hasOwn(publicRead,'scope'))
+      fail('INVALID','bounded public evidence scope required');
+    boundedOpts({readToken:publicRead.readToken,fetchImpl:publicRead.fetchImpl},
+      'public evidence read');
+  }
   boundedOpts(sourceRead,'source read');
   boundedOpts(providerRead,'provider read',true);
   if(!options.evaluation||typeof options.evaluation!=='object'||Array.isArray(options.evaluation)||
@@ -114,6 +127,19 @@ export async function rehearseNativeFullChain(rawInput,options={}) {
   // then R3 provider issue/PR/current CI read with its bounded PR double-read.
   const source=await projectCommittedGithubLineage(
     src,input.owner_seed,input.bindings,sourceRead);
+  // Public comment custody is observed, not an Owner authorization or a
+  // TaskEvidence acceptance. It is an optional source read, never a write.
+  let publicReceipt=null;
+  if(publicRead!==null){
+    const e=publicRead.scope;
+    if(e?.repository!==scope.repository||e.parent_issue!==scope.parent_issue||
+      !scope.child_issues.includes(e.task_issue))
+      fail('PUBLIC_EVIDENCE_SCOPE_MISMATCH','comment task not in current provider scope');
+    const readOpts={};
+    if(publicRead.fetchImpl!==undefined)readOpts.fetchImpl=publicRead.fetchImpl;
+    if(publicRead.readToken!==undefined)readOpts.readToken=publicRead.readToken;
+    publicReceipt=await observePublicTaskEvidence(e,readOpts);
+  }
   const provider=await reconcileGitHubFacts(scope,providerRead);
   if(source.custody.parent_issue!==provider.repository+'#'+provider.parent_issue.number||
     source.custody.repository!==provider.repository||
@@ -129,8 +155,13 @@ export async function rehearseNativeFullChain(rawInput,options={}) {
   if(!HEX.test(source.source_lineage_sha256)||
     !HEX.test(provider.snapshot_sha256)||provider.consistency!=='PR_DOUBLE_READ_NON_ATOMIC')
     fail('INVALID_SOURCE_PROOF','missing digest or inconsistent R3 provider-current fence');
-  const frontier=projectObservedFrontier(source,provider);
+  const frontier=projectObservedFrontier(source,provider,publicReceipt);
   const preview=renderRelayPreviews(provider,options.evaluation,frontier);
+  if(preview.public_task_evidence_receipt_sha256!==
+       (publicReceipt?.receipt_sha256??null)||
+    preview.successor_handover.public_task_evidence_receipt_sha256!==
+       (publicReceipt?.receipt_sha256??null))
+    fail('RENDER_SOURCE_MISMATCH','R4 not bound to observed public comment');
   if(preview.frontier_sha256!==frontier.frontier_sha256||
     preview.successor_handover.frontier_sha256!==frontier.frontier_sha256||
     preview.frontier_source_lineage_sha256!==source.source_lineage_sha256)
@@ -146,6 +177,7 @@ export async function rehearseNativeFullChain(rawInput,options={}) {
   const digest=sha({
     source_lineage_sha256:source.source_lineage_sha256,
     frontier_sha256:frontier.frontier_sha256,
+    public_task_evidence_receipt_sha256:publicReceipt?.receipt_sha256??null,
     source_commit_sha:source.custody.commit_sha,
     provider_snapshot_sha256:provider.snapshot_sha256,
     r4_projection_sha256:preview.projection_sha256,
