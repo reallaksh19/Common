@@ -65,6 +65,7 @@ class OwnerSessionContractTests(unittest.TestCase):
         self.assertEqual(2, out["session_event_count"])
         self.assertEqual(1, out["claimed_active_session_count"])
         self.assertTrue(out["history_sha256"].startswith("sha256:"))
+        self.assertEqual("sha256:9f2fdd9bb4dd151bc4ab9a8161026f0d87ea7c412563b9d97860239dff600517", out["history_sha256"])
 
     def test_unknown_owner_and_session_does_not_imply_origin_or_lease(self):
         x = sample()
