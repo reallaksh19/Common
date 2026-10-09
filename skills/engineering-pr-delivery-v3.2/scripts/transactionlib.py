@@ -180,13 +180,16 @@ def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str, actor:
 
 
 def _validate_freeze_candidate(root: Path, issue: int, serial: int, content: str) -> None:
-    """Verify exact local Relay input/baseline/plan receipts, not cognitive isolation."""
+    """Bind ALL five latest Stage1 receipts; never claim independent admission."""
     if not content.startswith("# STAGE1_FREEZE_CANDIDATE\n"):
         raise TransactionError("BUDDY_FREEZE_HEADING_REQUIRED")
-    if "Isolation verdict: NOT_ATTESTED" not in content:
+    verdicts = re.findall(r"(?m)^Isolation verdict: (.*)$", content)
+    if verdicts != ["NOT_ATTESTED"]:
         raise TransactionError("BUDDY_FREEZE_CANNOT_SELF_CERTIFY_ISOLATION")
     phases = (
         ("STAGE1_INTAKE", "Intake"),
+        ("DISPATCH_REQUEST", "Dispatch request"),
+        ("DISPATCH_OBSERVATION", "Dispatch observation"),
         ("STAGE1_BASELINE", "Baseline"),
         ("STAGE1_PLAN", "Plan"),
     )
@@ -197,7 +200,9 @@ def _validate_freeze_candidate(root: Path, issue: int, serial: int, content: str
         receipt = prior[1]
         tx_id = receipt["id"]
         digest = _digest_bytes(prior[0])
-        if f"{label} tx: {tx_id}\n" not in content or f"{label} digest: {digest}\n" not in content:
+        tx_lines = re.findall(rf"(?m)^{re.escape(label)} tx: (.*)$", content)
+        digest_lines = re.findall(rf"(?m)^{re.escape(label)} digest: (.*)$", content)
+        if tx_lines != [tx_id] or digest_lines != [digest]:
             raise TransactionError(f"BUDDY_FREEZE_{stage}_REF_MISMATCH")
 
 
