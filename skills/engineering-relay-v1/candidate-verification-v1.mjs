@@ -32,7 +32,7 @@ function expectedDigest(observation){
  if(hash(p)!==observation.snapshot_sha256)
   refuse('SNAPSHOT_DIGEST_MISMATCH','provider was changed after observation');
 }
-function perPR(pr){
+function perPR(pr,nativeObserved){
  if(!pr||!Number.isSafeInteger(pr.number)||pr.number<1||
    !H40.test(pr.head_sha??'')||!H40.test(pr.base_sha??'')||
    !['MATCH','STALE','UNPINNED'].includes(pr.currentness)||
@@ -66,7 +66,7 @@ function perPR(pr){
    expected_head_sha:pr.expected_head_sha,merged:pr.merged,
    head_state:head,selected_ci_state:ci,selected_workflows:workflows,
    // "qualified" means qualified selected hosted facts only, NOT code acceptance.
-   selected_ci_qualified:head==='CURRENT'&&ci==='PASS',
+   selected_ci_qualified:nativeObserved&&head==='CURRENT'&&ci==='PASS',
    material_status:head!=='CURRENT'?'STALE_OR_UNPINNED':
      ci==='UNKNOWN'?'UNKNOWN':
      ci==='FAIL'?'CI_NON_SUCCESS':
@@ -87,7 +87,7 @@ export function deriveCandidateState(source){
    p.live_writer_enabled!==false||
    !Array.isArray(p.pr_facts)||p.pr_facts.length<1||p.pr_facts.length>4)
    refuse('UNTRUSTED','provider cannot grant human, CI or publication authority');
- const prs=p.pr_facts.map(perPR);
+ const prs=p.pr_facts.map(pr=>perPR(pr,p.source_state==='PROVIDER_OBSERVED'));
  if(new Set(prs.map(x=>x.number)).size!==prs.length)refuse('INVALID','duplicate PR');
  const blockers=[];
  if(prs.some(x=>x.head_state!=='CURRENT'))blockers.push('PROVIDER_HEAD_STALE_OR_UNPINNED');
