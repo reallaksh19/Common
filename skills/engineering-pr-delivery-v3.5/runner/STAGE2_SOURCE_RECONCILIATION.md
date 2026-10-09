@@ -18,7 +18,7 @@ A trusted operator must provide **verified evidence**, or mark `UNKNOWN` and wit
 | Stage 1 original allowed-input manifest / pinned SHA | `[OPERATOR: immutable reference, raw digest]` |
 | Stage 1 technical read allowlist attested | `[OPERATOR: enforcement and denied-read log reference]` |
 | Stage 1 contamination verdict | `[OPERATOR: CLEAN / CONTAMINATED / UNKNOWN]` |
-| Immutable Stage 1 plan publication/readback | `[OPERATOR: actual content SHA256, immutable ref, receipt]` |
+| Immutable Stage 1 baseline + provisional interpretation publication/readback | `[OPERATOR: actual content SHA256, immutable ref, receipt]` |
 | Owner/coordinator permission to reveal Stage 2 | `[OPERATOR: independently authorized source ref]` |
 | Stage 2 reality packet identity | `[OPERATOR: sealed packet digest/revision]` |
 | Stage 2 write authorization | **NONE** — read reconciliation is not executor promotion |
@@ -105,7 +105,7 @@ Copy the **exact questions from your frozen Stage 1 reconstruction (Q1/Q2/Q3 whe
 - State a falsifier capable of changing your answer and the test/next source read that would settle it.
 - Identify whether the answer affects approved scope, authenticated Owner decision or execution safety.
 
-Separately, **after answering all three original questions**, identify the minimal legitimate existing execution unit or HOLD and its missing gate. Do not retrofit a generic next-unit question into Q1/Q2/Q3 if the frozen source-specific question concerns different engineering semantics. Never infer a new task from a newly created Runner issue.
+Separately, **after answering every original frozen question**,  identify the minimal legitimate existing execution unit or HOLD and its missing gate. Do not retrofit a generic next-unit question into Q1/Q2/Q3 if the frozen source-specific question concerns different engineering semantics. Never infer a new task from a newly created Runner issue.
 
 ## 5. Verify positive *and* negative acceptance
 
@@ -128,7 +128,7 @@ Create `RUNNER_RECONCILIATION_V1.md` with:
 2. **Mode and sources:** planned vs interrupted; original baseline, true Agent A starting SHA, current head, PR/issue/graph, authorizations, observation timestamp.
 3. **Four-way matrix:** Owner, Runner, Agent A, observed source for every material lifecycle/product seam.
 4. **What each agent missed or got better:** including instances where Agent A is superior and where both were wrong.
-5. **Answers to original Q1/Q2/Q3:** source-backed responses and falsifiers.
+5. **Answers to original frozen questions:** Q1/Q2/Q3 only when the governing contract required three; source-backed responses and falsifiers.
 6. **Positive/negative tests:** current SHA/fixtures/consumer/browser evidence and unrun gaps.
 7. **ROI disposition:** accepted High work, missing High, parked Medium with cost/revisit trigger and declined Low.
 8. **New detailed continuation plan:** file/function boundaries, existing issue/unit IDs, dependencies, tests, smallest legitimate next unit.
