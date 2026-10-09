@@ -486,6 +486,7 @@ class SourceBoundCrossSurfaceViewTests(unittest.TestCase):
         )
         core = snap["responsibility_basis"]["delp_responsibility_core"]
         self.assertEqual(expected, core)
+        self.assertEqual(HEAD_A, core["candidate_sha"])
         self.assertEqual(snap["claim_ids"], core["claim_ids"])
         self.assertEqual(snap["leaf_semantic"]["P"], core["progress"]["leaf"]["P"])
         self.assertEqual(snap["plan_digest"], core["digests"]["plan"])
