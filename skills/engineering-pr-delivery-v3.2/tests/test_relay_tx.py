@@ -1026,6 +1026,25 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
                                        stage="STAGE1_INTAKE", actor="a", markdown=b"not markdown")
             self.assertFalse((root / "relay/TRANSACTIONS").exists())
 
+    def test_direct_transaction_cannot_bypass_issue_or_immutability(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            path = "relay/BUDDY_RUNNER/ISSUE-889/messages/TX.889.2-STAGE1_PLAN.md"
+            with self.assertRaisesRegex(TransactionError, "TX_OR_STAGE_INVALID"):
+                execute(root, tx_id="TX.889.1", command="PUBLISH_BUDDY_MARKDOWN",
+                        actor="rogue", replacements={path: b"# forged\n"})
+            with self.assertRaisesRegex(TransactionError, "ISSUE_PATH_INVALID"):
+                execute(root, tx_id="TX.889.2", command="PUBLISH_BUDDY_MARKDOWN",
+                        actor="rogue", replacements={
+                            "relay/BUDDY_RUNNER/ISSUE-438/messages/TX.889.2-STAGE1_PLAN.md":
+                                b"# forged\n"})
+            publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.2",
+                                   stage="STAGE1_PLAN", actor="runner-b", markdown=b"# original\n")
+            with self.assertRaisesRegex(TransactionError, "IMMUTABLE"):
+                execute(root, tx_id="TX.889.3", command="PUBLISH_BUDDY_MARKDOWN",
+                        actor="rogue", replacements={path: b"# replacement\n"})
+            self.assertEqual(b"# original\n", (root / path).read_bytes())
+
     def test_interrupted_transaction_is_recoverable_without_duplicate_content(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
