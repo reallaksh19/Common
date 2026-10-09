@@ -979,7 +979,7 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
     def test_commit_readback_and_root_state_is_untouched(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
-            content = b"# Original source observation\n\nUNKNOWN implementation; original inputs only.\n"
+            content = b"# Original source observation\n\nUNKNOWN implementation. Historical refs EP.438.7 and EVT.438.1 are citations, not new identities.\n"
             result = publish_buddy_markdown(
                 root,
                 issue_number=889,
@@ -997,6 +997,7 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
             self.assertEqual(content, (root / result["message_path"]).read_bytes())
             receipt = load_yaml(root / "relay/TRANSACTIONS/TX.889.1/manifest.yaml")
             self.assertEqual("PUBLISH_BUDDY_MARKDOWN", receipt["command"])
+            self.assertEqual(["TX.889.1"], receipt["identity_reservations"])
             self.assertEqual(result["message_sha256"], receipt["operations"][0]["after_digest"])
             self.assertFalse((root / "relay/STATE.yaml").exists())
             self.assertFalse((root / "relay/LEASES").exists())
