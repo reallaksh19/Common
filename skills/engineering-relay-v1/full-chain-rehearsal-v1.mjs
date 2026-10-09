@@ -7,6 +7,7 @@ import {canonicalJSON} from './provenance-v1.mjs';
 import {projectCommittedGithubLineage} from './github-journal-lineage-v1.mjs';
 import {reconcileGitHubFacts} from './provider-facts-v1.mjs';
 import {renderRelayPreviews} from './projection-preview-v1.mjs';
+import {projectObservedFrontier} from './observed-frontier-v1.mjs';
 
 export class FullChainError extends Error {
   constructor(code,why){super(code+': '+why);this.name='FullChainError';this.code=code;}
@@ -53,6 +54,10 @@ function dataOnlyView(source,provider,preview,digest){
     event_count:custody.event_count,session_count:custody.session_ids.length,
     structural_lineage_sha256:source.lineage.projection_sha256,
     github_source_lineage_sha256:source.source_lineage_sha256,
+    frontier_sha256:preview.frontier_sha256,
+    next_verification_category:preview.next_verification_category,
+    blockers:preview.blockers,
+    acceptance_denominator_state:'NOT_ADJUDICATED',
     provider_snapshot_sha256:provider.snapshot_sha256,
     r4_projection_sha256:preview.projection_sha256,
     pr_heads:provider.pr_facts.map(x=>({
@@ -124,7 +129,12 @@ export async function rehearseNativeFullChain(rawInput,options={}) {
   if(!HEX.test(source.source_lineage_sha256)||
     !HEX.test(provider.snapshot_sha256)||provider.consistency!=='PR_DOUBLE_READ_NON_ATOMIC')
     fail('INVALID_SOURCE_PROOF','missing digest or inconsistent R3 provider-current fence');
-  const preview=renderRelayPreviews(provider,options.evaluation);
+  const frontier=projectObservedFrontier(source,provider);
+  const preview=renderRelayPreviews(provider,options.evaluation,frontier);
+  if(preview.frontier_sha256!==frontier.frontier_sha256||
+    preview.successor_handover.frontier_sha256!==frontier.frontier_sha256||
+    preview.frontier_source_lineage_sha256!==source.source_lineage_sha256)
+    fail('RENDER_SOURCE_MISMATCH','R4 handover is not bound to actual R1/R3 frontier');
   if(preview.snapshot_sha256!==provider.snapshot_sha256||
     preview.parent_issue.snapshot_sha256!==provider.snapshot_sha256||
     preview.pr_titles.some(p=>p.snapshot_sha256!==provider.snapshot_sha256)||
@@ -135,6 +145,7 @@ export async function rehearseNativeFullChain(rawInput,options={}) {
     fail('RENDER_SOURCE_MISMATCH','R4 projection consumed a different source snapshot');
   const digest=sha({
     source_lineage_sha256:source.source_lineage_sha256,
+    frontier_sha256:frontier.frontier_sha256,
     source_commit_sha:source.custody.commit_sha,
     provider_snapshot_sha256:provider.snapshot_sha256,
     r4_projection_sha256:preview.projection_sha256,
