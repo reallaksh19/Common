@@ -1,0 +1,179 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: relay-v3.2-source-receipt-v2
+title: SourceReceiptV2 and SourceReceiptSetV2
+description: WP1 receipt of caller-supplied provider data. Does not verify GitHub
+  authentication, true repository currentness, DELP progress, V1 archive integrity
+  or Owner authority. All sha256 fields on this surface use domain-separated V2 digests
+  except raw body.
+oneOf:
+- $ref: '#/$defs/receipt'
+- $ref: '#/$defs/receiptSet'
+$defs:
+  digest:
+    type: string
+    pattern: ^sha256:[0-9a-f]{64}$
+  receipt:
+    type: object
+    additionalProperties: false
+    required:
+    - schema
+    - repository
+    - issue_number
+    - graph_release_digest
+    - comment
+    - block
+    - trust
+    - transport_authenticity
+    - receipt_digest
+    properties:
+      schema:
+        const: relay-v3.2-source-receipt-v2
+      repository:
+        type: string
+        pattern: ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$
+      issue_number:
+        type: integer
+        minimum: 1
+      graph_release_digest:
+        $ref: '#/$defs/digest'
+      comment:
+        type: object
+        additionalProperties: false
+        required:
+        - id
+        - user_id
+        - login
+        - author_association
+        - body_digest
+        properties:
+          id:
+            type: integer
+            minimum: 1
+          user_id:
+            oneOf:
+            - type: integer
+              minimum: 1
+            - type: 'null'
+          login:
+            oneOf:
+            - type: string
+              minLength: 1
+            - type: 'null'
+          author_association:
+            oneOf:
+            - type: string
+              minLength: 1
+            - type: 'null'
+          body_digest:
+            $ref: '#/$defs/digest'
+      block:
+        type: object
+        additionalProperties: false
+        required:
+        - ordinal
+        - char_offset
+        - facts_digest
+        - facts
+        properties:
+          ordinal:
+            type: integer
+            minimum: 0
+          char_offset:
+            type: integer
+            minimum: 0
+          facts_digest:
+            $ref: '#/$defs/digest'
+          facts:
+            type: object
+      trust:
+        type: object
+        additionalProperties: false
+        required:
+        - policy_digest
+        - decision
+        - reason
+        properties:
+          policy_digest:
+            $ref: '#/$defs/digest'
+          decision:
+            enum:
+            - ACCEPT
+            - REJECT
+            - UNKNOWN
+          reason:
+            enum:
+            - ALLOWLIST_MATCH
+            - NOT_IN_ALLOWLIST
+            - PROVIDER_AUTHOR_UNAVAILABLE
+            - PROVIDER_AUTHOR_ID_UNAVAILABLE
+            - PROVIDER_ASSOCIATION_UNAVAILABLE
+            - TRUSTED_ASSOCIATION
+            - UNTRUSTED_ASSOCIATION
+      transport_authenticity:
+        const: UNVERIFIED_CALLER_SUPPLIED_PROVIDER_DATA
+      receipt_digest:
+        $ref: '#/$defs/digest'
+  receiptSet:
+    type: object
+    additionalProperties: false
+    required:
+    - schema
+    - repository
+    - issue_number
+    - graph_release_digest
+    - policy
+    - policy_digest
+    - authority
+    - source_completeness
+    - receipts
+    - receipt_set_digest
+    properties:
+      schema:
+        const: relay-v3.2-source-receipt-set-v2
+      repository:
+        type: string
+        pattern: ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$
+      issue_number:
+        type: integer
+        minimum: 1
+      graph_release_digest:
+        $ref: '#/$defs/digest'
+      policy:
+        type: object
+        additionalProperties: false
+        required:
+        - mode
+        - fact_authors
+        - associations
+        - graph_release_digest
+        properties:
+          mode:
+            enum:
+            - ALLOWLIST
+            - ASSOCIATIONS
+          fact_authors:
+            type: array
+            uniqueItems: true
+            items:
+              type: string
+              minLength: 1
+          associations:
+            type: array
+            const:
+            - COLLABORATOR
+            - MEMBER
+            - OWNER
+          graph_release_digest:
+            $ref: '#/$defs/digest'
+      policy_digest:
+        $ref: '#/$defs/digest'
+      authority:
+        const: UNVERIFIED_CALLER_SUPPLIED_PROVIDER_DATA
+      source_completeness:
+        const: UNKNOWN_CALLER_SUPPLIED_COMMENT_SET
+      receipts:
+        type: array
+        items:
+          $ref: '#/$defs/receipt'
+      receipt_set_digest:
+        $ref: '#/$defs/digest'
