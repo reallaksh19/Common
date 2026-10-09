@@ -1041,7 +1041,7 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
             publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.2",
                                    stage="STAGE1_PLAN", actor="runner-b", markdown=b"# original\n")
             with self.assertRaisesRegex(TransactionError, "IMMUTABLE"):
-                execute(root, tx_id="TX.889.3", command="PUBLISH_BUDDY_MARKDOWN",
+                execute(root, tx_id="TX.889.2", command="PUBLISH_BUDDY_MARKDOWN",
                         actor="rogue", replacements={path: b"# replacement\n"})
             self.assertEqual(b"# original\n", (root / path).read_bytes())
 
