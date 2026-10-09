@@ -366,3 +366,31 @@ amendments:
     allowed_paths:
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_865_evidence_identity_red.py
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_865_custody_red.py
+  - id: AMEND-V32-865-WP1-RECEIPT-017
+    owner_authorized: false
+    owner_basis: >-
+      DISABLED PROPOSAL ONLY for Owner source-level authorization decision; the direct
+      Owner continuation "proceed next" permits publishing this bounded
+      candidate proposal and exact RED evidence, but is not treated as
+      an explicit grant of new frozen source/schema paths, human review,
+      claim-first released responsibility, test acceptance, or merge.
+      Owner original private-chat permalink is UNKNOWN. This row stays
+      DISABLED until separately approved and independently reviewed;
+      it may be enabled only on a standalone governance PR that lands
+      BEFORE an implementation PR bases on it. Never authorize paths
+      from the proposed product PR HEAD.
+    summary: >-
+      WP1 SourceReceiptV2 only. Produce a canonical read-only GitHub
+      source receipt with stable repository/issue/comment identity,
+      source body digest, per-comment fact-block ordinal, actual provider
+      author association and release-pinned trust policy and decision;
+      preserve historical V1 input_digest; do NOT edit or wrap the
+      existing DELP projection in WP1. DELP integration is a separately
+      authorized WP2 source change after strict SourceReceiptV2 acceptance.
+      Run real positive/adversarial discoverable receipt-specific tests before any
+      cross-consumer WP2 migration. No product qualification, COLD native
+      rewrite, V3.5 parity override or GitHub live writer grant.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/scripts/source_receipt_v32.py
+      - skills/engineering-pr-delivery-v3.2/schemas/source-receipt-v2.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_872_source_receipt.py
