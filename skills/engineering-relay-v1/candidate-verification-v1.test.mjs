@@ -132,6 +132,8 @@ test('rehashed injected CI cannot impersonate an in-process native GitHub acquis
  assert.equal(candidate.source_acquisition_attested,false,
    'serialized source labels and SHA256 do not attest real native R3 acquisition');
  assert.equal(candidate.pr_candidates[0].selected_ci_qualified,false);
+ assert.ok(candidate.blockers.includes('SOURCE_ACQUISITION_UNATTESTED'));
+ assert.equal(candidate.next_candidate_verification,'REACQUIRE_NATIVE_PROVIDER_FACTS_FOR_CI');
  // Replaying ordinary JSON cannot carry the original acquisition capability.
  const replay=JSON.parse(canonicalJSON(injected));
  assert.equal(deriveCandidateState(replay).source_acquisition_attested,false);
