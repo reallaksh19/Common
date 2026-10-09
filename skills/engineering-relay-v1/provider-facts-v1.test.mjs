@@ -55,6 +55,7 @@ const refuses=(p,code)=>assert.rejects(p,e=>e instanceof ProviderFactsError&&e.c
 test('one bounded native-source scope produces issue/PR/current-head CI facts',async()=>{
   const {result:r,urls}=await observed();
   assert.equal(r.schema,'relay-provider-facts-v1');
+  assert.equal(r.actual_next,'UNDETERMINED_PROVIDER_ONLY_REQUIRES_LINEAGE_AND_ACCEPTED_EVIDENCE');
   assert.equal(r.parent_issue.number,787);
   assert.equal(r.child_issues[0].number,833);
   assert.equal(r.pr_facts[0].head_sha,SHA);
