@@ -13,6 +13,16 @@ const PATH='skills/engineering-relay-v1/fixtures/cold-synthetic-recovery-manifes
 const FIX=new URL('./fixtures/cold-synthetic-recovery-manifest-v1.json',import.meta.url);
 const sha=b=>createHash('sha256').update(b).digest('hex');
 const bytes=()=>readFile(FIX);
+// Test-only immutable Git tree oracle. The CLI/prod path always hashes literal
+// GitHub response BYTES without newline conversion. Checkout core.autocrlf
+// may change local disk bytes on Windows, but it cannot change Git blob bytes.
+async function committedManifestBytes(){
+ const root=fileURLToPath(new URL('../../',import.meta.url));
+ const {stdout}=await exec('git',['show','HEAD:'+PATH],{
+  cwd:root,encoding:'buffer',maxBuffer:32768
+ });
+ return Buffer.isBuffer(stdout)?stdout:Buffer.from(stdout);
+}
 const makePin=(b,head=HEAD)=>({
  manifest_url:'https://github.com/'+REPO+'/blob/'+head+'/'+PATH,
  manifest_sha256:sha(b),
@@ -140,11 +150,21 @@ test('native source/output CLI refuses stale expected GitHub HEAD without exposi
    e=>e.code===1&&e.stderr.includes('RELAY_COLD_PROCESS_REFUSED SCOPE_MISMATCH')&&
      !e.stderr.includes('CANARY_TOKEN_MUST_NOT_LEAK'));
 });
+test('checkout CRLF bytes never replace immutable Git source bytes in native oracle',async()=>{
+ const committed=await committedManifestBytes();
+ const disk=await bytes();
+ const normalized=Buffer.from(disk.toString('utf8').replace(/\r\n/g,'\n'),'utf8');
+ assert.deepEqual(normalized,committed);
+ assert.equal(sha(committed),'8b9466eb0699e553dd6a8a33acd7c7bad4f2520162075f2fabe53f695b9e12eb');
+ const windows=Buffer.from(committed.toString('utf8').replace(/\n/g,'\r\n'),'utf8');
+ assert.notEqual(sha(windows),sha(committed));
+ assert.notEqual(windows.length,committed.length);
+});
 test('fresh Node process recovers synthetic source only from GitHub links and an expected hash',
  {skip:!process.env.RELAY_COLD_CI_HEAD_SHA},async()=>{
  const expected=process.env.RELAY_COLD_CI_HEAD_SHA,number=Number(process.env.RELAY_COLD_CI_PR_NUMBER);
  assert.match(expected,/^[a-f0-9]{40}$/);assert.ok(number>0);
- const b=await bytes();
+ const b=await committedManifestBytes();
  const cli=fileURLToPath(new URL('./cold-recovery-v1.mjs',import.meta.url));
  const env={...process.env,
    RELAY_COLD_PR_URL:'https://github.com/'+REPO+'/pull/'+number,

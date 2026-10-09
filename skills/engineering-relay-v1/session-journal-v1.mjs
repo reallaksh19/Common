@@ -169,36 +169,67 @@ export async function initJournal(folder){
  await rootDir(folder,true);
  return readJournal(folder);
 }
+async function syncCommitDirectory(root){
+  // On Windows/NTFS, Node directory fsync may be unsupported. The entry FILE
+  // has already been synced, but directory-link crash durability is NOT proven.
+  if(process.platform==='win32')return 'FILE_SYNCED_DIRECTORY_PERSISTENCE_UNCONFIRMED';
+  const dir=await fs.open(root,'r');
+  try{await dir.sync();}finally{await dir.close();}
+  return 'FILE_AND_DIRECTORY_SYNCED';
+}
+async function appendWithBarrier(folder,input,expected,barrier){
+  const root=await rootDir(folder);
+  obj(expected,['seq','sha256'],'expected tip');
+  if(!Number.isSafeInteger(expected.seq)||expected.seq<0||!HASH.test(expected.sha256))
+    reject('INVALID','bad CAS expectation');
+  const event=snapshot(input);
+  validateRecord(event);
+  const now=await readJournal(root);
+  if(now.tip.seq!==expected.seq||now.tip.sha256!==expected.sha256)
+    reject('STALE_TIP','journal changed; reload before append');
+  if(now.tip.seq>=MAX_ENTRIES)reject('LIMIT','journal full');
+  checkChainState([...now.events,event]);
+  const seq=now.tip.seq+1;
+  const body={schema:'relay-session-entry-v1',seq,prev_sha256:now.tip.sha256,record:event};
+  const sha256=hash(canonicalJSON(body));
+  const target=join(root,filename(seq)),temp=join(root,'.pending-'+randomUUID());
+  const bytes=canonicalJSON({...body,sha256})+'\n';
+  let staged=false,durability;
+  try{
+    const out=await fs.open(temp,'wx',0o600);
+    staged=true;
+    try{await out.writeFile(bytes,'utf8');await out.sync();}finally{await out.close();}
+    try{await fs.link(temp,target);}catch(e){
+      if(e.code==='EEXIST')reject('STALE_TIP','another writer committed expected sequence');
+      throw e;
+    }
+    // A directory-sync error occurs AFTER the target link becomes visible:
+    // throwing never means the append rolled back. Verify what was committed.
+    try{durability=await barrier(root);}
+    catch{
+      let committed=false;
+      try{
+        const recovery=await readJournal(root);
+        committed=recovery.tip.seq===seq&&recovery.tip.sha256===sha256;
+      }catch{}
+      reject(committed?'POST_COMMIT_DURABILITY_UNKNOWN':'POST_LINK_RECOVERY_REQUIRED',
+        'post-link durability unconfirmed; re-read journal tip before retry');
+    }
+  }finally{if(staged)await fs.unlink(temp).catch(()=>{});}
+  // Stage file removed before readback; successful callers never see phantom
+  // pending debris in their returned immutable snapshot.
+  const replay=await readJournal(root);
+  if(replay.tip.seq!==seq||replay.tip.sha256!==sha256)
+    reject('CORRUPT','append readback mismatch');
+  return Object.freeze({...replay,durability_state:durability});
+}
 export async function appendJournal(folder,input,expected){
- const root=await rootDir(folder);
- obj(expected,['seq','sha256'],'expected tip');
- if(!Number.isSafeInteger(expected.seq)||expected.seq<0||!HASH.test(expected.sha256))
-   reject('INVALID','bad CAS expectation');
- const event=snapshot(input);
- validateRecord(event);
- const now=await readJournal(root);
- if(now.tip.seq!==expected.seq||now.tip.sha256!==expected.sha256)
-   reject('STALE_TIP','journal changed; reload before append');
- if(now.tip.seq>=MAX_ENTRIES)reject('LIMIT','journal full');
- checkChainState([...now.events,event]);
- const seq=now.tip.seq+1;
- const body={schema:'relay-session-entry-v1',seq,prev_sha256:now.tip.sha256,record:event};
- const sha256=hash(canonicalJSON(body));
- const target=join(root,filename(seq)),temp=join(root,'.pending-'+randomUUID());
- const bytes=canonicalJSON({...body,sha256})+'\n';
- let staged=false;
- try{
-   const out=await fs.open(temp,'wx',0o600);
-   staged=true;
-   try{await out.writeFile(bytes,'utf8');await out.sync();}finally{await out.close();}
-   try{await fs.link(temp,target)}catch(e){
-     if(e.code==='EEXIST')reject('STALE_TIP','another writer committed expected sequence');
-     throw e;
-   }
-   // fsync the directory so the atomic hardlink is durable after success.
-   const dir=await fs.open(root,'r');try{await dir.sync();}finally{await dir.close();}
- }finally{if(staged)await fs.unlink(temp).catch(()=>{});}
- const replay=await readJournal(root);
- if(replay.tip.seq!==seq||replay.tip.sha256!==sha256)reject('CORRUPT','append readback mismatch');
- return replay;
+  return appendWithBarrier(folder,input,expected,syncCommitDirectory);
+}
+/** Fault boundary for source-level tests only; production appendJournal
+ * always invokes the real OS-specific durability barrier.
+ */
+export async function __appendWithDirectoryBarrierForTest(folder,input,expected,barrier){
+  if(typeof barrier!=='function')reject('INVALID','test barrier must be callable');
+  return appendWithBarrier(folder,input,expected,barrier);
 }

@@ -4,7 +4,7 @@ import {mkdtemp,readFile,writeFile,readdir,unlink,symlink} from 'node:fs/promise
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
-import {initJournal,appendJournal,readJournal,JournalError} from './session-journal-v1.mjs';
+import {initJournal,appendJournal,readJournal,JournalError,__appendWithDirectoryBarrierForTest} from './session-journal-v1.mjs';
 
 const SHA='49ff9e03366470cb6282ff6697b5034e610a703c';
 const zero='0'.repeat(64),H=message=>createHash('sha256').update(message,'utf8').digest('hex');
@@ -183,4 +183,29 @@ test('symlink root is rejected',async()=>{
  const dir=await create(),parent=await mkdtemp(join(tmpdir(),'relay-link-')),alias=join(parent,'link');
  await symlink(dir,alias,'dir');
  await rejected(readJournal(alias),'INVALID');
+});
+
+
+test('post-link directory fsync failure is a typed committed-but-durability-unknown result, not rollback',async()=>{
+ const dir=await create(),old={seq:0,sha256:zero};
+ const event=record('OWNER_PROMPT','SYNTHETIC commit with directory fsync failure');
+ await rejected(__appendWithDirectoryBarrierForTest(dir,event,old,async()=>{
+  const e=new Error('SYNTHETIC EPERM after link');e.code='EPERM';throw e;
+ }),'POST_COMMIT_DURABILITY_UNKNOWN');
+ const replay=await readJournal(dir);
+ assert.equal(replay.tip.seq,1);
+ assert.equal(replay.events[0].event_id,event.event_id);
+ assert.equal(replay.events[0].content.text,event.content.text);
+ await rejected(appendJournal(dir,event,old),'STALE_TIP');
+ const recovered=await appendJournal(dir,record('AGENT_RESPONSE','continued after reconciled tip'),replay.tip);
+ assert.equal(recovered.tip.seq,2);
+ assert.equal(recovered.events.length,2);
+});
+test('successful append explicitly labels platform durability and never grants acceptance',async()=>{
+ const dir=await create();
+ const out=await appendJournal(dir,record('OWNER_PROMPT','SYNTHETIC file sync scope'),{seq:0,sha256:zero});
+ assert.equal(out.durability_state,process.platform==='win32'?
+  'FILE_SYNCED_DIRECTORY_PERSISTENCE_UNCONFIRMED':'FILE_AND_DIRECTORY_SYNCED');
+ assert.equal(out.authorization_granted,false);
+ assert.equal(out.independently_accepted,false);
 });
