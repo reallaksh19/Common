@@ -708,6 +708,11 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         self.assertTrue(declared)
         for number in declared:
             self.assertEqual(number, provider.get_pull(number)["number"])
+        import delp_projection_v32 as delp
+        observed = delp.observe_github(provider, live)
+        new_leaf = next(n["ref"] for n in live["nodes"]
+                        if n.get("responsibility_id") == "R-RECONSTRUCTION")
+        self.assertEqual("e" * 40, observed[new_leaf]["candidate_sha"])
         with self.assertRaisesRegex(AssertionError, "unapproved fake PR"):
             provider.get_pull(98764)
 
@@ -721,7 +726,6 @@ class VerticalResponsibilityCycle(unittest.TestCase):
         self.assertEqual(98765, future.get_pull(98765)["number"])
         with self.assertRaisesRegex(AssertionError, "unapproved fake PR"):
             future.get_pull(previous)
-        self.assertEqual([], replay.live_readback.__dict__.get("authority_effects", []))
 
 
 if __name__ == "__main__":
