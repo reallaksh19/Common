@@ -53,7 +53,8 @@ test('one canonical R12 schema supports PENDING, PASS, FAIL and UNKNOWN without 
   assert.equal(state.live_writer_enabled,false);
   assert.equal(state.independently_accepted,false);
   assert.equal(state.authorization_granted,false);
-  assert.equal(state.next_candidate_verification,ci==='PASS'?null:'QUALIFY_SELECTED_CURRENT_HEAD_CI');
+  assert.equal(state.next_candidate_verification,ci==='PASS'?'REACQUIRE_NATIVE_PROVIDER_FACTS_FOR_CI':'QUALIFY_SELECTED_CURRENT_HEAD_CI');
+  assert.ok(state.blockers.includes('SOURCE_ACQUISITION_UNATTESTED'));
   assert.equal(state.blockers.includes('SELECTED_CI_NOT_ALL_PASS'),ci!=='PASS');
   assert.deepEqual(verifyCandidateState(state,source),state);
   assert.equal(Object.isFrozen(state.pr_candidates[0].selected_workflows),true);
