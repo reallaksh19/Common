@@ -17,6 +17,8 @@
 | Visibility | `STAGE1_ONLY`; Runner `READ_ONLY`; A remains primary |
 | Operator read rule | [actual enforced ref/path/tool read boundary and receipt, else `NOT_VERIFIED`] |
 
+**Cognitive neutrality:** The original learner/user-facing task may be visible (planned Runner is `TASK_AWARE`), but don't preload a list of three “independent” research answers/questions, a mandatory number of redesigns/counterexamples, or a publishable Stage 1 implementation plan. Any genuine Owner questions must be labelled **OWNER QUESTIONS**, separate from B's own source-derived questions. First require an observed historical input→consumer→output witness and meaningful variation. A existing completed packet may be preserved as immutable history and revised under a new version; never silently rewrite its original commit.
+
 **Prohibited at this stage:** current A PR/branch/diff/status/CI, solution direction, A-selected risks and parked priorities, technical HANDOVER_CONTEXT, current material HEAD, original chat summary that discloses A's algorithm, Stage 2 instructions, Stage 1 evaluator/expected answer. Merely calling a packet sanitized does not make it safe.
 
 **Agent B's actual task:** read approved historical source; author [Stage 1 reconstruction](STAGE1_RECONSTRUCTION.md) with **Part A observed system baseline FIRST**, then independently interpret approved problem in Part B. Never read all `relay/` or GitHub by default; immediately return `STAGE1_NOT_ISOLATED` if any forbidden read surface is accessible.
