@@ -28,9 +28,9 @@
 
 **Owner WHAT:** `[observable outcome; separate from agent paraphrase]`
 
-**Owner WHY:** `[actual harm/cost/quality defect and what must remain invariant]`
+**Owner WHY:** `[actual harm/cost/quality defect and invariant, supported by original Owner source; agent interpretations kept separate]`
 
-**Current approved responsibility and non-goals at historical cutoff:** `[scope, graph, dependencies, parked items; cite frozen permitted source]`
+**Original approved responsibility and non-goals at historical cutoff:** `[Owner-approved scope, graph and dependencies only; optional agent-ranked risks or parked improvements WITHHELD until Stage 2]`
 
 ### Original repository and fixtures
 
@@ -62,6 +62,8 @@ A reason code reflects **why preparation was requested**, not proof of exact con
 
 ### Stage 1 technical admission (operator side only, not a model assertion)
 
+**No unfiltered links to the parent repository:** Any outbound Markdown link, commit URL, skill filename or relative folder-navigation path in the actual B-readable prompt must be audited for reachable current issues/PRs/Stage 2. A link to broad `Common/main` cannot be labelled Stage 1-only merely because the surrounding text says not to click it.
+
 - [ ] Runner B session actually new and not already exposed to A's implementation.
 - [ ] Only immutable approved source and curated intake are readable; no unrestricted connector/search/browser or shared conversation history.
 - [ ] Forbidden source/Stage 2 attempted reads would be denied and logged.
@@ -69,7 +71,7 @@ A reason code reflects **why preparation was requested**, not proof of exact con
 - [ ] Runner output is limited to an external controlled research artifact; engineering source/GitHub issue edits are unavailable.
 - [ ] If any item is unverified, no clean Stage 1 certification.
 
-**Runner task:** Supply the separate [Stage 1 thinking prompt](STAGE1_INDEPENDENT_RECONSTRUCTION.md) and original source only. It must produce historical system baseline **before** engineering options and never a current-head plan.
+**Runner task:** Supply **only a copy** of the sanitized Stage 1 thinking instructions (no link to broader V3.5 repo), the completed Template A input, and the allowlisted historical source. A full GitHub Skill/Relay folder link is NOT an isolation mechanism. It must produce historical system baseline **before** engineering options and never a current-head plan.
 
 ---
 
@@ -113,9 +115,9 @@ Do not show the following expectations to Stage 1 Runner B.
 
 | Axis | Observable minimum | Result |
 |---|---|---|
-| A. Independent engineering comprehension | Original path/symbols, actual consumers, two alternatives, three falsifiers, meaningful positive/negative acceptance | PASS / FAIL / NOT_OBSERVED |
+| A. Independent engineering comprehension | Original pinned paths/symbols → actual consumers and authentic witness; meaningful variation, evidence-based alternatives **or NO_CHANGE**, falsifiers and positive/negative acceptance | PASS / FAIL / NOT_OBSERVED |
 | B. Enforced original-source blindness | New independent context, technical read allowlist, denied forbidden reads, no premature A HOW | ENFORCED / CONTAMINATED / UNKNOWN |
-| C. Frozen answer integrity | Exact raw response digest, immutable source/readback and unchanged three questions | VERIFIED / NOT_VERIFIED |
+| C. Frozen answer integrity | Exact original Part A + Part B response digest, immutable readback and unchanged **actual original source-derived questions** (three only when required by Owner/hand-over contract) | VERIFIED / NOT_VERIFIED |
 | D. Four-way reality reconciliation | Original Owner vs B vs Agent A vs current provider source; explicit A-better, B-better, both-wrong or UNKNOWN examples | OBSERVED / INCOMPLETE / NOT_RUN |
 | E. Correct next-unit/ROI choice | Verified High absorbed, missing High ordered, Medium parked with trigger, existing responsibility preserved | GROUNDED / UNSUPPORTED |
 | F. Safe custody and external authority | No dual writer, no Owner/reviewer impersonation, source recheck and epoch after fencing | PROVEN / HOLD / NOT_RUN |
