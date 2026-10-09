@@ -60,6 +60,17 @@ test('one canonical R12 schema supports PENDING, PASS, FAIL and UNKNOWN without 
   assert.equal(JSON.stringify(state).includes('PRIVATE SOURCE CANARY'),false);
  }
 });
+test('injected PASS without native acquisition MUST carry an explicit source blocker and next verification',async()=>{
+  const source=await facts({status:'completed',conclusion:'success'});
+  const state=deriveCandidateState(source),candidate=state.pr_candidates[0];
+  assert.equal(candidate.selected_ci_state,'PASS');
+  assert.equal(state.source_acquisition_attested,false);
+  assert.equal(candidate.selected_ci_qualified,false);
+  assert.ok(state.blockers.includes('SOURCE_ACQUISITION_UNATTESTED'),
+    'unqualified injected selected PASS is not a completed acquisition check');
+  assert.equal(state.next_candidate_verification,'REACQUIRE_NATIVE_PROVIDER_FACTS_FOR_CI');
+});
+
 test('merged PR with completed PASS remains selected-CI-pass-only, never Owner-accepted',async()=>{
  const provider=await facts({merged:true});
  const state=deriveCandidateState(provider),unit=state.pr_candidates[0];
