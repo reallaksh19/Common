@@ -1,0 +1,52 @@
+name: v35-wp2-r12-to-delp-diagnostic
+on:
+  push:
+    branches:
+      - feat/v35-r14-wp2-u01-native-delpreado-probe-20261009
+  pull_request:
+    paths:
+      - skills/engineering-relay-v1/lifecycle-v35/**
+      - .github/workflows/v35-wp2-r12-to-delp-diagnostic.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-read-only-join:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-latest, python: '3.11', node: '22'}
+          - {os: ubuntu-latest, python: '3.12', node: '24'}
+          - {os: windows-latest, python: '3.11', node: '22'}
+          - {os: windows-latest, python: '3.12', node: '24'}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Exact immutable source and runtimes
+        shell: bash
+        run: |
+          git rev-parse HEAD
+          python --version
+          node --version
+      - name: Install pure source-validation dependencies
+        run: python -m pip install 'jsonschema==4.26.0' PyYAML
+      - name: U1-U4 full native exact-tree regression
+        run: python -m unittest discover -s skills/engineering-relay-v1/lifecycle-v35 -p 'test_*contract_v1.py' -v
+      - name: Python and Node U4 conformance including real V3.2 facts
+        run: python -m unittest discover -s skills/engineering-relay-v1/lifecycle-v35 -p 'test_*conformance_v1.py' -v
+      - name: U5 real DELP projector quarantine
+        run: python -m unittest discover -s skills/engineering-relay-v1/lifecycle-v35 -p 'test_diagnostic_delp_bridge_v1.py' -v
+      - name: U4 Node conformance
+        run: node --test skills/engineering-relay-v1/lifecycle-v35/lifecycle-conformance-v1.test.mjs
+      - name: U5 actual R12-to-Python-DELP consumer probe
+        run: node --test skills/engineering-relay-v1/lifecycle-v35/r12-to-delp-readonly-v1.test.mjs
