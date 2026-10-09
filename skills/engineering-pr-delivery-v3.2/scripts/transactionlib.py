@@ -129,51 +129,53 @@ def _prior_buddy_message(root: Path, issue: int, current_seq: int, stage: str) -
 
 
 def _require_buddy_sequence(root: Path, issue: int, seq: int, stage: str, actor: str) -> None:
-    """Require a current, ordered receipt chain; never certify a model's isolation."""
-    prerequisites = {
-        "DISPATCH_REQUEST": "STAGE1_INTAKE",
-        "DISPATCH_OBSERVATION": "DISPATCH_REQUEST",
-        "STAGE1_BASELINE": "DISPATCH_OBSERVATION",
-        "STAGE1_PLAN": "STAGE1_BASELINE",
-        "STAGE1_FREEZE_CANDIDATE": "STAGE1_PLAN",
-    }
-    needed = prerequisites.get(stage)
-    if needed is None:
-        return
-    prior = _prior_buddy_message(root, issue, seq, needed)
-    if prior is None:
-        raise TransactionError(f"BUDDY_STAGE_ORDER_MISSING_{needed}")
+    """All latest SAME-ISSUE receipts must form one ordered, unbroken Stage1 attempt.
 
-    prior_seq = int(prior[1]["id"].split(".")[-1])
-    if stage != "DISPATCH_REQUEST":
-        intake = _prior_buddy_message(root, issue, seq, "STAGE1_INTAKE")
-        if intake is None or prior_seq <= int(intake[1]["id"].split(".")[-1]):
+    This proves only local transaction ordering. It does not authenticate actor
+    identity, source-read isolation or the factual accuracy of a run claim.
+    """
+    stages = (
+        "STAGE1_INTAKE", "DISPATCH_REQUEST", "DISPATCH_OBSERVATION",
+        "STAGE1_BASELINE", "STAGE1_PLAN",
+    )
+    target_index = len(stages) if stage == "STAGE1_FREEZE_CANDIDATE" else (
+        stages.index(stage) if stage in stages else -1
+    )
+    if target_index <= 0:
+        return
+    chain: dict[str, tuple[bytes, dict[str, Any]]] = {}
+    last_seq = 0
+    for predecessor in stages[:target_index]:
+        observation = _prior_buddy_message(root, issue, seq, predecessor)
+        if observation is None:
+            if predecessor == stages[target_index - 1]:
+                raise TransactionError(f"BUDDY_STAGE_ORDER_MISSING_{predecessor}")
             raise TransactionError("BUDDY_STALE_STAGE_CHAIN")
-    # A subsequent intake/dispatch/observation supersedes earlier trial steps.
-    # A plan for a new intake must not inherit an old Runner's baseline.
-    earlier_stage = {
-        "DISPATCH_OBSERVATION": "STAGE1_INTAKE",
-        "STAGE1_BASELINE": "DISPATCH_REQUEST",
-        "STAGE1_PLAN": "DISPATCH_OBSERVATION",
-        "STAGE1_FREEZE_CANDIDATE": "STAGE1_BASELINE",
-    }.get(stage)
-    if earlier_stage is not None:
-        earlier = _prior_buddy_message(root, issue, seq, earlier_stage)
-        if earlier is None or prior_seq <= int(earlier[1]["id"].split(".")[-1]):
+        prior_seq = int(observation[1]["id"].split(".")[-1])
+        if prior_seq <= last_seq:
             raise TransactionError("BUDDY_STALE_STAGE_CHAIN")
-    if stage == "STAGE1_PLAN" and prior[1].get("actor") != actor:
-        raise TransactionError("BUDDY_STAGE1_AUTHOR_CHANGED")
-    if stage == "STAGE1_BASELINE":
-        if prior[1].get("actor") == actor:
-            raise TransactionError("BUDDY_OPERATOR_AND_RUNNER_NOT_SEPARATE")
-        content = prior[0].decode("utf-8")
-        if not content.startswith("# RUNNER_EXECUTION_OBSERVED\n"):
+        chain[predecessor] = observation
+        last_seq = prior_seq
+    if target_index >= 3:
+        observed = chain["DISPATCH_OBSERVATION"][0].decode("utf-8")
+        if not observed.startswith("# RUNNER_EXECUTION_OBSERVED\n"):
             raise TransactionError("BUDDY_DISPATCH_NOT_EXECUTED")
-        if not re.search(r"(?m)^Session ref: \S+", content) or not re.search(
-            r"(?m)^Read-scope ref: \S+", content
+        if not re.search(r"(?m)^Session ref: \S+", observed) or not re.search(
+            r"(?m)^Read-scope ref: \S+", observed
         ):
             raise TransactionError("BUDDY_DISPATCH_REFERENCES_MISSING")
-        # These are claimed observations, not independently provider-attested.
+    if stage == "STAGE1_BASELINE":
+        if actor == chain["DISPATCH_OBSERVATION"][1].get("actor"):
+            raise TransactionError("BUDDY_OPERATOR_AND_RUNNER_NOT_SEPARATE")
+    if stage == "STAGE1_PLAN":
+        if actor != chain["STAGE1_BASELINE"][1].get("actor"):
+            raise TransactionError("BUDDY_STAGE1_AUTHOR_CHANGED")
+    if stage == "STAGE1_FREEZE_CANDIDATE":
+        if chain["STAGE1_BASELINE"][1].get("actor") != chain["STAGE1_PLAN"][1].get("actor"):
+            raise TransactionError("BUDDY_STAGE1_AUTHOR_CHANGED")
+        if actor == chain["STAGE1_PLAN"][1].get("actor"):
+            raise TransactionError("BUDDY_FREEZE_OPERATOR_NOT_SEPARATE")
+
 
 
 
