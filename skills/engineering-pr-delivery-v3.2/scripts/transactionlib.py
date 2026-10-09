@@ -425,11 +425,14 @@ def _prepare(
     identity_reservations: set[str] = set()
     if parse_canonical_id(tx_id) is not None:
         identity_reservations.add(tx_id)
-    for payload in replacements.values():
-        try:
-            identity_reservations.update(canonical_ids_in_text(payload.decode("utf-8")))
-        except UnicodeDecodeError:
-            continue
+    # Free-form Buddy Markdown can quote historical TX/EP/EVT IDs as evidence.
+    # Those mentions are REFERENCES, not freshly allocated Relay identities.
+    if command != "PUBLISH_BUDDY_MARKDOWN":
+        for payload in replacements.values():
+            try:
+                identity_reservations.update(canonical_ids_in_text(payload.decode("utf-8")))
+            except UnicodeDecodeError:
+                continue
 
     now = _now()
     manifest = {
