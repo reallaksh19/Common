@@ -347,7 +347,9 @@ properties:
   source_bound_successor:
     type: object
     additionalProperties: false
-    required: [schema, authority, delp_responsibility_core, provider_trust, repository, root, leaf, responsibility, claim_ids, owner_source_status, currentness, moved_axes, digests, provider_observation, fact_count, rejected_fact_count, progress, source_action, source_action_detail, execution_admission, owner_merge_authority, authority_effects]
+    # Existing frozen C6 archives predate the added shared core. It is optional
+    # for historical schema validation; the current producer always emits it.
+    required: [schema, authority, provider_trust, repository, root, leaf, responsibility, claim_ids, owner_source_status, currentness, moved_axes, digests, provider_observation, fact_count, rejected_fact_count, progress, source_action, source_action_detail, execution_admission, owner_merge_authority, authority_effects]
     properties:
       schema: {const: relay-v3.2-source-bound-successor-v1}
       authority: {const: DERIVED_RECONSTRUCTION_READ_ONLY}
