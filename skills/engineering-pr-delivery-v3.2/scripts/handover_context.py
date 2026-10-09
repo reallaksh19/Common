@@ -507,6 +507,9 @@ def _successor_entry(
         challenge_basis["source_currentness"] = source_bound["currentness"]
         challenge_basis["source_input_digest"] = source_bound["digests"]["input"]
         challenge_basis["source_plan_digest"] = source_bound["digests"]["plan"]
+        challenge_basis["source_responsibility_basis_digest"] = (
+            source_bound["delp_responsibility_core"]["basis_digest"]
+        )
         challenge_basis["source_leaf"] = source_bound["leaf"]
         challenge_basis["source_moved_axes"] = list(source_bound["moved_axes"])
     challenge_digest = (
