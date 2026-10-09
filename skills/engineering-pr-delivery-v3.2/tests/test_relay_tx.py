@@ -1081,6 +1081,35 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
             self.assertEqual("NOT_ATTESTED_BY_MESSAGE_TRANSPORT", plan["admission"])
             self.assertFalse((root / "relay/STATE.yaml").exists())
 
+    def test_operator_cannot_claim_runner_baseline_and_runner_identity_cannot_switch(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.1",
+                                   stage="STAGE1_INTAKE", actor="operator",
+                                   markdown=b"# Original Owner source\\n")
+            publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.2",
+                                   stage="DISPATCH_REQUEST", actor="operator",
+                                   markdown=b"# Launch request\\n")
+            publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.3",
+                                   stage="DISPATCH_OBSERVATION", actor="operator",
+                                   markdown=b"# RUNNER_EXECUTION_OBSERVED\\n\\nSession ref: runner-123\\nRead-scope ref: original-only\\n")
+            with self.assertRaisesRegex(TransactionError, "OPERATOR_AND_RUNNER_NOT_SEPARATE"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.4",
+                                       stage="STAGE1_BASELINE", actor="operator",
+                                       markdown=b"# Attempted self-attestation\\n")
+            publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.4",
+                                   stage="STAGE1_BASELINE", actor="runner-b",
+                                   markdown=b"# Original source independently reconstructed\\n")
+            with self.assertRaisesRegex(TransactionError, "STAGE1_AUTHOR_CHANGED"):
+                publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.5",
+                                       stage="STAGE1_PLAN", actor="other-agent",
+                                       markdown=b"# Different author trying to inherit baseline\\n")
+            good = publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.5",
+                                          stage="STAGE1_PLAN", actor="runner-b",
+                                          markdown=b"# Independent options and falsifiers\\n")
+            self.assertEqual("COMMITTED", good["status"])
+            self.assertEqual("NOT_ATTESTED_BY_MESSAGE_TRANSPORT", good["admission"])
+
     def test_new_intake_supersedes_old_dispatch_and_baseline(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
