@@ -1046,6 +1046,28 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
                         actor="rogue", replacements={path: b"# replacement\n"})
             self.assertEqual(b"# original\n", (root / path).read_bytes())
 
+    def test_dispatch_request_then_blocker_records_no_runner_claim_or_lease(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            request = publish_buddy_markdown(
+                root, issue_number=889, tx_id="TX.889.5",
+                stage="DISPATCH_REQUEST", actor="operator",
+                markdown=b"# Dispatch requested\n\nExact source ref; independent runtime required.\n",
+            )
+            blocker = publish_buddy_markdown(
+                root, issue_number=889, tx_id="TX.889.6",
+                stage="DISPATCH_OBSERVATION", actor="operator",
+                markdown=b"# BLOCKED_NO_RUNNER_CAPABILITY\n\nNo separate AI runner available.\n",
+            )
+            self.assertEqual("COMMITTED", request["status"])
+            self.assertEqual("COMMITTED", blocker["status"])
+            self.assertEqual("NOT_ATTESTED_BY_MESSAGE_TRANSPORT", blocker["admission"])
+            self.assertNotEqual(request["message_sha256"], blocker["message_sha256"])
+            self.assertFalse((root / "relay/STATE.yaml").exists())
+            self.assertFalse((root / "relay/EVENTS.jsonl").exists())
+            self.assertFalse((root / "relay/LEASES").exists())
+            self.assertFalse((root / "relay/BUDDY_RUNNER/ISSUE-889/messages/TX.889.7-STAGE1_PLAN.md").exists())
+
     def test_interrupted_transaction_is_recoverable_without_duplicate_content(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
