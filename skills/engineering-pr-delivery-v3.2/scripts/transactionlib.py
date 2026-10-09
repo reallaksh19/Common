@@ -4,6 +4,7 @@ import copy
 import hashlib
 import json
 import os
+import re
 import shutil
 from fnmatch import fnmatch
 from datetime import datetime, timezone
@@ -87,6 +88,46 @@ COMMAND_TARGET_PATTERNS = {
         "relay/LEASES/LEASE-*.yaml",
     ],
 }
+
+
+# One canonical stage allowlist for all native Relay Buddy Markdown writers.
+BUDDY_MESSAGE_STAGES = frozenset({
+    "READINESS", "STAGE1_INTAKE", "STAGE1_BASELINE", "STAGE1_PLAN",
+    "TECHNICAL_HANDOVER", "STAGE2_RECONCILIATION", "CONTINUATION_EVIDENCE",
+})
+
+
+def _validate_buddy_markdown_transaction(
+    root: Path,
+    tx_id: str,
+    replacements: dict[str, bytes],
+) -> None:
+    """Prevent direct execute() from bypassing the immutable message boundary."""
+    if len(replacements) != 1:
+        raise TransactionError("BUDDY_SINGLE_MESSAGE_TRANSACTION_REQUIRED")
+    relative, payload = next(iter(replacements.items()))
+    match = re.fullmatch(
+        r"relay/BUDDY_RUNNER/ISSUE-([1-9][0-9]*)/messages/"
+        r"TX\.([1-9][0-9]*)\.([1-9][0-9]*)-([A-Z0-9_]+)\.md",
+        relative,
+    )
+    if not match or int(match.group(1)) != int(match.group(2)):
+        raise TransactionError("BUDDY_MESSAGE_ISSUE_PATH_INVALID")
+    expected_tx = f"TX.{match.group(1)}.{match.group(3)}"
+    if tx_id != expected_tx or match.group(4) not in BUDDY_MESSAGE_STAGES:
+        raise TransactionError("BUDDY_MESSAGE_TX_OR_STAGE_INVALID")
+    if not isinstance(payload, bytes) or not 4 <= len(payload) <= 2_000_000:
+        raise TransactionError("BUDDY_MARKDOWN_BYTES_INVALID")
+    try:
+        content = payload.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise TransactionError("BUDDY_MARKDOWN_UTF8_REQUIRED") from exc
+    if not content.startswith("# ") or "\x00" in content:
+        raise TransactionError("BUDDY_MARKDOWN_HEADING_REQUIRED")
+    target = repo_path(root, relative, "buddy Markdown message")
+    expected = root.resolve() / relative
+    if target != expected or target.exists() or expected.is_symlink():
+        raise TransactionError("BUDDY_MESSAGE_IMMUTABLE_OR_SYMLINKED")
 
 
 class TransactionError(RuntimeError):
@@ -343,6 +384,8 @@ def _prepare(
         require_identifier(tx_id, "TX-", "transaction id")
     except ValueError as exc:
         raise TransactionError(str(exc)) from exc
+    if command == "PUBLISH_BUDDY_MARKDOWN":
+        _validate_buddy_markdown_transaction(root, tx_id, replacements)
     prune_terminal_payloads(root)
     if incomplete_transactions(root):
         raise TransactionError("another incomplete V3 transaction exists; recover it before starting a new command")
