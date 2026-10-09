@@ -223,6 +223,8 @@ test('true native exact-head GitHub synthetic journal + real parent/PR/CI + R4 p
  // PASS, FAIL or UNKNOWN by the time a cold reviewer replays a merged PR.
  const candidate=out.verification_candidates.find(x=>x.number===prNumber);
  assert.ok(candidate,'selected PR must appear in canonical R12 candidate state');
+ assert.ok(!out.blockers.includes('SOURCE_ACQUISITION_UNATTESTED'),
+   'actual native R3 source must not inherit synthetic acquisition blocker');
  assert.equal(candidate.head_sha,head);
  assert.equal(candidate.head_state,'CURRENT');
  assert.equal(candidate.selected_workflows[0].state,out.pr_heads[0].ci[0].state);
