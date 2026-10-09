@@ -25,6 +25,10 @@ After preparing an original-only packet, Agent A must **determine whether the cu
 
 If an actual launch tool exists, the controller must use that supported capability, not a GitHub comment. Record its real new-session ID, restricted tool manifest, source allowlist and forbidden-read attempts. If no actual technical tool/credential restriction exists, the result is `BLINDNESS_UNVERIFIED`, even for a separately opened chat.
 
+### External Stage 1 release decision (not a file-hash gate)
+
+Before declaring `RUNNER_STARTED_ATTESTED` or releasing a B-answer task, the controller must execute the [Stage 1 operator release contract](OPERATOR_STAGE1_RELEASE_CONTRACT.md) and record an actual [release preflight receipt](TEMPLATES/STAGE1_RELEASE_PREFLIGHT.md). Denials must be observed using the **fresh B identity**, including alternate source routes and unallowlisted Stage 2/reviewer paths. If access remains broad or untested, report `REHEARSAL_NOT_BLIND` / `READ_BOUNDARY_NOT_ATTESTED` instead of a clean trial. This never grants source-writing authority.
+
 ### Idempotency and no-progress rule
 
 Use a human-readable idempotency key: `<existing-responsibility>|<historical packet commit/path>|<source snapshot tree SHA>|<packet revision>`. It is a claim reference only, **not** a cryptographic authorization token.
