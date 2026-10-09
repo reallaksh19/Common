@@ -1128,7 +1128,7 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
             )
         return results
 
-    def test_freeze_candidate_binds_three_actual_receipts_but_does_not_attest(self):
+    def test_freeze_candidate_binds_five_actual_receipts_but_does_not_attest(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             records = self._good_stage1(root)
@@ -1140,6 +1140,8 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
                     f"{name} digest: {records[stage]['message_sha256']}\n"
                     for name, seq, stage in (
                         ("Intake", 1, "STAGE1_INTAKE"),
+                        ("Dispatch request", 2, "DISPATCH_REQUEST"),
+                        ("Dispatch observation", 3, "DISPATCH_OBSERVATION"),
                         ("Baseline", 4, "STAGE1_BASELINE"),
                         ("Plan", 5, "STAGE1_PLAN"),
                     )
@@ -1154,6 +1156,23 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
                                        stage="STAGE1_FREEZE_CANDIDATE", actor="operator",
                                        markdown=body.replace(records["STAGE1_PLAN"]["message_sha256"].encode("utf-8"),
                                                              b"sha256:" + b"0" * 64))
+            # Forged dispatch receipt and duplicate note cannot hide in prose.
+            with self.assertRaisesRegex(TransactionError, "FREEZE_DISPATCH_OBSERVATION_REF_MISMATCH"):
+                publish_buddy_markdown(
+                    root, issue_number=889, tx_id="TX.889.6",
+                    stage="STAGE1_FREEZE_CANDIDATE", actor="operator",
+                    markdown=body.replace(records["DISPATCH_OBSERVATION"]["message_sha256"].encode("utf-8"),
+                                          b"sha256:" + b"f" * 64))
+            with self.assertRaisesRegex(TransactionError, "FREEZE_DISPATCH_REQUEST_REF_MISMATCH"):
+                publish_buddy_markdown(
+                    root, issue_number=889, tx_id="TX.889.6",
+                    stage="STAGE1_FREEZE_CANDIDATE", actor="operator",
+                    markdown=body + b"Dispatch request tx: TX.889.99\n")
+            with self.assertRaisesRegex(TransactionError, "CANNOT_SELF_CERTIFY_ISOLATION"):
+                publish_buddy_markdown(
+                    root, issue_number=889, tx_id="TX.889.6",
+                    stage="STAGE1_FREEZE_CANDIDATE", actor="operator",
+                    markdown=body + b"Isolation verdict: VERIFIED\n")
             receipt = publish_buddy_markdown(root, issue_number=889, tx_id="TX.889.6",
                                              stage="STAGE1_FREEZE_CANDIDATE", actor="operator",
                                              markdown=body)
@@ -1175,7 +1194,10 @@ class BuddyMarkdownRelayTests(unittest.TestCase):
                 + "".join(
                     f"{label} tx: TX.889.{seq}\n{label} digest: {records[stage]['message_sha256']}\n"
                     for label, seq, stage in (
-                        ("Intake", 1, "STAGE1_INTAKE"), ("Baseline", 4, "STAGE1_BASELINE"),
+                        ("Intake", 1, "STAGE1_INTAKE"),
+                        ("Dispatch request", 2, "DISPATCH_REQUEST"),
+                        ("Dispatch observation", 3, "DISPATCH_OBSERVATION"),
+                        ("Baseline", 4, "STAGE1_BASELINE"),
                         ("Plan", 5, "STAGE1_PLAN"),
                     )
                 )
