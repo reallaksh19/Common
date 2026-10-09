@@ -4151,6 +4151,66 @@ class _InputCache:
         return self._projection
 
 
+
+RESPONSIBILITY_CORE_SCHEMA = "relay-v3.2-delp-responsibility-core-v1"
+
+
+def source_bound_responsibility_core(
+    graph: Mapping[str, Any], projection: Mapping[str, Any], leaf_ref: str,
+) -> dict[str, Any]:
+    """One DELP-owned, source-identical responsibility core for views and C6.
+
+    This pure read model authenticates neither a GitHub transport nor the
+    released default branch. Only native C6's separate source custody and
+    double-read provider fence may report CURRENT_READ_ONLY.
+    """
+    indexed = validate_graph(graph)
+    if projection.get("root") != indexed["root"] or projection.get("plan_digest") != indexed["digest"]:
+        raise DelpError("RESPONSIBILITY_CORE_PLAN_MISMATCH")
+    if not isinstance(projection.get("input_digest"), str) or not re.fullmatch(
+        r"sha256:[0-9a-f]{64}", projection["input_digest"]
+    ):
+        raise DelpError("RESPONSIBILITY_CORE_INPUT_DIGEST_REQUIRED")
+    if leaf_ref not in indexed["nodes"] or indexed["nodes"][leaf_ref]["kind"] != "LEAF":
+        raise DelpError("RESPONSIBILITY_CORE_LEAF_UNBOUND")
+    source = indexed["nodes"][leaf_ref]
+    observed = (projection.get("nodes") or {}).get(leaf_ref)
+    root = (projection.get("nodes") or {}).get(indexed["root"])
+    if not isinstance(observed, Mapping) or not isinstance(root, Mapping):
+        raise DelpError("RESPONSIBILITY_CORE_PROJECTION_MISSING")
+    candidate_pr = source.get("primary_pr")
+    if candidate_pr is not None and (
+        not isinstance(candidate_pr, str) or
+        not candidate_pr.startswith(str(indexed["programme"]["repository"]).rsplit("/", 1)[-1] + "#")
+    ):
+        raise DelpError("RESPONSIBILITY_CORE_MATERIAL_BOUNDARY")
+    source_claims = sorted(source.get("owns_claims") or [])
+    core = {
+        "schema": RESPONSIBILITY_CORE_SCHEMA,
+        "authority": "DELP_SOURCE_DERIVED_NO_PROVIDER_AUTHENTICATION",
+        "repository": indexed["programme"]["repository"],
+        "root": indexed["root"],
+        "leaf": leaf_ref,
+        "responsibility": source.get("responsibility_id"),
+        "claim_ids": source_claims,
+        "primary_pr": candidate_pr,
+        "digests": {
+            "graph": canonical_digest(graph),
+            "plan": projection["plan_digest"],
+            "input": projection["input_digest"],
+        },
+        "progress": {
+            "root": {k: root["progress"][k] for k in ("D", "E")},
+            "leaf": {k: observed["progress"][k] for k in ("P", "E")},
+        },
+        "leaf_state": observed["state"],
+        "rejected_fact_count": len(projection.get("rejected_facts") or []),
+        "authority_effects": [],
+    }
+    core["basis_digest"] = canonical_digest(core)
+    return core
+
+
 def _source_view_title_contract(graph: Any, target_leaf: str | None = None) -> tuple[str, str] | None:
     """Derive owner-scoped title authority from the released graph, not issue IDs.
 
