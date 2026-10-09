@@ -26,7 +26,7 @@ from local_execution_projection import build as build_local_execution
 from render_local_execution_request import render as render_local_execution_request
 from relay_can import _protocol_state, evaluate as can_action
 from snapshot_projection import build as build_snapshot
-from transactionlib import TransactionError, execute, jsonl_bytes, recover_all, yaml_bytes
+from transactionlib import BUDDY_MESSAGE_STAGES, TransactionError, execute, jsonl_bytes, recover_all, yaml_bytes
 from v3lib import canonical_digest, load_events, load_yaml, require_identifier, validate_schema
 from validate_foundation import validate_authority
 
@@ -1296,16 +1296,6 @@ def reconcile_roadmap(
 
 # A Buddy message is a transaction-recorded Markdown observation, NOT execution
 # admission, accepted TASK_EVIDENCE, independent-context attestation or a handover.
-BUDDY_MESSAGE_STAGES = frozenset({
-    "READINESS",
-    "STAGE1_INTAKE",
-    "STAGE1_BASELINE",
-    "STAGE1_PLAN",
-    "TECHNICAL_HANDOVER",
-    "STAGE2_RECONCILIATION",
-    "CONTINUATION_EVIDENCE",
-})
-
 
 def publish_buddy_markdown(
     root: Path,
